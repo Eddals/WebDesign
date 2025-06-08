@@ -1,0 +1,22 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  },
+  server: {
+    port: 5173,
+    host: true
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2020'
+    },
+    include: ['react', 'react-dom', '@radix-ui/react-toast', 'clsx', 'tailwind-merge']
+  }
+})

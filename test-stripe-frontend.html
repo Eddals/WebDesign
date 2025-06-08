@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Stripe Integration</title>
+</head>
+<body>
+    <h1>Test Stripe Integration</h1>
+    <button onclick="testStripe()">Test Stripe Checkout</button>
+    <div id="result"></div>
+
+    <script>
+        async function testStripe() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        formData: {
+                            projectType: 'business',
+                            budget: 'professional',
+                            timeline: '2weeks',
+                            paymentModel: 'onetime',
+                            subscriptionPlan: ''
+                        },
+                        customerInfo: {
+                            name: 'Test User',
+                            email: 'test@example.com',
+                            phone: '123-456-7890',
+                            company: 'Test Company'
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <h3>✅ Success!</h3>
+                        <p><strong>Session ID:</strong> ${data.sessionId}</p>
+                        <p><strong>Amount:</strong> $${data.amount}</p>
+                        <p><strong>Description:</strong> ${data.description}</p>
+                        <p><a href="${data.url}" target="_blank">Open Stripe Checkout</a></p>
+                    `;
+                } else {
+                    const error = await response.json();
+                    resultDiv.innerHTML = `<h3>❌ Error:</h3><p>${error.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<h3>❌ Network Error:</h3><p>${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
