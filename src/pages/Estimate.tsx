@@ -227,7 +227,7 @@ const Estimate = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = '/'}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
               >
                 Back to Home
               </motion.button>
@@ -235,7 +235,7 @@ const Estimate = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = '/contact'}
-                className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-lg font-semibold transition-colors"
+                className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-full font-semibold transition-colors"
               >
                 Contact Us
               </motion.button>
@@ -346,14 +346,14 @@ const Estimate = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setProjectDetails({...projectDetails, projectType: type.id})}
-                        className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
+                        className={`p-6 rounded-full border-2 cursor-pointer transition-all ${
                           projectDetails.projectType === type.id
                             ? 'border-purple-500 bg-purple-500/10'
                             : 'border-white/10 bg-white/5 hover:border-purple-500/50'
                         }`}
                       >
                         <div className="flex items-start gap-4">
-                          <div className={`p-3 rounded-lg ${
+                          <div className={`p-3 rounded-full ${
                             projectDetails.projectType === type.id
                               ? 'bg-purple-500 text-white'
                               : 'bg-white/10 text-purple-400'
@@ -386,7 +386,7 @@ const Estimate = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={handleNext}
                       disabled={!projectDetails.projectType}
-                      className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                      className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-8 py-3 rounded-full font-semibold transition-colors flex items-center gap-2"
                     >
                       Next Step <ArrowRight className="w-4 h-4" />
                     </motion.button>
@@ -422,7 +422,7 @@ const Estimate = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setProjectDetails({...projectDetails, budget: budget.id})}
-                            className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                            className={`p-4 rounded-full border cursor-pointer transition-all ${
                               projectDetails.budget === budget.id
                                 ? 'border-purple-500 bg-purple-500/10'
                                 : 'border-white/10 bg-white/5 hover:border-purple-500/50'
@@ -437,306 +437,5 @@ const Estimate = () => {
                     {/* Timeline */}
                     <div>
                       <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <Clock className="w-5 h-5 text-purple-400" />
-                        Timeline
-                      </h3>
-                      <div className="space-y-3">
-                        {timelineOptions.map((timeline) => (
-                          <motion.div
-                            key={timeline.id}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => setProjectDetails({...projectDetails, timeline: timeline.id})}
-                            className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                              projectDetails.timeline === timeline.id
-                                ? 'border-purple-500 bg-purple-500/10'
-                                : 'border-white/10 bg-white/5 hover:border-purple-500/50'
-                            }`}
-                          >
-                            <div className="font-semibold text-white">{timeline.label}</div>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                        <Clock className="w-5 h
 
-                  <div className="flex justify-between">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setCurrentStep(1)}
-                      className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-lg font-semibold transition-colors"
-                    >
-                      Previous
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleNext}
-                      disabled={!projectDetails.budget || !projectDetails.timeline}
-                      className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
-                    >
-                      Next Step <ArrowRight className="w-4 h-4" />
-                    </motion.button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 3: Features & Description */}
-              {currentStep === 3 && (
-                <motion.div
-                  key="step3"
-                  variants={stepVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  transition={{ duration: 0.5 }}
-                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8"
-                >
-                  <h2 className="text-3xl font-bold text-white mb-2">Additional Features</h2>
-                  <p className="text-white/60 mb-8">Select any additional features you need</p>
-
-                  <div className="grid md:grid-cols-2 gap-4 mb-8">
-                    {additionalFeatures.map((feature) => (
-                      <motion.div
-                        key={feature.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          const newFeatures = projectDetails.features.includes(feature.id)
-                            ? projectDetails.features.filter(f => f !== feature.id)
-                            : [...projectDetails.features, feature.id];
-                          setProjectDetails({...projectDetails, features: newFeatures});
-                        }}
-                        className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                          projectDetails.features.includes(feature.id)
-                            ? 'border-purple-500 bg-purple-500/10'
-                            : 'border-white/10 bg-white/5 hover:border-purple-500/50'
-                        }`}
-                      >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-semibold text-white">{feature.label}</div>
-                            <div className="text-purple-400 font-bold">+${feature.price}</div>
-                          </div>
-                          {projectDetails.features.includes(feature.id) && (
-                            <CheckCircle className="w-5 h-5 text-green-400" />
-                          )}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  <div className="mb-8">
-                    <label className="block text-white font-semibold mb-3">
-                      Project Description (Optional)
-                    </label>
-                    <textarea
-                      value={projectDetails.description}
-                      onChange={(e) => setProjectDetails({...projectDetails, description: e.target.value})}
-                      placeholder="Tell us more about your project requirements, goals, and any specific features you need..."
-                      className="w-full p-4 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:border-purple-500 focus:outline-none resize-none"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="flex justify-between">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setCurrentStep(2)}
-                      className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-lg font-semibold transition-colors"
-                    >
-                      Previous
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleNext}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
-                    >
-                      Get Estimate <Calculator className="w-4 h-4" />
-                    </motion.button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 4: Contact Info & Final Estimate */}
-              {currentStep === 4 && (
-                <motion.div
-                  key="step4"
-                  variants={stepVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  transition={{ duration: 0.5 }}
-                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8"
-                >
-                  <div className="text-center mb-8">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                      className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-6 py-3 mb-6"
-                    >
-                      <Sparkles className="w-5 h-5 text-green-400" />
-                      <span className="text-green-300 font-medium">Estimate Ready!</span>
-                    </motion.div>
-
-                    <h2 className="text-4xl font-bold text-white mb-4">Your Project Estimate</h2>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                      className="text-6xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
-                    >
-                      ${estimatedPrice.toLocaleString()}
-                    </motion.div>
-                    <p className="text-white/60">*Final price may vary based on detailed requirements</p>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-8 mb-8">
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-4">Contact Information</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-white/70 mb-2">Full Name *</label>
-                          <input
-                            type="text"
-                            value={projectDetails.contactInfo.name}
-                            onChange={(e) => setProjectDetails({
-                              ...projectDetails,
-                              contactInfo: {...projectDetails.contactInfo, name: e.target.value}
-                            })}
-                            className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:border-purple-500 focus:outline-none"
-                            placeholder="John Doe"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-white/70 mb-2">Email *</label>
-                          <input
-                            type="email"
-                            value={projectDetails.contactInfo.email}
-                            onChange={(e) => setProjectDetails({
-                              ...projectDetails,
-                              contactInfo: {...projectDetails.contactInfo, email: e.target.value}
-                            })}
-                            className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:border-purple-500 focus:outline-none"
-                            placeholder="john@example.com"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-white/70 mb-2">Phone</label>
-                          <input
-                            type="tel"
-                            value={projectDetails.contactInfo.phone}
-                            onChange={(e) => setProjectDetails({
-                              ...projectDetails,
-                              contactInfo: {...projectDetails.contactInfo, phone: e.target.value}
-                            })}
-                            className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:border-purple-500 focus:outline-none"
-                            placeholder="+1 (555) 123-4567"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-white/70 mb-2">Company</label>
-                          <input
-                            type="text"
-                            value={projectDetails.contactInfo.company}
-                            onChange={(e) => setProjectDetails({
-                              ...projectDetails,
-                              contactInfo: {...projectDetails.contactInfo, company: e.target.value}
-                            })}
-                            className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:border-purple-500 focus:outline-none"
-                            placeholder="Your Company"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-4">Project Summary</h3>
-                      <div className="bg-white/5 rounded-lg p-4 space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-white/70">Project Type:</span>
-                          <span className="text-white font-semibold">
-                            {projectTypes.find(p => p.id === projectDetails.projectType)?.title}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-white/70">Budget Range:</span>
-                          <span className="text-white font-semibold">
-                            {budgetRanges.find(b => b.id === projectDetails.budget)?.label}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-white/70">Timeline:</span>
-                          <span className="text-white font-semibold">
-                            {timelineOptions.find(t => t.id === projectDetails.timeline)?.label}
-                          </span>
-                        </div>
-                        {projectDetails.features.length > 0 && (
-                          <div>
-                            <span className="text-white/70">Additional Features:</span>
-                            <div className="mt-2 space-y-1">
-                              {projectDetails.features.map(featureId => {
-                                const feature = additionalFeatures.find(f => f.id === featureId);
-                                return (
-                                  <div key={featureId} className="flex justify-between text-sm">
-                                    <span className="text-white/60">{feature?.label}</span>
-                                    <span className="text-purple-400">+${feature?.price}</span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setCurrentStep(3)}
-                      className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-lg font-semibold transition-colors"
-                    >
-                      Previous
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleSubmit}
-                      disabled={!projectDetails.contactInfo.name || !projectDetails.contactInfo.email || isSubmitting}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                          />
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          Submit Estimate <Rocket className="w-4 h-4" />
-                        </>
-                      )}
-                    </motion.button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
-export default Estimate; 
