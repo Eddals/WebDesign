@@ -358,7 +358,7 @@ const Estimate = () => {
                   exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <h2 className="text-3xl font-bold text-white mb-6">Personal Information</h2>
+                  <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Personal Information</h2>
                   <p className="text-white/60 mb-8">Let's start with your contact details</p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -443,7 +443,7 @@ const Estimate = () => {
                   exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <h2 className="text-3xl font-bold text-white mb-6">Project Type</h2>
+                  <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Project Type</h2>
                   <p className="text-white/60 mb-8">What type of project are you looking to build?</p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -523,7 +523,7 @@ const Estimate = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-8 p-6 bg-purple-500/10 border border-purple-500/30 rounded-xl"
                 >
-                  <h3 className="text-2xl font-bold text-white mb-4">Ready to Start?</h3>
+                  <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Ready to Start?</h3>
                   <p className="text-white/70 mb-6">
                     Your estimated project cost is ${estimatedPrice?.toLocaleString()}.
                     Click below to proceed with secure payment via Stripe.

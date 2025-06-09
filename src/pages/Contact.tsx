@@ -543,7 +543,7 @@ const Contact = () => {
 
               {/* Need a Project Estimate */}
               <div className="bg-gradient-to-r from-purple-500/20 to-purple-600/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-3">Need a Project Estimate?</h3>
+                <h3 className="text-xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Need a Project Estimate?</h3>
                 <p className="text-white/70 text-sm mb-4">
                   Looking to start a new project? Get a detailed estimate with our project calculator.
                 </p>
