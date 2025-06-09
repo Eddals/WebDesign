@@ -1,10 +1,38 @@
 
-import { useRef } from "react"
+import { useState, useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { Mail, Phone, MessageSquare } from "lucide-react"
+import {
+  Mail,
+  Phone,
+  MessageSquare,
+  MapPin,
+  Clock,
+  Send,
+  User,
+  Building,
+  Globe,
+  Calendar,
+  CheckCircle,
+  ArrowRight
+} from "lucide-react"
 import SEO from '@/components/SEO'
 
 const Contact = () => {
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    phone: '',
+    projectType: '',
+    budget: '',
+    timeline: '',
+    message: '',
+    preferredContact: 'email'
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
   // Animation references and effects
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
@@ -20,15 +48,15 @@ const Contact = () => {
       icon: <Mail className="w-8 h-8" />,
       title: 'Email Us',
       description: 'Send us an email anytime',
-      details: 'support@devtone.agency',
-      link: 'mailto:support@devtone.agency',
+      details: 'hello@matheusweb.com',
+      link: 'mailto:hello@matheusweb.com',
       color: 'from-blue-500 to-cyan-500',
       response: 'Usually responds within 2 hours'
     },
     {
       icon: <Phone className="w-8 h-8" />,
       title: 'Call Us',
-      description: 'Mon-Fri from 8am to 6pm',
+      description: 'Mon-Fri from 9am to 6pm EST',
       details: '+1 (555) 123-4567',
       link: 'tel:+15551234567',
       color: 'from-green-500 to-emerald-500',
@@ -42,8 +70,85 @@ const Contact = () => {
       link: '#',
       color: 'from-purple-500 to-pink-500',
       response: 'Average response time: 5 minutes'
+    },
+    {
+      icon: <Calendar className="w-8 h-8" />,
+      title: 'Schedule Meeting',
+      description: 'Book a consultation',
+      details: 'Free 30-min call',
+      link: '#',
+      color: 'from-orange-500 to-red-500',
+      response: 'Available slots this week'
     }
   ]
+
+  // Project types for the form
+  const projectTypes = [
+    'Website Development',
+    'E-commerce Store',
+    'Web Application',
+    'Website Redesign',
+    'Mobile App',
+    'SEO Services',
+    'Maintenance & Support',
+    'Other'
+  ]
+
+  // Budget ranges
+  const budgetRanges = [
+    'Under $1,000',
+    '$1,000 - $5,000',
+    '$5,000 - $10,000',
+    '$10,000 - $25,000',
+    '$25,000+',
+    'Let\'s discuss'
+  ]
+
+  // Timeline options
+  const timelineOptions = [
+    'ASAP',
+    '1-2 weeks',
+    '1 month',
+    '2-3 months',
+    '3+ months',
+    'Flexible'
+  ]
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setIsSubmitted(true)
+      // Reset form after success
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          phone: '',
+          projectType: '',
+          budget: '',
+          timeline: '',
+          message: '',
+          preferredContact: 'email'
+        })
+      }, 3000)
+    }, 2000)
+  }
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
 
   // Animation variants
   const containerVariants = {
@@ -97,70 +202,77 @@ const Contact = () => {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Contact Us - Web Development Services"
         description="Get in touch with our team for any inquiries about our web development services. We're here to help with your project needs."
         keywords={['contact', 'web development', 'support', 'get in touch', 'project inquiry']}
-        ogUrl="https://devtone.agency/contact"
+        ogUrl="https://matheusweb.com/contact"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}
         <style>{customStyles}</style>
 
+        {/* Animated background elements */}
+        <div className="fixed inset-0 overflow-hidden -z-10">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full opacity-10 blur-3xl"></div>
+          <div className="absolute top-1/3 -left-20 w-60 h-60 bg-purple-300 rounded-full opacity-10 blur-3xl"></div>
+          <div className="absolute bottom-20 right-1/4 w-60 h-60 bg-purple-700 rounded-full opacity-10 blur-3xl"></div>
+        </div>
+
         {/* Hero Section */}
-        <motion.section 
+        <motion.section
           ref={heroRef}
-          className="relative pt-12 pb-24 overflow-hidden"
+          className="relative pt-12 pb-16 overflow-hidden"
           style={{ opacity, scale }}
         >
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
+            <motion.div
               className="max-w-4xl mx-auto text-center mb-16"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <motion.div 
-                className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden group"
+              <motion.div
+                className="inline-block px-6 py-2 mb-6 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden group"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                <span className="relative z-10">Get In Touch</span>
-                <motion.div 
+                <span className="relative z-10">💬 Let's Talk</span>
+                <motion.div
                   className="absolute inset-0 bg-purple-500/20"
                   initial={{ x: "-100%" }}
                   whileHover={{ x: "100%" }}
                   transition={{ duration: 0.6 }}
                 />
               </motion.div>
-              
-              <motion.h1 
+
+              <motion.h1
                 className="text-5xl md:text-6xl font-bold mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">
-                  Contact <span className="animate-gradient-text">Us</span>
+                  Get In <span className="animate-gradient-text">Touch</span>
                 </span>
               </motion.h1>
-              
-              <motion.p 
+
+              <motion.p
                 className="text-xl text-white/80 max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                Have questions or ready to start your project? Reach out to us today.
+                Ready to bring your vision to life? Let's discuss your project and create something amazing together.
               </motion.p>
             </motion.div>
           </div>
         </motion.section>
 
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 pb-24">
           {/* Contact Methods */}
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -170,40 +282,139 @@ const Contact = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl p-6 text-center card-hover-effect"
-                whileHover={{ scale: 1.02 }}
+                className="group relative"
+                whileHover={{ y: -5 }}
               >
-                <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${method.color} bg-opacity-20 flex items-center justify-center`}>
-                  {method.icon}
+                <div className={`absolute -inset-1 bg-gradient-to-r ${method.color} rounded-2xl blur-lg opacity-25 group-hover:opacity-75 transition duration-500`}></div>
+                <div className="relative backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-6 text-center h-full">
+                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${method.color} bg-opacity-20 flex items-center justify-center`}>
+                    {method.icon}
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">{method.title}</h3>
+                  <p className="text-white/60 mb-3 text-sm">{method.description}</p>
+                  <div className="text-purple-400 font-semibold mb-2">{method.details}</div>
+                  <div className="text-xs text-white/50">{method.response}</div>
+
+                  <motion.a
+                    href={method.link}
+                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Connect
+                    <ArrowRight className="w-3 h-3" />
+                  </motion.a>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">{method.title}</h3>
-                <p className="text-white/60 mb-3">{method.description}</p>
-                <div className="text-purple-400 font-semibold mb-2">{method.details}</div>
-                <div className="text-xs text-white/50">{method.response}</div>
               </motion.div>
             ))}
           </motion.div>
 
-          {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto mb-24"
-          >
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-4">Send Us a Message</h2>
-                <p className="text-white/60">
-                  Fill out the form below and we'll get back to you within 24 hours
-                </p>
-              </div>
-              
-              {/* Form content here */}
-            </div>
-          </motion.div>
-        </div>
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold text-white mb-4">Start Your Project</h2>
+                  <p className="text-white/60">
+                    Tell us about your project and we'll get back to you within 24 hours with a detailed proposal.
+                  </p>
+                </div>
+
+                {isSubmitted ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-12"
+                  >
+                    <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+                    <p className="text-white/60">
+                      Thank you for reaching out. We'll get back to you within 24 hours.
+                    </p>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Name and Email Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-white/80 text-sm font-medium mb-2">
+                          Full Name *
+                        </label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                          <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                            placeholder="Your full name"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-white/80 text-sm font-medium mb-2">
+                          Email Address *
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                          <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                            placeholder="your@email.com"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Company and Phone Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-white/80 text-sm font-medium mb-2">
+                          Company
+                        </label>
+                        <div className="relative">
+                          <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                          <input
+                            type="text"
+                            name="company"
+                            value={formData.company}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                            placeholder="Your company"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-white/80 text-sm font-medium mb-2">
+                          Phone Number
+                        </label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                          <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                            placeholder="+1 (555) 123-4567"
+                          />
+                        </div>
+                      </div>
+                    </div>
       </div>
     </>
   );
