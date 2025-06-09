@@ -7,21 +7,12 @@ import {
   Code,
   Palette,
   CreditCard,
-  Check,
-  ArrowRight,
-  Package,
   Rocket,
   Crown,
   User,
   Mail,
   Phone,
   Building,
-  DollarSign,
-  Calendar,
-  FileText,
-  Zap,
-  Shield,
-  Star,
   ChevronRight,
   ChevronLeft
 } from "lucide-react"
@@ -118,47 +109,7 @@ const Estimate = () => {
     }
   ]
 
-  const budgetRanges = [
-    { id: 'under-1k', label: 'Under $1,000', min: 500, max: 1000 },
-    { id: '1k-5k', label: '$1,000 - $5,000', min: 1000, max: 5000 },
-    { id: '5k-10k', label: '$5,000 - $10,000', min: 5000, max: 10000 },
-    { id: '10k-25k', label: '$10,000 - $25,000', min: 10000, max: 25000 },
-    { id: '25k-plus', label: '$25,000+', min: 25000, max: 50000 },
-    { id: 'custom', label: 'Custom Budget', min: 1000, max: 100000 }
-  ]
 
-  const timelineOptions = [
-    { id: 'asap', label: 'ASAP (Rush)', multiplier: 1.8 },
-    { id: '1-week', label: '1 Week', multiplier: 1.5 },
-    { id: '2-weeks', label: '2 Weeks', multiplier: 1.2 },
-    { id: '1-month', label: '1 Month', multiplier: 1.0 },
-    { id: '2-3-months', label: '2-3 Months', multiplier: 0.9 },
-    { id: 'flexible', label: 'Flexible', multiplier: 0.8 }
-  ]
-
-  const availableFeatures = [
-    { id: 'ecommerce', label: 'E-commerce Integration', price: 1000 },
-    { id: 'cms', label: 'Content Management System', price: 500 },
-    { id: 'api-integration', label: 'API Integration', price: 800 },
-    { id: 'advanced-seo', label: 'Advanced SEO Setup', price: 300 },
-    { id: 'analytics', label: 'Analytics & Tracking', price: 200 },
-    { id: 'social-media', label: 'Social Media Integration', price: 150 },
-    { id: 'multi-language', label: 'Multi-language Support', price: 600 },
-    { id: 'custom-forms', label: 'Custom Forms', price: 250 },
-    { id: 'live-chat', label: 'Live Chat Integration', price: 200 },
-    { id: 'booking-system', label: 'Booking/Appointment System', price: 800 }
-  ]
-
-  const mainGoals = [
-    'Increase online presence',
-    'Generate more leads',
-    'Sell products online',
-    'Improve user experience',
-    'Modernize brand image',
-    'Expand to new markets',
-    'Automate business processes',
-    'Improve SEO rankings'
-  ]
 
   // Form handling functions
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -169,42 +120,12 @@ const Estimate = () => {
     }))
   }
 
-  const handleFeatureToggle = (featureId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      features: prev.features.includes(featureId)
-        ? prev.features.filter(f => f !== featureId)
-        : [...prev.features, featureId]
-    }))
-  }
-
-  const handleGoalToggle = (goal: string) => {
-    setFormData(prev => ({
-      ...prev,
-      mainGoals: prev.mainGoals.includes(goal)
-        ? prev.mainGoals.filter(g => g !== goal)
-        : [...prev.mainGoals, goal]
-    }))
-  }
-
   // Calculate estimated price
   const calculatePrice = () => {
     const selectedProject = projectTypes.find(p => p.id === formData.projectType)
     if (!selectedProject) return 0
 
     let basePrice = selectedProject.basePrice
-
-    // Apply timeline multiplier
-    const timelineOption = timelineOptions.find(t => t.id === formData.timeline)
-    if (timelineOption) {
-      basePrice *= timelineOption.multiplier
-    }
-
-    // Add feature costs
-    const featureCosts = formData.features.reduce((total, featureId) => {
-      const feature = availableFeatures.find(f => f.id === featureId)
-      return total + (feature?.price || 0)
-    }, 0)
 
     // Apply complexity multiplier
     const complexityMultipliers = {
@@ -216,7 +137,7 @@ const Estimate = () => {
 
     const complexityMultiplier = complexityMultipliers[formData.complexity as keyof typeof complexityMultipliers] || 1.0
 
-    const finalPrice = Math.round((basePrice + featureCosts) * complexityMultiplier)
+    const finalPrice = Math.round(basePrice * complexityMultiplier)
     return Math.max(500, finalPrice) // Minimum $500
   }
 
@@ -516,71 +437,134 @@ const Estimate = () => {
                 </motion.div>
               )}
 
-          {/* Project Type Selection */}
-          <motion.div
-            className="mt-24"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <div className="text-center mb-12">
-              <h3 className="text-3xl font-bold text-white mb-4">What Type of Project?</h3>
-              <p className="text-white/70">Tell us more about your specific needs</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              {projectTypes.map((type, index) => (
+              {/* Step 2: Project Type */}
+              {currentStep === 2 && (
                 <motion.div
-                  key={type.id}
-                  className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
-                    projectDetails.projectType === type.id
-                      ? 'border-purple-500 bg-purple-500/10'
-                      : 'border-white/10 bg-white/5 hover:border-purple-500/50'
-                  }`}
-                  onClick={() => setProjectDetails({...projectDetails, projectType: type.id})}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
-                      {type.icon}
-                    </div>
-                    <h4 className="text-white font-semibold mb-2">{type.name}</h4>
-                    <p className="text-white/60 text-sm">{type.description}</p>
+                  <h2 className="text-3xl font-bold text-white mb-6">Project Type</h2>
+                  <p className="text-white/60 mb-8">What type of project are you looking to build?</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {projectTypes.map((type) => (
+                      <motion.div
+                        key={type.id}
+                        className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
+                          formData.projectType === type.id
+                            ? 'border-purple-500 bg-purple-500/10'
+                            : 'border-white/10 bg-white/5 hover:border-purple-500/50'
+                        }`}
+                        onClick={() => setFormData({...formData, projectType: type.id})}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="text-center">
+                          <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+                            {type.icon}
+                          </div>
+                          <h4 className="text-white font-semibold mb-2">{type.name}</h4>
+                          <p className="text-white/60 text-sm mb-2">{type.description}</p>
+                          <p className="text-purple-400 font-semibold text-sm">
+                            Starting at ${type.basePrice.toLocaleString()}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 </motion.div>
-              ))}
-            </div>
-          </motion.div>
+              )}
 
-          {/* Contact CTA */}
-          <motion.div
-            className="mt-24 text-center"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <div className="max-w-2xl mx-auto bg-gradient-to-r from-purple-500/20 to-purple-700/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-              <h3 className="text-2xl font-bold text-white mb-4">Need a Custom Quote?</h3>
-              <p className="text-white/70 mb-6">
-                Have a unique project in mind? Let's discuss your specific requirements and create a custom solution.
-              </p>
-              <motion.a
-                href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 rounded-full font-semibold text-white transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Contact Us
-                <ArrowRight className="w-4 h-4" />
-              </motion.a>
-            </div>
-          </motion.div>
+              {/* Navigation Buttons */}
+              <div className="flex justify-between items-center mt-12 pt-8 border-t border-white/10">
+                <motion.button
+                  onClick={prevStep}
+                  disabled={currentStep === 1}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all ${
+                    currentStep === 1
+                      ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                      : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
+                  whileHover={currentStep > 1 ? { scale: 1.05 } : {}}
+                  whileTap={currentStep > 1 ? { scale: 0.95 } : {}}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Previous
+                </motion.button>
+
+                <div className="text-center">
+                  <p className="text-white/60 text-sm">Step {currentStep} of 2</p>
+                  {estimatedPrice && (
+                    <p className="text-purple-400 font-semibold">
+                      Estimated: ${estimatedPrice.toLocaleString()}
+                    </p>
+                  )}
+                </div>
+
+                <motion.button
+                  onClick={currentStep === 2 ? () => setShowPayment(true) : nextStep}
+                  disabled={
+                    (currentStep === 1 && (!formData.name || !formData.email)) ||
+                    (currentStep === 2 && !formData.projectType)
+                  }
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-full font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {currentStep === 2 ? 'Get Estimate' : 'Next'}
+                  <ChevronRight className="w-4 h-4" />
+                </motion.button>
+              </div>
+
+              {/* Payment Section */}
+              {showPayment && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-8 p-6 bg-purple-500/10 border border-purple-500/30 rounded-xl"
+                >
+                  <h3 className="text-2xl font-bold text-white mb-4">Ready to Start?</h3>
+                  <p className="text-white/70 mb-6">
+                    Your estimated project cost is ${estimatedPrice?.toLocaleString()}.
+                    Click below to proceed with secure payment via Stripe.
+                  </p>
+
+                  <div className="flex gap-4">
+                    <motion.button
+                      onClick={getEstimate}
+                      className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full font-semibold text-white transition-all"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Get Quote Only
+                    </motion.button>
+
+                    <motion.button
+                      onClick={handlePayment}
+                      disabled={isLoading}
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-full font-semibold text-white transition-all disabled:opacity-50"
+                      whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                      whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                    >
+                      {isLoading ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Processing...
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2">
+                          <CreditCard className="w-4 h-4" />
+                          Pay & Start Now
+                        </div>
+                      )}
+                    </motion.button>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
         </div>
       </div>
     </>
