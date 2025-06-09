@@ -1,7 +1,6 @@
 
-import { useState, useEffect, useRef } from "react"
+import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { ArrowRight, CheckCircle, MessageSquare } from "lucide-react"
 import SEO from '@/components/SEO'
 
 const Estimate = () => {
@@ -14,25 +13,7 @@ const Estimate = () => {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.5 }
-    }
-  }
 
   // Custom styles
   const customStyles = `

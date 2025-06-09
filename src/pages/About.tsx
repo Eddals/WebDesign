@@ -1,20 +1,9 @@
-"use client"
 
 import { useState, useEffect, useRef } from "react"
 import {
   Palette,
   Globe,
-  Coffee,
-  Music,
-  Camera,
-  Book,
   MessageCircle,
-  Users,
-  BarChart,
-  Zap,
-  Database,
-  Briefcase,
-  Monitor,
   Code,
   Lightbulb,
   Heart,
@@ -23,13 +12,11 @@ import {
   Target,
   Rocket,
   ArrowRight,
-  CheckCircle,
-  Sparkles,
   TrendingUp
 } from "lucide-react"
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import SEO from '@/components/SEO'
-import CreativeGraphic from '@/components/CreativeGraphic'
+
 
 const About = () => {
   // Animated counting effect for stats
@@ -39,8 +26,7 @@ const About = () => {
     experience: 0,
   })
   
-  const [activeSkillTab, setActiveSkillTab] = useState("frontend")
-  const [isInView, setIsInView] = useState(false)
+
 
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -51,13 +37,7 @@ const About = () => {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsInView(true)
-    }, 300)
-    
-    return () => clearTimeout(timer)
-  }, [])
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -94,14 +74,7 @@ const About = () => {
     },
   ]
 
-  // Personal interests for a more human touch
-  const interests = [
-    { name: "Photography", icon: <Camera size={20} /> },
-    { name: "Music Production", icon: <Music size={20} /> },
-    { name: "Coffee Brewing", icon: <Coffee size={20} /> },
-    { name: "Reading", icon: <Book size={20} /> },
-    { name: "Travel", icon: <Globe size={20} /> },
-  ]
+
 
   // Animation variants
   const containerVariants = {
@@ -295,26 +268,14 @@ const About = () => {
 
           {/* About Content */}
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24"
+            className="grid grid-cols-1 gap-12 items-center mb-24"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <motion.div 
-              className="relative group"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <div className="backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-8 card-hover-effect">
-                <CreativeGraphic />
-              </div>
-            </motion.div>
-
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 0 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               viewport={{ once: true }}
