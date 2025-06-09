@@ -21,7 +21,6 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ||
 
 const Estimate = () => {
   // State management
-  const [selectedPlan, setSelectedPlan] = useState<string>('')
   const [projectDetails, setProjectDetails] = useState({
     projectType: '',
     features: [] as string[],
