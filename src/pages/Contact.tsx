@@ -226,7 +226,7 @@ const Contact = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                Ready to bring your vision to life? Let's discuss your project and create something amazing together.
+                Have questions, need support, or want to say hello? We're here to help and would love to hear from you.
               </motion.p>
             </motion.div>
           </div>
@@ -283,9 +283,9 @@ const Contact = () => {
             >
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-white mb-4">Start Your Project</h2>
+                  <h2 className="text-3xl font-bold text-white mb-4">Send Us a Message</h2>
                   <p className="text-white/60">
-                    Tell us about your project and we'll get back to you within 24 hours with a detailed proposal.
+                    Whether you have questions, need support, or just want to connect, we're here to help. We'll get back to you within 24 hours.
                   </p>
                 </div>
 
@@ -386,15 +386,22 @@ const Contact = () => {
                       </label>
                       <div className="relative">
                         <MessageSquare className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                        <input
-                          type="text"
+                        <select
                           name="subject"
                           value={formData.subject}
                           onChange={handleInputChange}
                           required
-                          className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                          placeholder="What can we help you with?"
-                        />
+                          className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
+                        >
+                          <option value="" className="bg-gray-800">Select a topic</option>
+                          <option value="general-inquiry" className="bg-gray-800">General Inquiry</option>
+                          <option value="technical-support" className="bg-gray-800">Technical Support</option>
+                          <option value="billing-question" className="bg-gray-800">Billing Question</option>
+                          <option value="website-issue" className="bg-gray-800">Website Issue</option>
+                          <option value="feedback" className="bg-gray-800">Feedback</option>
+                          <option value="partnership" className="bg-gray-800">Partnership Opportunity</option>
+                          <option value="other" className="bg-gray-800">Other</option>
+                        </select>
                       </div>
                     </div>
 
@@ -408,9 +415,9 @@ const Contact = () => {
                         value={formData.message}
                         onChange={handleInputChange}
                         required
-                        rows={5}
+                        rows={6}
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors resize-none"
-                        placeholder="Tell us how we can help you..."
+                        placeholder="Please provide details about your inquiry, question, or how we can assist you..."
                       />
                     </div>
 
