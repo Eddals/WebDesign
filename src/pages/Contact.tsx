@@ -1,6 +1,4 @@
 
-"use client"
-
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Mail, Phone, MessageSquare } from "lucide-react"
