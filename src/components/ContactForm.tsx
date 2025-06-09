@@ -114,7 +114,7 @@ const ContactForm: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter your email"
+              placeholder="Enter your emails"
             />
           </div>
 
