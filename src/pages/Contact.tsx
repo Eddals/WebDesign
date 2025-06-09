@@ -52,18 +52,15 @@ const Contact = () => {
   const contactMethods = [
     {
       icon: <Mail className="w-8 h-8 rounded-full" />,
-      icon: <Mail className="w-8 h-8" />,
       title: 'Email Us',
       description: 'Send us an email anytime',
       details: 'support@devtone.agency',
       link: 'mailto:support@devtone.agency',
       color: 'from-blue-500 to-cyan-500',
       response: 'Usually responds within 2 hours'
-
     },
     {
       icon: <Phone className="w-8 h-8 rounded-full" />,
-      icon: <Phone className="w-8 h-8" />,
       title: 'Call Us',
       description: 'Mon-Fri from 8am to 6pm',
       details: '+1 (555) 123-4567',
@@ -73,7 +70,6 @@ const Contact = () => {
     },
     {
       icon: <MessageSquare className="w-8 h-8 rounded-full" />,
-      icon: <MessageSquare className="w-8 h-8" />,
       title: 'Live Chat',
       description: 'Chat with our team',
       details: 'Start a conversation',
@@ -83,7 +79,6 @@ const Contact = () => {
     },
     {
       icon: <Calendar className="w-8 h-8 rounded-full" />,
-      icon: <Calendar className="w-8 h-8" />,
       title: 'Schedule Meeting',
       description: 'Book a consultation',
       details: 'Free 30-min call',
@@ -99,8 +94,7 @@ const Contact = () => {
     { id: 'webapp', label: 'Web Application', icon: <Code className="w-8 h-8 rounded-full" /> },
     { id: 'redesign', label: 'Website Redesign', icon: <Palette className="w-8 h-8 rounded-full" /> },
     { id: 'maintenance', label: 'Maintenance & Support', icon: <Shield className="w-8 h-8 rounded-full" /> },
-    { id: 'consultation', label: 'Consultation', icon: <Lightbulb className="w-8 h-8 rounded-full" /> },
-    { id: 'website', label: 'Website Development', icon: <Globe className="w-8 h-8 rounded-full" /> }
+    { id: 'consultation', label: 'Consultation', icon: <Lightbulb className="w-8 h-8 rounded-full" /> }
   ];
 
   const budgetRanges = [
@@ -593,4 +587,6 @@ const Contact = () => {
     </>
   );
 };
+
+export default Contact;
 /******  5d6c01a1-758a-4a64-a6b2-390dcefcea17  *******/
