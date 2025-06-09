@@ -5,8 +5,6 @@ import {
   Mail,
   Phone,
   MessageSquare,
-  MapPin,
-  Clock,
   Send,
   User,
   Building,
@@ -415,6 +413,220 @@ const Contact = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* Project Details Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-white/80 text-sm font-medium mb-2">
+                          Project Type *
+                        </label>
+                        <div className="relative">
+                          <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                          <select
+                            name="projectType"
+                            value={formData.projectType}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
+                          >
+                            <option value="" className="bg-gray-800">Select project type</option>
+                            {projectTypes.map((type) => (
+                              <option key={type} value={type} className="bg-gray-800">{type}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-white/80 text-sm font-medium mb-2">
+                          Budget Range
+                        </label>
+                        <select
+                          name="budget"
+                          value={formData.budget}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
+                        >
+                          <option value="" className="bg-gray-800">Select budget</option>
+                          {budgetRanges.map((range) => (
+                            <option key={range} value={range} className="bg-gray-800">{range}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-white/80 text-sm font-medium mb-2">
+                          Timeline
+                        </label>
+                        <select
+                          name="timeline"
+                          value={formData.timeline}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
+                        >
+                          <option value="" className="bg-gray-800">Select timeline</option>
+                          {timelineOptions.map((option) => (
+                            <option key={option} value={option} className="bg-gray-800">{option}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Message */}
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">
+                        Project Description *
+                      </label>
+                      <textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        required
+                        rows={5}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                        placeholder="Tell us about your project, goals, and any specific requirements..."
+                      />
+                    </div>
+
+                    {/* Preferred Contact Method */}
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-3">
+                        Preferred Contact Method
+                      </label>
+                      <div className="flex gap-4">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="preferredContact"
+                            value="email"
+                            checked={formData.preferredContact === 'email'}
+                            onChange={handleInputChange}
+                            className="w-4 h-4 text-purple-500 bg-white/10 border-white/20 focus:ring-purple-500"
+                          />
+                          <span className="text-white/80">Email</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="preferredContact"
+                            value="phone"
+                            checked={formData.preferredContact === 'phone'}
+                            onChange={handleInputChange}
+                            className="w-4 h-4 text-purple-500 bg-white/10 border-white/20 focus:ring-purple-500"
+                          />
+                          <span className="text-white/80">Phone</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <motion.button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className={`w-full py-4 rounded-full font-semibold text-white transition-all duration-300 ${
+                        isSubmitting
+                          ? 'bg-gray-600 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600'
+                      }`}
+                      whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                      whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Sending Message...
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2">
+                          <Send className="w-4 h-4" />
+                          Send Message
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      )}
+                    </motion.button>
+                  </form>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Contact Info Sidebar */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="space-y-8"
+            >
+              {/* Why Choose Us */}
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+                <h3 className="text-2xl font-bold text-white mb-4">Why Choose Us?</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle className="w-3 h-3 text-purple-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-semibold mb-1">Expert Team</h4>
+                      <p className="text-white/60 text-sm">Experienced developers and designers</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle className="w-3 h-3 text-purple-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-semibold mb-1">Fast Delivery</h4>
+                      <p className="text-white/60 text-sm">Quick turnaround times</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle className="w-3 h-3 text-purple-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-semibold mb-1">24/7 Support</h4>
+                      <p className="text-white/60 text-sm">Always here when you need us</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ */}
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+                <h3 className="text-2xl font-bold text-white mb-4">Quick FAQ</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-white font-semibold mb-2">How long does a project take?</h4>
+                    <p className="text-white/60 text-sm">Most projects are completed within 2-6 weeks, depending on complexity.</p>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold mb-2">Do you offer maintenance?</h4>
+                    <p className="text-white/60 text-sm">Yes, we provide ongoing support and maintenance packages.</p>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold mb-2">What's included in the price?</h4>
+                    <p className="text-white/60 text-sm">Design, development, testing, deployment, and initial support.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Emergency Contact */}
+              <div className="bg-gradient-to-r from-purple-500/20 to-indigo-500/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-white mb-3">Need Urgent Help?</h3>
+                <p className="text-white/70 text-sm mb-4">
+                  For urgent matters or existing project support, call us directly.
+                </p>
+                <motion.a
+                  href="tel:+15551234567"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 rounded-full font-semibold text-white transition-all duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Phone className="w-4 h-4" />
+                  Call Now
+                </motion.a>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </>
   );
