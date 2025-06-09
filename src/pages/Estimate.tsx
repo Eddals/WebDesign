@@ -229,7 +229,6 @@ const Estimate = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = '/'}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
               >
                 Back to Home
               </motion.button>
@@ -238,7 +237,6 @@ const Estimate = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = '/contact'}
                 className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-full font-semibold transition-colors"
-                className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-lg font-semibold transition-colors"
               >
                 Contact Us
               </motion.button>
@@ -349,7 +347,6 @@ const Estimate = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setProjectDetails({...projectDetails, projectType: type.id})}
-                        className={`p-6 rounded-full border-2 cursor-pointer transition-all ${
                         className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
                           projectDetails.projectType === type.id
                             ? 'border-purple-500 bg-purple-500/10'
@@ -357,7 +354,6 @@ const Estimate = () => {
                         }`}
                       >
                         <div className="flex items-start gap-4">
-                          <div className={`p-3 rounded-full ${
                           <div className={`p-3 rounded-lg ${
                             projectDetails.projectType === type.id
                               ? 'bg-purple-500 text-white'
@@ -391,7 +387,6 @@ const Estimate = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={handleNext}
                       disabled={!projectDetails.projectType}
-                      className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-8 py-3 rounded-full font-semibold transition-colors flex items-center gap-2"
                       className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
                     >
                       Next Step <ArrowRight className="w-4 h-4" />
@@ -428,7 +423,6 @@ const Estimate = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setProjectDetails({...projectDetails, budget: budget.id})}
-                            className={`p-4 rounded-full border cursor-pointer transition-all ${
                             className={`p-4 rounded-lg border cursor-pointer transition-all ${
                               projectDetails.budget === budget.id
                                 ? 'border-purple-500 bg-purple-500/10'
@@ -444,7 +438,6 @@ const Estimate = () => {
                     {/* Timeline */}
                     <div>
                       <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <Clock className="w-5 h
                         <Clock className="w-5 h-5 text-purple-400" />
                         Timeline
                       </h3>
