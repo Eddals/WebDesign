@@ -8,7 +8,6 @@ import {
   Send,
   User,
   Building,
-  Globe,
   Calendar,
   CheckCircle,
   ArrowRight
@@ -78,37 +77,7 @@ const Contact = () => {
     }
   ]
 
-  // Project types for the form
-  const projectTypes = [
-    'Website Development',
-    'E-commerce Store',
-    'Web Application',
-    'Website Redesign',
-    'Mobile App',
-    'SEO Services',
-    'Maintenance & Support',
-    'Other'
-  ]
 
-  // Budget ranges
-  const budgetRanges = [
-    'Under $1,000',
-    '$1,000 - $5,000',
-    '$5,000 - $10,000',
-    '$10,000 - $25,000',
-    '$25,000+',
-    'Let\'s discuss'
-  ]
-
-  // Timeline options
-  const timelineOptions = [
-    'ASAP',
-    '1-2 weeks',
-    '1 month',
-    '2-3 months',
-    '3+ months',
-    'Flexible'
-  ]
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -432,7 +401,7 @@ const Contact = () => {
                     {/* Message */}
                     <div>
                       <label className="block text-white/80 text-sm font-medium mb-2">
-                        Project Description *
+                        Message *
                       </label>
                       <textarea
                         name="message"
@@ -441,7 +410,7 @@ const Contact = () => {
                         required
                         rows={5}
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors resize-none"
-                        placeholder="Tell us about your project, goals, and any specific requirements..."
+                        placeholder="Tell us how we can help you..."
                       />
                     </div>
 
