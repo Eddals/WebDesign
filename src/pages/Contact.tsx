@@ -524,21 +524,21 @@ const Contact = () => {
                 </div>
               </div>
 
-              {/* FAQ */}
+              {/* Support FAQ */}
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-                <h3 className="text-2xl font-bold text-white mb-4">Quick FAQ</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">Support FAQ</h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-white font-semibold mb-2">How long does a project take?</h4>
-                    <p className="text-white/60 text-sm">Most projects are completed within 2-6 weeks, depending on complexity.</p>
+                    <h4 className="text-white font-semibold mb-2">How quickly do you respond?</h4>
+                    <p className="text-white/60 text-sm">We respond to all inquiries within 24 hours, often much sooner.</p>
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-2">Do you offer maintenance?</h4>
-                    <p className="text-white/60 text-sm">Yes, we provide ongoing support and maintenance packages.</p>
+                    <h4 className="text-white font-semibold mb-2">What support do you offer?</h4>
+                    <p className="text-white/60 text-sm">Technical support, general questions, billing inquiries, and website assistance.</p>
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-2">What's included in the price?</h4>
-                    <p className="text-white/60 text-sm">Design, development, testing, deployment, and initial support.</p>
+                    <h4 className="text-white font-semibold mb-2">Need a project estimate?</h4>
+                    <p className="text-white/60 text-sm">For project estimates, please visit our <a href="/estimate" className="text-purple-400 hover:text-purple-300">Get Estimate</a> page.</p>
                   </div>
                 </div>
               </div>
