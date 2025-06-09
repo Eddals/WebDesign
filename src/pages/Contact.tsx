@@ -53,10 +53,11 @@ const Contact = () => {
       icon: <Mail className="w-8 h-8" />,
       title: 'Email Us',
       description: 'Send us an email anytime',
-      details: 'hello@matheusweb.com',
-      link: 'mailto:hello@matheusweb.com',
+      details: 'support@devtone.agency',
+      link: 'mailto:support@devtone.agency',
       color: 'from-blue-500 to-cyan-500',
       response: 'Usually responds within 2 hours'
+      
     },
     {
       icon: <Phone className="w-8 h-8" />,
