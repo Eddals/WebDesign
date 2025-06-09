@@ -543,20 +543,20 @@ const Contact = () => {
                 </div>
               </div>
 
-              {/* Emergency Contact */}
-              <div className="bg-gradient-to-r from-purple-500/20 to-indigo-500/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-3">Need Urgent Help?</h3>
+              {/* Need a Project Estimate */}
+              <div className="bg-gradient-to-r from-purple-500/20 to-purple-600/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-white mb-3">Need a Project Estimate?</h3>
                 <p className="text-white/70 text-sm mb-4">
-                  For urgent matters or existing project support, call us directly.
+                  Looking to start a new project? Get a detailed estimate with our project calculator.
                 </p>
                 <motion.a
-                  href="tel:+15551234567"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 rounded-full font-semibold text-white transition-all duration-300"
+                  href="/estimate"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-full font-semibold text-white transition-all duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Phone className="w-4 h-4" />
-                  Call Now
+                  <ArrowRight className="w-4 h-4" />
+                  Get Estimate
                 </motion.a>
               </div>
             </motion.div>
