@@ -200,7 +200,7 @@ const Contact = () => {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                <span className="relative z-10">💬 Let's Talk</span>
+                <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-purple-500">💬 Let's Talk</span>
                 <motion.div
                   className="absolute inset-0 bg-purple-500/20"
                   initial={{ x: "-100%" }}
@@ -210,14 +210,12 @@ const Contact = () => {
               </motion.div>
 
               <motion.h1
-                className="text-5xl md:text-6xl font-bold mb-6"
+                className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 text-glow"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">
-                  Get In <span className="animate-gradient-text">Touch</span>
-                </span>
+                Get In <span className="animate-gradient-text">Touch</span>
               </motion.h1>
 
               <motion.p
@@ -283,7 +281,7 @@ const Contact = () => {
             >
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-white mb-4">Send Us a Message</h2>
+                  <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Send Us a Message</h2>
                   <p className="text-white/60">
                     Whether you have questions, need support, or just want to connect, we're here to help. We'll get back to you within 24 hours.
                   </p>
@@ -492,7 +490,7 @@ const Contact = () => {
             >
               {/* Support Information */}
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-                <h3 className="text-2xl font-bold text-white mb-4">How We Can Help</h3>
+                <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">How We Can Help</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">

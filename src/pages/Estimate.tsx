@@ -280,7 +280,7 @@ const Estimate = () => {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                <span className="relative z-10">📋 Step {currentStep} of 5</span>
+                <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-purple-500">📋 Step {currentStep} of 2</span>
                 <motion.div
                   className="absolute inset-0 bg-purple-500/20"
                   initial={{ x: "-100%" }}
@@ -290,14 +290,12 @@ const Estimate = () => {
               </motion.div>
 
               <motion.h1
-                className="text-5xl md:text-6xl font-bold mb-6"
+                className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 text-glow"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">
-                  Get Your <span className="animate-gradient-text">Project Estimate</span>
-                </span>
+                Get Your <span className="animate-gradient-text">Project Estimate</span>
               </motion.h1>
 
               <motion.p
@@ -318,24 +316,24 @@ const Estimate = () => {
               transition={{ duration: 0.8, delay: 0.6 }}
             >
               <div className="flex items-center justify-between mb-4">
-                {[1, 2, 3, 4, 5].map((step) => (
+                {[1, 2].map((step) => (
                   <div
                     key={step}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                    className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
                       step <= currentStep
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-white/10 text-white/50'
+                        ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25'
+                        : 'bg-white/10 text-white/50 border border-white/20'
                     }`}
                   >
                     {step}
                   </div>
                 ))}
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-white/10 rounded-full h-3">
                 <motion.div
-                  className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full"
-                  initial={{ width: "20%" }}
-                  animate={{ width: `${(currentStep / 5) * 100}%` }}
+                  className="bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 h-3 rounded-full shadow-lg shadow-purple-500/25"
+                  initial={{ width: "50%" }}
+                  animate={{ width: `${(currentStep / 2) * 100}%` }}
                   transition={{ duration: 0.5 }}
                 />
               </div>
