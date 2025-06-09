@@ -1,4 +1,3 @@
-/*************  ✨ Codeium Command 🌟  *************/
 "use client"
 
 import { useState, useRef } from 'react';
@@ -228,7 +227,7 @@ const Estimate = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = '/'}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
               >
                 Back to Home
               </motion.button>
@@ -236,7 +235,7 @@ const Estimate = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = '/contact'}
-                className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-full font-semibold transition-colors"
+                className="border border-purple-500 text-purple-400 hover:bg-purple-500/10 px-8 py-3 rounded-lg font-semibold transition-colors"
               >
                 Contact Us
               </motion.button>
@@ -742,4 +741,3 @@ const Estimate = () => {
 
 export default Estimate; 
 
-/******  59419d7b-5384-4e77-9f18-0b3b5afcf528  *******/
