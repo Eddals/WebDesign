@@ -41,16 +41,16 @@ const Contact = () => {
   const contactMethods = [
     {
       icon: <Mail className="w-8 h-8" />,
-      title: 'Email Us',
+      title: 'Email Support',
       description: 'Send us an email anytime',
-      details: 'hello@matheusweb.com',
-      link: 'mailto:hello@matheusweb.com',
+      details: 'support@matheusweb.com',
+      link: 'mailto:support@matheusweb.com',
       color: 'from-purple-400 to-purple-600',
-      response: 'Usually responds within 2 hours'
+      response: 'Response within 24 hours'
     },
     {
       icon: <Phone className="w-8 h-8" />,
-      title: 'Call Us',
+      title: 'Phone Support',
       description: 'Mon-Fri from 9am to 6pm EST',
       details: '+1 (555) 123-4567',
       link: 'tel:+15551234567',
@@ -60,17 +60,17 @@ const Contact = () => {
     {
       icon: <MessageSquare className="w-8 h-8" />,
       title: 'Live Chat',
-      description: 'Chat with our team',
+      description: 'Chat with our support team',
       details: 'Start a conversation',
       link: '#',
       color: 'from-purple-600 to-purple-800',
-      response: 'Average response time: 5 minutes'
+      response: 'Available Mon-Fri 9am-6pm EST'
     },
     {
       icon: <Calendar className="w-8 h-8" />,
-      title: 'Schedule Meeting',
-      description: 'Book a consultation',
-      details: 'Free 30-min call',
+      title: 'Schedule Call',
+      description: 'Book a support call',
+      details: 'Free consultation',
       link: '#',
       color: 'from-purple-300 to-purple-500',
       response: 'Available slots this week'
