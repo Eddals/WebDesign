@@ -11,7 +11,7 @@ const Contact = () => {
       icon: <Mail className="w-6 h-6" />,
       title: 'Email',
       details: 'info@matheusweb.com',
-      link: 'mailto:info@matheusweb.com'
+      link: 'mailto:infoe@matheusweb.com'
     },
     {
       icon: <Phone className="w-6 h-6" />,
