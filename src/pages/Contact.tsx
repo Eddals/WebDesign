@@ -22,9 +22,7 @@ const Contact = () => {
     email: '',
     company: '',
     phone: '',
-    projectType: '',
-    budget: '',
-    timeline: '',
+    subject: '',
     message: '',
     preferredContact: 'email'
   })
@@ -48,7 +46,7 @@ const Contact = () => {
       description: 'Send us an email anytime',
       details: 'hello@matheusweb.com',
       link: 'mailto:hello@matheusweb.com',
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-purple-400 to-purple-600',
       response: 'Usually responds within 2 hours'
     },
     {
@@ -57,7 +55,7 @@ const Contact = () => {
       description: 'Mon-Fri from 9am to 6pm EST',
       details: '+1 (555) 123-4567',
       link: 'tel:+15551234567',
-      color: 'from-green-500 to-emerald-500',
+      color: 'from-purple-500 to-purple-700',
       response: 'Available during business hours'
     },
     {
@@ -66,7 +64,7 @@ const Contact = () => {
       description: 'Chat with our team',
       details: 'Start a conversation',
       link: '#',
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-purple-600 to-purple-800',
       response: 'Average response time: 5 minutes'
     },
     {
@@ -75,7 +73,7 @@ const Contact = () => {
       description: 'Book a consultation',
       details: 'Free 30-min call',
       link: '#',
-      color: 'from-orange-500 to-red-500',
+      color: 'from-purple-300 to-purple-500',
       response: 'Available slots this week'
     }
   ]
@@ -129,9 +127,7 @@ const Contact = () => {
           email: '',
           company: '',
           phone: '',
-          projectType: '',
-          budget: '',
-          timeline: '',
+          subject: '',
           message: '',
           preferredContact: 'email'
         })
@@ -414,59 +410,22 @@ const Contact = () => {
                       </div>
                     </div>
 
-                    {/* Project Details Row */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-white/80 text-sm font-medium mb-2">
-                          Project Type *
-                        </label>
-                        <div className="relative">
-                          <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                          <select
-                            name="projectType"
-                            value={formData.projectType}
-                            onChange={handleInputChange}
-                            required
-                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
-                          >
-                            <option value="" className="bg-gray-800">Select project type</option>
-                            {projectTypes.map((type) => (
-                              <option key={type} value={type} className="bg-gray-800">{type}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-white/80 text-sm font-medium mb-2">
-                          Budget Range
-                        </label>
-                        <select
-                          name="budget"
-                          value={formData.budget}
+                    {/* Subject */}
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">
+                        Subject *
+                      </label>
+                      <div className="relative">
+                        <MessageSquare className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                        <input
+                          type="text"
+                          name="subject"
+                          value={formData.subject}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
-                        >
-                          <option value="" className="bg-gray-800">Select budget</option>
-                          {budgetRanges.map((range) => (
-                            <option key={range} value={range} className="bg-gray-800">{range}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-white/80 text-sm font-medium mb-2">
-                          Timeline
-                        </label>
-                        <select
-                          name="timeline"
-                          value={formData.timeline}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
-                        >
-                          <option value="" className="bg-gray-800">Select timeline</option>
-                          {timelineOptions.map((option) => (
-                            <option key={option} value={option} className="bg-gray-800">{option}</option>
-                          ))}
-                        </select>
+                          required
+                          className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                          placeholder="What can we help you with?"
+                        />
                       </div>
                     </div>
 

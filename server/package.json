@@ -1,0 +1,30 @@
+{
+  "name": "webdesign-stripe-server",
+  "version": "1.0.0",
+  "description": "Stripe payment server for web development services",
+  "main": "stripe-checkout.js",
+  "scripts": {
+    "start": "node stripe-checkout.js",
+    "dev": "nodemon stripe-checkout.js",
+    "test": "node test-stripe.js"
+  },
+  "dependencies": {
+    "stripe": "^14.21.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "stripe",
+    "payment",
+    "web-development",
+    "checkout"
+  ],
+  "author": "Matheus Silva",
+  "license": "MIT"
+}
