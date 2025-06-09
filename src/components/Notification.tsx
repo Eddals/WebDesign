@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+
+interface Purchase {
+  name: string;
+  location: string;
+  plan: string;
+  image: string;
+  review: string;
+}
 
 const Notification = () => {
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState<Purchase | null>(null);
 
   const purchases = [
     {

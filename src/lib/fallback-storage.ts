@@ -1,9 +1,14 @@
 // Fallback storage for when Supabase is not available
-import { supabase } from './supabase';
+import { supabase, isSupabaseConfigured } from './supabase';
 import type { Contact } from '../types/contacts';
 import type { Quote } from '../types/quotes';
 
 export async function saveContact(contactData: Partial<Contact>) {
+  if (!isSupabaseConfigured) {
+    console.warn('Supabase not configured, using localStorage fallback');
+    return saveToLocalStorage('contacts', contactData);
+  }
+
   try {
     // Try Supabase first
     const { data, error } = await supabase
@@ -24,6 +29,11 @@ export async function saveContact(contactData: Partial<Contact>) {
 }
 
 export async function saveQuote(quoteData: Partial<Quote>) {
+  if (!isSupabaseConfigured) {
+    console.warn('Supabase not configured, using localStorage fallback');
+    return saveToLocalStorage('quotes', quoteData);
+  }
+
   try {
     // Try Supabase first
     const { data, error } = await supabase

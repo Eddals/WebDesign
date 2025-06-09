@@ -1,6 +1,6 @@
-import React from 'react';
+
 import { Link } from "react-router-dom"
-import { Instagram, Facebook, Linkedin, Github } from "lucide-react"
+import { Instagram, Linkedin, Github } from "lucide-react"
 import { motion } from "framer-motion"
 
 const Footer = () => {

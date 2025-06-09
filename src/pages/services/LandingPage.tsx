@@ -1,6 +1,5 @@
 "use client"
 
-import React from 'react'
 import { motion } from 'framer-motion'
 import { 
   Target, TrendingUp, Zap, CheckCircle, 
@@ -116,7 +115,7 @@ const LandingPage = () => {
         ogUrl="https://matheusweb.com/services/landing-page"
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
-        <style jsx="true" global="true">{customStyles}</style>
+        <style >{customStyles}</style>
         
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden -z-10">

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -14,22 +13,14 @@ import Estimate from './pages/Estimate';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
 import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import FAQ from "./pages/FAQ";
+import Terms from "./pages/terms";
+import FAQ from "./pages/faq";
 import NotFound from "./pages/not-found";
 import WebDesign from './pages/services/WebDesign';
 import LandingPage from './pages/services/LandingPage';
 import SocialMediaMarketing from './pages/services/SocialMediaMarketing';
 import DigitalMarketing from './pages/services/DigitalMarketing';
 import MarketingAutomation from './pages/services/MarketingAutomation';
-import FAQChatButton from "./components/FAQChatButton";
-import { Toaster } from "@/components/ui/toaster";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Home as HomeIcon } from "lucide-react";
-import { Link } from "react-router-dom";
 
 
 export default function App() {

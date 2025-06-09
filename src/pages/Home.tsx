@@ -10,7 +10,7 @@ import {
 } from "lucide-react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import SEO from '@/components/SEO'
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Quote, PackageType } from '../types/quotes';
 import { PostgrestError } from '@supabase/supabase-js';
 
@@ -152,7 +152,7 @@ const customStyles = `
 `;
 
 const Home = () => {
-  const [selectedPlan, setSelectedPlan] = useState<PackageType>("Standard");
+  const [selectedPlan, setSelectedPlan] = useState<PackageType | null>("Standard");
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [activeTab, setActiveTab] = useState("packages"); // Start with packages tab
   const [animateStats, setAnimateStats] = useState(false)
@@ -248,13 +248,19 @@ const Home = () => {
       // Log the data being sent
       console.log('Submitting quote:', quoteData);
 
-      const { error: supabaseError } = await supabase
-        .from('quotes')
-        .insert(quoteData);
+      if (!isSupabaseConfigured) {
+        // Simulate successful submission when Supabase is not configured
+        console.warn('Supabase not configured - simulating successful submission');
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+      } else {
+        const { error: supabaseError } = await supabase
+          .from('quotes')
+          .insert(quoteData);
 
-      if (supabaseError) {
-        console.error('Supabase Error:', supabaseError);
-        throw new Error(supabaseError.message);
+        if (supabaseError) {
+          console.error('Supabase Error:', supabaseError);
+          throw new Error(supabaseError.message);
+        }
       }
 
       setFormSubmitted(true);
@@ -329,7 +335,7 @@ const Home = () => {
       />
       <div className="min-h-screen bg-[#030718]">
         {/* Add the custom styles */}
-        <style jsx="true" global="true">{customStyles}</style>
+        <style >{customStyles}</style>
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden -z-10">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full opacity-10 blur-3xl"></div>

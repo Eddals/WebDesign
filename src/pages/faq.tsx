@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, Minus, Search, CheckCircle, ArrowRight, 
@@ -11,8 +11,14 @@ import {
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 
+interface FAQItem {
+  category: string;
+  question: string;
+  answer: ReactNode;
+}
+
 const FAQ = () => {
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [isInView, setIsInView] = useState(false);
@@ -774,10 +780,9 @@ const FAQ = () => {
   ];
 
   // Filter FAQs based on search and category
-  const filteredFaqs = faqItems.filter((faq) => {
+  const filteredFaqs = faqItems.filter((faq: FAQItem) => {
     const matchesSearch = searchTerm === '' || 
-      faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (typeof faq.answer === 'string' && faq.answer.toLowerCase().includes(searchTerm.toLowerCase()));
+      faq.question.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
     
@@ -840,7 +845,7 @@ const FAQ = () => {
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}
-        <style jsx="true" global="true">{customStyles}</style>
+        <style >{customStyles}</style>
         
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden -z-10">

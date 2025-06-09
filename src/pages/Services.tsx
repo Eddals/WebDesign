@@ -16,9 +16,9 @@ import ServicesGraphic from '@/components/ServicesGraphic'
 
 const Services = () => {
   const [activeCategory, setActiveCategory] = useState("websites")
-  const [selectedService, setSelectedService] = useState(null)
+  const [selectedService, setSelectedService] = useState<any>(null)
   const [isInView, setIsInView] = useState(false)
-  const [expandedFaq, setExpandedFaq] = useState(null)
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -526,7 +526,7 @@ const Services = () => {
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}
-        <style jsx="true" global="true">{customStyles}</style>
+        <style >{customStyles}</style>
         
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden -z-10">

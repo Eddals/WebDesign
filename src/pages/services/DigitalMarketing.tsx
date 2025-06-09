@@ -1,6 +1,5 @@
 "use client"
 
-import React from 'react'
 import { motion } from 'framer-motion'
 import { 
   Globe, TrendingUp, Target, Search, 
@@ -142,7 +141,7 @@ const DigitalMarketing = () => {
         ogUrl="https://matheusweb.com/services/digital-marketing"
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
-        <style jsx="true" global="true">{customStyles}</style>
+        <style >{customStyles}</style>
         
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden -z-10">

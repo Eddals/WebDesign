@@ -1,6 +1,13 @@
+import { ReactNode } from 'react';
+import Navbar from './Navbar';
+import Footer from './Footer';
 import RecentPurchaseNotification from './RecentPurchaseNotification';
 
-const Layout = ({ children }) => {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <Navbar />
@@ -10,3 +17,5 @@ const Layout = ({ children }) => {
     </>
   );
 };
+
+export default Layout;

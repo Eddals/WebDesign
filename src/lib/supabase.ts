@@ -4,21 +4,37 @@ import { Database } from '../types/supabase'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
-}
+// Check if Supabase is configured
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey)
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+// Create a mock client for when Supabase is not configured
+const createMockClient = () => ({
+  from: () => ({
+    insert: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    select: () => Promise.resolve({ data: [], error: null }),
+    update: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    delete: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } })
+  }),
   auth: {
-    persistSession: false,
-    autoRefreshToken: false
-  },
-  db: {
-    schema: 'public'
-  },
-  global: {
-    headers: {
-      'X-Client-Info': 'supabase-js-web'
-    }
+    signUp: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    signIn: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    signOut: () => Promise.resolve({ error: null })
   }
 })
+
+export const supabase = isSupabaseConfigured 
+  ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false
+      },
+      db: {
+        schema: 'public'
+      },
+      global: {
+        headers: {
+          'X-Client-Info': 'supabase-js-web'
+        }
+      }
+    })
+  : createMockClient() as any

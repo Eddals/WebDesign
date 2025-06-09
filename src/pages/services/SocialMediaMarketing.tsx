@@ -1,6 +1,5 @@
 "use client"
 
-import React from 'react'
 import { motion } from 'framer-motion'
 import { 
   Share2, TrendingUp, Users, Heart, 
@@ -140,7 +139,7 @@ const SocialMediaMarketing = () => {
         ogUrl="https://matheusweb.com/services/social-media-marketing"
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
-        <style jsx="true" global="true">{`
+        <style >{`
           @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }

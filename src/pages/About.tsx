@@ -196,7 +196,7 @@ const About = () => {
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}
-        <style jsx="true" global="true">{customStyles}</style>
+        <style>{customStyles}</style>
         
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden -z-10">
