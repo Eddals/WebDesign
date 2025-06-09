@@ -490,17 +490,17 @@ const Contact = () => {
               viewport={{ once: true }}
               className="space-y-8"
             >
-              {/* Why Choose Us */}
+              {/* Support Information */}
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-                <h3 className="text-2xl font-bold text-white mb-4">Why Choose Us?</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">How We Can Help</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <CheckCircle className="w-3 h-3 text-purple-400" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold mb-1">Expert Team</h4>
-                      <p className="text-white/60 text-sm">Experienced developers and designers</p>
+                      <h4 className="text-white font-semibold mb-1">Technical Support</h4>
+                      <p className="text-white/60 text-sm">Help with website issues and troubleshooting</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -508,8 +508,8 @@ const Contact = () => {
                       <CheckCircle className="w-3 h-3 text-purple-400" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold mb-1">Fast Delivery</h4>
-                      <p className="text-white/60 text-sm">Quick turnaround times</p>
+                      <h4 className="text-white font-semibold mb-1">General Questions</h4>
+                      <p className="text-white/60 text-sm">Information about our services and process</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -517,8 +517,8 @@ const Contact = () => {
                       <CheckCircle className="w-3 h-3 text-purple-400" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold mb-1">24/7 Support</h4>
-                      <p className="text-white/60 text-sm">Always here when you need us</p>
+                      <h4 className="text-white font-semibold mb-1">Quick Response</h4>
+                      <p className="text-white/60 text-sm">We respond to all inquiries within 24 hours</p>
                     </div>
                   </div>
                 </div>
