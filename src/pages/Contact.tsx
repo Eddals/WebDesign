@@ -24,12 +24,39 @@ interface ContactFormData {
 }
 
 const Contact = () => {
-  const contactInfo = [
+  const [formData, setFormData] = useState<ContactFormData>({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    subject: '',
+    message: '',
+    projectType: '',
+    budget: '',
+    timeline: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8]);
+
+  const contactMethods = [
     {
-      icon: <Mail className="w-6 h-6" />,
-      title: 'Email',
-      details: 'info@matheusweb.com',
-      link: 'mailto:info@matheusweb.com'
+      icon: <Mail className="w-8 h-8" />,
+      title: 'Email Us',
+      description: 'Send us an email anytime',
+      details: 'hello@matheusweb.com',
+      link: 'mailto:hello@matheusweb.com',
+      color: 'from-blue-500 to-cyan-500',
+      response: 'Usually responds within 2 hours'
     },
     {
       icon: <Phone className="w-8 h-8" />,
