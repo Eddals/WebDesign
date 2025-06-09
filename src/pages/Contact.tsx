@@ -99,13 +99,8 @@ const Contact = () => {
     { id: 'webapp', label: 'Web Application', icon: <Code className="w-8 h-8 rounded-full" /> },
     { id: 'redesign', label: 'Website Redesign', icon: <Palette className="w-8 h-8 rounded-full" /> },
     { id: 'maintenance', label: 'Maintenance & Support', icon: <Shield className="w-8 h-8 rounded-full" /> },
-    { id: 'consultation', label: 'Consultation', icon: <Lightbulb className="w-8 h-8 rounded-full" /> }
-    { id: 'website', label: 'Website Development', icon: <Globe className="w-5 h-5" /> },
-    { id: 'ecommerce', label: 'E-commerce Store', icon: <Monitor className="w-5 h-5" /> },
-    { id: 'webapp', label: 'Web Application', icon: <Code className="w-5 h-5" /> },
-    { id: 'redesign', label: 'Website Redesign', icon: <Palette className="w-5 h-5" /> },
-    { id: 'maintenance', label: 'Maintenance & Support', icon: <Shield className="w-5 h-5" /> },
-    { id: 'consultation', label: 'Consultation', icon: <Lightbulb className="w-5 h-5" /> }
+    { id: 'consultation', label: 'Consultation', icon: <Lightbulb className="w-8 h-8 rounded-full" /> },
+    { id: 'website', label: 'Website Development', icon: <Globe className="w-8 h-8 rounded-full" /> }
   ];
 
   const budgetRanges = [
