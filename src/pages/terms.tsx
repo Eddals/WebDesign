@@ -7,7 +7,7 @@ const Terms = () => {
           title="Terms of Service - DevTone"
           description="DevTone's terms of service outline the conditions for using our web development services. Learn about our policies, client responsibilities, and service agreements."
           keywords={['DevTone terms of service', 'service agreement', 'web development terms', 'client responsibilities', 'service conditions']}
-          ogUrl="https://devtone.com/terms"
+          ogUrl="https://www.devtone.agency/terms"
         />
       <div className="min-h-screen pt-24 bg-[#030718]">
         {/* Animated background elements */}
@@ -96,7 +96,7 @@ const Terms = () => {
                 </p>
   
                 <h2 className="text-2xl font-semibold mb-4 mt-8 text-white">10. Contact Us</h2>
-                <p>If you have any questions about these Terms, please contact us at contact@devtone.com.</p>
+                <p>If you have any questions about these Terms, please contact us at contact@devtone.agency.</p>
               </div>
             </div>
           </div>

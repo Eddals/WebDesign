@@ -13,8 +13,8 @@ export default function SEO({
   title,
   description,
   keywords,
-  ogImage = 'https://devtone.com/og-image.jpg',
-  ogUrl = 'https://devtone.com',
+  ogImage = 'https://www.devtone.agency/og-image.jpg',
+  ogUrl = 'https://www.devtone.agency',
   article = false
 }: SEOProps) {
   const fullTitle = title.includes('DevTone') ? title : `${title} | DevTone`;
@@ -62,8 +62,8 @@ export default function SEO({
           "@type": "Organization",
           "name": "DevTone",
           "description": "Professional web development and digital marketing agency",
-          "url": "https://devtone.com",
-          "logo": "https://devtone.com/logo.png",
+          "url": "https://www.devtone.agency",
+          "logo": "https://www.devtone.agency/logo.png",
           "sameAs": [
             "https://twitter.com/devtone",
             "https://linkedin.com/company/devtone"

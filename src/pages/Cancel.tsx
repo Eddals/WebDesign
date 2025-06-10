@@ -10,7 +10,7 @@ const Cancel = () => {
         title="Payment Cancelled - DevTone"
         description="Your payment was cancelled. No charges have been applied to your account. You can try again or contact DevTone for assistance with your web development project."
         keywords={['payment cancelled', 'DevTone checkout cancelled', 'web development payment']}
-        ogUrl="https://devtone.com/cancel"
+        ogUrl="https://www.devtone.agency/cancel"
       />
       
       <div className="min-h-screen bg-[#030718] pt-24 pb-12">
@@ -216,7 +216,7 @@ const Cancel = () => {
               >
                 <p>
                   Having trouble? DevTone is here to help!{' '}
-                  <a href="mailto:support@devtone.com" className="text-purple-400 hover:text-purple-300 transition-colors">
+                  <a href="mailto:support@devtone.agency" className="text-purple-400 hover:text-purple-300 transition-colors">
                     Contact our support team
                   </a>
                   {' '}and we'll assist you with your payment.

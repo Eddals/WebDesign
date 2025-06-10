@@ -38,7 +38,7 @@ const Success = () => {
         title="Payment Successful - Thank You for Choosing DevTone"
         description="Your payment has been processed successfully! Thank you for choosing DevTone for your web development project. We'll be in touch soon to get started."
         keywords={['payment success', 'DevTone order confirmation', 'web development project', 'successful payment']}
-        ogUrl="https://devtone.com/success"
+        ogUrl="https://www.devtone.agency/success"
       />
       
       <div className="min-h-screen bg-[#030718] pt-24 pb-12">
@@ -208,7 +208,7 @@ const Success = () => {
                   className="flex flex-col sm:flex-row gap-4 justify-center"
                 >
                   <motion.a
-                    href="mailto:hello@devtone.com"
+                    href="mailto:hello@devtone.agency"
                     className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -238,8 +238,8 @@ const Success = () => {
                 >
                   <p>
                     Need help? Contact DevTone at{' '}
-                    <a href="mailto:support@devtone.com" className="text-purple-400 hover:text-purple-300 transition-colors">
-                      support@devtone.com
+                    <a href="mailto:support@devtone.agency" className="text-purple-400 hover:text-purple-300 transition-colors">
+                      support@devtone.agency
                     </a>
                   </p>
                 </motion.div>

@@ -176,7 +176,7 @@ const Pricing = () => {
         title="Pricing - DevTone Web Development Packages"
         description="Transparent pricing for professional web development services. Choose from our affordable packages designed for businesses of all sizes. No hidden fees, just quality work."
         keywords={['DevTone pricing', 'web development packages', 'website pricing', 'affordable web design', 'transparent pricing']}
-        ogUrl="https://devtone.com/pricing"
+        ogUrl="https://www.devtone.agency/pricing"
       />
       
       <div className="min-h-screen bg-[#030718] pt-24 pb-12">
