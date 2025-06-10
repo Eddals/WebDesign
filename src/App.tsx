@@ -9,6 +9,7 @@ import Services from './pages/Services';
 import Seo from './pages/SEO';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Pricing from './pages/Pricing';
 import Estimate from './pages/Estimate';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
