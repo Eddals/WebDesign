@@ -712,35 +712,114 @@ const Services = () => {
           </div>
         </motion.section>
 
-        {/* Services Section */}
+        {/* Services Overview Grid */}
         <section id="services" className="py-24">
           <div className="container mx-auto px-4">
-            <motion.div 
+            <motion.div
               className="text-center mb-16"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <motion.div 
+              <motion.div
                 className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden group"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                <span className="relative z-10">Comprehensive Solutions</span>
-                <motion.div 
+                <span className="relative z-10">What I Offer</span>
+                <motion.div
                   className="absolute inset-0 bg-purple-500/20"
                   initial={{ x: "-100%" }}
                   whileHover={{ x: "100%" }}
                   transition={{ duration: 0.6 }}
                 />
               </motion.div>
-              
+
               <h2 className="text-4xl font-bold text-white mb-4">My Development Services</h2>
               <p className="text-white/70 mb-8 max-w-2xl mx-auto">
-                Tailored solutions to bring your digital vision to life with modern technologies and best practices
+                Comprehensive digital solutions to help your business succeed online
               </p>
-              
+            </motion.div>
+
+            {/* Services Grid */}
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {services.map((service, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300 group"
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition-colors flex-shrink-0">
+                      <div className="text-purple-400">{service.icon}</div>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-white">{service.title}</h3>
+                  </div>
+
+                  <p className="text-white/70 mb-6">{service.description}</p>
+
+                  <div className="space-y-2 mb-6">
+                    {service.features.slice(0, 4).map((feature, i) => (
+                      <div key={i} className="flex items-center gap-2 text-white/80 text-sm">
+                        <CheckCircle className="text-purple-400 flex-shrink-0" size={16} />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <motion.a
+                    href="/contact"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-purple-700/20 hover:from-purple-500/30 hover:to-purple-700/30 rounded-full text-white text-sm font-medium transition-all border border-purple-500/30"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Learn More
+                    <ArrowRight size={14} />
+                  </motion.a>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Detailed Services Section */}
+        <section className="py-24 bg-gradient-to-b from-[#0a0e24] to-[#030718]">
+          <div className="container mx-auto px-4">
+            <motion.div
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <motion.div
+                className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden group"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <span className="relative z-10">Detailed Overview</span>
+                <motion.div
+                  className="absolute inset-0 bg-purple-500/20"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.6 }}
+                />
+              </motion.div>
+
+              <h2 className="text-4xl font-bold text-white mb-4">Service Categories</h2>
+              <p className="text-white/70 mb-8 max-w-2xl mx-auto">
+                Explore detailed information about each service category
+              </p>
+
               {/* Service Tabs */}
               <div className="flex flex-wrap justify-center gap-4 mb-12">
                 {categories.map((category) => (
