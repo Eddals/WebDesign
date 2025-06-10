@@ -16,7 +16,8 @@ import {
   Zap,
   CreditCard,
   Lock,
-  AlertTriangle
+  AlertTriangle,
+  Mail
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import StripeCheckout from '@/components/StripeCheckout';
@@ -401,31 +402,38 @@ const Pricing = () => {
                   </div>
                 </div>
 
-                {/* Stripe Checkout Component */}
+                {/* Contact Form Alternative */}
                 {customerInfo.name && customerInfo.email && selectedPackage && (
-                  <StripeCheckout
-                    formData={{
-                      name: customerInfo.name,
-                      email: customerInfo.email,
-                      phone: customerInfo.phone,
-                      company: customerInfo.company,
-                      projectType: selectedPackage,
-                      budget: 'professional',
-                      timeline: '1month',
-                      description: `${pricingPackages.find(p => p.id === selectedPackage)?.name} purchase`,
-                      paymentModel: 'onetime',
-                      subscriptionPlan: '',
-                      features: []
-                    }}
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                    disabled={!isSecure}
-                  />
+                  <div className="space-y-4">
+                    <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-xl p-4">
+                      <div className="flex items-center gap-3 text-yellow-400">
+                        <AlertTriangle className="w-5 h-5" />
+                        <div>
+                          <h4 className="font-semibold">Payment System Temporarily Unavailable</h4>
+                          <p className="text-sm">Our automated payment system is being updated. Please contact us directly to complete your order.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <motion.a
+                      href={`mailto:support@devtone.agency?subject=Order Request - ${pricingPackages.find(p => p.id === selectedPackage)?.name}&body=Hi DevTone Team,%0D%0A%0D%0AI would like to order the ${pricingPackages.find(p => p.id === selectedPackage)?.name} for $${pricingPackages.find(p => p.id === selectedPackage)?.price}.%0D%0A%0D%0ACustomer Information:%0D%0AName: ${customerInfo.name}%0D%0AEmail: ${customerInfo.email}%0D%0APhone: ${customerInfo.phone}%0D%0ACompany: ${customerInfo.company}%0D%0A%0D%0APlease send me payment instructions.%0D%0A%0D%0AThank you!`}
+                      className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Mail className="w-5 h-5" />
+                      Contact Us to Complete Order
+                    </motion.a>
+
+                    <div className="text-center text-white/60 text-sm">
+                      We'll respond within 2 hours with payment instructions
+                    </div>
+                  </div>
                 )}
 
                 {(!customerInfo.name || !customerInfo.email) && (
                   <div className="text-center text-white/60 text-sm">
-                    Please fill in your name and email to proceed with payment
+                    Please fill in your name and email to contact us about this package
                   </div>
                 )}
               </motion.div>

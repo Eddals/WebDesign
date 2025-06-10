@@ -162,6 +162,7 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
       }
 
       onSuccess?.();
+      */
 
     } catch (error) {
       console.error('❌ Checkout error:', error);
