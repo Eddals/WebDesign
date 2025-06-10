@@ -12,30 +12,69 @@ import {
   Target,
   Rocket,
   ArrowRight,
-  TrendingUp
+  TrendingUp,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Zap,
+  Coffee,
+  Music,
+  Camera,
+  Gamepad2,
+  Book,
+  Headphones,
+  Monitor
 } from "lucide-react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import SEO from '@/components/SEO'
 
 
 const About = () => {
+  // Interactive state management
+  const [activeSkill, setActiveSkill] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(true)
+  const [hoveredAchievement, setHoveredAchievement] = useState(null)
+  const [personalityMode, setPersonalityMode] = useState('professional')
+  const [interactionCount, setInteractionCount] = useState(0)
+
   // Animated counting effect for stats
   const [counts, setCounts] = useState({
     projects: 0,
     clients: 0,
     experience: 0,
   })
-  
-
 
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
   })
-  
+
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
+
+  // Interactive functions
+  const handleInteraction = () => {
+    setInteractionCount(prev => prev + 1)
+    if (soundEnabled) {
+      // Play interaction sound (you can add actual audio here)
+      console.log('🎵 Interaction sound!')
+    }
+  }
+
+  const togglePersonality = () => {
+    setPersonalityMode(prev => prev === 'professional' ? 'fun' : 'professional')
+    handleInteraction()
+  }
+
+  const playSound = () => {
+    if (soundEnabled) {
+      setIsPlaying(!isPlaying)
+      handleInteraction()
+    }
+  }
 
 
 
@@ -50,28 +89,50 @@ const About = () => {
     return () => clearInterval(interval)
   }, [])
 
-  // Skills categories
+  // Skills categories with interactive elements
   const skills = [
     {
       category: "Platforms",
       icon: <Globe size={24} />,
       items: ["WordPress", "Shopify", "Webflow", "Drupal"],
+      color: "from-blue-500/20 to-blue-700/20",
+      borderColor: "border-blue-500/30",
+      description: "Building on powerful platforms"
     },
     {
       category: "Coding",
       icon: <Code size={24} />,
       items: ["React", "Next.js", "JavaScript", "HTML/CSS", "PHP"],
+      color: "from-green-500/20 to-green-700/20",
+      borderColor: "border-green-500/30",
+      description: "Crafting clean, efficient code"
     },
     {
       category: "Design",
       icon: <Palette size={24} />,
       items: ["UI/UX Design", "Figma", "Responsive Design", "Branding"],
+      color: "from-pink-500/20 to-pink-700/20",
+      borderColor: "border-pink-500/30",
+      description: "Creating beautiful experiences"
     },
     {
       category: "Marketing",
       icon: <TrendingUp size={24} />,
       items: ["SEO", "Analytics", "Content Strategy", "Social Media"],
+      color: "from-purple-500/20 to-purple-700/20",
+      borderColor: "border-purple-500/30",
+      description: "Growing your digital presence"
     },
+  ]
+
+  // Personal interests for fun mode
+  const personalInterests = [
+    { icon: <Coffee size={20} />, name: "Coffee Enthusiast", fact: "I've tried 47 different coffee beans!" },
+    { icon: <Music size={20} />, name: "Music Lover", fact: "I code better with lo-fi beats" },
+    { icon: <Camera size={20} />, name: "Photography", fact: "I capture moments between coding sessions" },
+    { icon: <Gamepad2 size={20} />, name: "Gaming", fact: "Strategy games help me think better" },
+    { icon: <Book size={20} />, name: "Learning", fact: "Always reading about new tech trends" },
+    { icon: <Headphones size={20} />, name: "Podcasts", fact: "Tech podcasts during morning walks" }
   ]
 
 
@@ -212,52 +273,113 @@ const About = () => {
           </motion.div>
         </div>
 
+        {/* Interactive Control Panel */}
+        <motion.div
+          className="fixed top-32 right-4 z-50 space-y-2"
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 1 }}
+        >
+          <motion.button
+            onClick={togglePersonality}
+            className="w-12 h-12 rounded-full bg-purple-500/20 backdrop-blur-lg border border-purple-500/30 flex items-center justify-center text-purple-300 hover:bg-purple-500/30 transition-all duration-300"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            title={`Switch to ${personalityMode === 'professional' ? 'fun' : 'professional'} mode`}
+          >
+            {personalityMode === 'professional' ? <Zap size={20} /> : <Monitor size={20} />}
+          </motion.button>
+
+          <motion.button
+            onClick={() => {
+              setSoundEnabled(!soundEnabled)
+              handleInteraction()
+            }}
+            className="w-12 h-12 rounded-full bg-purple-500/20 backdrop-blur-lg border border-purple-500/30 flex items-center justify-center text-purple-300 hover:bg-purple-500/30 transition-all duration-300"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            title={`${soundEnabled ? 'Disable' : 'Enable'} sound effects`}
+          >
+            {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
+          </motion.button>
+
+          <motion.button
+            onClick={playSound}
+            className="w-12 h-12 rounded-full bg-purple-500/20 backdrop-blur-lg border border-purple-500/30 flex items-center justify-center text-purple-300 hover:bg-purple-500/30 transition-all duration-300"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            title="Play interaction sound"
+          >
+            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+          </motion.button>
+
+          {/* Interaction Counter */}
+          <motion.div
+            className="w-12 h-12 rounded-full bg-purple-500/20 backdrop-blur-lg border border-purple-500/30 flex items-center justify-center text-purple-300 text-xs font-bold"
+            animate={{ scale: interactionCount > 0 ? [1, 1.2, 1] : 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            {interactionCount}
+          </motion.div>
+        </motion.div>
+
         {/* Hero Section */}
-        <motion.section 
+        <motion.section
           ref={heroRef}
           className="relative pt-12 pb-24 overflow-hidden"
           style={{ opacity, scale }}
         >
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
+            <motion.div
               className="max-w-4xl mx-auto text-center mb-16"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <motion.div 
-                className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden group"
+              <motion.div
+                className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden group cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                onClick={handleInteraction}
               >
-                <span className="relative z-10">About Me</span>
-                <motion.div 
+                <span className="relative z-10">
+                  {personalityMode === 'professional' ? 'About Me' : '🚀 Fun Mode Active!'}
+                </span>
+                <motion.div
                   className="absolute inset-0 bg-purple-500/20"
                   initial={{ x: "-100%" }}
                   whileHover={{ x: "100%" }}
                   transition={{ duration: 0.6 }}
                 />
               </motion.div>
-              
-              <motion.h1 
-                className="text-5xl md:text-6xl font-bold mb-6"
+
+              <motion.h1
+                className="text-5xl md:text-6xl font-bold mb-6 cursor-pointer"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
+                onClick={handleInteraction}
+                whileHover={{ scale: 1.02 }}
               >
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">
-                  Meet the <span className="animate-gradient-text">Developer</span>
+                  Meet the <span className="animate-gradient-text">
+                    {personalityMode === 'professional' ? 'Developer' : 'Creative Wizard'}
+                  </span>
                 </span>
               </motion.h1>
-              
-              <motion.p 
-                className="text-xl text-white/80 max-w-2xl mx-auto"
+
+              <motion.p
+                className="text-xl text-white/80 max-w-2xl mx-auto cursor-pointer"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
+                onClick={handleInteraction}
+                whileHover={{ scale: 1.01 }}
               >
-                I love building intelligent, creative, and well-developed websites. I believe in delivering digital
-                experiences that truly make a difference.
+                {personalityMode === 'professional'
+                  ? "I love building intelligent, creative, and well-developed websites. I believe in delivering digital experiences that truly make a difference."
+                  : "I'm a digital alchemist who transforms caffeine into code and ideas into interactive experiences! ✨ Let's create some magic together!"
+                }
               </motion.p>
             </motion.div>
           </div>
