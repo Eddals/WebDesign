@@ -45,13 +45,18 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element
-      if (!target.closest('.dropdown-container')) {
+      if (!target.closest('.dropdown-container') && !target.closest('button')) {
         setActiveDropdown(null)
       }
     }
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
+  
+  // Close dropdown when route changes
+  useEffect(() => {
+    setActiveDropdown(null)
+  }, [location.pathname])
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-background/80 backdrop-blur-sm border-b border-white/10">
@@ -197,70 +202,86 @@ export default function Navbar() {
           </button>
         </div>
 
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden py-4"
-          >
-            {navItems.map((item) => (
-              <div key={item.href}>
-                {item.hasDropdown ? (
-                  <div>
-                    <div
-                      className={`flex items-center justify-between w-full px-4 py-3 rounded-full mb-2
-                        ${location.pathname === item.href || location.pathname.startsWith(item.href + '/') 
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="md:hidden py-4"
+            >
+              {navItems.map((item) => (
+                <div key={item.href}>
+                  {item.hasDropdown ? (
+                    <div className="mb-2 dropdown-container">
+                      <button
+                        onClick={() => setActiveDropdown(activeDropdown === item.href ? null : item.href)}
+                        className={`flex items-center justify-between w-full px-4 py-3 rounded-full
+                          ${location.pathname === item.href || location.pathname.startsWith(item.href + '/') 
+                            ? "text-purple-400 bg-white/5" 
+                            : "text-white/90 hover:text-purple-400 hover:bg-white/5"
+                          }`}
+                        aria-expanded={activeDropdown === item.href}
+                      >
+                        <div className="flex items-center gap-2">
+                          {item.icon}
+                          <span>{item.label}</span>
+                        </div>
+                        <ChevronDown 
+                          size={16} 
+                          className={`transition-transform duration-300 ${
+                            activeDropdown === item.href ? 'rotate-180' : ''
+                          }`} 
+                        />
+                      </button>
+                      
+                      <AnimatePresence>
+                        {activeDropdown === item.href && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="ml-4 mt-2 overflow-hidden"
+                          >
+                            {item.dropdownItems?.map((dropdownItem) => (
+                              <Link
+                                key={dropdownItem.href}
+                                to={dropdownItem.href}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={`flex items-center gap-3 px-4 py-2 rounded-full mb-1
+                                  ${location.pathname === dropdownItem.href 
+                                    ? "text-purple-400 bg-purple-500/10" 
+                                    : "text-white/70 hover:text-purple-400 hover:bg-white/5"
+                                  }`}
+                              >
+                                {dropdownItem.icon}
+                                <span className="text-sm">{dropdownItem.label}</span>
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-2 px-4 py-3 rounded-full mb-2
+                        ${location.pathname === item.href 
                           ? "text-purple-400 bg-white/5" 
                           : "text-white/90 hover:text-purple-400 hover:bg-white/5"
                         }`}
                     >
-                      <div className="flex items-center gap-2">
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </div>
-                      <ChevronDown size={16} className="rotate-180" />
-                    </div>
-                    
-                    <motion.div
-                      initial={{ opacity: 1, height: 'auto' }}
-                      className="ml-4 mb-2"
-                    >
-                      {item.dropdownItems?.map((dropdownItem) => (
-                        <Link
-                          key={dropdownItem.href}
-                          to={dropdownItem.href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-2 rounded-full mb-1
-                            ${location.pathname === dropdownItem.href 
-                              ? "text-purple-400 bg-purple-500/10" 
-                              : "text-white/70 hover:text-purple-400 hover:bg-white/5"
-                            }`}
-                        >
-                          {dropdownItem.icon}
-                          <span className="text-sm">{dropdownItem.label}</span>
-                        </Link>
-                      ))}
-                    </motion.div>
-                  </div>
-                ) : (
-                  <Link
-                    to={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-2 px-4 py-3 rounded-full mb-2
-                      ${location.pathname === item.href 
-                        ? "text-purple-400 bg-white/5" 
-                        : "text-white/90 hover:text-purple-400 hover:bg-white/5"
-                      }`}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </Link>
-                )}
-              </div>
-            ))}
-          </motion.div>
-        )}
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </header>
   )
