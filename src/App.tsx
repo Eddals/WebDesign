@@ -44,6 +44,7 @@ export default function App() {
               <Route path="/seo" element={<Seo />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="/estimate" element={<Estimate />} />
               <Route path="/success" element={<Success />} />
               <Route path="/cancel" element={<Cancel />} />
