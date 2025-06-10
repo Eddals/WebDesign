@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Search, Calendar, MessageCircle, ThumbsUp, BookmarkPlus, 
+import {
+  Search, Calendar, MessageCircle, ThumbsUp, BookmarkPlus,
   Share2, TrendingUp, Filter, Clock, Eye, Tag
 } from 'lucide-react'
+import SEO from '@/components/SEO'
 
 interface BlogPost {
   id: number
@@ -119,7 +120,14 @@ const Blog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#030718]">
+    <>
+      <SEO
+        title="DevTone Blog - Web Development & Digital Marketing Insights"
+        description="Stay updated with the latest web development trends, SEO strategies, and digital marketing insights from DevTone's expert team. Learn, grow, and succeed online."
+        keywords={['web development blog', 'SEO tips', 'digital marketing insights', 'DevTone blog', 'web design trends', 'development tutorials']}
+        ogUrl="https://devtone.com/blog"
+      />
+      <div className="min-h-screen bg-[#030718]">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0, y: 20 }}
@@ -217,6 +225,7 @@ const Blog = () => {
         </div>
       </section>
     </div>
+    </>
   )
 }
 

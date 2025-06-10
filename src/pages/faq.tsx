@@ -838,10 +838,10 @@ const FAQ = () => {
 
   return (
     <>
-      <SEO 
-        title="Frequently Asked Questions | Web Development Services"
-        description="Find answers to common questions about our web development services, pricing, process, and support."
-        keywords={['FAQ', 'web development', 'pricing', 'packages', 'process', 'support']}
+      <SEO
+        title="FAQ - DevTone Web Development Services"
+        description="Get answers to frequently asked questions about DevTone's web development services, pricing packages, development process, and ongoing support. Everything you need to know."
+        keywords={['DevTone FAQ', 'web development questions', 'pricing packages', 'development process', 'support', 'DevTone services']}
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}

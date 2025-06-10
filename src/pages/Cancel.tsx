@@ -6,11 +6,11 @@ import SEO from '@/components/SEO';
 const Cancel = () => {
   return (
     <>
-      <SEO 
-        title="Payment Cancelled | No Charges Applied"
-        description="Your payment was cancelled. No charges have been applied to your account. You can try again or contact us for assistance."
-        keywords={['payment cancelled', 'checkout cancelled', 'web development']}
-        ogUrl="https://mywebsite.com/cancel"
+      <SEO
+        title="Payment Cancelled - DevTone"
+        description="Your payment was cancelled. No charges have been applied to your account. You can try again or contact DevTone for assistance with your web development project."
+        keywords={['payment cancelled', 'DevTone checkout cancelled', 'web development payment']}
+        ogUrl="https://devtone.com/cancel"
       />
       
       <div className="min-h-screen bg-[#030718] pt-24 pb-12">
@@ -215,8 +215,8 @@ const Cancel = () => {
                 className="text-center text-white/60 text-sm"
               >
                 <p>
-                  Having trouble? We're here to help!{' '}
-                  <a href="mailto:support@mywebsite.com" className="text-purple-400 hover:text-purple-300 transition-colors">
+                  Having trouble? DevTone is here to help!{' '}
+                  <a href="mailto:support@devtone.com" className="text-purple-400 hover:text-purple-300 transition-colors">
                     Contact our support team
                   </a>
                   {' '}and we'll assist you with your payment.

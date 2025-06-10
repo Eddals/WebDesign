@@ -538,10 +538,10 @@ const Estimate = () => {
   return (
     <>
       <SEO
-        title="Get Your Project Estimate | Professional Web Development"
-        description="Get a detailed estimate for your web development project. Interactive pricing calculator with instant quotes and secure Stripe payments."
-        keywords={['web development estimate', 'project quote', 'website pricing', 'development cost calculator']}
-        ogUrl="https://matheusweb.com/estimate"
+        title="Get Your Project Estimate - DevTone Web Development"
+        description="Get an instant estimate for your web development project with DevTone. Transparent pricing, professional service, and secure payment options. Start your project today!"
+        keywords={['DevTone estimate', 'web development pricing', 'project quote', 'website cost calculator', 'development estimate', 'transparent pricing']}
+        ogUrl="https://devtone.com/estimate"
       />
 
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">

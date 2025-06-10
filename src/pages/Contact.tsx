@@ -164,10 +164,10 @@ const Contact = () => {
   return (
     <>
       <SEO
-        title="Contact Us - DevTone Web Development"
-        description="Get in touch with our team for any inquiries about our web development services. We're here to help with your project needs."
-        keywords={['contact', 'web development', 'support', 'get in touch', 'project inquiry']}
-        ogUrl="https://devtone.agency/contact"
+        title="Contact DevTone - Get Professional Web Development Support"
+        description="Contact DevTone for expert web development services, technical support, and project consultations. We're here to help bring your digital vision to life. Get in touch today!"
+        keywords={['contact DevTone', 'web development support', 'project consultation', 'technical support', 'get in touch', 'DevTone contact']}
+        ogUrl="https://devtone.com/contact"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}

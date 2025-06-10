@@ -518,11 +518,11 @@ const Services = () => {
 
   return (
     <>
-      <SEO 
-        title="Web Development Services & Solutions"
-        description="Comprehensive web development services including custom website development, e-commerce solutions, CMS integration, and performance optimization."
-        keywords={['web services', 'custom development', 'e-commerce development', 'CMS integration', 'website optimization', 'technical consulting']}
-        ogUrl="https://matheusweb.com/services"
+      <SEO
+        title="Professional Web Development Services - DevTone"
+        description="DevTone offers comprehensive web development services including custom websites, e-commerce solutions, web applications, SEO optimization, and digital marketing. Transform your online presence with our expert team."
+        keywords={['web development services', 'custom websites', 'e-commerce development', 'web applications', 'SEO services', 'digital marketing', 'DevTone services', 'professional web design']}
+        ogUrl="https://devtone.com/services"
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}

@@ -34,11 +34,11 @@ const Success = () => {
 
   return (
     <>
-      <SEO 
-        title="Payment Successful | Thank You for Your Order"
-        description="Your payment has been processed successfully. We'll be in touch soon to start your project."
-        keywords={['payment success', 'order confirmation', 'web development']}
-        ogUrl="https://mywebsite.com/success"
+      <SEO
+        title="Payment Successful - Thank You for Choosing DevTone"
+        description="Your payment has been processed successfully! Thank you for choosing DevTone for your web development project. We'll be in touch soon to get started."
+        keywords={['payment success', 'DevTone order confirmation', 'web development project', 'successful payment']}
+        ogUrl="https://devtone.com/success"
       />
       
       <div className="min-h-screen bg-[#030718] pt-24 pb-12">
@@ -208,13 +208,13 @@ const Success = () => {
                   className="flex flex-col sm:flex-row gap-4 justify-center"
                 >
                   <motion.a
-                    href="mailto:hello@mywebsite.com"
+                    href="mailto:hello@devtone.com"
                     className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <Mail className="w-4 h-4" />
-                    Contact Us
+                    Contact DevTone
                   </motion.a>
                   
                   <Link to="/">
@@ -237,13 +237,9 @@ const Success = () => {
                   className="text-center text-white/60 text-sm"
                 >
                   <p>
-                    Need help? Contact us at{' '}
-                    <a href="mailto:support@mywebsite.com" className="text-purple-400 hover:text-purple-300 transition-colors">
-                      support@mywebsite.com
-                    </a>
-                    {' '}or call{' '}
-                    <a href="tel:+1234567890" className="text-purple-400 hover:text-purple-300 transition-colors">
-                      (123) 456-7890
+                    Need help? Contact DevTone at{' '}
+                    <a href="mailto:support@devtone.com" className="text-purple-400 hover:text-purple-300 transition-colors">
+                      support@devtone.com
                     </a>
                   </p>
                 </motion.div>

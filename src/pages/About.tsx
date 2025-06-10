@@ -160,12 +160,11 @@ const About = () => {
 
   return (
     <>
-      <SEO 
-        title="About Me - Professional Web Developer"
-        description="Learn about my journey, expertise, and passion for creating exceptional web experiences. Specialized in modern web technologies and user-centric design."
-        keywords={['about developer', 'web developer portfolio', 'professional experience', 'tech skills', 'web development expertise']}
-        ogUrl="https://matheusweb.com/about"
-
+      <SEO
+        title="About DevTone - Expert Web Development Team"
+        description="Meet the DevTone team - experienced web developers and digital marketing experts dedicated to creating exceptional online experiences. Learn about our expertise, values, and commitment to client success."
+        keywords={['about DevTone', 'web development team', 'digital marketing experts', 'professional experience', 'web design agency', 'development expertise']}
+        ogUrl="https://devtone.com/about"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}

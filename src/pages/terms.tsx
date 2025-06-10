@@ -1,5 +1,14 @@
+import SEO from '@/components/SEO'
+
 const Terms = () => {
     return (
+      <>
+        <SEO
+          title="Terms of Service - DevTone"
+          description="DevTone's terms of service outline the conditions for using our web development services. Learn about our policies, client responsibilities, and service agreements."
+          keywords={['DevTone terms of service', 'service agreement', 'web development terms', 'client responsibilities', 'service conditions']}
+          ogUrl="https://devtone.com/terms"
+        />
       <div className="min-h-screen pt-24 bg-[#030718]">
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden -z-10">
@@ -93,6 +102,7 @@ const Terms = () => {
           </div>
         </div>
       </div>
+      </>
     )
   }
   

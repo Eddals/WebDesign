@@ -327,11 +327,11 @@ const Home = () => {
 
   return (
     <>
-      <SEO 
-        title="Professional Web Development Services"
-        description="Expert web development services specializing in React, Next.js, and modern web technologies. Get fast, responsive, and SEO-friendly websites tailored to your business needs."
-        keywords={['web development', 'React development', 'Next.js', 'frontend development', 'responsive design', 'SEO optimization']}
-        ogUrl="https://matheusdev.net"
+      <SEO
+        title="DevTone - Professional Web Development & Digital Marketing Agency"
+        description="DevTone delivers cutting-edge web development and digital marketing solutions. Specializing in responsive websites, SEO optimization, and custom web applications that drive business growth."
+        keywords={['web development', 'digital marketing', 'SEO services', 'responsive design', 'web design agency', 'DevTone', 'custom websites', 'business websites']}
+        ogUrl="https://devtone.com"
       />
       <div className="min-h-screen bg-[#030718]">
         {/* Add the custom styles */}

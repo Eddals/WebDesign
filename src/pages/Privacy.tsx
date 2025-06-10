@@ -1,5 +1,14 @@
+import SEO from '@/components/SEO'
+
 const Privacy = () => {
   return (
+    <>
+      <SEO
+        title="Privacy Policy - DevTone"
+        description="DevTone's privacy policy outlines how we collect, use, and protect your personal information. Learn about your rights and our commitment to data security."
+        keywords={['DevTone privacy policy', 'data protection', 'privacy rights', 'data security', 'personal information']}
+        ogUrl="https://devtone.com/privacy"
+      />
     <div className="min-h-screen pt-24 bg-[#030718]">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden -z-10">
@@ -118,6 +127,7 @@ const Privacy = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
