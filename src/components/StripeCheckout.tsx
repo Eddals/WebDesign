@@ -125,8 +125,12 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
         company: formData.company
       };
 
-      // Call your backend API
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/create-checkout-session`, {
+      // Call your backend API - temporarily disabled until backend is deployed
+      // For now, show a message to contact directly
+      throw new Error('Payment processing is temporarily unavailable. Please contact us directly at support@devtone.agency for payment processing.');
+
+      /*
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
