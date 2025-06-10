@@ -32,7 +32,7 @@ import SEO from '@/components/SEO'
 
 const About = () => {
   // Interactive state management
-  const [activeSkill, setActiveSkill] = useState(null)
+  const [activeSkill, setActiveSkill] = useState<number | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [hoveredAchievement, setHoveredAchievement] = useState(null)
@@ -523,7 +523,7 @@ const About = () => {
               </motion.p>
             </div>
 
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
               variants={containerVariants}
               initial="hidden"
@@ -534,47 +534,127 @@ const About = () => {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  className="backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl p-6 card-hover-effect relative overflow-hidden group"
-                  whileHover={{ scale: 1.02 }}
+                  className={`backdrop-blur-lg bg-gradient-to-br ${skill.color} border ${skill.borderColor} rounded-xl p-6 card-hover-effect relative overflow-hidden group cursor-pointer`}
+                  whileHover={{ scale: 1.02, y: -5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  onClick={() => {
+                    setActiveSkill(activeSkill === index ? null : index)
+                    handleInteraction()
+                  }}
+                  onMouseEnter={() => setActiveSkill(index)}
+                  onMouseLeave={() => setActiveSkill(null)}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
                   <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-4">
-                      <motion.div 
-                        className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"
+                      <motion.div
+                        className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
                         whileHover={{ rotate: 360 }}
                         transition={{ duration: 0.6 }}
+                        animate={activeSkill === index ? { scale: [1, 1.2, 1] } : {}}
                       >
-                        <div className="text-purple-400">{skill.icon}</div>
+                        <div className="text-white">{skill.icon}</div>
                       </motion.div>
                       <h3 className="text-xl font-semibold text-white">{skill.category}</h3>
                     </div>
-                    
+
+                    <AnimatePresence>
+                      {activeSkill === index && (
+                        <motion.p
+                          className="text-white/70 text-sm mb-3"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {skill.description}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+
                     <ul className="space-y-2">
                       {skill.items.map((item, i) => (
-                        <motion.li 
-                          key={i} 
-                          className="flex items-center gap-2 text-white/80"
+                        <motion.li
+                          key={i}
+                          className="flex items-center gap-2 text-white/80 cursor-pointer"
                           initial={{ opacity: 0, x: -10 }}
                           whileInView={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.3, delay: i * 0.1 }}
                           viewport={{ once: true }}
+                          whileHover={{ x: 5, color: "#ffffff" }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleInteraction()
+                          }}
                         >
-                          <motion.div 
-                            className="w-1.5 h-1.5 bg-purple-400 rounded-full"
-                            whileHover={{ scale: 1.5 }}
+                          <motion.div
+                            className="w-1.5 h-1.5 bg-white rounded-full"
+                            whileHover={{ scale: 2 }}
                             transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                            animate={activeSkill === index ? {
+                              scale: [1, 1.5, 1],
+                              backgroundColor: ["#ffffff", "#a855f7", "#ffffff"]
+                            } : {}}
                           />
                           {item}
                         </motion.li>
                       ))}
                     </ul>
                   </div>
+
+                  {/* Interactive pulse effect */}
+                  <motion.div
+                    className="absolute inset-0 border-2 border-white/20 rounded-xl"
+                    initial={{ scale: 1, opacity: 0 }}
+                    animate={activeSkill === index ? {
+                      scale: [1, 1.05, 1],
+                      opacity: [0, 0.5, 0]
+                    } : {}}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  />
                 </motion.div>
               ))}
             </motion.div>
+
+            {/* Personal Interests Section (Fun Mode) */}
+            <AnimatePresence>
+              {personalityMode === 'fun' && (
+                <motion.div
+                  className="mt-12 p-6 backdrop-blur-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl"
+                  initial={{ opacity: 0, y: 20, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: "auto" }}
+                  exit={{ opacity: 0, y: -20, height: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h3 className="text-2xl font-bold text-white mb-4 text-center">
+                    🎨 When I'm Not Coding...
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {personalInterests.map((interest, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex items-center gap-2 p-3 bg-white/5 rounded-lg cursor-pointer group"
+                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
+                        onClick={handleInteraction}
+                        title={interest.fact}
+                      >
+                        <motion.div
+                          className="text-purple-400"
+                          whileHover={{ rotate: 360 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          {interest.icon}
+                        </motion.div>
+                        <span className="text-white/80 text-sm group-hover:text-white transition-colors">
+                          {interest.name}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.section>
 
           {/* Achievements Section */}
