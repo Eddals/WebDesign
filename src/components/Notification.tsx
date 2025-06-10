@@ -1,89 +1,197 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, FileText, Clock } from "lucide-react";
 
-interface Purchase {
+interface EstimateRequest {
   name: string;
-  location: string;
-  plan: string;
-  image: string;
-  review: string;
+  country: string;
+  countryCode: string;
+  timeAgo: string;
 }
 
+/**
+ * Notification
+ *
+ * Displays a notification when someone submits an estimate request.
+ * The notification appears randomly throughout the website.
+ * Each notification is visible for 7 seconds before disappearing.
+ *
+ * @returns {JSX.Element} The notification component.
+ */
 const Notification = () => {
-  const [notification, setNotification] = useState<Purchase | null>(null);
+  const [notification, setNotification] = useState<EstimateRequest | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-  const purchases = [
+  const estimateRequests: EstimateRequest[] = [
     {
-      name: "John Doe",
-      location: "New York, USA",
-      plan: "Premium Package",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-      review: "This changed my life! Absolutely love it.",
+      name: "John Smith",
+      country: "United States",
+      countryCode: "us",
+      timeAgo: "2 minutes ago"
     },
     {
-      name: "Jane Smith",
-      location: "London, UK",
-      plan: "Standard Package",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-      review: "Exactly what I needed. Thank you!",
+      name: "Emma Wilson",
+      country: "United Kingdom",
+      countryCode: "gb",
+      timeAgo: "5 minutes ago"
     },
     {
-      name: "Carlos Silva",
-      location: "São Paulo, Brazil",
-      plan: "Basic Package",
-      image: "https://randomuser.me/api/portraits/men/85.jpg",
-      review: "Great start for my journey. So happy!",
+      name: "Carlos Rodriguez",
+      country: "Spain",
+      countryCode: "es",
+      timeAgo: "8 minutes ago"
     },
     {
-      name: "Emily Johnson",
-      location: "Toronto, Canada",
-      plan: "Premium Package",
-      image: "https://randomuser.me/api/portraits/women/68.jpg",
-      review: "Worth every penny. Amazing experience!",
+      name: "Sophie Dubois",
+      country: "France",
+      countryCode: "fr",
+      timeAgo: "12 minutes ago"
     },
     {
-      name: "Akira Tanaka",
-      location: "Tokyo, Japan",
-      plan: "Standard Package",
-      image: "https://randomuser.me/api/portraits/men/29.jpg",
-      review: "Exceeded my expectations. Fantastic!",
+      name: "Marco Rossi",
+      country: "Italy",
+      countryCode: "it",
+      timeAgo: "15 minutes ago"
     },
+    {
+      name: "Anna Schmidt",
+      country: "Germany",
+      countryCode: "de",
+      timeAgo: "18 minutes ago"
+    },
+    {
+      name: "Hiroshi Tanaka",
+      country: "Japan",
+      countryCode: "jp",
+      timeAgo: "22 minutes ago"
+    },
+    {
+      name: "Maria Silva",
+      country: "Brazil",
+      countryCode: "br",
+      timeAgo: "25 minutes ago"
+    },
+    {
+      name: "Ahmed Hassan",
+      country: "Egypt",
+      countryCode: "eg",
+      timeAgo: "30 minutes ago"
+    },
+    {
+      name: "Olivia Chen",
+      country: "Australia",
+      countryCode: "au",
+      timeAgo: "35 minutes ago"
+    }
   ];
 
   useEffect(() => {
+    // Show first notification after a random time between 5-15 seconds
+    const initialDelay = Math.floor(Math.random() * 10000) + 5000;
+    const initialTimer = setTimeout(() => {
+      const randomEstimate = estimateRequests[Math.floor(Math.random() * estimateRequests.length)];
+      setNotification(randomEstimate);
+      setIsVisible(true);
+
+      // Hide after 7 seconds
+      setTimeout(() => {
+        setIsVisible(false);
+      }, 7000);
+    }, initialDelay);
+
+    // Set up interval for subsequent notifications with random timing
     const interval = setInterval(() => {
-      const randomPurchase = purchases[Math.floor(Math.random() * purchases.length)];
-      setNotification(randomPurchase);
+      // Only show if not currently visible
+      if (!isVisible) {
+        const randomEstimate = estimateRequests[Math.floor(Math.random() * estimateRequests.length)];
+        setNotification(randomEstimate);
+        setIsVisible(true);
 
-      setTimeout(() => setNotification(null), 7000);
-    }, 15000);
+        // Hide after 7 seconds
+        setTimeout(() => {
+          setIsVisible(false);
+        }, 7000);
+      }
+    }, Math.floor(Math.random() * 20000) + 15000); // Random interval between 15-35 seconds
 
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!notification) return null;
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
+  }, [isVisible]);
 
   return (
-    <div className="fixed bottom-4 right-4 bg-gradient-to-r from-purple-700 via-purple-800 to-purple-900 border border-purple-500/50 shadow-xl rounded-xl p-4 flex items-center gap-4 animate-slide-in text-white relative">
-      <button
-        onClick={() => setNotification(null)}
-        className="absolute top-2 right-2 text-white/70 hover:text-white text-sm"
-      >
-        ✕
-      </button>
-      <img
-        src={notification.image}
-        alt={notification.name}
-        className="w-12 h-12 rounded-full border border-purple-500/50"
-      />
-      <div>
-        <p className="font-bold">{notification.name}</p>
-        <p className="text-sm">
-          from <span className="font-medium">{notification.location}</span> got the{" "}
-          <span className="text-purple-300 font-semibold">{notification.plan}</span>.
-        </p>
-        <blockquote className="italic mt-2 text-purple-200">"{notification.review}"</blockquote>
-      </div>
-    </div>
+    <AnimatePresence>
+      {isVisible && notification && (
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 50, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="fixed bottom-4 right-4 z-50 max-w-sm"
+        >
+          <div className="bg-gradient-to-r from-purple-700 via-purple-800 to-purple-900 border border-purple-500/50 shadow-xl rounded-xl p-4 backdrop-blur-sm">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-t-xl">
+              <motion.div 
+                className="h-full bg-white/30"
+                initial={{ width: "100%" }}
+                animate={{ width: "0%" }}
+                transition={{ duration: 7, ease: "linear" }}
+              />
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="relative flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-purple-600/50 flex items-center justify-center">
+                  <img
+                    src={`https://flagcdn.com/w80/${notification.countryCode.toLowerCase()}.png`}
+                    alt={`${notification.country} flag`}
+                    className="w-6 h-6 object-cover rounded-sm"
+                  />
+                </div>
+                <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-0.5">
+                  <FileText className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <p className="font-bold text-white">{notification.name}</p>
+                  <button
+                    onClick={() => setIsVisible(false)}
+                    className="text-white/70 hover:text-white transition-colors"
+                    aria-label="Close notification"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                
+                <div className="flex items-center gap-1 text-xs text-purple-200 mb-1">
+                  <Clock className="w-3 h-3" />
+                  <span>{notification.timeAgo}</span>
+                </div>
+                
+                <p className="text-sm text-white/90">
+                  from <span className="font-medium">{notification.country}</span> just requested an{" "}
+                  <span className="text-purple-300 font-semibold">estimate</span>
+                </p>
+
+                <div className="mt-2 pt-2 border-t border-purple-500/30 flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-xs text-purple-300">
+                    <FileText className="w-3 h-3" />
+                    <span>Estimate Request</span>
+                  </div>
+                  
+                  <div className="text-xs text-purple-300">
+                    <span className="animate-pulse">● Live</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

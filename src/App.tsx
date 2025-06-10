@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
+import Notification from './components/Notification';
 import Home from "./pages/Home";
 import Services from './pages/Services';
 import Seo from './pages/SEO';
@@ -53,6 +54,7 @@ export default function App() {
               <Route path="/terms" element={<Terms />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <Notification />
             <Footer />
           </div>
         </Router>
