@@ -126,7 +126,7 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
       };
 
       // Call Amplify API Gateway
-      const apiUrl = `${import.meta.env.VITE_API_GATEWAY_URL || 'https://your-api-id.execute-api.us-east-1.amazonaws.com/dev'}/stripe/checkout`;
+      const apiUrl = import.meta.env.VITE_API_GATEWAY_URL || 'https://your-api-id.execute-api.us-east-1.amazonaws.com/dev/stripe/checkout';
 
       const response = await fetch(apiUrl, {
         method: 'POST',
