@@ -765,12 +765,12 @@ const Services = () => {
                     <h3 className="text-lg sm:text-xl font-semibold text-white">{service.title}</h3>
                   </div>
 
-                  <p className="text-white/70 mb-6">{service.description}</p>
+                  <p className="text-white/70 mb-6 text-sm sm:text-base">{service.description}</p>
 
                   <div className="space-y-2 mb-6">
                     {service.features.slice(0, 4).map((feature, i) => (
-                      <div key={i} className="flex items-center gap-2 text-white/80 text-sm">
-                        <CheckCircle className="text-purple-400 flex-shrink-0" size={16} />
+                      <div key={i} className="flex items-start gap-2 text-white/80 text-sm">
+                        <CheckCircle className="text-purple-400 flex-shrink-0 mt-0.5" size={16} />
                         <span>{feature}</span>
                       </div>
                     ))}
