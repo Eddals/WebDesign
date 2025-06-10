@@ -37,25 +37,25 @@ const Contact = () => {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
 
-  // Contact methods data
+  // Creative contact methods section
   const contactMethods = [
     {
       icon: <Mail className="w-8 h-8" />,
       title: 'Email Support',
       description: 'Send us an email anytime',
-      details: 'support@matheusweb.com',
-      link: 'mailto:support@matheusweb.com',
+      details: 'support@devtone.agency',
+      link: 'mailto:support@devtone.agency',
       color: 'from-purple-400 to-purple-600',
       response: 'Response within 24 hours'
     },
     {
       icon: <Phone className="w-8 h-8" />,
       title: 'Phone Support',
-      description: 'Mon-Fri from 9am to 6pm EST',
-      details: '+1 (555) 123-4567',
-      link: 'tel:+15551234567',
+      description: 'Mon-Fri from 12am to 6pm EST',
+      details: '+1 (718) 419-3863',
+      link: 'tel: +17184193863',
       color: 'from-purple-500 to-purple-700',
-      response: 'Available during business hours'
+      response: 'Available during business hours only'
     },
     {
       icon: <MessageSquare className="w-8 h-8" />,
@@ -64,20 +64,18 @@ const Contact = () => {
       details: 'Start a conversation',
       link: '#',
       color: 'from-purple-600 to-purple-800',
-      response: 'Available Mon-Fri 9am-6pm EST'
+      response: 'Available Mon-Fri 12am to 6pm EST'
     },
     {
       icon: <Calendar className="w-8 h-8" />,
       title: 'Schedule Call',
       description: 'Book a support call',
       details: 'Free consultation',
-      link: '#',
+      link: 'https://calendar.app.google/E7Xf7ZeiVqcR5rof8https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ090688oDQPcvG5Wxi-vZugSIP1LGHQrZxgk5fB5rM46mgFZP1fVoq8xT70bguxDkjBy09qswqj',
       color: 'from-purple-300 to-purple-500',
       response: 'Available slots this week'
     }
   ]
-
-
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -166,10 +164,10 @@ const Contact = () => {
   return (
     <>
       <SEO
-        title="Contact Us - Web Development Services"
+        title="Contact Us - DevTone Web Development"
         description="Get in touch with our team for any inquiries about our web development services. We're here to help with your project needs."
         keywords={['contact', 'web development', 'support', 'get in touch', 'project inquiry']}
-        ogUrl="https://matheusweb.com/contact"
+        ogUrl="https://devtone.agency/contact"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}
@@ -219,7 +217,7 @@ const Contact = () => {
               </motion.h1>
 
               <motion.p
-                className="text-xl text-white/80 max-w-2xl mx-auto"
+                className="text-xl text-white max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -252,9 +250,9 @@ const Contact = () => {
                     {method.icon}
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">{method.title}</h3>
-                  <p className="text-white/60 mb-3 text-sm">{method.description}</p>
+                  <p className="text-white mb-3 text-sm">{method.description}</p>
                   <div className="text-purple-400 font-semibold mb-2">{method.details}</div>
-                  <div className="text-xs text-white/50">{method.response}</div>
+                  <div className="text-xs text-white">{method.response}</div>
 
                   <motion.a
                     href={method.link}
@@ -282,7 +280,7 @@ const Contact = () => {
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Send Us a Message</h2>
-                  <p className="text-white/60">
+                  <p className="text-white">
                     Whether you have questions, need support, or just want to connect, we're here to help. We'll get back to you within 24 hours.
                   </p>
                 </div>
@@ -297,7 +295,7 @@ const Contact = () => {
                       <CheckCircle className="w-8 h-8 text-green-400" />
                     </div>
                     <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                    <p className="text-white/60">
+                    <p className="text-white">
                       Thank you for reaching out. We'll get back to you within 24 hours.
                     </p>
                   </motion.div>
@@ -306,7 +304,7 @@ const Contact = () => {
                     {/* Name and Email Row */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-white/80 text-sm font-medium mb-2">
+                        <label className="block text-white text-sm font-medium mb-2">
                           Full Name *
                         </label>
                         <div className="relative">
@@ -323,7 +321,7 @@ const Contact = () => {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-white/80 text-sm font-medium mb-2">
+                        <label className="block text-white text-sm font-medium mb-2">
                           Email Address *
                         </label>
                         <div className="relative">
@@ -335,7 +333,7 @@ const Contact = () => {
                             onChange={handleInputChange}
                             required
                             className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                            placeholder="your@email.com"
+                            placeholder="support@adevtone.agency.com"
                           />
                         </div>
                       </div>
@@ -344,7 +342,7 @@ const Contact = () => {
                     {/* Company and Phone Row */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-white/80 text-sm font-medium mb-2">
+                        <label className="block text-white text-sm font-medium mb-2">
                           Company
                         </label>
                         <div className="relative">
@@ -360,7 +358,7 @@ const Contact = () => {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-white/80 text-sm font-medium mb-2">
+                        <label className="block text-white text-sm font-medium mb-2">
                           Phone Number
                         </label>
                         <div className="relative">
@@ -379,7 +377,7 @@ const Contact = () => {
 
                     {/* Subject */}
                     <div>
-                      <label className="block text-white/80 text-sm font-medium mb-2">
+                      <label className="block text-white text-sm font-medium mb-2">
                         Subject *
                       </label>
                       <div className="relative">
@@ -405,7 +403,7 @@ const Contact = () => {
 
                     {/* Message */}
                     <div>
-                      <label className="block text-white/80 text-sm font-medium mb-2">
+                      <label className="block text-white text-sm font-medium mb-2">
                         Message *
                       </label>
                       <textarea
@@ -421,7 +419,7 @@ const Contact = () => {
 
                     {/* Preferred Contact Method */}
                     <div>
-                      <label className="block text-white/80 text-sm font-medium mb-3">
+                      <label className="block text-white text-sm font-medium mb-3">
                         Preferred Contact Method
                       </label>
                       <div className="flex gap-4">
@@ -434,7 +432,7 @@ const Contact = () => {
                             onChange={handleInputChange}
                             className="w-4 h-4 text-purple-500 bg-white/10 border-white/20 focus:ring-purple-500"
                           />
-                          <span className="text-white/80">Email</span>
+                          <span className="text-white">Email</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -445,7 +443,7 @@ const Contact = () => {
                             onChange={handleInputChange}
                             className="w-4 h-4 text-purple-500 bg-white/10 border-white/20 focus:ring-purple-500"
                           />
-                          <span className="text-white/80">Phone</span>
+                          <span className="text-white">Phone</span>
                         </label>
                       </div>
                     </div>
@@ -498,7 +496,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="text-white font-semibold mb-1">Technical Support</h4>
-                      <p className="text-white/60 text-sm">Help with website issues and troubleshooting</p>
+                      <p className="text-white text-sm">Help with website issues and troubleshooting or bugs related to your website</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -507,7 +505,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="text-white font-semibold mb-1">General Questions</h4>
-                      <p className="text-white/60 text-sm">Information about our services and process</p>
+                      <p className="text-white text-sm">Information about our services and process</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -516,35 +514,17 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="text-white font-semibold mb-1">Quick Response</h4>
-                      <p className="text-white/60 text-sm">We respond to all inquiries within 24 hours</p>
+                      <p className="text-white text-sm">We respond to all inquiries within 24 hours</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Support FAQ */}
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-                <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Support FAQ</h3>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-white font-semibold mb-2">How quickly do you respond?</h4>
-                    <p className="text-white/60 text-sm">We respond to all inquiries within 24 hours, often much sooner.</p>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold mb-2">What support do you offer?</h4>
-                    <p className="text-white/60 text-sm">Technical support, general questions, billing inquiries, and website assistance.</p>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold mb-2">Need a project estimate?</h4>
-                    <p className="text-white/60 text-sm">For project estimates, please visit our <a href="/estimate" className="text-purple-400 hover:text-purple-300">Get Estimate</a> page.</p>
-                  </div>
-                </div>
-              </div>
-
+            
               {/* Need a Project Estimate */}
               <div className="bg-gradient-to-r from-purple-500/20 to-purple-600/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
                 <h3 className="text-xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Need a Project Estimate?</h3>
-                <p className="text-white/70 text-sm mb-4">
+                <p className="text-white text-sm mb-4">
                   Looking to start a new project? Get a detailed estimate with our project calculator.
                 </p>
                 <motion.a

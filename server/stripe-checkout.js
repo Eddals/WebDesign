@@ -26,96 +26,92 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Pricing configuration
+// Updated pricing configuration to match frontend
 const PRICING_CONFIG = {
-  budgetRanges: {
-    'under-1k': { min: 500, max: 1000, default: 750 },
-    '1k-5k': { min: 1000, max: 5000, default: 2500 },
-    '5k-10k': { min: 5000, max: 10000, default: 7500 },
-    '10k-25k': { min: 10000, max: 25000, default: 15000 },
-    '25k-plus': { min: 25000, max: 50000, default: 35000 },
-    'custom': { min: 1000, max: 100000, default: 5000 }
+  projectTypes: {
+    'landing': { basePrice: 299, name: 'Landing Page' },
+    'portfolio': { basePrice: 499, name: 'Portfolio Website' },
+    'business': { basePrice: 799, name: 'Business Website' },
+    'ecommerce': { basePrice: 1299, name: 'E-commerce Store' },
+    'webapp': { basePrice: 2499, name: 'Web Application' }
   },
-  projectTypeMultipliers: {
-    'business-website': 1.0,
-    'ecommerce-store': 1.5,
-    'web-application': 2.0,
-    'website-redesign': 0.8,
-    'landing-page': 0.6,
-    'portfolio-site': 0.7,
-    'blog-website': 0.7,
-    'custom-development': 2.5
+  budgetRanges: {
+    'starter': { min: 500, max: 1500, default: 1000 },
+    'professional': { min: 1500, max: 5000, default: 3000 },
+    'premium': { min: 5000, max: 15000, default: 10000 },
+    'enterprise': { min: 15000, max: 50000, default: 25000 }
   },
   timelineMultipliers: {
-    'asap': 1.8,
-    '1-week': 1.5,
-    '2-weeks': 1.2,
-    '1-month': 1.0,
-    '2-3-months': 0.9,
+    'asap': 1.5,
+    '2weeks': 1.0,
+    '1month': 0.9,
     'flexible': 0.8
   },
-  complexityMultipliers: {
-    'simple': 0.8,
-    'moderate': 1.0,
-    'complex': 1.5,
-    'enterprise': 2.0
+  features: {
+    'seo': { price: 149, name: 'SEO Optimization' },
+    'analytics': { price: 79, name: 'Analytics Setup' },
+    'social': { price: 99, name: 'Social Media Integration' },
+    'security': { price: 129, name: 'Security Package' },
+    'performance': { price: 99, name: 'Speed Optimization' },
+    'maintenance': { price: 199, name: '6 Months Support' },
+    'training': { price: 99, name: 'Training Session' },
+    'backup': { price: 49, name: 'Automated Backups' }
   }
 };
 
-// Calculate project price
+// Calculate project price based on new structure
 function calculateProjectPrice(formData) {
   const {
-    budget,
     projectType,
     timeline,
-    complexity = 'moderate',
-    features = [],
-    customBudget
+    features = []
   } = formData;
 
-  // Base price from budget range
-  let basePrice = PRICING_CONFIG.budgetRanges[budget]?.default || 2500;
-  
-  // Use custom budget if provided
-  if (budget === 'custom' && customBudget) {
-    basePrice = Math.max(1000, Math.min(100000, parseInt(customBudget)));
+  // Get base price from project type
+  const projectConfig = PRICING_CONFIG.projectTypes[projectType];
+  if (!projectConfig) {
+    throw new Error(`Invalid project type: ${projectType}`);
   }
 
-  // Apply multipliers
-  const projectMultiplier = PRICING_CONFIG.projectTypeMultipliers[projectType] || 1.0;
+  let basePrice = projectConfig.basePrice;
+
+  // Apply timeline multiplier
   const timelineMultiplier = PRICING_CONFIG.timelineMultipliers[timeline] || 1.0;
-  const complexityMultiplier = PRICING_CONFIG.complexityMultipliers[complexity] || 1.0;
+  basePrice = Math.round(basePrice * timelineMultiplier);
 
-  // Feature-based additions
+  // Add feature costs
   let featureAdditions = 0;
-  if (features.includes('ecommerce')) featureAdditions += 1000;
-  if (features.includes('cms')) featureAdditions += 500;
-  if (features.includes('api-integration')) featureAdditions += 800;
-  if (features.includes('advanced-seo')) featureAdditions += 300;
-  if (features.includes('analytics')) featureAdditions += 200;
-  if (features.includes('social-media')) featureAdditions += 150;
+  const selectedFeatures = [];
 
-  // Calculate final price
-  const calculatedPrice = Math.round(
-    (basePrice * projectMultiplier * timelineMultiplier * complexityMultiplier) + featureAdditions
-  );
+  features.forEach(featureId => {
+    const feature = PRICING_CONFIG.features[featureId];
+    if (feature) {
+      featureAdditions += feature.price;
+      selectedFeatures.push({
+        id: featureId,
+        name: feature.name,
+        price: feature.price
+      });
+    }
+  });
 
-  // Ensure minimum price
-  const finalPrice = Math.max(500, calculatedPrice);
+  const finalPrice = basePrice + featureAdditions;
 
   return {
-    basePrice,
+    basePrice: projectConfig.basePrice,
+    timelineAdjustedPrice: basePrice,
+    featureAdditions,
     finalPrice,
+    selectedFeatures,
     breakdown: {
-      projectMultiplier,
+      projectType: projectConfig.name,
       timelineMultiplier,
-      complexityMultiplier,
-      featureAdditions
+      features: selectedFeatures
     }
   };
 }
 
-// Create checkout session endpoint
+// Create checkout session endpoint with invoice generation
 app.post('/create-checkout-session', async (req, res) => {
   try {
     const { formData, customerInfo } = req.body;
@@ -133,64 +129,140 @@ app.post('/create-checkout-session', async (req, res) => {
       return res.status(400).json({ error: 'Amount too low for Stripe processing' });
     }
 
-    // Create product description
-    const description = `${formData.projectType.replace('-', ' ').toUpperCase()} - ${formData.timeline} timeline`;
+    // Create or retrieve customer
+    let customer;
+    try {
+      const existingCustomers = await stripe.customers.list({
+        email: customerInfo.email,
+        limit: 1
+      });
+
+      if (existingCustomers.data.length > 0) {
+        customer = existingCustomers.data[0];
+      } else {
+        customer = await stripe.customers.create({
+          email: customerInfo.email,
+          name: customerInfo.name,
+          phone: customerInfo.phone,
+          metadata: {
+            company: customerInfo.company || '',
+            source: 'website_estimate'
+          }
+        });
+      }
+    } catch (customerError) {
+      console.error('Error handling customer:', customerError);
+      // Continue without customer if there's an issue
+    }
+
+    // Create line items for invoice
+    const lineItems = [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: pricing.breakdown.projectType,
+            description: `${formData.timeline} timeline`,
+          },
+          unit_amount: pricing.timelineAdjustedPrice * 100,
+        },
+        quantity: 1,
+      }
+    ];
+
+    // Add feature line items
+    pricing.selectedFeatures.forEach(feature => {
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: feature.name,
+            description: 'Premium add-on feature',
+          },
+          unit_amount: feature.price * 100,
+        },
+        quantity: 1,
+      });
+    });
+
+    // Create invoice for record keeping
+    let invoice = null;
+    if (customer) {
+      try {
+        // Create invoice items
+        for (const item of lineItems) {
+          await stripe.invoiceItems.create({
+            customer: customer.id,
+            amount: item.price_data.unit_amount,
+            currency: 'usd',
+            description: `${item.price_data.product_data.name} - ${item.price_data.product_data.description}`,
+          });
+        }
+
+        // Create the invoice
+        invoice = await stripe.invoices.create({
+          customer: customer.id,
+          description: `Web Development Project - ${pricing.breakdown.projectType}`,
+          metadata: {
+            projectType: formData.projectType,
+            timeline: formData.timeline,
+            features: JSON.stringify(formData.features || []),
+            customerName: customerInfo.name,
+            estimateDate: new Date().toISOString()
+          },
+          auto_advance: false, // Don't auto-finalize
+        });
+
+        console.log('✅ Invoice created:', invoice.id);
+      } catch (invoiceError) {
+        console.error('Error creating invoice:', invoiceError);
+        // Continue without invoice if there's an issue
+      }
+    }
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `Web Development Project`,
-              description: description,
-              images: ['https://your-domain.com/logo.png'], // Add your logo URL
-            },
-            unit_amount: amount,
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: 'payment',
-      customer_email: customerInfo.email,
+      customer: customer?.id,
+      customer_email: customer ? undefined : customerInfo.email,
       metadata: {
         customerName: customerInfo.name,
         customerPhone: customerInfo.phone || '',
         customerCompany: customerInfo.company || '',
         projectType: formData.projectType,
         timeline: formData.timeline,
-        budget: formData.budget,
         features: JSON.stringify(formData.features || []),
-        description: formData.description || ''
+        description: formData.description || '',
+        invoiceId: invoice?.id || '',
+        estimatedPrice: pricing.finalPrice.toString()
       },
-      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/cancel`,
+      success_url: `${process.env.FRONTEND_URL || 'http://localhost:5174'}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5174'}/cancel`,
       billing_address_collection: 'required',
-      shipping_address_collection: {
-        allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'BR'],
-      },
     });
 
     console.log('✅ Checkout session created:', {
       sessionId: session.id,
       amount: amount / 100,
-      customer: customerInfo.email
+      customer: customerInfo.email,
+      invoiceId: invoice?.id
     });
 
     res.json({
       url: session.url,
       sessionId: session.id,
       amount: amount / 100,
-      description: description
+      description: pricing.breakdown.projectType,
+      invoiceId: invoice?.id
     });
 
   } catch (error) {
     console.error('❌ Error creating checkout session:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to create checkout session',
-      details: error.message 
+      details: error.message
     });
   }
 });
@@ -245,19 +317,33 @@ app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
         customerEmail: session.customer_email,
         amount: session.amount_total / 100
       });
-      
+
+      // Finalize invoice if it exists
+      if (session.metadata.invoiceId) {
+        try {
+          const invoice = await stripe.invoices.finalize(session.metadata.invoiceId);
+          console.log('✅ Invoice finalized:', invoice.id);
+
+          // Mark invoice as paid
+          await stripe.invoices.pay(invoice.id);
+          console.log('✅ Invoice marked as paid:', invoice.id);
+        } catch (invoiceError) {
+          console.error('❌ Error finalizing invoice:', invoiceError);
+        }
+      }
+
       // Here you would typically:
       // 1. Save order to database
-      // 2. Send confirmation email
+      // 2. Send confirmation email with invoice
       // 3. Start project workflow
       // 4. Update CRM/project management system
-      
+
       break;
-    
+
     case 'payment_intent.payment_failed':
       console.log('❌ Payment failed:', event.data.object);
       break;
-    
+
     default:
       console.log(`Unhandled event type ${event.type}`);
   }

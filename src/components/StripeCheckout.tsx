@@ -25,30 +25,28 @@ interface StripeCheckoutProps {
 
 // Pricing configuration (matches backend)
 const PRICING_CONFIG = {
-  budgetRanges: {
-    'starter': { min: 500, max: 1500, default: 1000 },
-    'professional': { min: 1500, max: 5000, default: 3000 },
-    'premium': { min: 5000, max: 15000, default: 10000 },
-    'enterprise': { min: 15000, max: 50000, default: 25000 }
-  },
-  subscriptionPlans: {
-    'starter': { setupFee: 99, monthlyPrice: 29 },
-    'business': { setupFee: 149, monthlyPrice: 59 },
-    'pro': { setupFee: 199, monthlyPrice: 99 }
-  },
-  projectTypeMultipliers: {
-    'business': 1.0,
-    'ecommerce': 1.5,
-    'portfolio': 0.8,
-    'blog': 0.7,
-    'landing': 0.6,
-    'webapp': 2.0
+  projectTypes: {
+    'landing': { basePrice: 299, name: 'Landing Page' },
+    'portfolio': { basePrice: 499, name: 'Portfolio Website' },
+    'business': { basePrice: 799, name: 'Business Website' },
+    'ecommerce': { basePrice: 1299, name: 'E-commerce Store' },
+    'webapp': { basePrice: 2499, name: 'Web Application' }
   },
   timelineMultipliers: {
     'asap': 1.5,
     '2weeks': 1.0,
     '1month': 0.9,
     'flexible': 0.8
+  },
+  features: {
+    'seo': { price: 149, name: 'SEO Optimization' },
+    'analytics': { price: 79, name: 'Analytics Setup' },
+    'social': { price: 99, name: 'Social Media Integration' },
+    'security': { price: 129, name: 'Security Package' },
+    'performance': { price: 99, name: 'Speed Optimization' },
+    'maintenance': { price: 199, name: '6 Months Support' },
+    'training': { price: 99, name: 'Training Session' },
+    'backup': { price: 49, name: 'Automated Backups' }
   }
 };
 
@@ -62,38 +60,38 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
 
-  // Calculate estimated price (same logic as backend)
+  // Calculate estimated price (matches backend logic)
   const calculateEstimatedPrice = (): { price: number; description: string } => {
-    const { budget, projectType, timeline, paymentModel, subscriptionPlan } = formData;
-    
-    let basePrice = 0;
-    let description = '';
-    
-    if (paymentModel === 'onetime') {
-      const budgetConfig = PRICING_CONFIG.budgetRanges[budget as keyof typeof PRICING_CONFIG.budgetRanges];
-      if (budgetConfig) {
-        basePrice = budgetConfig.default;
-      }
-      
-      const projectMultiplier = PRICING_CONFIG.projectTypeMultipliers[projectType as keyof typeof PRICING_CONFIG.projectTypeMultipliers] || 1.0;
-      basePrice *= projectMultiplier;
-      
-      const timelineMultiplier = PRICING_CONFIG.timelineMultipliers[timeline as keyof typeof PRICING_CONFIG.timelineMultipliers] || 1.0;
-      basePrice *= timelineMultiplier;
-      
-      description = `Web Design Package - ${projectType.charAt(0).toUpperCase() + projectType.slice(1)} Website`;
-      
-    } else if (paymentModel === 'subscription' && subscriptionPlan) {
-      const planConfig = PRICING_CONFIG.subscriptionPlans[subscriptionPlan as keyof typeof PRICING_CONFIG.subscriptionPlans];
-      if (planConfig) {
-        basePrice = planConfig.setupFee;
-        description = `Web Design Package - ${subscriptionPlan.charAt(0).toUpperCase() + subscriptionPlan.slice(1)} Plan Setup`;
-      }
+    const { projectType, timeline } = formData;
+
+    // Get base price from project type
+    const projectConfig = PRICING_CONFIG.projectTypes[projectType as keyof typeof PRICING_CONFIG.projectTypes];
+    if (!projectConfig) {
+      return { price: 0, description: 'Invalid project type' };
     }
-    
-    basePrice = Math.max(basePrice, 99);
-    
-    return { price: basePrice, description };
+
+    let basePrice = projectConfig.basePrice;
+
+    // Apply timeline multiplier
+    const timelineMultiplier = PRICING_CONFIG.timelineMultipliers[timeline as keyof typeof PRICING_CONFIG.timelineMultipliers] || 1.0;
+    basePrice = Math.round(basePrice * timelineMultiplier);
+
+    // Add feature costs (this would be passed from parent component)
+    // For now, we'll calculate it here
+    let featureAdditions = 0;
+    if (formData.features && Array.isArray(formData.features)) {
+      formData.features.forEach((featureId: string) => {
+        const feature = PRICING_CONFIG.features[featureId as keyof typeof PRICING_CONFIG.features];
+        if (feature) {
+          featureAdditions += feature.price;
+        }
+      });
+    }
+
+    const finalPrice = basePrice + featureAdditions;
+    const description = projectConfig.name;
+
+    return { price: finalPrice, description };
   };
 
   // Validate form data
@@ -101,16 +99,8 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
     if (!formData.name.trim()) return 'Name is required';
     if (!formData.email.trim()) return 'Email is required';
     if (!formData.projectType) return 'Project type is required';
-    if (!formData.paymentModel) return 'Payment model is required';
-    
-    if (formData.paymentModel === 'onetime' && !formData.budget) {
-      return 'Budget range is required for one-time payments';
-    }
-    
-    if (formData.paymentModel === 'subscription' && !formData.subscriptionPlan) {
-      return 'Subscription plan is required';
-    }
-    
+    if (!formData.timeline) return 'Timeline is required';
+
     return null;
   };
 
@@ -179,7 +169,7 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
 
   // Get estimated pricing for display
   React.useEffect(() => {
-    if (formData.paymentModel && (formData.budget || formData.subscriptionPlan)) {
+    if (formData.projectType && formData.timeline) {
       const { price } = calculateEstimatedPrice();
       setEstimatedPrice(price);
     }
@@ -200,7 +190,7 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
             <div>
               <h3 className="text-white font-semibold text-lg">{description}</h3>
               <p className="text-white/60 text-sm mt-1">
-                {formData.paymentModel === 'subscription' ? 'Setup fee' : 'One-time payment'}
+                {formData.paymentModel === 'monthly' ? 'Monthly payment option available' : 'One-time payment'}
               </p>
             </div>
             <div className="text-right">
@@ -210,13 +200,13 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
               <div className="text-white/60 text-sm">USD</div>
             </div>
           </div>
-          
-          {formData.paymentModel === 'subscription' && formData.subscriptionPlan && (
+
+          {formData.paymentModel === 'monthly' && estimatedPrice && (
             <div className="mt-4 pt-4 border-t border-white/10">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-white/60">Monthly subscription</span>
+                <span className="text-white/60">Monthly payment option</span>
                 <span className="text-white">
-                  ${PRICING_CONFIG.subscriptionPlans[formData.subscriptionPlan as keyof typeof PRICING_CONFIG.subscriptionPlans]?.monthlyPrice}/month
+                  ${Math.round(estimatedPrice / 12)}/month for 12 months
                 </span>
               </div>
             </div>
