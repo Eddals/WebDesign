@@ -35,7 +35,7 @@ const About = () => {
   const [activeSkill, setActiveSkill] = useState<number | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
-  const [hoveredAchievement, setHoveredAchievement] = useState(null)
+  const [hoveredAchievement, setHoveredAchievement] = useState<number | null>(null)
   const [personalityMode, setPersonalityMode] = useState('professional')
   const [interactionCount, setInteractionCount] = useState(0)
 
@@ -714,51 +714,116 @@ const About = () => {
                   title: "Top Rated",
                   description: "Freelancer on multiple platforms",
                   color: "from-yellow-500/20 to-yellow-700/20",
-                  borderColor: "border-yellow-500/30"
+                  borderColor: "border-yellow-500/30",
+                  funTitle: "🏆 Achievement Unlocked",
+                  funDescription: "Master of Digital Wizardry"
                 },
                 {
                   icon: <Star size={32} />,
                   title: "5-Star Reviews",
                   description: "Consistent client satisfaction",
                   color: "from-green-500/20 to-green-700/20",
-                  borderColor: "border-green-500/30"
+                  borderColor: "border-green-500/30",
+                  funTitle: "⭐ Star Collector",
+                  funDescription: "Making clients happy since day one"
                 },
                 {
                   icon: <Target size={32} />,
                   title: "100% Success",
                   description: "Project completion rate",
                   color: "from-blue-500/20 to-blue-700/20",
-                  borderColor: "border-blue-500/30"
+                  borderColor: "border-blue-500/30",
+                  funTitle: "🎯 Perfect Shot",
+                  funDescription: "Never missed a deadline (yet!)"
                 },
                 {
                   icon: <TrendingUp size={32} />,
                   title: "Growth Expert",
                   description: "Helping businesses scale online",
                   color: "from-purple-500/20 to-purple-700/20",
-                  borderColor: "border-purple-500/30"
+                  borderColor: "border-purple-500/30",
+                  funTitle: "📈 Growth Hacker",
+                  funDescription: "Turning startups into unicorns"
                 }
               ].map((achievement, index) => (
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  className={`backdrop-blur-lg bg-gradient-to-br ${achievement.color} border ${achievement.borderColor} rounded-2xl p-6 text-center card-hover-effect relative overflow-hidden group`}
-                  whileHover={{ scale: 1.02 }}
+                  className={`backdrop-blur-lg bg-gradient-to-br ${achievement.color} border ${achievement.borderColor} rounded-2xl p-6 text-center card-hover-effect relative overflow-hidden group cursor-pointer`}
+                  whileHover={{ scale: 1.02, y: -5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  onClick={() => {
+                    setHoveredAchievement(hoveredAchievement === index ? null : index)
+                    handleInteraction()
+                  }}
+                  onMouseEnter={() => setHoveredAchievement(index)}
+                  onMouseLeave={() => setHoveredAchievement(null)}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
+
+                  {/* Interactive sparkle effect */}
+                  <motion.div
+                    className="absolute top-2 right-2 text-white/30"
+                    animate={hoveredAchievement === index ? {
+                      rotate: [0, 360],
+                      scale: [1, 1.2, 1]
+                    } : {}}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  >
+                    ✨
+                  </motion.div>
+
                   <div className="relative z-10">
-                    <motion.div 
+                    <motion.div
                       className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center text-white"
                       whileHover={{ rotate: 360 }}
                       transition={{ duration: 0.6 }}
+                      animate={hoveredAchievement === index ? {
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 10, -10, 0]
+                      } : {}}
                     >
                       {achievement.icon}
                     </motion.div>
-                    
-                    <h3 className="text-xl font-bold text-white mb-2">{achievement.title}</h3>
-                    <p className="text-white/70">{achievement.description}</p>
+
+                    <motion.h3
+                      className="text-xl font-bold text-white mb-2"
+                      animate={hoveredAchievement === index ? { scale: [1, 1.05, 1] } : {}}
+                    >
+                      {personalityMode === 'professional' ? achievement.title : achievement.funTitle}
+                    </motion.h3>
+                    <motion.p
+                      className="text-white/70"
+                      animate={hoveredAchievement === index ? { scale: [1, 1.02, 1] } : {}}
+                    >
+                      {personalityMode === 'professional' ? achievement.description : achievement.funDescription}
+                    </motion.p>
+
+                    {/* Click indicator */}
+                    <AnimatePresence>
+                      {hoveredAchievement === index && (
+                        <motion.div
+                          className="mt-2 text-xs text-white/50"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          Click for more interaction!
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
+
+                  {/* Ripple effect on click */}
+                  <motion.div
+                    className="absolute inset-0 border-2 border-white/30 rounded-2xl"
+                    initial={{ scale: 1, opacity: 0 }}
+                    animate={hoveredAchievement === index ? {
+                      scale: [1, 1.1, 1],
+                      opacity: [0, 0.3, 0]
+                    } : {}}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                  />
                 </motion.div>
               ))}
             </motion.div>
@@ -767,37 +832,80 @@ const About = () => {
 
 
           {/* CTA Section */}
-          <motion.section 
+          <motion.section
             className="mb-24"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <div className="max-w-4xl mx-auto backdrop-blur-lg bg-gradient-to-r from-purple-500/20 to-purple-700/20 border border-white/10 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
+            <div className="max-w-4xl mx-auto backdrop-blur-lg bg-gradient-to-r from-purple-500/20 to-purple-700/20 border border-white/10 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden group cursor-pointer"
+                 onClick={handleInteraction}>
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent"></div>
-              
+
+              {/* Interactive floating elements */}
+              <motion.div
+                className="absolute top-4 left-4 text-purple-300/50"
+                animate={{
+                  y: [0, -10, 0],
+                  rotate: [0, 5, 0]
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              >
+                💫
+              </motion.div>
+              <motion.div
+                className="absolute top-4 right-4 text-purple-300/50"
+                animate={{
+                  y: [0, -15, 0],
+                  rotate: [0, -5, 0]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              >
+                🚀
+              </motion.div>
+              <motion.div
+                className="absolute bottom-4 left-8 text-purple-300/50"
+                animate={{
+                  y: [0, -8, 0],
+                  rotate: [0, 10, 0]
+                }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              >
+                ✨
+              </motion.div>
+
               <div className="relative z-10">
-                <motion.h2 
-                  className="text-3xl md:text-4xl font-bold mb-4 text-white"
+                <motion.h2
+                  className="text-3xl md:text-4xl font-bold mb-4 text-white cursor-pointer"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
                   viewport={{ once: true }}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={handleInteraction}
                 >
-                  Let's Work <span className="animate-gradient-text">Together</span>
+                  {personalityMode === 'professional'
+                    ? <>Let's Work <span className="animate-gradient-text">Together</span></>
+                    : <>Ready to Create <span className="animate-gradient-text">Magic</span>? 🎨</>
+                  }
                 </motion.h2>
-                
-                <motion.p 
-                  className="text-xl text-white/80 mb-8 max-w-2xl mx-auto"
+
+                <motion.p
+                  className="text-xl text-white/80 mb-8 max-w-2xl mx-auto cursor-pointer"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   viewport={{ once: true }}
+                  whileHover={{ scale: 1.01 }}
+                  onClick={handleInteraction}
                 >
-                  Ready to transform your digital presence? Let's create something amazing together.
+                  {personalityMode === 'professional'
+                    ? "Ready to transform your digital presence? Let's create something amazing together."
+                    : "Let's turn your wildest digital dreams into reality! I promise it'll be more fun than debugging CSS at 3 AM! 😄"
+                  }
                 </motion.p>
-                
+
                 <motion.a
                   href="/contact"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 rounded-full font-semibold text-white card-hover-effect relative overflow-hidden group"
@@ -806,16 +914,40 @@ const About = () => {
                   transition={{ duration: 0.6, delay: 0.4 }}
                   viewport={{ once: true }}
                   whileHover={{ scale: 1.05 }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleInteraction()
+                  }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
+
                   <div className="relative z-10 flex items-center gap-2">
                     <MessageCircle className="h-5 w-5" />
-                    Get In Touch
+                    {personalityMode === 'professional' ? 'Get In Touch' : 'Let\'s Chat! 💬'}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </div>
                 </motion.a>
+
+                {/* Interaction stats display */}
+                <motion.div
+                  className="mt-6 text-sm text-white/50"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: interactionCount > 5 ? 1 : 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  🎉 Wow! You've interacted {interactionCount} times! You're really engaged!
+                </motion.div>
               </div>
+
+              {/* Interactive border pulse */}
+              <motion.div
+                className="absolute inset-0 border-2 border-purple-500/30 rounded-2xl"
+                animate={{
+                  scale: [1, 1.02, 1],
+                  opacity: [0.3, 0.6, 0.3]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
             </div>
           </motion.section>
         </div>
