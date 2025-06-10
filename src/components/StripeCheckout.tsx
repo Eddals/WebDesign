@@ -13,6 +13,7 @@ interface FormData {
   description: string;
   paymentModel: string;
   subscriptionPlan: string;
+  features?: string[];
 }
 
 interface StripeCheckoutProps {
