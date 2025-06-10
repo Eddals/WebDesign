@@ -646,8 +646,8 @@ const Services = () => {
                   </motion.a>
                 </motion.div>
                 
-                <motion.div 
-                  className="mt-12 grid grid-cols-3 gap-6"
+                <motion.div
+                  className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.8 }}
@@ -781,11 +781,11 @@ const Services = () => {
                       
                       <p className="text-white/80 text-lg mb-8">{service.description}</p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                         {service.features.map((feature, index) => (
                           <div key={index} className="flex items-start gap-3">
                             <CheckCircle className="text-purple-400 flex-shrink-0 mt-1" size={18} />
-                            <span className="text-white/80">{feature}</span>
+                            <span className="text-white/80 text-sm sm:text-base">{feature}</span>
                           </div>
                         ))}
                       </div>

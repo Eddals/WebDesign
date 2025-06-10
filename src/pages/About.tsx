@@ -1,82 +1,30 @@
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import {
-  Palette,
   Globe,
   MessageCircle,
   Code,
-  Lightbulb,
-  Heart,
   Star,
   Award,
   Target,
-  Rocket,
   ArrowRight,
   TrendingUp,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  Zap,
-  Coffee,
-  Music,
-  Camera,
-  Gamepad2,
-  Book,
-  Headphones,
-  Monitor
+  Users,
+  CheckCircle,
+  MapPin,
+  Mail,
+  Phone
 } from "lucide-react"
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import SEO from '@/components/SEO'
 
-
 const About = () => {
-  // Interactive state management
-  const [activeSkill, setActiveSkill] = useState<number | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [soundEnabled, setSoundEnabled] = useState(true)
-  const [hoveredAchievement, setHoveredAchievement] = useState<number | null>(null)
-  const [personalityMode, setPersonalityMode] = useState('professional')
-  const [interactionCount, setInteractionCount] = useState(0)
-
   // Animated counting effect for stats
   const [counts, setCounts] = useState({
     projects: 0,
     clients: 0,
     experience: 0,
   })
-
-  const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  })
-
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
-
-  // Interactive functions
-  const handleInteraction = () => {
-    setInteractionCount(prev => prev + 1)
-    if (soundEnabled) {
-      // Play interaction sound (you can add actual audio here)
-      console.log('🎵 Interaction sound!')
-    }
-  }
-
-  const togglePersonality = () => {
-    setPersonalityMode(prev => prev === 'professional' ? 'fun' : 'professional')
-    handleInteraction()
-  }
-
-  const playSound = () => {
-    if (soundEnabled) {
-      setIsPlaying(!isPlaying)
-      handleInteraction()
-    }
-  }
-
-
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -89,52 +37,53 @@ const About = () => {
     return () => clearInterval(interval)
   }, [])
 
-  // Skills categories with interactive elements
+  // Skills categories
   const skills = [
     {
-      category: "Platforms",
-      icon: <Globe size={24} />,
-      items: ["WordPress", "Shopify", "Webflow", "Drupal"],
-      color: "from-blue-500/20 to-blue-700/20",
-      borderColor: "border-blue-500/30",
-      description: "Building on powerful platforms"
+      category: "Web Development",
+      icon: <Code size={24} />,
+      items: ["React", "Next.js", "JavaScript", "HTML/CSS", "PHP", "WordPress"]
     },
     {
-      category: "Coding",
-      icon: <Code size={24} />,
-      items: ["React", "Next.js", "JavaScript", "HTML/CSS", "PHP"],
-      color: "from-green-500/20 to-green-700/20",
-      borderColor: "border-green-500/30",
-      description: "Crafting clean, efficient code"
+      category: "Digital Marketing",
+      icon: <TrendingUp size={24} />,
+      items: ["SEO", "Google Analytics", "Content Strategy", "Social Media Marketing"]
     },
     {
       category: "Design",
-      icon: <Palette size={24} />,
-      items: ["UI/UX Design", "Figma", "Responsive Design", "Branding"],
-      color: "from-pink-500/20 to-pink-700/20",
-      borderColor: "border-pink-500/30",
-      description: "Creating beautiful experiences"
+      icon: <Globe size={24} />,
+      items: ["UI/UX Design", "Responsive Design", "Branding", "Figma"]
     },
     {
-      category: "Marketing",
-      icon: <TrendingUp size={24} />,
-      items: ["SEO", "Analytics", "Content Strategy", "Social Media"],
-      color: "from-purple-500/20 to-purple-700/20",
-      borderColor: "border-purple-500/30",
-      description: "Growing your digital presence"
+      category: "Platforms",
+      icon: <Target size={24} />,
+      items: ["WordPress", "Shopify", "Webflow", "Drupal"]
+    }
+  ]
+
+  // Agency values
+  const values = [
+    {
+      icon: <Award size={32} />,
+      title: "Quality First",
+      description: "We deliver exceptional results that exceed expectations"
     },
+    {
+      icon: <Users size={32} />,
+      title: "Client-Focused",
+      description: "Your success is our priority, always"
+    },
+    {
+      icon: <Star size={32} />,
+      title: "Innovation",
+      description: "Using cutting-edge technologies and creative solutions"
+    },
+    {
+      icon: <CheckCircle size={32} />,
+      title: "Reliability",
+      description: "Consistent delivery and ongoing support you can count on"
+    }
   ]
-
-  // Personal interests for fun mode
-  const personalInterests = [
-    { icon: <Coffee size={20} />, name: "Coffee Enthusiast", fact: "I've tried 47 different coffee beans!" },
-    { icon: <Music size={20} />, name: "Music Lover", fact: "I code better with lo-fi beats" },
-    { icon: <Camera size={20} />, name: "Photography", fact: "I capture moments between coding sessions" },
-    { icon: <Gamepad2 size={20} />, name: "Gaming", fact: "Strategy games help me think better" },
-    { icon: <Book size={20} />, name: "Learning", fact: "Always reading about new tech trends" },
-    { icon: <Headphones size={20} />, name: "Podcasts", fact: "Tech podcasts during morning walks" }
-  ]
-
 
 
   // Animation variants
@@ -156,68 +105,6 @@ const About = () => {
       transition: { duration: 0.5 }
     }
   }
-
-  // Custom styles for animations
-  const customStyles = `
-    @keyframes gradientFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-    }
-    
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(168, 85, 247, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
-    }
-    
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    
-    .animate-gradient-text {
-      background: linear-gradient(90deg, #a855f7, #6366f1, #a855f7);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: gradientFlow 6s linear infinite;
-    }
-    
-    .animate-float {
-      animation: float 6s ease-in-out infinite;
-    }
-    
-    .animate-pulse-glow {
-      animation: pulse 2s infinite;
-    }
-    
-    .animate-shimmer {
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
-      background-size: 200% 100%;
-      animation: shimmer 3s infinite;
-    }
-    
-    .card-hover-effect {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .card-hover-effect:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.3);
-    }
-    
-    .text-glow {
-      text-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3);
-    }
-  `;
 
   return (
     <>
