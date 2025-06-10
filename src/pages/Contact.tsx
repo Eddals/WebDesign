@@ -208,12 +208,12 @@ const Contact = () => {
               </motion.div>
 
               <motion.h1
-                className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 text-glow"
+                className="text-5xl md:text-6xl font-bold mb-6 text-white"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Get In <span className="animate-gradient-text">Touch</span>
+                Get In Touch
               </motion.h1>
 
               <motion.p
