@@ -125,12 +125,10 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
         company: formData.company
       };
 
-      // Call your backend API - temporarily disabled until backend is deployed
-      // For now, show a message to contact directly
-      throw new Error('Payment processing is temporarily unavailable. Please contact us directly at support@devtone.agency for payment processing.');
+      // Call Amplify API Gateway
+      const apiUrl = `${import.meta.env.VITE_API_GATEWAY_URL || 'https://your-api-id.execute-api.us-east-1.amazonaws.com/dev'}/stripe/checkout`;
 
-      /*
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/create-checkout-session`, {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +160,6 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
       }
 
       onSuccess?.();
-      */
 
     } catch (error) {
       console.error('❌ Checkout error:', error);
