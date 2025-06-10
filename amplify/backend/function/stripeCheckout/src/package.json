@@ -1,0 +1,16 @@
+{
+  "name": "stripe-checkout-lambda",
+  "version": "1.0.0",
+  "description": "AWS Lambda function for Stripe checkout processing",
+  "main": "index.js",
+  "dependencies": {
+    "stripe": "^14.21.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["stripe", "lambda", "aws", "devtone"],
+  "author": "DevTone Agency",
+  "license": "MIT"
+}
