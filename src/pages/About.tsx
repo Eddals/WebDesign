@@ -274,3 +274,173 @@ const About = () => {
               </div>
             </div>
           </motion.section>
+
+          {/* Skills Section */}
+          <motion.section
+            className="py-16"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="text-center mb-12">
+              <motion.h2
+                className="text-3xl font-bold mb-4 text-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                Our <span className="text-purple-400">Expertise</span>
+              </motion.h2>
+              <motion.p
+                className="text-white/70 max-w-2xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                We offer a comprehensive range of services to help your business succeed online
+              </motion.p>
+            </div>
+
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {skills.map((skill, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl p-6"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                      <div className="text-purple-400">{skill.icon}</div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white">{skill.category}</h3>
+                  </div>
+
+                  <ul className="space-y-2">
+                    {skill.items.map((item, i) => (
+                      <li key={i} className="flex items-center gap-2 text-white/80">
+                        <div className="w-1.5 h-1.5 bg-purple-400 rounded-full" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.section>
+
+          {/* Values Section */}
+          <motion.section
+            className="py-16"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="text-center mb-12">
+              <motion.h2
+                className="text-3xl font-bold mb-4 text-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                Our <span className="text-purple-400">Values</span>
+              </motion.h2>
+              <motion.p
+                className="text-white/70 max-w-2xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                The principles that guide everything we do
+              </motion.p>
+            </div>
+
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {values.map((value, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl p-6 text-center"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <div className="text-purple-400">{value.icon}</div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
+                  <p className="text-white/70">{value.description}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.section>
+
+          {/* CTA Section */}
+          <motion.section
+            className="py-16"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="max-w-4xl mx-auto backdrop-blur-lg bg-gradient-to-r from-purple-500/20 to-purple-700/20 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
+              <motion.h2
+                className="text-3xl md:text-4xl font-bold mb-4 text-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                Ready to Work <span className="text-purple-400">Together</span>?
+              </motion.h2>
+
+              <motion.p
+                className="text-xl text-white/80 mb-8 max-w-2xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                Let's discuss your project and see how DevTone can help bring your digital vision to life.
+              </motion.p>
+
+              <motion.a
+                href="/contact"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 rounded-full font-semibold text-white transition-all"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.05 }}
+              >
+                <MessageCircle className="h-5 w-5" />
+                Get In Touch
+                <ArrowRight className="h-4 w-4" />
+              </motion.a>
+            </div>
+          </motion.section>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default About
