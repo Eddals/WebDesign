@@ -32,131 +32,130 @@ const Portfolio = () => {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
 
   const filters = [
-    { id: 'all', label: 'All Projects', count: 12 },
-    { id: 'web-design', label: 'Web Design', count: 5 },
-    { id: 'ecommerce', label: 'E-commerce', count: 3 },
-    { id: 'landing', label: 'Landing Pages', count: 4 }
+    { id: 'all', label: 'All Projects', count: 6 },
+    { id: 'ecommerce', label: 'E-commerce', count: 2 },
+    { id: 'web-design', label: 'Web Applications', count: 4 }
   ]
 
   const projects = [
     {
       id: 1,
-      title: "TechFlow Solutions",
-      category: "web-design",
-      type: "Business Website",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
-      description: "Modern corporate website for a technology consulting firm with advanced animations and interactive elements.",
-      technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion"],
-      features: ["Responsive Design", "SEO Optimized", "Fast Loading", "Interactive UI"],
-      liveUrl: "#",
-      githubUrl: "#",
+      title: "StyleHub E-commerce",
+      category: "ecommerce",
+      type: "E-commerce Platform",
+      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop",
+      description: "Complete e-commerce platform for fashion retail with modern design, shopping cart, user authentication, and payment integration. Built with PHP, MySQL, and responsive design.",
+      technologies: ["PHP 8.0+", "MySQL", "HTML5", "CSS3", "JavaScript"],
+      features: ["Shopping Cart", "User Authentication", "Payment Gateway", "Admin Dashboard", "Product Reviews", "Wishlist"],
+      liveUrl: "https://stylehub-demo.devtone.agency",
+      githubUrl: "https://github.com/devtone-agency/stylehub-ecommerce",
       completedDate: "2024-01-15",
-      client: "TechFlow Inc.",
-      duration: "3 weeks",
+      client: "StyleHub Fashion",
+      duration: "4 weeks",
       results: {
-        traffic: "+150%",
-        conversion: "+85%",
-        performance: "98/100"
+        conversion: "+180%",
+        performance: "95/100",
+        mobile: "100%"
       }
     },
     {
       id: 2,
-      title: "EcoStore Marketplace",
-      category: "ecommerce",
-      type: "E-commerce Platform",
-      image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
-      description: "Sustainable products marketplace with advanced filtering, payment integration, and inventory management.",
-      technologies: ["Next.js", "Stripe", "MongoDB", "Node.js"],
-      features: ["Payment Gateway", "Inventory System", "User Accounts", "Admin Dashboard"],
-      liveUrl: "#",
+      title: "DevTone Agency Website",
+      category: "web-design",
+      type: "Agency Website",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
+      description: "Modern agency website with advanced animations, service showcases, portfolio gallery, and integrated contact forms. Built with React and TypeScript.",
+      technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Supabase"],
+      features: ["Responsive Design", "SEO Optimized", "Contact Forms", "Portfolio Gallery", "Service Pages"],
+      liveUrl: "https://devtone.agency",
       githubUrl: "#",
       completedDate: "2024-02-20",
-      client: "EcoStore Ltd.",
-      duration: "6 weeks",
+      client: "DevTone Agency",
+      duration: "3 weeks",
       results: {
-        sales: "+200%",
-        users: "5,000+",
-        rating: "4.9/5"
+        traffic: "+250%",
+        leads: "+190%",
+        performance: "98/100"
       }
     },
     {
       id: 3,
-      title: "FitLife Gym Landing",
-      category: "landing",
-      type: "Landing Page",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
-      description: "High-converting landing page for a fitness center with membership signup and class booking features.",
-      technologies: ["React", "Tailwind CSS", "EmailJS", "AOS"],
-      features: ["Lead Generation", "Class Booking", "Testimonials", "Mobile First"],
-      liveUrl: "#",
+      title: "Restaurant Management System",
+      category: "web-design",
+      type: "Business Application",
+      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop",
+      description: "Complete restaurant management system with online ordering, table reservations, menu management, and POS integration. Built with modern web technologies.",
+      technologies: ["PHP", "MySQL", "Bootstrap", "jQuery", "Chart.js"],
+      features: ["Online Ordering", "Table Reservations", "Menu Management", "POS Integration", "Analytics Dashboard"],
+      liveUrl: "https://restaurant-demo.devtone.agency",
       githubUrl: "#",
       completedDate: "2024-01-30",
-      client: "FitLife Gym",
-      duration: "2 weeks",
+      client: "Bella Vista Restaurant",
+      duration: "5 weeks",
       results: {
-        conversion: "+120%",
-        leads: "800+",
-        bounce: "-45%"
+        orders: "+160%",
+        efficiency: "+85%",
+        revenue: "+140%"
       }
     },
     {
       id: 4,
-      title: "Digital Agency Pro",
+      title: "Real Estate Platform",
       category: "web-design",
-      type: "Agency Website",
-      image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&h=600&fit=crop",
-      description: "Creative agency portfolio website with stunning animations and project showcases.",
-      technologies: ["Vue.js", "GSAP", "Sass", "Netlify"],
-      features: ["Portfolio Gallery", "Contact Forms", "Blog System", "Dark Mode"],
-      liveUrl: "#",
+      type: "Property Portal",
+      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop",
+      description: "Modern real estate platform with property listings, advanced search filters, virtual tours, and agent management system.",
+      technologies: ["React", "Node.js", "MongoDB", "Express", "Socket.io"],
+      features: ["Property Search", "Virtual Tours", "Agent Portal", "Mortgage Calculator", "Real-time Chat"],
+      liveUrl: "https://realestate-demo.devtone.agency",
       githubUrl: "#",
       completedDate: "2024-03-10",
-      client: "Creative Pro Agency",
-      duration: "4 weeks",
+      client: "Prime Properties",
+      duration: "6 weeks",
       results: {
-        inquiries: "+180%",
-        engagement: "+95%",
-        awards: "3"
+        listings: "2,500+",
+        inquiries: "+220%",
+        sales: "+175%"
       }
     },
     {
       id: 5,
-      title: "RestaurantHub",
+      title: "Healthcare Management Portal",
       category: "web-design",
-      type: "Restaurant Website",
-      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop",
-      description: "Elegant restaurant website with online menu, reservation system, and delivery integration.",
-      technologies: ["React", "Firebase", "Stripe", "Google Maps API"],
-      features: ["Online Menu", "Reservations", "Delivery", "Reviews"],
-      liveUrl: "#",
+      type: "Healthcare System",
+      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=600&fit=crop",
+      description: "Comprehensive healthcare management system with patient records, appointment scheduling, and telemedicine integration.",
+      technologies: ["PHP", "MySQL", "Bootstrap", "Chart.js", "WebRTC"],
+      features: ["Patient Records", "Appointment Scheduling", "Telemedicine", "Billing System", "Reports"],
+      liveUrl: "https://healthcare-demo.devtone.agency",
       githubUrl: "#",
       completedDate: "2024-02-05",
-      client: "Bella Vista Restaurant",
-      duration: "3 weeks",
+      client: "MedCare Clinic",
+      duration: "8 weeks",
       results: {
-        reservations: "+160%",
-        orders: "+140%",
-        reviews: "4.8/5"
+        efficiency: "+200%",
+        patients: "1,500+",
+        satisfaction: "4.9/5"
       }
     },
     {
       id: 6,
-      title: "StartupLaunch",
-      category: "landing",
-      type: "Product Launch",
-      image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop",
-      description: "Product launch landing page with email capture, countdown timer, and social proof elements.",
-      technologies: ["React", "Tailwind CSS", "Mailchimp", "Analytics"],
-      features: ["Email Capture", "Countdown Timer", "Social Proof", "Analytics"],
-      liveUrl: "#",
+      title: "Educational Learning Platform",
+      category: "ecommerce",
+      type: "E-learning Platform",
+      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop",
+      description: "Modern e-learning platform with course management, video streaming, progress tracking, and certification system.",
+      technologies: ["React", "Node.js", "MongoDB", "Socket.io", "AWS S3"],
+      features: ["Course Management", "Video Streaming", "Progress Tracking", "Certifications", "Live Classes"],
+      liveUrl: "https://learning-demo.devtone.agency",
       githubUrl: "#",
       completedDate: "2024-01-20",
-      client: "InnovateTech Startup",
-      duration: "1 week",
+      client: "EduTech Academy",
+      duration: "7 weeks",
       results: {
-        signups: "2,500+",
-        conversion: "+95%",
-        shares: "1,200+"
+        students: "3,200+",
+        completion: "+85%",
+        revenue: "+300%"
       }
     }
   ]
@@ -166,10 +165,10 @@ const Portfolio = () => {
     : projects.filter(project => project.category === activeFilter)
 
   const stats = [
-    { label: "Projects Completed", value: "50+", icon: <CheckCircle className="w-6 h-6" /> },
-    { label: "Happy Clients", value: "40+", icon: <Users className="w-6 h-6" /> },
-    { label: "Years Experience", value: "5+", icon: <Award className="w-6 h-6" /> },
-    { label: "Success Rate", value: "98%", icon: <TrendingUp className="w-6 h-6" /> }
+    { label: "Projects Completed", value: "25+", icon: <CheckCircle className="w-6 h-6" /> },
+    { label: "Happy Clients", value: "20+", icon: <Users className="w-6 h-6" /> },
+    { label: "Years Experience", value: "3+", icon: <Award className="w-6 h-6" /> },
+    { label: "Success Rate", value: "100%", icon: <TrendingUp className="w-6 h-6" /> }
   ]
 
   return (

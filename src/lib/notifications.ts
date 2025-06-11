@@ -33,19 +33,21 @@ export async function getRecentEstimates(): Promise<EstimateNotification[]> {
       console.error('- Mensagem:', error.message);
 
       if (error.code === '42P01') {
-        console.log('💡 Tabela quotes não existe. Execute criar-tabela-quotes.sql');
+        console.log('💡 Tabela quotes não existe. Usando dados de exemplo');
       } else if (error.code === '42703') {
-        console.log('💡 Coluna não existe. Execute criar-tabela-quotes.sql');
+        console.log('💡 Coluna não existe. Usando dados de exemplo');
       }
 
-      return []; // Return empty array for real data only
+      console.log('📋 Retornando notificações de exemplo para demonstração');
+      return getExampleNotifications();
     }
 
     console.log(`📊 Encontrados ${data?.length || 0} estimates no banco`);
 
     if (!data || data.length === 0) {
       console.log('⚠️ Nenhum estimate encontrado no banco de dados');
-      return []; // Return empty array for real data only
+      console.log('📋 Retornando notificações de exemplo para demonstração');
+      return getExampleNotifications();
     }
 
     // Only return estimates that have both country and industry
@@ -61,10 +63,17 @@ export async function getRecentEstimates(): Promise<EstimateNotification[]> {
 
     console.log(`✅ ${validEstimates.length} estimates válidos para notificações`);
 
+    // If no valid estimates, return example data
+    if (validEstimates.length === 0) {
+      console.log('📋 Nenhum estimate válido encontrado. Usando dados de exemplo');
+      return getExampleNotifications();
+    }
+
     return validEstimates;
   } catch (error) {
     console.error('❌ Erro geral em getRecentEstimates:', error);
-    return []; // Return empty array for real data only
+    console.log('📋 Retornando notificações de exemplo devido ao erro');
+    return getExampleNotifications();
   }
 }
 
@@ -86,9 +95,9 @@ function getTimeAgo(dateString: string): string {
   return `${Math.floor(diffInDays / 7)} weeks ago`;
 }
 
-// Example notifications for demonstration (only used when no real data exists)
+// Example notifications for demonstration (used when no real data exists)
 function getExampleNotifications(): EstimateNotification[] {
-  return [
+  const examples = [
     {
       id: 'example-1',
       name: 'Sarah Johnson',
@@ -123,6 +132,30 @@ function getExampleNotifications(): EstimateNotification[] {
       country: 'Germany',
       industry: 'Fashion & Beauty',
       timeAgo: '47 minutes ago'
+    },
+    {
+      id: 'example-6',
+      name: 'João Silva',
+      country: 'Brazil',
+      industry: 'Technology & Software',
+      timeAgo: '8 minutes ago'
+    },
+    {
+      id: 'example-7',
+      name: 'Maria Santos',
+      country: 'Brazil',
+      industry: 'E-commerce & Retail',
+      timeAgo: '15 minutes ago'
+    },
+    {
+      id: 'example-8',
+      name: 'David Kim',
+      country: 'South Korea',
+      industry: 'Gaming & Entertainment',
+      timeAgo: '22 minutes ago'
     }
   ];
+
+  console.log('📋 Gerando notificações de exemplo para demonstração');
+  return examples;
 }
