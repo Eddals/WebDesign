@@ -1,18 +1,23 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Send, 
-  User, 
-  Mail, 
-  Phone, 
-  Building, 
-  Clock, 
+import {
+  Send,
+  User,
+  Mail,
+  Phone,
+  Building,
+  Clock,
   MessageSquare,
   Settings,
   MoreVertical,
   CheckCircle,
   AlertCircle,
-  Loader2
+  Loader2,
+  Paperclip,
+  Image,
+  FileText,
+  Download,
+  X
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
@@ -54,6 +59,9 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
   const [agentName] = useState('Support Agent') // In real app, get from auth
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [uploadingFile, setUploadingFile] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Scroll to bottom
   const scrollToBottom = () => {
@@ -82,14 +90,27 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
         schema: 'public',
         table: 'chat_messages',
         filter: `session_id=eq.${session.id}`
-      }, (payload) => {
+      }, (payload: any) => {
         const newMsg = payload.new as ChatMessage
         setMessages(prev => [...prev, newMsg])
-        
-        // Mark user messages as read
+
+        // Mark user messages as read automatically
         if (newMsg.is_user) {
           markMessageAsRead(newMsg.id)
         }
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'chat_messages',
+        filter: `session_id=eq.${session.id}`
+      }, (payload: any) => {
+        // Update message in real-time (for read status, etc.)
+        setMessages(prev => prev.map(msg =>
+          msg.id === payload.new.id
+            ? { ...msg, ...payload.new }
+            : msg
+        ))
       })
       .subscribe()
 
@@ -215,40 +236,59 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
     }
   }
 
-  // Close conversation and notify client
+  // Close conversation completely - delete from database
   const closeConversation = async () => {
     if (!session) return
 
+    const confirmClose = window.confirm(
+      'Are you sure you want to close this conversation? This will:\n\n' +
+      '• Send a closure message to the client\n' +
+      '• Clear the client\'s chat history\n' +
+      '• Delete all conversation data\n\n' +
+      'This action cannot be undone.'
+    )
+
+    if (!confirmClose) return
+
     try {
-      // Send closing message to client
+      // Send final closure message to client via broadcast
       await supabase
-        .from('chat_messages')
-        .insert({
-          session_id: session.id,
-          user_name: agentName,
-          user_email: 'support@devtone.agency',
-          message: '✅ This conversation has been resolved and closed by our support team. Thank you for contacting DevTone! If you need further assistance, please start a new chat.',
-          is_user: false,
-          is_read: true,
-          metadata: {
-            agent_name: agentName,
-            message_type: 'system_close',
+        .channel(`session_close:${session.id}`)
+        .send({
+          type: 'broadcast',
+          event: 'conversation_closed',
+          payload: {
+            session_id: session.id,
+            message: '✅ Your conversation has been resolved and closed by our support team.\n\nThank you for contacting DevTone! We hope we were able to help you.\n\nIf you need further assistance, please feel free to start a new chat.',
+            closed_by: agentName,
             timestamp: new Date().toISOString()
           }
         })
 
-      // Update session status to resolved
+      // Wait a moment for the message to be delivered
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Delete all messages for this session
+      await supabase
+        .from('chat_messages')
+        .delete()
+        .eq('session_id', session.id)
+
+      // Delete the session
       await supabase
         .from('chat_sessions')
-        .update({
-          status: 'resolved',
-          updated_at: new Date().toISOString()
-        })
+        .delete()
         .eq('id', session.id)
 
+      // Update the dashboard
       onSessionUpdate()
+
+      // Show success message
+      alert('Conversation closed successfully. The client has been notified and all data has been cleared.')
+
     } catch (error) {
       console.error('Error closing conversation:', error)
+      alert('Error closing conversation. Please try again.')
     }
   }
 
@@ -268,6 +308,96 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
     } else {
       return `${minutes}m`
     }
+  }
+
+  // Handle file selection
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Check file size (max 5MB for base64 storage)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB')
+        return
+      }
+      setSelectedFile(file)
+    }
+  }
+
+  // Convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = error => reject(error)
+    })
+  }
+
+  // Send file message
+  const sendFileMessage = async () => {
+    if (!selectedFile || !session || uploadingFile) return
+
+    setUploadingFile(true)
+
+    try {
+      // Convert file to base64
+      const fileBase64 = await fileToBase64(selectedFile)
+
+      // Send message with file
+      const { error } = await supabase
+        .from('chat_messages')
+        .insert({
+          session_id: session.id,
+          user_name: agentName,
+          user_email: 'support@devtone.agency',
+          message: `📎 File shared: ${selectedFile.name}`,
+          is_user: false,
+          is_read: true,
+          metadata: {
+            agent_name: agentName,
+            message_type: 'file',
+            file_name: selectedFile.name,
+            file_data: fileBase64,
+            file_size: selectedFile.size,
+            file_type: selectedFile.type,
+            timestamp: new Date().toISOString()
+          }
+        })
+
+      if (error) throw error
+
+      // Clear selected file
+      setSelectedFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+
+    } catch (error) {
+      console.error('Error sending file:', error)
+      alert('Failed to send file')
+    } finally {
+      setUploadingFile(false)
+    }
+  }
+
+  // Get file icon based on type
+  const getFileIcon = (fileType: string) => {
+    if (fileType.startsWith('image/')) {
+      return <Image size={16} className="text-blue-400" />
+    } else if (fileType.includes('pdf') || fileType.includes('document')) {
+      return <FileText size={16} className="text-red-400" />
+    } else {
+      return <Paperclip size={16} className="text-gray-400" />
+    }
+  }
+
+  // Format file size
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
   // Send typing indicator
@@ -429,7 +559,40 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
                       {message.user_name}
                     </div>
                   )}
+
+                  {/* Message content */}
                   <p className="whitespace-pre-wrap">{message.message}</p>
+
+                  {/* File attachment */}
+                  {message.metadata?.message_type === 'file' && (
+                    <div className="mt-2 p-3 bg-black/20 rounded-lg border border-white/10">
+                      <div className="flex items-center gap-2 mb-2">
+                        {getFileIcon(message.metadata.file_type)}
+                        <span className="text-sm font-medium">{message.metadata.file_name}</span>
+                      </div>
+                      <div className="text-xs text-gray-300 mb-2">
+                        {formatFileSize(message.metadata.file_size)}
+                      </div>
+                      {message.metadata.file_type.startsWith('image/') ? (
+                        <div className="mb-2">
+                          <img
+                            src={message.metadata.file_data}
+                            alt={message.metadata.file_name}
+                            className="max-w-full max-h-48 rounded border"
+                          />
+                        </div>
+                      ) : null}
+                      <a
+                        href={message.metadata.file_data}
+                        download={message.metadata.file_name}
+                        className="inline-flex items-center gap-1 text-xs bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded transition-colors"
+                      >
+                        <Download size={12} />
+                        Download
+                      </a>
+                    </div>
+                  )}
+
                   <div
                     className={`text-xs mt-1 ${
                       message.is_user ? 'text-purple-200' : 'text-gray-400'
@@ -459,18 +622,77 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
 
       {/* Message Input */}
       <div className="bg-gray-800 border-t border-gray-700 p-4 flex-shrink-0">
+        {/* File Preview */}
+        {selectedFile && (
+          <div className="mb-3 p-3 bg-gray-700 rounded-lg border border-gray-600">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {getFileIcon(selectedFile.type)}
+                <div>
+                  <p className="text-white text-sm font-medium">{selectedFile.name}</p>
+                  <p className="text-gray-400 text-xs">{formatFileSize(selectedFile.size)}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={sendFileMessage}
+                  disabled={uploadingFile}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors disabled:opacity-50"
+                >
+                  {uploadingFile ? (
+                    <Loader2 className="animate-spin" size={14} />
+                  ) : (
+                    'Send File'
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedFile(null)
+                    if (fileInputRef.current) fileInputRef.current.value = ''
+                  }}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={sendMessage} className="flex items-center gap-2">
+          {/* File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileSelect}
+            accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+            className="hidden"
+          />
+
+          {/* File Upload Button */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg p-2 transition-colors"
+            title="Attach File"
+          >
+            <Paperclip size={18} />
+          </button>
+
+          {/* Text Input */}
           <input
             type="text"
             value={newMessage}
             onChange={handleInputChange}
             placeholder="Type your response..."
             className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-            disabled={sendingMessage}
+            disabled={sendingMessage || uploadingFile}
           />
+
+          {/* Send Button */}
           <button
             type="submit"
-            disabled={!newMessage.trim() || sendingMessage}
+            disabled={!newMessage.trim() || sendingMessage || uploadingFile}
             className="bg-purple-600 text-white rounded-lg px-4 py-2 hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {sendingMessage ? (

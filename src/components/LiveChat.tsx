@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquare, Send, X, User, Loader2, ChevronDown, ChevronUp, Mail, Phone, Building } from 'lucide-react'
+import { MessageSquare, Send, X, User, Loader2, ChevronDown, ChevronUp, Mail, Phone, Building, Download, Image, FileText, Paperclip } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -127,6 +127,26 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
     }
   }
 
+  // Get file icon based on type
+  const getFileIcon = (fileType: string) => {
+    if (fileType.startsWith('image/')) {
+      return <Image size={16} className="text-blue-400" />
+    } else if (fileType.includes('pdf') || fileType.includes('document')) {
+      return <FileText size={16} className="text-red-400" />
+    } else {
+      return <Paperclip size={16} className="text-gray-400" />
+    }
+  }
+
+  // Format file size
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
   // Load messages for a specific session
   const loadMessagesForSession = async (sessionId: string) => {
     try {
@@ -225,11 +245,44 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
         })
         .subscribe()
 
+      // Subscribe to conversation closure events
+      const closeChannel = supabase
+        .channel(`session_close:${chatSession.id}`)
+        .on('broadcast', { event: 'conversation_closed' }, (payload: any) => {
+          if (payload.payload.session_id === chatSession.id) {
+            // Show closure message
+            setMessages([{
+              id: 'closure-message',
+              message: payload.payload.message,
+              is_user: false,
+              created_at: new Date().toISOString(),
+              metadata: { message_type: 'system_close' }
+            }])
+
+            // Clear session data after showing message
+            setTimeout(() => {
+              endChatSession()
+              setIsOpen(false)
+            }, 5000) // Show message for 5 seconds then close
+          }
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_sessions',
+          filter: `id=eq.${chatSession.id}`
+        }, (payload: any) => {
+          // Update session status in real-time
+          setChatSession(prev => prev ? { ...prev, ...payload.new } : null)
+        })
+        .subscribe()
+
       setSubscription(subscription)
 
       return () => {
         subscription.unsubscribe()
         typingChannel.unsubscribe()
+        closeChannel.unsubscribe()
         if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
       }
     }
@@ -619,7 +672,39 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                                   : 'bg-gray-700 text-white shadow-md'
                               }`}
                             >
+                              {/* Message content */}
                               <p>{msg.message}</p>
+
+                              {/* File attachment */}
+                              {msg.metadata?.message_type === 'file' && (
+                                <div className="mt-3 p-3 bg-black/20 rounded-2xl border border-white/10">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    {getFileIcon(msg.metadata.file_type)}
+                                    <span className="text-sm font-medium">{msg.metadata.file_name}</span>
+                                  </div>
+                                  <div className="text-xs text-gray-300 mb-2">
+                                    {formatFileSize(msg.metadata.file_size)}
+                                  </div>
+                                  {msg.metadata.file_type.startsWith('image/') && (
+                                    <div className="mb-2">
+                                      <img
+                                        src={msg.metadata.file_data}
+                                        alt={msg.metadata.file_name}
+                                        className="max-w-full max-h-48 rounded border"
+                                      />
+                                    </div>
+                                  )}
+                                  <a
+                                    href={msg.metadata.file_data}
+                                    download={msg.metadata.file_name}
+                                    className="inline-flex items-center gap-1 text-xs bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full transition-colors"
+                                  >
+                                    <Download size={12} />
+                                    Download
+                                  </a>
+                                </div>
+                              )}
+
                               <div
                                 className={`text-xs mt-1 ${
                                   msg.is_user ? 'text-purple-200' : 'text-gray-400'

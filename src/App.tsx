@@ -4,7 +4,6 @@ import { queryClient } from "./lib/queryClient";
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
-import Notification from './components/Notification';
 import LiveChat from './components/LiveChat';
 import Home from "./pages/Home";
 import Services from './pages/Services';
@@ -57,7 +56,6 @@ export default function App() {
               <Route path="/chat-dashboard" element={<ChatDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <Notification />
             <LiveChat />
             <Footer />
           </div>
