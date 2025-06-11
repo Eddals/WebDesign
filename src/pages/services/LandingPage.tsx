@@ -187,7 +187,7 @@ const LandingPage = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  View Examples
+                  Contact Us
                 </motion.button>
               </Link>
             </motion.div>
@@ -348,7 +348,7 @@ const LandingPage = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Contact Us
+                 Get a Estimate
                 </motion.button>
               </Link>
             </div>

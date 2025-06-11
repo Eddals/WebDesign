@@ -20,27 +20,36 @@ const Notification = () => {
   // Load estimates from database on component mount
   useEffect(() => {
     const loadEstimates = async () => {
+      console.log('🔄 Carregando estimates para notificações...');
       const estimates = await getRecentEstimates();
+      console.log(`📊 Estimates carregados: ${estimates.length}`);
       setEstimateRequests(estimates);
     };
     loadEstimates();
   }, []);
 
-  // No fallback data - only show real database submissions
-
   useEffect(() => {
-    // Only show real database data - no fallback for authentic notifications
-    if (estimateRequests.length === 0) return;
+    // Show notifications if we have data (real or example)
+    if (estimateRequests.length === 0) {
+      console.log('⚠️ Nenhum estimate disponível para notificações');
+      return;
+    }
 
-    // Show first notification after a random time between 5-15 seconds
-    const initialDelay = Math.floor(Math.random() * 10000) + 5000;
+    console.log(`🎯 Iniciando sistema de notificações com ${estimateRequests.length} estimates`);
+
+    // Show first notification after a shorter time for better UX
+    const initialDelay = Math.floor(Math.random() * 5000) + 3000; // 3-8 seconds
+    console.log(`⏰ Primeira notificação em ${initialDelay/1000}s`);
+
     const initialTimer = setTimeout(() => {
       const randomEstimate = estimateRequests[Math.floor(Math.random() * estimateRequests.length)];
+      console.log(`🔔 Mostrando notificação: ${randomEstimate.name} de ${randomEstimate.country}`);
       setNotification(randomEstimate);
       setIsVisible(true);
 
       // Hide after 7 seconds
       setTimeout(() => {
+        console.log('👋 Ocultando notificação');
         setIsVisible(false);
       }, 7000);
     }, initialDelay);
@@ -50,15 +59,17 @@ const Notification = () => {
       // Only show if not currently visible
       if (!isVisible) {
         const randomEstimate = estimateRequests[Math.floor(Math.random() * estimateRequests.length)];
+        console.log(`🔔 Nova notificação: ${randomEstimate.name} de ${randomEstimate.country}`);
         setNotification(randomEstimate);
         setIsVisible(true);
 
         // Hide after 7 seconds
         setTimeout(() => {
+          console.log('👋 Ocultando notificação');
           setIsVisible(false);
         }, 7000);
       }
-    }, Math.floor(Math.random() * 20000) + 15000); // Random interval between 15-35 seconds
+    }, Math.floor(Math.random() * 15000) + 10000); // Random interval between 10-25 seconds
 
     return () => {
       clearTimeout(initialTimer);

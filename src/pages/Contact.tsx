@@ -72,8 +72,8 @@ const Contact = () => {
       title: 'Schedule Call',
       description: 'Book a support call',
       details: 'Free consultation',
-      link: 'https://calendar.app.google/E7Xf7ZeiVqcR5rof8https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ090688oDQPcvG5Wxi-vZugSIP1LGHQrZxgk5fB5rM46mgFZP1fVoq8xT70bguxDkjBy09qswqj',
-      color: 'from-purple-300 to-purple-500',
+      link: 'https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ090688oDQPcvG5Wxi-vZugSIP1LGHQrZxgk5fB5rM46mgFZP1fVoq8xT70bguxDkjBy09qswqj',
+      color: 'from-purple-500 to-purple-700',
       response: 'Available slots this week'
     }
   ]

@@ -107,7 +107,7 @@ const About = () => {
   return (
     <>
       <SEO
-        title="About DevTone - Expert Web Development Agency"
+        title="About Us - Expert Web Development Agency"
         description="Learn about DevTone, a professional web development agency specializing in custom websites, digital marketing, and innovative solutions. Meet our team and discover our commitment to excellence."
         keywords={['about DevTone', 'web development agency', 'digital marketing experts', 'professional team', 'web design services', 'development expertise']}
         ogUrl="https://devtone.agency/about"
@@ -134,7 +134,7 @@ const About = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              About DevTone
+              About Us
             </motion.div>
 
             <motion.h1
@@ -201,7 +201,7 @@ const About = () => {
                   transition={{ duration: 0.6 }}
                   viewport={{ once: true }}
                 >
-                  About <span className="text-purple-400">DevTone Agency</span>
+                  About <span className="text-purple-400">Our Agency</span>
                 </motion.h2>
 
                 <motion.div

@@ -213,7 +213,7 @@ const MarketingAutomation = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  See Demo
+                 Contact Us
                 </motion.button>
               </Link>
             </motion.div>

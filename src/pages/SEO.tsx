@@ -1,3 +1,4 @@
+/*************  ✨ Codeium Command 🌟  *************/
 "use client"
 
 import { motion } from 'framer-motion'
@@ -183,21 +184,19 @@ const SEO = () => {
                   className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  Get Free SEO Audit
+                  Get Started
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
               <Link to="/contact">
-                <motion.a
+                <motion.button
                   className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  Learn More
-                </motion.a>
+                  Contact Us
+                </motion.button>
               </Link>
             </motion.div>
           </motion.div>
@@ -344,9 +343,8 @@ const SEO = () => {
                   className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  Start Your SEO Journey
+                  Get Started
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
@@ -368,3 +366,4 @@ const SEO = () => {
 }
 
 export default SEO
+/******  adf3c151-790a-4c01-9a94-0f46a42e0598  *******/
