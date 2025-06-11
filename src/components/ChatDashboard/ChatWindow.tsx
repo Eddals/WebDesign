@@ -17,7 +17,9 @@ import {
   Image,
   FileText,
   Download,
-  X
+  X,
+  XCircle,
+  Check
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
@@ -236,55 +238,109 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
     }
   }
 
-  // Close conversation completely - delete from database
+  // Mark conversation as resolved
+  const markAsResolved = async () => {
+    if (!session) return
+
+    try {
+      // Send resolution message to client
+      await supabase
+        .from('chat_messages')
+        .insert({
+          session_id: session.id,
+          user_name: agentName,
+          user_email: 'support@devtone.agency',
+          message: '✅ This conversation has been marked as resolved by our support team. Thank you for contacting DevTone! If you need further assistance, please feel free to continue the conversation.',
+          is_user: false,
+          is_read: true,
+          metadata: {
+            agent_name: agentName,
+            message_type: 'system_resolved',
+            timestamp: new Date().toISOString()
+          }
+        })
+
+      // Update session status to resolved
+      await supabase
+        .from('chat_sessions')
+        .update({
+          status: 'resolved',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', session.id)
+
+      onSessionUpdate()
+    } catch (error) {
+      console.error('Error marking as resolved:', error)
+      alert('Error updating conversation status.')
+    }
+  }
+
+  // Mark conversation as not resolved (reopen)
+  const markAsNotResolved = async () => {
+    if (!session) return
+
+    try {
+      // Send reopening message to client
+      await supabase
+        .from('chat_messages')
+        .insert({
+          session_id: session.id,
+          user_name: agentName,
+          user_email: 'support@devtone.agency',
+          message: '🔄 This conversation has been reopened by our support team. We\'re here to help you further. Please let us know how we can assist you.',
+          is_user: false,
+          is_read: true,
+          metadata: {
+            agent_name: agentName,
+            message_type: 'system_reopened',
+            timestamp: new Date().toISOString()
+          }
+        })
+
+      // Update session status to active
+      await supabase
+        .from('chat_sessions')
+        .update({
+          status: 'active',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', session.id)
+
+      onSessionUpdate()
+    } catch (error) {
+      console.error('Error marking as not resolved:', error)
+      alert('Error updating conversation status.')
+    }
+  }
+
+  // Close conversation (hide from dashboard but keep data)
   const closeConversation = async () => {
     if (!session) return
 
     const confirmClose = window.confirm(
-      'Are you sure you want to close this conversation? This will:\n\n' +
-      '• Send a closure message to the client\n' +
-      '• Clear the client\'s chat history\n' +
-      '• Delete all conversation data\n\n' +
-      'This action cannot be undone.'
+      'Are you sure you want to close this conversation?\n\n' +
+      'This will:\n' +
+      '• Hide the conversation from the dashboard\n' +
+      '• Keep all conversation data\n' +
+      '• Client can still access their chat history\n\n' +
+      'You can reopen it later if needed.'
     )
 
     if (!confirmClose) return
 
     try {
-      // Send final closure message to client via broadcast
-      await supabase
-        .channel(`session_close:${session.id}`)
-        .send({
-          type: 'broadcast',
-          event: 'conversation_closed',
-          payload: {
-            session_id: session.id,
-            message: '✅ Your conversation has been resolved and closed by our support team.\n\nThank you for contacting DevTone! We hope we were able to help you.\n\nIf you need further assistance, please feel free to start a new chat.',
-            closed_by: agentName,
-            timestamp: new Date().toISOString()
-          }
-        })
-
-      // Wait a moment for the message to be delivered
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      // Delete all messages for this session
-      await supabase
-        .from('chat_messages')
-        .delete()
-        .eq('session_id', session.id)
-
-      // Delete the session
+      // Update session status to closed
       await supabase
         .from('chat_sessions')
-        .delete()
+        .update({
+          status: 'closed',
+          updated_at: new Date().toISOString()
+        })
         .eq('id', session.id)
 
-      // Update the dashboard
       onSessionUpdate()
-
-      // Show success message
-      alert('Conversation closed successfully. The client has been notified and all data has been cleared.')
+      alert('Conversation closed successfully. Data has been preserved.')
 
     } catch (error) {
       console.error('Error closing conversation:', error)
@@ -493,24 +549,43 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Status buttons */}
-            <select
-              value={session.status}
-              onChange={(e) => updateSessionStatus(e.target.value)}
-              className="px-3 py-1 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="pending">Pending</option>
-              <option value="active">Active</option>
-              <option value="resolved">Resolved</option>
-            </select>
+            {/* Status Display */}
+            <span className={`px-3 py-1 text-xs rounded-full font-medium ${
+              session.status === 'active' ? 'bg-green-500/20 text-green-400' :
+              session.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+              session.status === 'resolved' ? 'bg-blue-500/20 text-blue-400' :
+              'bg-gray-500/20 text-gray-400'
+            }`}>
+              {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+            </span>
 
-            {/* Close Conversation Button */}
+            {/* Action Buttons */}
+            <button
+              onClick={markAsResolved}
+              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors flex items-center gap-1"
+              title="Mark as Resolved"
+              disabled={session.status === 'resolved'}
+            >
+              <CheckCircle size={14} />
+              Resolved
+            </button>
+
+            <button
+              onClick={markAsNotResolved}
+              className="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm rounded transition-colors flex items-center gap-1"
+              title="Mark as Not Resolved (Reopen)"
+              disabled={session.status === 'active'}
+            >
+              <AlertCircle size={14} />
+              Not Resolved
+            </button>
+
             <button
               onClick={closeConversation}
               className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors flex items-center gap-1"
-              title="Close & Resolve Conversation"
+              title="Close Conversation (Hide from Dashboard)"
             >
-              <CheckCircle size={14} />
+              <XCircle size={14} />
               Close
             </button>
 

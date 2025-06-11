@@ -259,11 +259,7 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
               metadata: { message_type: 'system_close' }
             }])
 
-            // Clear session data after showing message
-            setTimeout(() => {
-              endChatSession()
-              setIsOpen(false)
-            }, 5000) // Show message for 5 seconds then close
+            // Keep session open - client can continue if needed
           }
         })
         .on('postgres_changes', {
@@ -667,6 +663,10 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                               className={`max-w-[80%] rounded-3xl px-4 py-3 ${
                                 msg.metadata?.message_type === 'system_close'
                                   ? 'bg-green-600 text-white shadow-lg border-2 border-green-400'
+                                  : msg.metadata?.message_type === 'system_resolved'
+                                  ? 'bg-blue-600 text-white shadow-lg border-2 border-blue-400'
+                                  : msg.metadata?.message_type === 'system_reopened'
+                                  ? 'bg-orange-600 text-white shadow-lg border-2 border-orange-400'
                                   : msg.is_user
                                   ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg'
                                   : 'bg-gray-700 text-white shadow-md'
@@ -764,18 +764,32 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                         <div ref={messagesEndRef} />
                       </div>
 
-                      {/* Chat Input */}
+                      {/* Chat Input - Always available */}
                       {chatSession?.status === 'resolved' ? (
                         <div className="p-4 bg-gray-900 border-t border-gray-700">
-                          <div className="text-center text-gray-400 text-sm">
-                            <p className="mb-2">✅ This conversation has been resolved by our support team.</p>
-                            <button
-                              onClick={endChatSession}
-                              className="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors text-sm"
-                            >
-                              Start New Conversation
-                            </button>
+                          <div className="text-center text-gray-400 text-sm mb-3">
+                            <p>✅ This conversation has been marked as resolved by our support team.</p>
+                            <p className="text-xs mt-1">You can still continue the conversation if needed.</p>
                           </div>
+                          <form onSubmit={sendMessage} className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={newMessage}
+                              onChange={(e) => setNewMessage(e.target.value)}
+                              placeholder="Continue conversation..."
+                              className="flex-1 bg-gray-800 border border-gray-700 rounded-full px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              disabled={isLoading}
+                            />
+                            <motion.button
+                              type="submit"
+                              className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
+                              disabled={isLoading || !newMessage.trim()}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <Send size={18} />
+                            </motion.button>
+                          </form>
                         </div>
                       ) : (
                         <form onSubmit={sendMessage} className="p-4 bg-gray-900 border-t border-gray-700">

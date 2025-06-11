@@ -75,17 +75,26 @@ const ChatDashboard = () => {
   }, [])
 
   // Fetch chat sessions
-  const fetchSessions = async () => {
+  const fetchSessions = async (includeClosedSessions = false) => {
     try {
       setLoading(true)
-      
-      // Get sessions with message counts
-      const { data: sessionsData, error: sessionsError } = await supabase
+
+      // Build query
+      let query = supabase
         .from('chat_sessions')
         .select(`
           *,
           chat_messages(count)
         `)
+
+      // Exclude closed sessions by default unless specifically requested
+      if (!includeClosedSessions && statusFilter !== 'closed') {
+        query = query.neq('status', 'closed')
+      } else if (statusFilter === 'closed') {
+        query = query.eq('status', 'closed')
+      }
+
+      const { data: sessionsData, error: sessionsError } = await query
         .order('updated_at', { ascending: false })
 
       if (sessionsError) throw sessionsError
@@ -190,6 +199,13 @@ const ChatDashboard = () => {
       messagesSubscription.unsubscribe()
     }
   }, [isAuthenticated])
+
+  // Refetch sessions when status filter changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSessions()
+    }
+  }, [statusFilter])
 
   // Filter sessions based on search and status
   const filteredSessions = sessions.filter(session => {
@@ -304,6 +320,7 @@ const ChatDashboard = () => {
               <option value="active">Active</option>
               <option value="pending">Pending</option>
               <option value="resolved">Resolved</option>
+              <option value="closed">Closed</option>
             </select>
           </div>
 
