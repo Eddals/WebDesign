@@ -10,7 +10,7 @@ const Footer = () => {
     <footer className="w-full bg-background/80 backdrop-blur-sm border-t border-white/10">
       <div className="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
             <motion.div 
@@ -62,17 +62,17 @@ const Footer = () => {
                 />
               </motion.div>
               <h3 className="text-xl font-bold bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent">
-                Devtone
+                DevTone
               </h3>
             </motion.div>
-            <motion.p 
+            <motion.p
               className="text-white/70"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              Professional web development services tailored to your needs.
+              Professional web development agency delivering exceptional digital solutions that drive business growth and success.
             </motion.p>
           </div>
 
@@ -97,10 +97,44 @@ const Footer = () => {
             <h4 className="text-white font-semibold">Services</h4>
             <nav className="flex flex-col space-y-2">
               <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
-                Web Development
+                Business Websites
               </Link>
-              <Link to="/seo" className="text-white/70 hover:text-purple-400 transition-colors">
-                SEO Services
+              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+                Landing Pages
+              </Link>
+              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+                E-Commerce Stores
+              </Link>
+              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+                Website Redesign
+              </Link>
+              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+                SEO Optimization
+              </Link>
+              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+                Mobile Applications
+              </Link>
+            </nav>
+          </div>
+
+          {/* More Services */}
+          <div className="space-y-4">
+            <h4 className="text-white font-semibold">More Services</h4>
+            <nav className="flex flex-col space-y-2">
+              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+                Web Applications
+              </Link>
+              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+                Performance Optimization
+              </Link>
+              <Link to="/services/digital-marketing" className="text-white/70 hover:text-purple-400 transition-colors">
+                Digital Marketing
+              </Link>
+              <Link to="/services/social-media-marketing" className="text-white/70 hover:text-purple-400 transition-colors">
+                Social Media Marketing
+              </Link>
+              <Link to="/estimate" className="text-white/70 hover:text-purple-400 transition-colors">
+                Get Estimate
               </Link>
               <Link to="/contact" className="text-white/70 hover:text-purple-400 transition-colors">
                 Consultation
@@ -109,33 +143,41 @@ const Footer = () => {
           </div>
 
           {/* Social Links */}
-          <div className="space-y-4">
+          <div className="space-y-4 md:col-span-2 lg:col-span-1">
             <h4 className="text-white font-semibold">Connect</h4>
             <div className="flex space-x-4">
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/devtone-agency"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-purple-400 transition-colors"
+                aria-label="GitHub"
               >
                 <Github size={24} />
               </a>
               <a
-                href="https://linkedin.com/in/yourusername"
+                href="https://linkedin.com/company/devtone-agency"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-purple-400 transition-colors"
+                aria-label="LinkedIn"
               >
                 <Linkedin size={24} />
               </a>
               <a
-                href="https://instagram.com/yourusername"
+                href="https://instagram.com/devtone.agency"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-purple-400 transition-colors"
+                aria-label="Instagram"
               >
                 <Instagram size={24} />
               </a>
+            </div>
+            <div className="mt-4">
+              <Link to="/contact" className="text-white/70 hover:text-purple-400 transition-colors text-sm">
+                hello@devtone.agency
+              </Link>
             </div>
           </div>
         </div>

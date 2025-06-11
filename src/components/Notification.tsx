@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, FileText, Clock } from "lucide-react";
-
-interface EstimateRequest {
-  name: string;
-  country: string;
-  countryCode: string;
-  timeAgo: string;
-}
+import { getRecentEstimates, EstimateNotification } from "@/lib/notifications";
 
 /**
  * Notification
@@ -19,73 +13,25 @@ interface EstimateRequest {
  * @returns {JSX.Element} The notification component.
  */
 const Notification = () => {
-  const [notification, setNotification] = useState<EstimateRequest | null>(null);
+  const [notification, setNotification] = useState<EstimateNotification | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [estimateRequests, setEstimateRequests] = useState<EstimateNotification[]>([]);
 
-  const estimateRequests: EstimateRequest[] = [
-    {
-      name: "John Smith",
-      country: "United States",
-      countryCode: "us",
-      timeAgo: "2 minutes ago"
-    },
-    {
-      name: "Emma Wilson",
-      country: "United Kingdom",
-      countryCode: "gb",
-      timeAgo: "5 minutes ago"
-    },
-    {
-      name: "Carlos Rodriguez",
-      country: "Spain",
-      countryCode: "es",
-      timeAgo: "8 minutes ago"
-    },
-    {
-      name: "Sophie Dubois",
-      country: "France",
-      countryCode: "fr",
-      timeAgo: "12 minutes ago"
-    },
-    {
-      name: "Marco Rossi",
-      country: "Italy",
-      countryCode: "it",
-      timeAgo: "15 minutes ago"
-    },
-    {
-      name: "Anna Schmidt",
-      country: "Germany",
-      countryCode: "de",
-      timeAgo: "18 minutes ago"
-    },
-    {
-      name: "Hiroshi Tanaka",
-      country: "Japan",
-      countryCode: "jp",
-      timeAgo: "22 minutes ago"
-    },
-    {
-      name: "Maria Silva",
-      country: "Brazil",
-      countryCode: "br",
-      timeAgo: "25 minutes ago"
-    },
-    {
-      name: "Ahmed Hassan",
-      country: "Egypt",
-      countryCode: "eg",
-      timeAgo: "30 minutes ago"
-    },
-    {
-      name: "Olivia Chen",
-      country: "Australia",
-      countryCode: "au",
-      timeAgo: "35 minutes ago"
-    }
-  ];
+  // Load estimates from database on component mount
+  useEffect(() => {
+    const loadEstimates = async () => {
+      const estimates = await getRecentEstimates();
+      setEstimateRequests(estimates);
+    };
+    loadEstimates();
+  }, []);
+
+  // No fallback data - only show real database submissions
 
   useEffect(() => {
+    // Only show real database data - no fallback for authentic notifications
+    if (estimateRequests.length === 0) return;
+
     // Show first notification after a random time between 5-15 seconds
     const initialDelay = Math.floor(Math.random() * 10000) + 5000;
     const initialTimer = setTimeout(() => {
@@ -118,7 +64,7 @@ const Notification = () => {
       clearTimeout(initialTimer);
       clearInterval(interval);
     };
-  }, [isVisible]);
+  }, [isVisible, estimateRequests]);
 
   return (
     <AnimatePresence>
@@ -143,11 +89,7 @@ const Notification = () => {
             <div className="flex items-start gap-4">
               <div className="relative flex-shrink-0">
                 <div className="w-12 h-12 rounded-full bg-purple-600/50 flex items-center justify-center">
-                  <img
-                    src={`https://flagcdn.com/w80/${notification.countryCode.toLowerCase()}.png`}
-                    alt={`${notification.country} flag`}
-                    className="w-6 h-6 object-cover rounded-sm"
-                  />
+                  <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-0.5">
                   <FileText className="w-4 h-4 text-white" />
@@ -174,6 +116,10 @@ const Notification = () => {
                 <p className="text-sm text-white/90">
                   from <span className="font-medium">{notification.country}</span> just requested an{" "}
                   <span className="text-purple-300 font-semibold">estimate</span>
+                </p>
+
+                <p className="text-xs text-purple-200 mt-1">
+                  for their <span className="font-medium text-purple-300">{notification.industry}</span> business
                 </p>
 
                 <div className="mt-2 pt-2 border-t border-purple-500/30 flex items-center justify-between">

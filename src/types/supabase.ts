@@ -14,70 +14,91 @@ export interface Database {
           id: string
           created_at: string
           updated_at: string
+          // Personal Information
           full_name: string
           email: string
           phone: string | null
-          business_name: string | null
           company: string | null
+          country: string | null
+          industry: string | null
+          // Project Details
           project_type: string | null
-          website_goal: string | null
-          description: string | null
           budget_range: string | null
           timeline: string | null
-          selected_package: string | null
-          payment_model: string | null
-          subscription_plan: string | null
+          features: Json | null
+          description: string | null
+          // System Fields
           status: string
+          priority: number | null
+          assigned_to: string | null
           notes: string | null
-          estimated_budget: number | null
-          pages_needed: string | null
-          domain_hosting_status: string | null
+          estimated_cost: number | null
+          quoted_amount: number | null
+          // Metadata
+          source: string | null
+          ip_address: string | null
+          user_agent: string | null
+          referrer: string | null
         }
         Insert: {
           id?: string
           created_at?: string
           updated_at?: string
+          // Personal Information
           full_name: string
           email: string
           phone?: string | null
-          business_name?: string | null
           company?: string | null
+          country?: string | null
+          industry?: string | null
+          // Project Details
           project_type?: string | null
-          website_goal?: string | null
-          description?: string | null
           budget_range?: string | null
           timeline?: string | null
-          selected_package?: string | null
-          payment_model?: string | null
-          subscription_plan?: string | null
+          features?: Json | null
+          description?: string | null
+          // System Fields
           status?: string
+          priority?: number | null
+          assigned_to?: string | null
           notes?: string | null
-          estimated_budget?: number | null
-          pages_needed?: string | null
-          domain_hosting_status?: string | null
+          estimated_cost?: number | null
+          quoted_amount?: number | null
+          // Metadata
+          source?: string | null
+          ip_address?: string | null
+          user_agent?: string | null
+          referrer?: string | null
         }
         Update: {
           id?: string
           created_at?: string
           updated_at?: string
+          // Personal Information
           full_name?: string
           email?: string
           phone?: string | null
-          business_name?: string | null
           company?: string | null
+          country?: string | null
+          industry?: string | null
+          // Project Details
           project_type?: string | null
-          website_goal?: string | null
-          description?: string | null
           budget_range?: string | null
           timeline?: string | null
-          selected_package?: string | null
-          payment_model?: string | null
-          subscription_plan?: string | null
+          features?: Json | null
+          description?: string | null
+          // System Fields
           status?: string
+          priority?: number | null
+          assigned_to?: string | null
           notes?: string | null
-          estimated_budget?: number | null
-          pages_needed?: string | null
-          domain_hosting_status?: string | null
+          estimated_cost?: number | null
+          quoted_amount?: number | null
+          // Metadata
+          source?: string | null
+          ip_address?: string | null
+          user_agent?: string | null
+          referrer?: string | null
         }
       }
       contacts: {

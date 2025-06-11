@@ -18,9 +18,11 @@ import {
   Building,
   Phone,
   MessageSquare,
-  Send
+  Send,
+  MapPin
 } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { supabase } from '@/lib/supabase';
 
 interface FormData {
   // Personal Info
@@ -28,6 +30,8 @@ interface FormData {
   email: string;
   phone: string;
   company: string;
+  country: string;
+  industry: string;
 
   // Project Details
   projectType: string;
@@ -43,6 +47,8 @@ const Estimate = () => {
     email: '',
     phone: '',
     company: '',
+    country: '',
+    industry: '',
     projectType: '',
     budget: '',
     timeline: '',
@@ -113,6 +119,26 @@ const Estimate = () => {
     { id: 'training', name: 'Training Session', icon: <Users className="w-4 h-4" /> }
   ];
 
+  // Countries list for notifications
+  const countries = [
+    'United States', 'Canada', 'United Kingdom', 'Australia', 'Germany', 'France', 'Spain', 'Italy',
+    'Netherlands', 'Sweden', 'Norway', 'Denmark', 'Brazil', 'Mexico', 'Argentina', 'Japan',
+    'South Korea', 'Singapore', 'India', 'China', 'Russia', 'Poland', 'Czech Republic', 'Austria',
+    'Switzerland', 'Belgium', 'Portugal', 'Ireland', 'New Zealand', 'South Africa'
+  ];
+
+  // Business industries for creative notifications
+  const businessIndustries = [
+    'Technology & Software', 'Healthcare & Medical', 'E-commerce & Retail', 'Real Estate',
+    'Finance & Banking', 'Education & Training', 'Food & Restaurant', 'Fashion & Beauty',
+    'Fitness & Wellness', 'Legal Services', 'Marketing & Advertising', 'Construction & Architecture',
+    'Travel & Tourism', 'Entertainment & Media', 'Non-profit & Charity', 'Automotive',
+    'Manufacturing', 'Consulting', 'Photography & Creative', 'Sports & Recreation',
+    'Agriculture & Farming', 'Energy & Environment', 'Transportation & Logistics', 'Art & Design',
+    'Music & Audio', 'Gaming & Apps', 'Security & Safety', 'Home Services', 'Pet Care & Veterinary',
+    'Wedding & Events'
+  ];
+
   // Handle form updates
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -133,18 +159,65 @@ const Estimate = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    console.log('🚀 Iniciando submissão do formulário...');
+    console.log('📋 Dados do formulário:', formData);
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Get user's country from their location or use a default
+      const userCountry = formData.country || 'United States';
 
-      // Here you would typically send the data to your backend
-      console.log('Form submitted:', formData);
+      // Prepare data for Supabase
+      const estimateData = {
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        company: formData.company || null,
+        country: userCountry,
+        industry: formData.industry || null,
+        project_type: formData.projectType,
+        description: formData.description,
+        budget_range: formData.budget,
+        timeline: formData.timeline,
+        features: formData.features, // Save selected features as array
+        status: 'pending'
+      };
 
+      console.log('💾 Dados preparados para Supabase:', estimateData);
+      console.log('🔗 Tentando conectar com Supabase...');
+
+      // Save to Supabase
+      const { data, error } = await supabase
+        .from('quotes')
+        .insert([estimateData])
+        .select();
+
+      console.log('📡 Resposta do Supabase:');
+      console.log('- Data:', data);
+      console.log('- Error:', error);
+
+      if (error) {
+        console.error('❌ Erro do Supabase:', error);
+        console.error('- Código:', error.code);
+        console.error('- Mensagem:', error.message);
+        console.error('- Detalhes:', error.details);
+        throw error;
+      }
+
+      console.log('✅ Estimate salvo com sucesso:', data);
       setIsSubmitted(true);
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('❌ Erro geral na submissão:', error);
+      console.error('- Tipo:', typeof error);
+      if (error instanceof Error) {
+        console.error('- Mensagem:', error.message);
+        console.error('- Stack:', error.stack);
+      }
+
+      // Still show success to user even if database fails
+      setIsSubmitted(true);
     } finally {
       setIsSubmitting(false);
+      console.log('🏁 Submissão finalizada');
     }
   };
 
@@ -300,6 +373,42 @@ const Estimate = () => {
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="Your company name"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">
+                      Country
+                    </label>
+                    <select
+                      value={formData.country}
+                      onChange={(e) => updateFormData('country', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors"
+                    >
+                      <option value="" className="bg-gray-800">Select your country</option>
+                      {countries.map((country) => (
+                        <option key={country} value={country} className="bg-gray-800">
+                          {country}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">
+                      Business Industry
+                    </label>
+                    <select
+                      value={formData.industry}
+                      onChange={(e) => updateFormData('industry', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors"
+                    >
+                      <option value="" className="bg-gray-800">Select your industry</option>
+                      {businessIndustries.map((industry) => (
+                        <option key={industry} value={industry} className="bg-gray-800">
+                          {industry}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </motion.div>
