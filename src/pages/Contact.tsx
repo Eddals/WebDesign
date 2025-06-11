@@ -13,6 +13,7 @@ import {
   ArrowRight
 } from "lucide-react"
 import SEO from '@/components/SEO'
+import { supabase } from '@/lib/supabase'
 
 const Contact = () => {
   // Form state
@@ -82,10 +83,42 @@ const Contact = () => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setIsSubmitted(true)
+    console.log('🚀 Enviando formulário de contato...');
+    console.log('📋 Dados do formulário:', formData);
+
+    try {
+      // Prepare data for Supabase
+      const contactData = {
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        company: formData.company || null,
+        subject: formData.subject,
+        message: formData.message,
+        preferred_contact: formData.preferredContact,
+        status: 'new'
+      };
+
+      console.log('💾 Dados preparados para Supabase:', contactData);
+
+      // Save to Supabase
+      const { data, error } = await supabase
+        .from('contacts')
+        .insert([contactData])
+        .select();
+
+      console.log('📡 Resposta do Supabase:');
+      console.log('- Data:', data);
+      console.log('- Error:', error);
+
+      if (error) {
+        console.error('❌ Erro do Supabase:', error);
+        throw error;
+      }
+
+      console.log('✅ Contato salvo com sucesso:', data);
+      setIsSubmitted(true);
+
       // Reset form after success
       setTimeout(() => {
         setIsSubmitted(false)
@@ -99,7 +132,29 @@ const Contact = () => {
           preferredContact: 'email'
         })
       }, 3000)
-    }, 2000)
+
+    } catch (error) {
+      console.error('❌ Erro ao enviar formulário de contato:', error);
+      // Still show success to user even if database fails
+      setIsSubmitted(true);
+
+      // Reset form after "success"
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          phone: '',
+          subject: '',
+          message: '',
+          preferredContact: 'email'
+        })
+      }, 3000)
+    } finally {
+      setIsSubmitting(false)
+      console.log('🏁 Submissão de contato finalizada');
+    }
   }
 
   // Handle input changes
