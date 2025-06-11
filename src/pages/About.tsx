@@ -255,7 +255,7 @@ const About = () => {
                     <Mail className="text-purple-400" size={24} />
                     <h3 className="text-xl font-semibold text-white">Contact</h3>
                   </div>
-                  <p className="text-white/80">hello@devtone.agency</p>
+                  <p className="text-white/80">support@devtone.agency</p>
                 </motion.div>
 
                 <motion.div
