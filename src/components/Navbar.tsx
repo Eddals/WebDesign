@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Menu, X, Home, Briefcase, Settings, User, Phone, Pen, Calculator, ChevronDown, Globe, Share2, Palette, Target, Zap, DollarSign } from "lucide-react"
+import { Menu, X, Home, Briefcase, Settings, User, Phone, Pen, Calculator, ChevronDown, Globe, Share2, Palette, Target, Zap, DollarSign, FolderOpen } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const navItems = [
   { href: "/", label: "Home", icon: <Home size={20} /> },
   { href: "/about", label: "About Me", icon: <User size={20} /> },
-  { 
-    href: "/services", 
-    label: "Services", 
+  {
+    href: "/services",
+    label: "Services",
     icon: <Briefcase size={20} />,
     hasDropdown: true,
     dropdownItems: [
@@ -22,6 +22,7 @@ const navItems = [
       { href: "/seo", label: "SEO Services", icon: <Settings size={16} /> },
     ]
   },
+  { href: "/portfolio", label: "Portfolio", icon: <FolderOpen size={20} /> },
   { href: "/pricing", label: "Pricing", icon: <DollarSign size={20} /> },
   { href: "/estimate", label: "Get Estimate", icon: <Calculator size={20} /> },
   { href: "/faq", label: "FAQ", icon: <Pen size={20} /> },

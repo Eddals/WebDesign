@@ -213,7 +213,7 @@ const SocialMediaMarketing = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/portfolio">
                 <motion.button
                   className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
                   whileHover={{ scale: 1.05 }}

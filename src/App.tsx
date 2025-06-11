@@ -10,6 +10,7 @@ import Services from './pages/Services';
 import Seo from './pages/SEO';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Portfolio from './pages/Portfolio';
 import Pricing from './pages/Pricing';
 import Estimate from './pages/Estimate';
 import Success from './pages/Success';
@@ -45,6 +46,7 @@ export default function App() {
               <Route path="/seo" element={<Seo />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/estimate" element={<Estimate />} />
               <Route path="/success" element={<Success />} />
