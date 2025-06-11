@@ -8,6 +8,14 @@ export interface EstimateNotification {
   id: string;
 }
 
+interface DatabaseEstimate {
+  id: string;
+  full_name: string;
+  country: string | null;
+  industry: string | null;
+  created_at: string;
+}
+
 // Function to get recent estimates for notifications
 export async function getRecentEstimates(): Promise<EstimateNotification[]> {
   try {
@@ -42,12 +50,12 @@ export async function getRecentEstimates(): Promise<EstimateNotification[]> {
 
     // Only return estimates that have both country and industry
     const validEstimates = data
-      .filter(estimate => estimate.country && estimate.industry)
-      .map(estimate => ({
+      .filter((estimate: DatabaseEstimate) => estimate.country && estimate.industry)
+      .map((estimate: DatabaseEstimate) => ({
         id: estimate.id,
         name: estimate.full_name,
-        country: estimate.country,
-        industry: estimate.industry,
+        country: estimate.country!,
+        industry: estimate.industry!,
         timeAgo: getTimeAgo(estimate.created_at)
       }));
 
