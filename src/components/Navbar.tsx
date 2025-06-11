@@ -66,9 +66,9 @@ export default function Navbar() {
       <nav className="container mx-auto px-4">
         
         <div className="flex items-center justify-between h-20">
-          <Link 
+          <Link
             to="/"
-            className="text-2xl font-bold flex items-center gap-3 text-white group"
+            className="flex items-center group"
           >
             <motion.div
               className="relative"
@@ -78,10 +78,10 @@ export default function Navbar() {
                 y: [0, -2, 0],
               }}
             >
-              <motion.img 
-                src="/logo.png" 
-                alt="Devtone Logo" 
-                className="w-10 h-10 object-contain filter drop-shadow-lg"
+              <motion.img
+                src="https://i.imgur.com/N2muQIS.png"
+                alt="DevTone Logo"
+                className="w-16 h-16 md:w-20 md:h-20 object-contain filter drop-shadow-lg"
                 initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
                 animate={{ 
                   opacity: 1, 
@@ -99,7 +99,7 @@ export default function Navbar() {
                 }}
               />
               <motion.div
-                className="absolute inset-0 bg-purple-500/20 rounded-full blur-md"
+                className="absolute inset-0 bg-purple-500/20 blur-md"
                 initial={{ opacity: 0 }}
                 whileHover={{ opacity: 1 }}
                 animate={{ 
@@ -115,14 +115,7 @@ export default function Navbar() {
                 }}
               />
             </motion.div>
-            <motion.span 
-              className="bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              Devtone
-            </motion.span>
+
           </Link>
 
           <div className="hidden md:flex items-center gap-4">

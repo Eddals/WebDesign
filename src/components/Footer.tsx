@@ -24,20 +24,28 @@ const Footer = () => {
                 className="relative"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                animate={{
+                  y: [0, -2, 0],
+                }}
               >
-                <motion.img 
-                  src="/logo.png" 
-                  alt="Devtone Logo" 
-                  className="w-8 h-8 object-contain filter drop-shadow-lg"
+                <motion.img
+                  src="https://i.imgur.com/N2muQIS.png"
+                  alt="DevTone Logo"
+                  className="w-14 h-14 md:w-16 md:h-16 object-contain filter drop-shadow-lg"
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   animate={{ 
                     scale: [1, 1.05, 1],
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 0.5,
                     scale: {
                       duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    },
+                    y: {
+                      duration: 3,
                       repeat: Infinity,
                       ease: "easeInOut"
                     }
@@ -45,7 +53,7 @@ const Footer = () => {
                   viewport={{ once: true }}
                 />
                 <motion.div
-                  className="absolute inset-0 bg-purple-500/20 rounded-full blur-sm"
+                  className="absolute inset-0 bg-purple-500/20 blur-sm"
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
                   animate={{ 
@@ -61,9 +69,7 @@ const Footer = () => {
                   }}
                 />
               </motion.div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent">
-                DevTone
-              </h3>
+
             </motion.div>
             <motion.p
               className="text-white/70"
@@ -196,15 +202,15 @@ const Footer = () => {
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <motion.img 
-                src="/logo.png" 
-                alt="Devtone Logo" 
-                className="w-5 h-5 object-contain filter drop-shadow-sm"
+              <motion.img
+                src="https://i.imgur.com/N2muQIS.png"
+                alt="DevTone Logo"
+                className="w-8 h-8 md:w-10 md:h-10 object-contain filter drop-shadow-sm"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
               />
               <p className="text-white/50 text-sm">
-                © {currentYear} Devtone. All rights reserved.
+                © {currentYear} DevTone. All rights reserved.
               </p>
             </motion.div>
             <div className="flex space-x-6 text-sm">
