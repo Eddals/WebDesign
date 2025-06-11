@@ -13,6 +13,7 @@ import {
   ArrowRight
 } from "lucide-react"
 import SEO from '@/components/SEO'
+import LiveChat from '@/components/LiveChat'
 import { supabase } from '@/lib/supabase'
 
 const Contact = () => {
@@ -37,6 +38,9 @@ const Contact = () => {
   })
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
+
+  // State for chat
+  const [isChatOpen, setIsChatOpen] = useState(false)
 
   // Creative contact methods section
   const contactMethods = [
@@ -63,7 +67,8 @@ const Contact = () => {
       title: 'Live Chat',
       description: 'Chat with our support team',
       details: 'Start a conversation',
-      link: '#',
+      action: () => setIsChatOpen(true),
+      isButton: true,
       color: 'from-purple-600 to-purple-800',
       response: 'Available Mon-Fri 12am to 6pm EST'
     },
@@ -218,6 +223,9 @@ const Contact = () => {
 
   return (
     <>
+      {/* Live Chat Component */}
+      <LiveChat isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
+      
       <SEO
         title="Contact DevTone - Get Professional Web Development Support"
         description="Contact DevTone for expert web development services, technical support, and project consultations. We're here to help bring your digital vision to life. Get in touch today!"
@@ -309,15 +317,27 @@ const Contact = () => {
                   <div className="text-purple-400 font-semibold mb-2">{method.details}</div>
                   <div className="text-xs text-white">{method.response}</div>
 
-                  <motion.a
-                    href={method.link}
-                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Connect
-                    <ArrowRight className="w-3 h-3" />
-                  </motion.a>
+                  {method.isButton ? (
+                    <motion.button
+                      onClick={method.action}
+                      className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Connect
+                      <ArrowRight className="w-3 h-3" />
+                    </motion.button>
+                  ) : (
+                    <motion.a
+                      href={method.link}
+                      className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Connect
+                      <ArrowRight className="w-3 h-3" />
+                    </motion.a>
+                  )}
                 </div>
               </motion.div>
             ))}

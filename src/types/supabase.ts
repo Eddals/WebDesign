@@ -101,6 +101,82 @@ export interface Database {
           referrer?: string | null
         }
       }
+      chat_messages: {
+        Row: {
+          id: string
+          created_at: string
+          session_id: string
+          user_name: string
+          user_email: string
+          message: string
+          is_user: boolean
+          is_read: boolean
+          metadata: Json | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          session_id: string
+          user_name: string
+          user_email: string
+          message: string
+          is_user: boolean
+          is_read?: boolean
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          session_id?: string
+          user_name?: string
+          user_email?: string
+          message?: string
+          is_user?: boolean
+          is_read?: boolean
+          metadata?: Json | null
+        }
+      }
+      chat_sessions: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          user_name: string
+          user_email: string
+          user_phone: string | null
+          user_company: string | null
+          inquiry_type: string | null
+          status: string
+          is_active: boolean
+          metadata: Json | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          user_name: string
+          user_email: string
+          user_phone?: string | null
+          user_company?: string | null
+          inquiry_type?: string | null
+          status?: string
+          is_active?: boolean
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          user_name?: string
+          user_email?: string
+          user_phone?: string | null
+          user_company?: string | null
+          inquiry_type?: string | null
+          status?: string
+          is_active?: boolean
+          metadata?: Json | null
+        }
+      }
       contacts: {
         Row: {
           id: string
@@ -160,9 +236,113 @@ export interface Database {
           subject?: string | null
         }
       }
+      chat_agents: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          name: string
+          email: string
+          role: string
+          is_active: boolean
+          is_online: boolean
+          last_seen: string | null
+          max_concurrent_chats: number
+          auto_assign: boolean
+          metadata: Json | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          name: string
+          email: string
+          role?: string
+          is_active?: boolean
+          is_online?: boolean
+          last_seen?: string | null
+          max_concurrent_chats?: number
+          auto_assign?: boolean
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          name?: string
+          email?: string
+          role?: string
+          is_active?: boolean
+          is_online?: boolean
+          last_seen?: string | null
+          max_concurrent_chats?: number
+          auto_assign?: boolean
+          metadata?: Json | null
+        }
+      }
+      chat_assignments: {
+        Row: {
+          id: string
+          created_at: string
+          session_id: string
+          agent_id: string | null
+          status: string
+          assigned_at: string
+          completed_at: string | null
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          session_id: string
+          agent_id?: string | null
+          status?: string
+          assigned_at?: string
+          completed_at?: string | null
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          session_id?: string
+          agent_id?: string | null
+          status?: string
+          assigned_at?: string
+          completed_at?: string | null
+          notes?: string | null
+        }
+      }
     }
     Views: {
-      [_ in never]: never
+      chat_stats: {
+        Row: {
+          total_sessions: number | null
+          active_sessions: number | null
+          pending_sessions: number | null
+          resolved_sessions: number | null
+          today_sessions: number | null
+          week_sessions: number | null
+        }
+      }
+      chat_sessions_with_counts: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          user_name: string
+          user_email: string
+          user_phone: string | null
+          user_company: string | null
+          inquiry_type: string | null
+          status: string
+          is_active: boolean
+          metadata: Json | null
+          total_messages: number | null
+          unread_messages: number | null
+          last_message: string | null
+          last_message_time: string | null
+        }
+      }
     }
     Functions: {
       [_ in never]: never

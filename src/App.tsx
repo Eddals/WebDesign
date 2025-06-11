@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
 import Notification from './components/Notification';
+import LiveChat from './components/LiveChat';
 import Home from "./pages/Home";
 import Services from './pages/Services';
 import Seo from './pages/SEO';
@@ -18,6 +19,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/terms";
 import FAQ from "./pages/faq";
 import NotFound from "./pages/not-found";
+import ChatDashboard from "./pages/ChatDashboard";
 import WebDesign from './pages/services/WebDesign';
 import LandingPage from './pages/services/LandingPage';
 import SocialMediaMarketing from './pages/services/SocialMediaMarketing';
@@ -52,9 +54,11 @@ export default function App() {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/chat-dashboard" element={<ChatDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Notification />
+            <LiveChat />
             <Footer />
           </div>
         </Router>

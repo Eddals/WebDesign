@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom"
-import { Instagram, Linkedin, Github } from "lucide-react"
+import { Instagram, Linkedin, Github, Shield } from "lucide-react"
 import { motion } from "framer-motion"
 
 const Footer = () => {
@@ -142,6 +142,9 @@ const Footer = () => {
               <Link to="/contact" className="text-white/70 hover:text-purple-400 transition-colors">
                 Consultation
               </Link>
+              <Link to="/chat-dashboard" className="text-white/70 hover:text-purple-400 transition-colors">
+                Support Dashboard
+              </Link>
             </nav>
           </div>
 
@@ -216,6 +219,14 @@ const Footer = () => {
               </Link>
               <Link to="/terms" className="text-white/50 hover:text-purple-400 transition-colors">
                 Terms of Service
+              </Link>
+              <Link
+                to="/chat-dashboard"
+                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
+                title="Admin Access"
+              >
+                <Shield size={14} />
+                Admin
               </Link>
             </div>
           </div>
