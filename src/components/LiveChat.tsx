@@ -167,7 +167,7 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
       if (error) throw error
 
       if (data && data.length > 0) {
-        const formattedMessages = data.map(msg => ({
+        const formattedMessages = data.map((msg: any) => ({
           id: msg.id,
           message: msg.message,
           is_user: msg.is_user,
@@ -323,7 +323,7 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
         }, (payload: any) => {
           setChatSession(prev => prev ? { ...prev, ...payload.new } : null)
         })
-        .subscribe((status) => {
+        .subscribe((status: any) => {
           console.log('Subscription status:', status)
 
           if (status === 'SUBSCRIBED') {
@@ -375,7 +375,7 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
           table: 'chat_messages',
           filter: `session_id=eq.${chatSession.id}`
         },
-        (payload) => {
+        (payload: any) => {
           // Only add messages from the agent (not the user's own messages)
           if (!payload.new.is_user) {
             const newMsg = {

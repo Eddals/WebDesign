@@ -131,7 +131,7 @@ const ChatSessionList = ({ sessions, selectedSession, onSelectSession, loading }
   return (
     <div className="overflow-y-auto h-full bg-gray-800">
       {sessions.map((session) => (
-        <motion.div
+        <div
           key={session.id}
           onClick={() => onSelectSession(session)}
           className={`mx-1 my-1 p-2 rounded-lg cursor-pointer transition-colors border ${
@@ -222,7 +222,7 @@ const ChatSessionList = ({ sessions, selectedSession, onSelectSession, loading }
               {session.status}
             </span>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   )

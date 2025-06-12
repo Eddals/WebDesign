@@ -96,7 +96,7 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
           table: 'chat_messages',
           filter: `session_id=eq.${session.id}`
         },
-        (payload) => {
+        (payload: any) => {
           const newMsg = payload.new as ChatMessage
 
           // 🚀 INSTANT ADD - Exactly like your pattern
@@ -121,7 +121,7 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
           table: 'chat_messages',
           filter: `session_id=eq.${session.id}`
         },
-        (payload) => {
+        (payload: any) => {
           // Update message in real-time (for read status, etc.)
           setMessages((prev) => prev.map(msg =>
             msg.id === payload.new.id
@@ -192,8 +192,10 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
     const tempMessageId = `agent-temp-${Date.now()}-${Math.random()}`
 
     // 🚀 INSTANT UI UPDATE - Add message immediately to dashboard
-    const instantMessage = {
+    const instantMessage: ChatMessage = {
       id: tempMessageId,
+      session_id: session.id,
+      user_email: 'support@devtone.agency',
       message: messageContent,
       is_user: false,
       user_name: agentName,

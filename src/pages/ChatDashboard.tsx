@@ -108,7 +108,7 @@ const ChatDashboard = () => {
 
       // Get unread message counts and last messages for each session
       const sessionsWithDetails = await Promise.all(
-        (sessionsData || []).map(async (session) => {
+        (sessionsData || []).map(async (session: any) => {
           // Get unread count
           const { count: unreadCount } = await supabase
             .from('chat_messages')
@@ -152,9 +152,9 @@ const ChatDashboard = () => {
 
       if (allSessions) {
         const total = allSessions.length
-        const active = allSessions.filter(s => s.status === 'active').length
-        const pending = allSessions.filter(s => s.status === 'pending').length
-        const resolved = allSessions.filter(s => s.status === 'resolved').length
+        const active = allSessions.filter((s: any) => s.status === 'active').length
+        const pending = allSessions.filter((s: any) => s.status === 'pending').length
+        const resolved = allSessions.filter((s: any) => s.status === 'resolved').length
 
         setStats({
           total_sessions: total,
@@ -213,7 +213,7 @@ const ChatDashboard = () => {
           fetchSessions()
           fetchStats()
         })
-        .subscribe((status) => {
+        .subscribe((status: any) => {
           console.log('Sessions subscription status:', status)
           if (status === 'SUBSCRIBED') {
             setConnectionStatus('connected')
@@ -233,7 +233,7 @@ const ChatDashboard = () => {
         }, () => {
           fetchSessions() // Update unread counts
         })
-        .subscribe((status) => {
+        .subscribe((status: any) => {
           console.log('Messages subscription status:', status)
           if (status !== 'SUBSCRIBED' && status === 'CHANNEL_ERROR') {
             if (!usePolling) startPolling()
