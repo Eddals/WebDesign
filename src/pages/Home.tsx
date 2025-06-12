@@ -492,7 +492,7 @@ const Home = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  I create beautiful, fast, and SEO-friendly websites that help your business thrive. 
+                  We create beautiful, fast, and SEO-friendly websites that help your business thrive. 
                   Let's bring your <span className="text-purple-300">ideas</span> to <span className="text-purple-300">life</span>!
                 </motion.p>
                 
