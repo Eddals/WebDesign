@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { 
   MessageSquare, 
@@ -54,6 +54,13 @@ const ChatDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('all')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [authPassword, setAuthPassword] = useState('')
+
+  // Real-time connection management
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'error'>('disconnected')
+  const [usePolling, setUsePolling] = useState(false)
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const subscriptionsRef = useRef<any[]>([])
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Simple authentication for demo purposes
   const handleAuth = (e: React.FormEvent) => {
@@ -162,41 +169,129 @@ const ChatDashboard = () => {
     }
   }
 
-  // Set up real-time subscriptions
+  // Start polling fallback
+  const startPolling = () => {
+    if (pollingIntervalRef.current) return
+
+    console.log('Dashboard: Starting polling fallback...')
+    setUsePolling(true)
+    setConnectionStatus('connected')
+
+    pollingIntervalRef.current = setInterval(() => {
+      fetchSessions()
+      fetchStats()
+    }, 30000) // 30 seconds
+  }
+
+  // Stop polling
+  const stopPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current)
+      pollingIntervalRef.current = null
+      setUsePolling(false)
+    }
+  }
+
+  // Setup enhanced real-time subscriptions with fallback
+  const setupRealTimeSubscriptions = () => {
+    // Clean up existing subscriptions
+    subscriptionsRef.current.forEach(sub => sub.unsubscribe())
+    subscriptionsRef.current = []
+    stopPolling()
+
+    try {
+      setConnectionStatus('connected')
+
+      // Subscribe to session changes
+      const sessionsSubscription = supabase
+        .channel('dashboard_sessions_changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'chat_sessions'
+        }, () => {
+          fetchSessions()
+          fetchStats()
+        })
+        .subscribe((status) => {
+          console.log('Sessions subscription status:', status)
+          if (status === 'SUBSCRIBED') {
+            setConnectionStatus('connected')
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            setConnectionStatus('error')
+            startPolling()
+          }
+        })
+
+      // Subscribe to message changes
+      const messagesSubscription = supabase
+        .channel('dashboard_messages_changes')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages'
+        }, () => {
+          fetchSessions() // Update unread counts
+        })
+        .subscribe((status) => {
+          console.log('Messages subscription status:', status)
+          if (status !== 'SUBSCRIBED' && status === 'CHANNEL_ERROR') {
+            if (!usePolling) startPolling()
+          }
+        })
+
+      subscriptionsRef.current = [sessionsSubscription, messagesSubscription]
+
+      // Fallback to polling if real-time doesn't work within 10 seconds
+      setTimeout(() => {
+        if (connectionStatus !== 'connected') {
+          console.log('Dashboard: Real-time timeout, starting polling')
+          startPolling()
+        }
+      }, 10000)
+
+    } catch (error) {
+      console.error('Error setting up real-time subscriptions:', error)
+      setConnectionStatus('error')
+      startPolling()
+    }
+  }
+
+  // Set up simple and fast real-time subscriptions
   useEffect(() => {
     if (!isAuthenticated) return
 
     fetchSessions()
     fetchStats()
 
-    // Subscribe to new sessions
-    const sessionsSubscription = supabase
-      .channel('chat_sessions_changes')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'chat_sessions'
-      }, () => {
-        fetchSessions()
-        fetchStats()
-      })
+    // 🚀 SIMPLE AND FAST REAL-TIME - Like your example
+    const sessionsChannel = supabase
+      .channel('dashboard-sessions')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'chat_sessions' },
+        () => {
+          fetchSessions()
+          fetchStats()
+        }
+      )
       .subscribe()
 
-    // Subscribe to new messages
-    const messagesSubscription = supabase
-      .channel('chat_messages_changes')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'chat_messages'
-      }, () => {
-        fetchSessions()
-      })
+    const messagesChannel = supabase
+      .channel('dashboard-messages')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'chat_messages' },
+        () => {
+          fetchSessions() // Update unread counts
+        }
+      )
       .subscribe()
 
     return () => {
-      sessionsSubscription.unsubscribe()
-      messagesSubscription.unsubscribe()
+      // 🚀 SIMPLE CLEANUP - Like your example
+      supabase.removeChannel(sessionsChannel)
+      supabase.removeChannel(messagesChannel)
     }
   }, [isAuthenticated])
 
@@ -254,26 +349,39 @@ const ChatDashboard = () => {
 
   return (
     <div className="fixed inset-0 bg-gray-900 z-50 overflow-hidden">
-      {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 px-6 py-4 h-20">
+      {/* Header - Mobile Responsive */}
+      <div className="bg-gray-800 border-b border-gray-700 px-3 sm:px-6 py-3 sm:py-4 h-16 sm:h-20">
         <div className="flex items-center justify-between h-full">
-          <div className="flex items-center">
-            <MessageSquare className="text-purple-500 mr-3" size={32} />
-            <div>
-              <h1 className="text-2xl font-bold text-white">DevTone Chat Dashboard</h1>
-              <p className="text-gray-400">Manage customer support conversations</p>
+          <div className="flex items-center min-w-0 flex-1">
+            <MessageSquare className="text-purple-500 mr-2 sm:mr-3 flex-shrink-0" size={24} />
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold text-white truncate">DevTone Chat Dashboard</h1>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <p className="text-gray-400 text-xs sm:text-sm truncate">Manage customer support conversations</p>
+                {/* Connection Status Indicator */}
+                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                  <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
+                    connectionStatus === 'connected' ? 'bg-green-400' :
+                    connectionStatus === 'error' ? 'bg-orange-400' :
+                    'bg-red-400'
+                  }`}></div>
+                  <span className="text-xs text-gray-500 hidden sm:inline">
+                    {usePolling ? 'Polling Mode' : 'Real-time'}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <button
               onClick={() => {
                 fetchSessions()
                 fetchStats()
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm"
             >
-              <RefreshCw size={16} />
-              Refresh
+              <RefreshCw size={14} className="sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Refresh</span>
             </button>
             <button
               onClick={() => {
@@ -281,40 +389,40 @@ const ChatDashboard = () => {
                 setIsAuthenticated(false)
                 window.location.href = '/' // Redirect to home instead of reload
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-xs sm:text-sm"
             >
-              <Users size={16} />
-              Logout
+              <Users size={14} className="sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="h-24">
+      {/* Stats - Mobile Responsive */}
+      <div className="h-20 sm:h-24">
         <ChatStats stats={stats} />
       </div>
 
-      {/* Main Content */}
-      <div className="flex h-[calc(100vh-176px)]">
+      {/* Main Content - Mobile Responsive */}
+      <div className="flex flex-col sm:flex-row h-[calc(100vh-144px)] sm:h-[calc(100vh-176px)]">
         {/* Sessions List */}
-        <div className="w-1/3 bg-gray-800 border-r border-gray-700 flex flex-col">
+        <div className="w-full sm:w-1/3 bg-gray-800 border-b sm:border-b-0 sm:border-r border-gray-700 flex flex-col h-1/2 sm:h-full">
           {/* Search and Filter */}
-          <div className="p-4 border-b border-gray-700 flex-shrink-0">
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+          <div className="p-2 sm:p-4 border-b border-gray-700 flex-shrink-0">
+            <div className="relative mb-2 sm:mb-3">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search conversations..."
-                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full pl-9 pr-3 py-1.5 sm:pl-10 sm:pr-4 sm:py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -336,7 +444,7 @@ const ChatDashboard = () => {
         </div>
 
         {/* Chat Window */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-1/2 sm:h-full">
           <ChatWindow
             session={selectedSession}
             onSessionUpdate={fetchSessions}

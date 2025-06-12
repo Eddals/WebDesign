@@ -198,7 +198,7 @@ const SocialMediaMarketing = () => {
             </motion.p>
 
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
@@ -401,7 +401,7 @@ const SocialMediaMarketing = () => {
             <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
               Let's create a social media strategy that builds your brand, engages your audience, and drives real business results.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center">
               <Link to="/estimate">
                 <motion.button
                   className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"

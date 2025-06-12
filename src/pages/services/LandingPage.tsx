@@ -166,14 +166,14 @@ const LandingPage = () => {
             </motion.p>
 
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <Link to="/estimate">
+              <Link to="/estimate" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -181,9 +181,9 @@ const LandingPage = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -331,10 +331,10 @@ const LandingPage = () => {
             <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
               Let's create a landing page that turns your visitors into customers
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/estimate">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center">
+              <Link to="/estimate" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -342,9 +342,9 @@ const LandingPage = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

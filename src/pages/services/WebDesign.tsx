@@ -101,13 +101,13 @@ const WebDesign = () => {
           <div className="absolute bottom-20 right-1/4 w-40 h-40 bg-purple-700 rounded-full opacity-10 blur-3xl"></div>
         </div>
 
-        <div className="container mx-auto px-4">
-          {/* Hero Section */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Hero Section - Mobile Responsive */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
             <motion.div
               className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-2 mb-6"
@@ -120,7 +120,7 @@ const WebDesign = () => {
             </motion.div>
 
             <motion.h1
-              className="text-4xl md:text-6xl font-bold mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
@@ -133,24 +133,24 @@ const WebDesign = () => {
             </motion.h1>
 
             <motion.p
-              className="text-xl text-white/70 mb-8 max-w-3xl mx-auto"
+              className="text-lg sm:text-xl text-white/70 mb-6 sm:mb-8 max-w-3xl mx-auto px-4 sm:px-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Create stunning, responsive websites that captivate your audience and drive business growth. 
+              Create stunning, responsive websites that captivate your audience and drive business growth.
               Our custom web designs combine aesthetics with functionality for maximum impact.
             </motion.p>
 
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <Link to="/estimate">
+              <Link to="/estimate" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -158,9 +158,9 @@ const WebDesign = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -170,85 +170,85 @@ const WebDesign = () => {
             </motion.div>
           </motion.div>
 
-          {/* Features Section */}
+          {/* Features Section - Mobile Responsive */}
           <motion.div
-            className="mb-20"
+            className="mb-16 sm:mb-20"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <div className="text-center mb-8 sm:mb-12 px-4 sm:px-0">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
                 Why Choose Our Web Design?
               </h2>
-              <p className="text-white/70 text-lg max-w-2xl mx-auto">
+              <p className="text-white/70 text-base sm:text-lg max-w-2xl mx-auto">
                 We create websites that not only look amazing but also perform exceptionally
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
+                  className="bg-white/5 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -5 }}
                 >
-                  <div className="bg-purple-500/20 rounded-full p-3 w-fit mb-4">
+                  <div className="bg-purple-500/20 rounded-full p-2.5 sm:p-3 w-fit mb-3 sm:mb-4">
                     <div className="text-purple-400">
                       {feature.icon}
                     </div>
                   </div>
-                  <h3 className="text-white font-semibold text-lg mb-2">{feature.title}</h3>
-                  <p className="text-white/70">{feature.description}</p>
+                  <h3 className="text-white font-semibold text-base sm:text-lg mb-2">{feature.title}</h3>
+                  <p className="text-white/70 text-sm sm:text-base">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* Process Section */}
+          {/* Process Section - Mobile Responsive */}
           <motion.div
-            className="mb-20"
+            className="mb-16 sm:mb-20"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <div className="text-center mb-8 sm:mb-12 px-4 sm:px-0">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
                 Our Design Process
               </h2>
-              <p className="text-white/70 text-lg max-w-2xl mx-auto">
+              <p className="text-white/70 text-base sm:text-lg max-w-2xl mx-auto">
                 A proven methodology that ensures your project's success from concept to launch
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               {process.map((step, index) => (
                 <motion.div
                   key={index}
-                  className="text-center"
+                  className="text-center px-4 sm:px-0"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <div className="relative mb-6">
-                    <div className="bg-gradient-to-r from-purple-500 to-purple-700 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
+                  <div className="relative mb-4 sm:mb-6">
+                    <div className="bg-gradient-to-r from-purple-500 to-purple-700 rounded-full p-3 sm:p-4 w-12 h-12 sm:w-16 sm:h-16 mx-auto flex items-center justify-center">
                       <div className="text-white">
                         {step.icon}
                       </div>
                     </div>
-                    <div className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs font-bold rounded-full w-8 h-8 flex items-center justify-center">
+                    <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 bg-purple-500 text-white text-xs font-bold rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
                       {step.step}
                     </div>
                   </div>
-                  <h3 className="text-white font-semibold text-lg mb-2">{step.title}</h3>
-                  <p className="text-white/70 text-sm">{step.description}</p>
+                  <h3 className="text-white font-semibold text-base sm:text-lg mb-2">{step.title}</h3>
+                  <p className="text-white/70 text-xs sm:text-sm">{step.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -256,25 +256,25 @@ const WebDesign = () => {
 
 
 
-          {/* CTA Section */}
+          {/* CTA Section - Mobile Responsive */}
           <motion.div
-            className="text-center bg-gradient-to-r from-purple-500/10 to-purple-700/10 rounded-2xl p-12 border border-purple-500/20"
+            className="text-center bg-gradient-to-r from-purple-500/10 to-purple-700/10 rounded-2xl p-6 sm:p-8 lg:p-12 border border-purple-500/20 mx-4 sm:mx-0"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
               Ready to Transform Your Online Presence?
             </h2>
-            <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
-              Let's create a stunning website that represents your brand and drives results. 
+            <p className="text-white/70 text-base sm:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto px-4 sm:px-0">
+              Let's create a stunning website that represents your brand and drives results.
               Get a custom quote tailored to your specific needs and budget.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/estimate">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center">
+              <Link to="/estimate" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -282,9 +282,9 @@ const WebDesign = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

@@ -64,6 +64,7 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadingFile, setUploadingFile] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
 
   // Scroll to bottom
   const scrollToBottom = () => {
@@ -84,40 +85,56 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
     fetchMessages()
     markMessagesAsRead()
 
-    // Subscribe to new messages for this session
-    const subscription = supabase
-      .channel(`chat_messages:session_id=eq.${session.id}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `session_id=eq.${session.id}`
-      }, (payload: any) => {
-        const newMsg = payload.new as ChatMessage
-        setMessages(prev => [...prev, newMsg])
+    // 🚀 SIMPLE AND FAST REAL-TIME - Like your example
+    const channel = supabase
+      .channel('chat-window-messages')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `session_id=eq.${session.id}`
+        },
+        (payload) => {
+          const newMsg = payload.new as ChatMessage
 
-        // Mark user messages as read automatically
-        if (newMsg.is_user) {
-          markMessageAsRead(newMsg.id)
+          // 🚀 INSTANT ADD - Exactly like your pattern
+          setMessages((prev) => {
+            // Avoid duplicates
+            const exists = prev.find(msg => msg.id === newMsg.id)
+            if (exists) return prev
+            return [...prev, newMsg]
+          })
+
+          // Mark user messages as read automatically
+          if (newMsg.is_user) {
+            markMessageAsRead(newMsg.id)
+          }
         }
-      })
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `session_id=eq.${session.id}`
-      }, (payload: any) => {
-        // Update message in real-time (for read status, etc.)
-        setMessages(prev => prev.map(msg =>
-          msg.id === payload.new.id
-            ? { ...msg, ...payload.new }
-            : msg
-        ))
-      })
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `session_id=eq.${session.id}`
+        },
+        (payload) => {
+          // Update message in real-time (for read status, etc.)
+          setMessages((prev) => prev.map(msg =>
+            msg.id === payload.new.id
+              ? { ...msg, ...payload.new }
+              : msg
+          ))
+        }
+      )
       .subscribe()
 
     return () => {
-      subscription.unsubscribe()
+      // 🚀 SIMPLE CLEANUP - Like your example
+      supabase.removeChannel(channel)
     }
   }, [session])
 
@@ -172,6 +189,24 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
     if (!newMessage.trim() || !session || sendingMessage) return
 
     const messageContent = newMessage.trim()
+    const tempMessageId = `agent-temp-${Date.now()}-${Math.random()}`
+
+    // 🚀 INSTANT UI UPDATE - Add message immediately to dashboard
+    const instantMessage = {
+      id: tempMessageId,
+      message: messageContent,
+      is_user: false,
+      user_name: agentName,
+      created_at: new Date().toISOString(),
+      is_read: true,
+      metadata: {
+        agent_name: agentName,
+        sending: true,
+        temp: true
+      }
+    }
+
+    setMessages(prev => [...prev, instantMessage])
     setNewMessage('')
     setSendingMessage(true)
 
@@ -183,7 +218,7 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
     }
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('chat_messages')
         .insert({
           session_id: session.id,
@@ -197,8 +232,22 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
             timestamp: new Date().toISOString()
           }
         })
+        .select()
+        .single()
 
       if (error) throw error
+
+      // ✅ Replace temp message with real message from database
+      setMessages(prev => prev.map(msg =>
+        msg.id === tempMessageId
+          ? {
+              ...msg,
+              id: data.id,
+              created_at: data.created_at,
+              metadata: { ...msg.metadata, sent: true, temp: false }
+            }
+          : msg
+      ))
 
       // Update session status to active if it was pending
       if (session.status === 'pending') {
@@ -215,6 +264,13 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
 
     } catch (error) {
       console.error('Error sending message:', error)
+
+      // ❌ Mark message as failed in UI
+      setMessages(prev => prev.map(msg =>
+        msg.id === tempMessageId
+          ? { ...msg, metadata: { ...msg.metadata, failed: true } }
+          : msg
+      ))
     } finally {
       setSendingMessage(false)
     }
@@ -240,8 +296,9 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
 
   // Mark conversation as resolved
   const markAsResolved = async () => {
-    if (!session) return
+    if (!session || actionLoading) return
 
+    setActionLoading('resolved')
     try {
       // Send resolution message to client
       await supabase
@@ -270,16 +327,20 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
         .eq('id', session.id)
 
       onSessionUpdate()
+      alert('Conversation marked as resolved successfully!')
     } catch (error) {
       console.error('Error marking as resolved:', error)
       alert('Error updating conversation status.')
+    } finally {
+      setActionLoading(null)
     }
   }
 
   // Mark conversation as not resolved (reopen)
   const markAsNotResolved = async () => {
-    if (!session) return
+    if (!session || actionLoading) return
 
+    setActionLoading('not_resolved')
     try {
       // Send reopening message to client
       await supabase
@@ -308,28 +369,66 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
         .eq('id', session.id)
 
       onSessionUpdate()
+      alert('Conversation reopened successfully!')
     } catch (error) {
       console.error('Error marking as not resolved:', error)
       alert('Error updating conversation status.')
+    } finally {
+      setActionLoading(null)
     }
   }
 
-  // Close conversation (hide from dashboard but keep data)
+  // Close conversation completely - close chat on both sides
   const closeConversation = async () => {
-    if (!session) return
+    if (!session || actionLoading) return
 
     const confirmClose = window.confirm(
       'Are you sure you want to close this conversation?\n\n' +
       'This will:\n' +
+      '• Close the chat on both agent and client side\n' +
+      '• Send a closure message to the client\n' +
       '• Hide the conversation from the dashboard\n' +
-      '• Keep all conversation data\n' +
-      '• Client can still access their chat history\n\n' +
-      'You can reopen it later if needed.'
+      '• Preserve all conversation data\n\n' +
+      'The client will be notified that the conversation is closed.'
     )
 
     if (!confirmClose) return
 
+    setActionLoading('close')
     try {
+      // Send closure message to client
+      await supabase
+        .from('chat_messages')
+        .insert({
+          session_id: session.id,
+          user_name: agentName,
+          user_email: 'support@devtone.agency',
+          message: '🔒 This conversation has been closed by our support team. Thank you for contacting DevTone! If you need further assistance, please start a new chat.',
+          is_user: false,
+          is_read: true,
+          metadata: {
+            agent_name: agentName,
+            message_type: 'system_closed',
+            timestamp: new Date().toISOString()
+          }
+        })
+
+      // Send broadcast to close client chat immediately
+      const channel = supabase.channel(`session_close:${session.id}`)
+      await channel.send({
+        type: 'broadcast',
+        event: 'conversation_closed',
+        payload: {
+          session_id: session.id,
+          message: '🔒 This conversation has been closed by our support team.\n\nThank you for contacting DevTone!\n\nIf you need further assistance, please start a new chat.',
+          closed_by: agentName,
+          timestamp: new Date().toISOString()
+        }
+      })
+
+      // Wait a moment for the broadcast to be delivered
+      await new Promise(resolve => setTimeout(resolve, 1500))
+
       // Update session status to closed
       await supabase
         .from('chat_sessions')
@@ -339,12 +438,15 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
         })
         .eq('id', session.id)
 
+      // Update dashboard and show success
       onSessionUpdate()
-      alert('Conversation closed successfully. Data has been preserved.')
+      alert('Conversation closed successfully. The client has been notified and their chat will close automatically.')
 
     } catch (error) {
       console.error('Error closing conversation:', error)
       alert('Error closing conversation. Please try again.')
+    } finally {
+      setActionLoading(null)
     }
   }
 
@@ -562,30 +664,43 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
             {/* Action Buttons */}
             <button
               onClick={markAsResolved}
-              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors flex items-center gap-1"
+              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Mark as Resolved"
-              disabled={session.status === 'resolved'}
+              disabled={session.status === 'resolved' || actionLoading !== null}
             >
-              <CheckCircle size={14} />
+              {actionLoading === 'resolved' ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <CheckCircle size={14} />
+              )}
               Resolved
             </button>
 
             <button
               onClick={markAsNotResolved}
-              className="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm rounded transition-colors flex items-center gap-1"
+              className="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Mark as Not Resolved (Reopen)"
-              disabled={session.status === 'active'}
+              disabled={session.status === 'active' || actionLoading !== null}
             >
-              <AlertCircle size={14} />
+              {actionLoading === 'not_resolved' ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <AlertCircle size={14} />
+              )}
               Not Resolved
             </button>
 
             <button
               onClick={closeConversation}
-              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors flex items-center gap-1"
-              title="Close Conversation (Hide from Dashboard)"
+              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Close Conversation (Close on Both Sides)"
+              disabled={actionLoading !== null}
             >
-              <XCircle size={14} />
+              {actionLoading === 'close' ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <XCircle size={14} />
+              )}
               Close
             </button>
 

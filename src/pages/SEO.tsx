@@ -1,4 +1,3 @@
-/*************  ✨ Codeium Command 🌟  *************/
 "use client"
 
 import { motion } from 'framer-motion'
@@ -132,13 +131,13 @@ const SEO = () => {
           <div className="absolute bottom-20 right-1/4 w-40 h-40 bg-purple-700 rounded-full opacity-10 blur-3xl"></div>
         </div>
 
-        <div className="container mx-auto px-4">
-          {/* Hero Section */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Hero Section - Mobile Responsive */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
             <motion.div
               className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-2 mb-6"
@@ -151,7 +150,7 @@ const SEO = () => {
             </motion.div>
 
             <motion.h1
-              className="text-4xl md:text-6xl font-bold mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
@@ -164,24 +163,24 @@ const SEO = () => {
             </motion.h1>
 
             <motion.p
-              className="text-xl text-white/70 mb-8 max-w-3xl mx-auto"
+              className="text-lg sm:text-xl text-white/70 mb-6 sm:mb-8 max-w-3xl mx-auto px-4 sm:px-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Drive more organic traffic, increase visibility, and grow your business with 
+              Drive more organic traffic, increase visibility, and grow your business with
               data-driven SEO strategies that deliver measurable results.
             </motion.p>
 
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <Link to="/estimate">
+              <Link to="/estimate" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -189,9 +188,9 @@ const SEO = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -337,10 +336,10 @@ const SEO = () => {
             <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
               Let's create an SEO strategy that drives real traffic, leads, and revenue for your business.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/estimate">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center">
+              <Link to="/estimate" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -348,9 +347,9 @@ const SEO = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <motion.button
-                  className="px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-white/20 hover:border-white/40 text-white rounded-full font-semibold hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -366,4 +365,3 @@ const SEO = () => {
 }
 
 export default SEO
-/******  adf3c151-790a-4c01-9a94-0f46a42e0598  *******/

@@ -60,6 +60,14 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
   const [isLoadingSession, setIsLoadingSession] = useState(true)
   const [isAgentTyping, setIsAgentTyping] = useState(false)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Real-time connection management
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('connecting')
+  const [usePolling, setUsePolling] = useState(false)
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const lastMessageTimeRef = useRef<string | null>(null)
+  const connectionRetryRef = useRef<NodeJS.Timeout | null>(null)
+  const retryCountRef = useRef(0)
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -191,13 +199,101 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
     setIsLoadingSession(false)
   }, [])
 
-  // No automatic welcome messages - clean chat interface
+  // Polling fallback for when WebSocket fails
+  const startPolling = () => {
+    if (pollingIntervalRef.current) return // Already polling
 
-  // Set up real-time subscription when chat session is created
-  useEffect(() => {
-    if (chatSession?.id && isUserInfoSubmitted) {
-      // Subscribe to new messages for this session
-      const subscription = supabase
+    console.log('Starting polling fallback...')
+    setUsePolling(true)
+    setConnectionStatus('connected') // Consider polling as connected
+
+    pollingIntervalRef.current = setInterval(async () => {
+      if (!chatSession) return
+
+      try {
+        // Check for new messages
+        const { data: newMessages, error } = await supabase
+          .from('chat_messages')
+          .select('*')
+          .eq('session_id', chatSession.id)
+          .order('created_at', { ascending: true })
+          .gt('created_at', lastMessageTimeRef.current || new Date(Date.now() - 60000).toISOString())
+
+        if (error) throw error
+
+        if (newMessages && newMessages.length > 0) {
+          const formattedMessages = newMessages.map((msg: any) => ({
+            id: msg.id,
+            message: msg.message,
+            is_user: msg.is_user,
+            created_at: msg.created_at,
+            agent_name: msg.user_name,
+            metadata: msg.metadata
+          }))
+
+          setMessages(prev => [...prev, ...formattedMessages])
+          lastMessageTimeRef.current = newMessages[newMessages.length - 1].created_at
+        }
+
+        // Check for session status changes
+        const { data: sessionData, error: sessionError } = await supabase
+          .from('chat_sessions')
+          .select('*')
+          .eq('id', chatSession.id)
+          .single()
+
+        if (sessionError) throw sessionError
+
+        if (sessionData && sessionData.status !== chatSession.status) {
+          setChatSession(prev => prev ? { ...prev, ...sessionData } : null)
+        }
+
+      } catch (error) {
+        console.error('Polling error:', error)
+        setConnectionStatus('error')
+      }
+    }, 30000) // 30 seconds interval
+  }
+
+  // Stop polling
+  const stopPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current)
+      pollingIntervalRef.current = null
+      setUsePolling(false)
+      console.log('Polling stopped')
+    }
+  }
+
+  // Retry connection with exponential backoff
+  const retryConnection = () => {
+    if (connectionRetryRef.current) return
+
+    const retryDelay = Math.min(1000 * Math.pow(2, retryCountRef.current), 30000) // Max 30s
+    console.log(`Retrying connection in ${retryDelay}ms (attempt ${retryCountRef.current + 1})`)
+
+    connectionRetryRef.current = setTimeout(() => {
+      retryCountRef.current++
+      setupRealTimeSubscription()
+      connectionRetryRef.current = null
+    }, retryDelay)
+  }
+
+  // Setup real-time subscription with fallback
+  const setupRealTimeSubscription = async () => {
+    if (!chatSession) return
+
+    try {
+      setConnectionStatus('connecting')
+
+      // Clean up existing subscriptions
+      if (subscription) {
+        subscription.unsubscribe()
+      }
+      stopPolling()
+
+      // Try WebSocket connection first
+      const newSubscription = supabase
         .channel(`chat_messages:session_id=eq.${chatSession.id}`)
         .on('postgres_changes', {
           event: 'INSERT',
@@ -205,6 +301,81 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
           table: 'chat_messages',
           filter: `session_id=eq.${chatSession.id}`
         }, (payload: any) => {
+          const newMessage = {
+            id: payload.new.id,
+            message: payload.new.message,
+            is_user: payload.new.is_user,
+            created_at: payload.new.created_at,
+            agent_name: payload.new.user_name,
+            metadata: payload.new.metadata
+          }
+          setMessages(prev => [...prev, newMessage])
+          lastMessageTimeRef.current = payload.new.created_at
+
+          // Reset retry count on successful message
+          retryCountRef.current = 0
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_sessions',
+          filter: `id=eq.${chatSession.id}`
+        }, (payload: any) => {
+          setChatSession(prev => prev ? { ...prev, ...payload.new } : null)
+        })
+        .subscribe((status) => {
+          console.log('Subscription status:', status)
+
+          if (status === 'SUBSCRIBED') {
+            setConnectionStatus('connected')
+            retryCountRef.current = 0
+            console.log('Real-time connected successfully')
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            setConnectionStatus('error')
+            console.log('Real-time connection failed, starting polling fallback')
+            startPolling()
+          } else if (status === 'CLOSED') {
+            setConnectionStatus('disconnected')
+            retryConnection()
+          }
+        })
+
+      setSubscription(newSubscription)
+
+      // Fallback to polling if WebSocket doesn't connect within 10 seconds
+      setTimeout(() => {
+        if (connectionStatus !== 'connected') {
+          console.log('WebSocket timeout, falling back to polling')
+          startPolling()
+        }
+      }, 10000)
+
+    } catch (error) {
+      console.error('Error setting up real-time subscription:', error)
+      setConnectionStatus('error')
+      startPolling()
+    }
+  }
+
+  // Set up real-time subscription when chat session is created
+  useEffect(() => {
+    if (!chatSession?.id || !isUserInfoSubmitted) return
+
+    // Load initial messages
+    loadMessagesForSession(chatSession.id)
+
+    // 🚀 SIMPLE AND FAST REAL-TIME - Like your example
+    const channel = supabase
+      .channel('chat-messages')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `session_id=eq.${chatSession.id}`
+        },
+        (payload) => {
           // Only add messages from the agent (not the user's own messages)
           if (!payload.new.is_user) {
             const newMsg = {
@@ -212,20 +383,29 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
               message: payload.new.message,
               is_user: payload.new.is_user,
               created_at: payload.new.created_at,
+              agent_name: payload.new.user_name,
               metadata: payload.new.metadata
             }
-            setMessages(prev => [...prev, newMsg])
+
+            // 🚀 INSTANT ADD - Exactly like your pattern
+            setMessages((prev) => {
+              // Avoid duplicates
+              const exists = prev.find(msg => msg.id === newMsg.id)
+              if (exists) return prev
+              return [...prev, newMsg]
+            })
+
             // Hide typing indicator when message arrives
             setIsAgentTyping(false)
 
-            // If this is a close message, disable the chat input
+            // If this is a close message, update session status
             if (payload.new.metadata?.message_type === 'system_close') {
-              // Update session status locally
               setChatSession(prev => prev ? { ...prev, status: 'resolved' } : null)
             }
           }
-        })
-        .subscribe()
+        }
+      )
+      .subscribe()
 
       // Subscribe to typing indicators via broadcast
       const typingChannel = supabase
@@ -256,10 +436,15 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
               message: payload.payload.message,
               is_user: false,
               created_at: new Date().toISOString(),
-              metadata: { message_type: 'system_close' }
+              metadata: { message_type: 'system_closed' }
             }])
 
-            // Keep session open - client can continue if needed
+            // Close chat after showing message for 3 seconds
+            setTimeout(() => {
+              endChatSession() // Clear session data
+              setIsOpen(false) // Close chat widget
+              setMessages([]) // Clear messages
+            }, 3000)
           }
         })
         .on('postgres_changes', {
@@ -276,13 +461,13 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
       setSubscription(subscription)
 
       return () => {
-        subscription.unsubscribe()
-        typingChannel.unsubscribe()
-        closeChannel.unsubscribe()
+        // 🚀 SIMPLE CLEANUP - Like your example
+        supabase.removeChannel(channel)
+        supabase.removeChannel(typingChannel)
+        supabase.removeChannel(closeChannel)
         if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
       }
-    }
-  }, [chatSession, isUserInfoSubmitted])
+  }, [chatSession?.id, isUserInfoSubmitted])
 
   // Create a new chat session
   const createChatSession = async () => {
@@ -347,14 +532,15 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
     setNewMessage('')
     setIsLoading(true)
 
-    // Add user message to UI immediately
+    // 🚀 Add user message to UI INSTANTLY - NO DELAY
     const userMessage: ChatMessage = {
       id: uuidv4(),
       message: messageContent,
       is_user: true,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      metadata: { sending: true }
     }
-    
+
     setMessages(prev => [...prev, userMessage])
 
     try {
@@ -372,17 +558,31 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
 
       if (error) throw error
 
-      // In a real application, you would have a backend service that would:
-      // 1. Process the message
-      // 2. Generate a response
-      // 3. Insert the response into the database
-      // 4. The subscription would then pick up the new message
-      
-      // Message sent successfully - no automatic responses
+      // ✅ Mark message as successfully sent
+      setMessages(prev => prev.map(msg =>
+        msg.id === userMessage.id
+          ? { ...msg, metadata: { sent: true } }
+          : msg
+      ))
+
+      // Update session timestamp
+      await supabase
+        .from('chat_sessions')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', chatSession.id)
+
       setIsLoading(false)
-      
+
     } catch (error) {
       console.error('Error sending message:', error)
+
+      // ❌ Mark message as failed
+      setMessages(prev => prev.map(msg =>
+        msg.id === userMessage.id
+          ? { ...msg, metadata: { failed: true } }
+          : msg
+      ))
+
       setIsLoading(false)
     }
   }
@@ -430,17 +630,17 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
 
   return (
     <>
-      {/* Chat Button */}
+      {/* Chat Button - Mobile Responsive */}
       <motion.button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white flex items-center justify-center shadow-2xl z-50 border-4 border-white/20"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white flex items-center justify-center shadow-2xl z-50 border-2 sm:border-4 border-white/20"
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
         style={{
           boxShadow: '0 8px 32px rgba(147, 51, 234, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)'
         }}
       >
-        {isOpen ? <X size={26} /> : <MessageSquare size={26} />}
+        {isOpen ? <X size={20} className="sm:w-6 sm:h-6" /> : <MessageSquare size={20} className="sm:w-6 sm:h-6" />}
       </motion.button>
 
       {/* Chat Window */}
@@ -450,23 +650,39 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-24 right-6 w-80 md:w-96 bg-gray-900 rounded-3xl shadow-2xl overflow-hidden z-50 border-2 border-purple-500/20"
+            className="fixed inset-x-4 bottom-20 sm:bottom-24 sm:right-6 sm:left-auto sm:w-80 md:w-96 bg-gray-900 rounded-3xl shadow-2xl overflow-hidden z-50 border-2 border-purple-500/20"
             style={{
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(147, 51, 234, 0.1)'
             }}
           >
-            {/* Chat Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-4 flex items-center justify-between rounded-t-3xl">
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-3">
-                  <MessageSquare className="text-white" size={18} />
+            {/* Chat Header - Mobile Responsive */}
+            <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-3 sm:p-4 flex items-center justify-between rounded-t-3xl">
+              <div className="flex items-center min-w-0 flex-1">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                  <MessageSquare className="text-white" size={14} />
                 </div>
-                <div>
-                  <h3 className="text-white font-semibold">DevTone Support</h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-white font-semibold text-sm sm:text-base truncate">DevTone Support</h3>
                   {isUserInfoSubmitted ? (
-                    <p className="text-white/70 text-xs">
-                      Connected as {userInfo.name}
-                    </p>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <p className="text-white/70 text-xs truncate">
+                        Connected as {userInfo.name}
+                      </p>
+                      {/* Connection Status Indicator */}
+                      {chatSession && (
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <div className={`w-1.5 h-1.5 rounded-full ${
+                            connectionStatus === 'connected' ? 'bg-green-300' :
+                            connectionStatus === 'connecting' ? 'bg-yellow-300 animate-pulse' :
+                            connectionStatus === 'error' ? 'bg-orange-300' :
+                            'bg-red-300'
+                          }`}></div>
+                          <span className="text-white/50 text-xs hidden sm:inline">
+                            {usePolling ? 'Polling' : 'Live'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <p className="text-white/70 text-xs">
                       {isSupportAvailable() ? "🟢 Online" : "🔴 Offline"}
@@ -474,33 +690,33 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                 {isUserInfoSubmitted && (
                   <motion.button
                     onClick={endChatSession}
-                    className="w-8 h-8 rounded-full bg-red-500/20 hover:bg-red-500/30 text-red-200 flex items-center justify-center transition-colors"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-500/20 hover:bg-red-500/30 text-red-200 flex items-center justify-center transition-colors"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     title="End Chat Session"
                   >
-                    <X size={14} />
+                    <X size={12} className="sm:w-3.5 sm:h-3.5" />
                   </motion.button>
                 )}
                 <motion.button
                   onClick={toggleMinimize}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  {isMinimized ? <ChevronUp size={14} className="sm:w-4 sm:h-4" /> : <ChevronDown size={14} className="sm:w-4 sm:h-4" />}
                 </motion.button>
                 <motion.button
                   onClick={toggleChat}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <X size={16} />
+                  <X size={14} className="sm:w-4 sm:h-4" />
                 </motion.button>
               </div>
             </div>
@@ -523,11 +739,11 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                       </div>
                     </div>
                   ) : !isUserInfoSubmitted ? (
-                    // User Info Form
-                    <div className="p-4 bg-gray-800">
-                      <div className="text-center mb-4">
-                        <h3 className="text-white text-lg font-semibold mb-2">Welcome to DevTone Support!</h3>
-                        <p className="text-gray-300 text-sm mb-3">
+                    // User Info Form - Mobile Responsive
+                    <div className="p-3 sm:p-4 bg-gray-800">
+                      <div className="text-center mb-3 sm:mb-4">
+                        <h3 className="text-white text-base sm:text-lg font-semibold mb-2">Welcome to DevTone Support!</h3>
+                        <p className="text-gray-300 text-xs sm:text-sm mb-3">
                           Please provide your information so we can assist you better:
                         </p>
 
@@ -551,85 +767,85 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                           </p>
                         </div>
                       </div>
-                      <form onSubmit={handleUserInfoSubmit} className="space-y-3">
+                      <form onSubmit={handleUserInfoSubmit} className="space-y-2 sm:space-y-3">
                         <div>
-                          <label className="block text-white text-sm font-medium mb-1">
+                          <label className="block text-white text-xs sm:text-sm font-medium mb-1">
                             Full Name *
                           </label>
                           <div className="relative">
-                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
-                              <User className="w-3 h-3 text-purple-400" />
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
+                              <User className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
                             </div>
                             <input
                               type="text"
                               value={userInfo.name}
                               onChange={(e) => setUserInfo(prev => ({ ...prev, name: e.target.value }))}
-                              className="w-full pl-12 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-full text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                               placeholder="Your full name"
                               required
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-white text-sm font-medium mb-1">
+                          <label className="block text-white text-xs sm:text-sm font-medium mb-1">
                             Email Address *
                           </label>
                           <div className="relative">
-                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
-                              <Mail className="w-3 h-3 text-purple-400" />
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
+                              <Mail className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
                             </div>
                             <input
                               type="email"
                               value={userInfo.email}
                               onChange={(e) => setUserInfo(prev => ({ ...prev, email: e.target.value }))}
-                              className="w-full pl-12 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-full text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                               placeholder="your@email.com"
                               required
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-white text-sm font-medium mb-1">
+                          <label className="block text-white text-xs sm:text-sm font-medium mb-1">
                             Phone Number
                           </label>
                           <div className="relative">
-                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
-                              <Phone className="w-3 h-3 text-purple-400" />
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
+                              <Phone className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
                             </div>
                             <input
                               type="tel"
                               value={userInfo.phone}
                               onChange={(e) => setUserInfo(prev => ({ ...prev, phone: e.target.value }))}
-                              className="w-full pl-12 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-full text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                               placeholder="(555) 123-4567"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-white text-sm font-medium mb-1">
+                          <label className="block text-white text-xs sm:text-sm font-medium mb-1">
                             Company/Organization
                           </label>
                           <div className="relative">
-                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
-                              <Building className="w-3 h-3 text-purple-400" />
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 bg-purple-500/20 rounded-full flex items-center justify-center">
+                              <Building className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
                             </div>
                             <input
                               type="text"
                               value={userInfo.company}
                               onChange={(e) => setUserInfo(prev => ({ ...prev, company: e.target.value }))}
-                              className="w-full pl-12 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-full text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                               placeholder="Your company name"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-white text-sm font-medium mb-1">
+                          <label className="block text-white text-xs sm:text-sm font-medium mb-1">
                             How can we help you?
                           </label>
                           <select
                             value={userInfo.inquiry_type}
                             onChange={(e) => setUserInfo(prev => ({ ...prev, inquiry_type: e.target.value }))}
-                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-full text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                           >
                             <option value="">Select an option</option>
                             <option value="general">General Inquiry</option>
@@ -642,7 +858,7 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                         </div>
                         <motion.button
                           type="submit"
-                          className="w-full py-3 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full font-medium hover:from-purple-600 hover:to-purple-800 transition-colors shadow-lg"
+                          className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full font-medium text-sm sm:text-base hover:from-purple-600 hover:to-purple-800 transition-colors shadow-lg"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
@@ -651,17 +867,19 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                       </form>
                     </div>
                   ) : (
-                    // Chat Messages
+                    // Chat Messages - Mobile Responsive
                     <>
-                      <div className="h-80 overflow-y-auto p-4 bg-gray-800">
+                      <div className="h-64 sm:h-80 overflow-y-auto p-3 sm:p-4 bg-gray-800">
                         {messages.map((msg) => (
                           <div
                             key={msg.id}
-                            className={`mb-4 flex ${msg.is_user ? 'justify-end' : 'justify-start'}`}
+                            className={`mb-3 sm:mb-4 flex ${msg.is_user ? 'justify-end' : 'justify-start'}`}
                           >
                             <div
-                              className={`max-w-[80%] rounded-3xl px-4 py-3 ${
-                                msg.metadata?.message_type === 'system_close'
+                              className={`max-w-[85%] sm:max-w-[80%] rounded-2xl sm:rounded-3xl px-3 sm:px-4 py-2 sm:py-3 ${
+                                msg.metadata?.message_type === 'system_closed'
+                                  ? 'bg-red-600 text-white shadow-lg border-2 border-red-400'
+                                  : msg.metadata?.message_type === 'system_close'
                                   ? 'bg-green-600 text-white shadow-lg border-2 border-green-400'
                                   : msg.metadata?.message_type === 'system_resolved'
                                   ? 'bg-blue-600 text-white shadow-lg border-2 border-blue-400'
@@ -673,7 +891,7 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                               }`}
                             >
                               {/* Message content */}
-                              <p>{msg.message}</p>
+                              <p className="text-sm sm:text-base">{msg.message}</p>
 
                               {/* File attachment */}
                               {msg.metadata?.message_type === 'file' && (
@@ -764,10 +982,10 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                         <div ref={messagesEndRef} />
                       </div>
 
-                      {/* Chat Input - Always available */}
+                      {/* Chat Input - Mobile Responsive */}
                       {chatSession?.status === 'resolved' ? (
-                        <div className="p-4 bg-gray-900 border-t border-gray-700">
-                          <div className="text-center text-gray-400 text-sm mb-3">
+                        <div className="p-3 sm:p-4 bg-gray-900 border-t border-gray-700">
+                          <div className="text-center text-gray-400 text-xs sm:text-sm mb-2 sm:mb-3">
                             <p>✅ This conversation has been marked as resolved by our support team.</p>
                             <p className="text-xs mt-1">You can still continue the conversation if needed.</p>
                           </div>
@@ -777,39 +995,39 @@ const LiveChat = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: Live
                               value={newMessage}
                               onChange={(e) => setNewMessage(e.target.value)}
                               placeholder="Continue conversation..."
-                              className="flex-1 bg-gray-800 border border-gray-700 rounded-full px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              className="flex-1 bg-gray-800 border border-gray-700 rounded-full px-3 sm:px-4 py-2.5 sm:py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                               disabled={isLoading}
                             />
                             <motion.button
                               type="submit"
-                              className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
+                              className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
                               disabled={isLoading || !newMessage.trim()}
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
-                              <Send size={18} />
+                              <Send size={16} className="sm:w-4.5 sm:h-4.5" />
                             </motion.button>
                           </form>
                         </div>
                       ) : (
-                        <form onSubmit={sendMessage} className="p-4 bg-gray-900 border-t border-gray-700">
+                        <form onSubmit={sendMessage} className="p-3 sm:p-4 bg-gray-900 border-t border-gray-700">
                           <div className="flex items-center gap-2">
                             <input
                               type="text"
                               value={newMessage}
                               onChange={(e) => setNewMessage(e.target.value)}
                               placeholder="Type your message..."
-                              className="flex-1 bg-gray-800 border border-gray-700 rounded-full px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                              className="flex-1 bg-gray-800 border border-gray-700 rounded-full px-3 sm:px-4 py-2.5 sm:py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                               disabled={isLoading}
                             />
                             <motion.button
                               type="submit"
-                              className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
+                              className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
                               disabled={isLoading || !newMessage.trim()}
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
-                              <Send size={18} />
+                              <Send size={16} className="sm:w-4.5 sm:h-4.5" />
                             </motion.button>
                           </div>
                         </form>
