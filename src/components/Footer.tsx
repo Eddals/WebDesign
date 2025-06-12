@@ -4,8 +4,6 @@ import { Instagram, Linkedin, Github, Shield } from "lucide-react"
 import { motion } from "framer-motion"
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear()
-
   return (
     <footer className="w-full bg-background/80 backdrop-blur-sm border-t border-white/10">
       <div className="container mx-auto px-4 py-12">
@@ -29,9 +27,9 @@ const Footer = () => {
                 }}
               >
                 <motion.img
-                  src="https://i.imgur.com/N2muQIS.png"
+                  src="https://i.imgur.com/roZSSf4.png"
                   alt="DevTone Logo"
-                  className="w-14 h-14 md:w-16 md:h-16 object-contain filter drop-shadow-lg"
+                  className="w-24 h-24 md:w-32 md:h-32 object-contain filter drop-shadow-lg"
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   animate={{ 
@@ -52,22 +50,7 @@ const Footer = () => {
                   }}
                   viewport={{ once: true }}
                 />
-                <motion.div
-                  className="absolute inset-0 bg-purple-500/20 blur-sm"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  animate={{ 
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{ 
-                    duration: 0.3,
-                    opacity: {
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }
-                  }}
-                />
+
               </motion.div>
 
             </motion.div>
@@ -203,14 +186,14 @@ const Footer = () => {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <motion.img
-                src="https://i.imgur.com/N2muQIS.png"
+                src="https://i.imgur.com/qZ9tgbe.png"
                 alt="DevTone Logo"
                 className="w-8 h-8 md:w-10 md:h-10 object-contain filter drop-shadow-sm"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
               />
               <p className="text-white/50 text-sm">
-                © {currentYear} DevTone. All rights reserved.
+                © 2025 DevTone. All rights reserved.
               </p>
             </motion.div>
             <div className="flex space-x-6 text-sm">

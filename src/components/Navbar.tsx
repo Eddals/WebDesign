@@ -33,6 +33,16 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const location = useLocation()
 
+  const handleLinkClick = () => {
+    setIsMobileMenuOpen(false)
+    setActiveDropdown(null)
+    // Scroll to top smoothly
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
@@ -68,6 +78,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             to="/"
+            onClick={handleLinkClick}
             className="flex items-center group"
           >
             <motion.div
@@ -79,9 +90,9 @@ export default function Navbar() {
               }}
             >
               <motion.img
-                src="https://i.imgur.com/N2muQIS.png"
+                src="https://i.imgur.com/qZ9tgbe.png"
                 alt="DevTone Logo"
-                className="w-16 h-16 md:w-20 md:h-20 object-contain filter drop-shadow-lg"
+                className="w-20 h-20 md:w-24 md:h-24 object-contain filter drop-shadow-lg"
                 initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
                 animate={{
                   opacity: 1,
@@ -155,9 +166,10 @@ export default function Navbar() {
                             <Link
                               key={dropdownItem.href}
                               to={dropdownItem.href}
+                              onClick={handleLinkClick}
                               className={`flex items-center gap-3 px-4 py-3 transition-colors first:rounded-t-xl last:rounded-b-xl
-                                ${location.pathname === dropdownItem.href 
-                                  ? "text-purple-400 bg-purple-500/10" 
+                                ${location.pathname === dropdownItem.href
+                                  ? "text-purple-400 bg-purple-500/10"
                                   : "text-white/90 hover:text-purple-400 hover:bg-white/5"
                                 }`}
                             >
@@ -172,6 +184,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     to={item.href}
+                    onClick={handleLinkClick}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors
                       ${location.pathname === item.href
                         ? "text-purple-400 bg-white/5"
@@ -244,7 +257,7 @@ export default function Navbar() {
                               <Link
                                 key={dropdownItem.href}
                                 to={dropdownItem.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
+                                onClick={handleLinkClick}
                                 className={`flex items-center gap-3 px-4 py-2 rounded-full mb-1
                                   ${location.pathname === dropdownItem.href 
                                     ? "text-purple-400 bg-purple-500/10" 
@@ -262,7 +275,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       to={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={handleLinkClick}
                       className={`flex items-center gap-2 px-4 py-3 rounded-full mb-2
                         ${location.pathname === item.href
                           ? "text-purple-400 bg-white/5"

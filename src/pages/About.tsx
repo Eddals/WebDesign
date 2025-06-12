@@ -41,12 +41,12 @@ const About = () => {
     {
       category: "Web Development",
       icon: <Code size={24} />,
-      items: ["React", "Next.js", "JavaScript", "HTML/CSS", "PHP", "WordPress"]
+      items: ["React", "Next.js", "JavaScript", "HTML/CSS", "PHP"]
     },
     {
       category: "Digital Marketing",
       icon: <TrendingUp size={24} />,
-      items: ["SEO", "Google Analytics", "Content Strategy", "Social Media Marketing"]
+      items: ["SEO", "Google Analytics & Ads", "Content Strategy", "Social Media Marketing"]
     },
     {
       category: "Design",
@@ -56,7 +56,7 @@ const About = () => {
     {
       category: "Platforms",
       icon: <Target size={24} />,
-      items: ["WordPress", "Shopify", "Webflow", "Drupal"]
+      items: ["AWS Amplify"]
     }
   ]
 

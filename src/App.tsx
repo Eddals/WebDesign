@@ -5,6 +5,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
 import LiveChat from './components/LiveChat';
+import ScrollNavigation from './components/ScrollNavigation';
+import ScrollToTop from './components/ScrollToTop';
 import Home from "./pages/Home";
 import Services from './pages/Services';
 import Seo from './pages/SEO';
@@ -31,8 +33,9 @@ export default function App() {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <Router>
+          <ScrollToTop />
           <div className="min-h-screen bg-[#030718]">
-            
+
             <Navbar />
             
             <Routes>
@@ -57,6 +60,7 @@ export default function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
             <LiveChat />
+            <ScrollNavigation />
             <Footer />
           </div>
         </Router>

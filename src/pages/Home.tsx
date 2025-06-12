@@ -503,24 +503,7 @@ const Home = () => {
                   transition={{ duration: 0.8, delay: 0.8 }}
                 >
                   <div className="relative group">
-                    <motion.div
-                      className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/40 to-indigo-600/40 rounded-full opacity-30 group-hover:opacity-50 blur-[2px]"
-                      animate={{
-                        background: [
-                          "linear-gradient(0deg, rgba(124,58,237,0.4), rgba(79,70,229,0.4))",
-                          "linear-gradient(90deg, rgba(79,70,229,0.4), rgba(124,58,237,0.4))",
-                          "linear-gradient(180deg, rgba(124,58,237,0.4), rgba(79,70,229,0.4))",
-                          "linear-gradient(270deg, rgba(79,70,229,0.4), rgba(124,58,237,0.4))",
-                          "linear-gradient(360deg, rgba(124,58,237,0.4), rgba(79,70,229,0.4))",
-                        ],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                    />
-                    <motion.button 
+                    <motion.button
                       onClick={() => {
                         window.location.href = "/estimate";
                       }}
@@ -552,24 +535,7 @@ const Home = () => {
                   </div>
                   
                   <div className="relative group">
-                    <motion.div
-                      className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/40 to-indigo-600/40 rounded-full opacity-30 group-hover:opacity-50 blur-[2px]"
-                      animate={{
-                        background: [
-                          "linear-gradient(0deg, rgba(124,58,237,0.4), rgba(79,70,229,0.4))",
-                          "linear-gradient(90deg, rgba(79,70,229,0.4), rgba(124,58,237,0.4))",
-                          "linear-gradient(180deg, rgba(124,58,237,0.4), rgba(79,70,229,0.4))",
-                          "linear-gradient(270deg, rgba(79,70,229,0.4), rgba(124,58,237,0.4))",
-                          "linear-gradient(360deg, rgba(124,58,237,0.4), rgba(79,70,229,0.4))",
-                        ],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                    />
-                    <motion.button 
+                    <motion.button
                       onClick={() => window.location.href = "/contact"}
                       className="group relative px-8 py-4 bg-transparent border-2 border-purple-500/20
                         rounded-xl font-semibold text-lg overflow-hidden"
@@ -587,7 +553,7 @@ const Home = () => {
                       
                       {/* Button content */}
                       <div className="relative flex items-center justify-center">
-                        <span className="text-white/90 mr-4">Contact Me</span>
+                        <span className="text-white/90 mr-4">Contact Us</span>
                         <motion.div
                           animate={{ rotate: [0, 10, 0] }}
                           transition={{ duration: 2, repeat: Infinity }}
@@ -1617,14 +1583,14 @@ const Home = () => {
                 Built for Success
               </motion.h2>
               
-              <motion.p 
+              <motion.p
                 className="text-white/80 max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                We combine cutting-edge technology with proven strategies to deliver websites that drive real business results
+                We build websites that actually work for your business. Simple, fast, and designed to get you more customers.
               </motion.p>
             </motion.div>
 
@@ -1633,39 +1599,39 @@ const Home = () => {
               {[
                 {
                   icon: <Zap className="w-8 h-8" />,
-                  title: "Lightning Fast",
-                  description: "Optimized for speed with 95+ PageSpeed scores. Your visitors won't wait, and neither should you.",
-                  color: "from-yellow-500 to-orange-500"
+                  title: "Super Fast",
+                  description: "Your website loads in under 3 seconds. Fast sites keep visitors happy and boost sales.",
+                  color: "from-purple-500 to-purple-700"
                 },
                 {
                   icon: <Shield className="w-8 h-8" />,
-                  title: "Secure & Reliable",
-                  description: "Enterprise-grade security with SSL certificates, regular backups, and 99.9% uptime guarantee.",
-                  color: "from-green-500 to-emerald-500"
+                  title: "Safe & Secure",
+                  description: "Your website is protected 24/7. We handle security so you can focus on your business.",
+                  color: "from-purple-500 to-purple-700"
                 },
                 {
                   icon: <Smartphone className="w-8 h-8" />,
-                  title: "Mobile First",
-                  description: "Responsive design that looks perfect on every device. Mobile traffic converts better than ever.",
-                  color: "from-blue-500 to-cyan-500"
+                  title: "Works on All Devices",
+                  description: "Looks great on phones, tablets, and computers. Your customers can find you anywhere.",
+                  color: "from-purple-500 to-purple-700"
                 },
                 {
                   icon: <Target className="w-8 h-8" />,
-                  title: "SEO Optimized",
-                  description: "Built-in SEO best practices to help you rank higher and attract more organic traffic.",
-                  color: "from-purple-500 to-pink-500"
+                  title: "Easy to Find on Google",
+                  description: "We make sure people can find your business when they search online. More visibility = more customers.",
+                  color: "from-purple-500 to-purple-700"
                 },
                 {
                   icon: <Heart className="w-8 h-8" />,
-                  title: "User Experience",
-                  description: "Intuitive navigation and engaging interactions that keep visitors coming back for more.",
-                  color: "from-red-500 to-rose-500"
+                  title: "Easy to Use",
+                  description: "Simple navigation that makes sense. Visitors find what they need quickly and easily.",
+                  color: "from-purple-500 to-purple-700"
                 },
                 {
                   icon: <Gauge className="w-8 h-8" />,
-                  title: "Performance Focused",
-                  description: "Every line of code is optimized for performance. Fast loading times mean better conversions.",
-                  color: "from-indigo-500 to-purple-500"
+                  title: "Built for Results",
+                  description: "Every feature is designed to help your business grow. More leads, more sales, more success.",
+                  color: "from-purple-500 to-purple-700"
                 }
               ].map((feature, index) => (
                 <motion.div
@@ -1680,15 +1646,35 @@ const Home = () => {
                   {/* Hover effect background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
-                  {/* Icon */}
-                  <motion.div 
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r ${feature.color} mb-4 relative z-10`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  {/* Interactive Icon */}
+                  <motion.div
+                    className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r ${feature.color} mb-4 relative z-10 cursor-pointer`}
+                    whileHover={{
+                      scale: 1.15,
+                      rotate: [0, -10, 10, -5, 5, 0],
+                      boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 10,
+                      rotate: { duration: 0.6 }
+                    }}
+                    animate={{
+                      y: [0, -5, 0],
+                    }}
+                    style={{
+                      animationDelay: `${index * 0.2}s`
+                    }}
                   >
-                    <div className="text-white">
+                    <motion.div
+                      className="text-white"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       {feature.icon}
-                    </div>
+                    </motion.div>
                   </motion.div>
                   
                   {/* Content */}
@@ -1748,14 +1734,14 @@ const Home = () => {
                 Measurable Impact
               </motion.h2>
               
-              <motion.p 
+              <motion.p
                 className="text-white/80 max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                Numbers don't lie. See the tangible results our clients achieve with professionally crafted websites that convert visitors into customers.
+                Real numbers from real businesses. Here's what happens when you get a website that actually works for you.
               </motion.p>
             </motion.div>
 
@@ -1764,37 +1750,37 @@ const Home = () => {
               {[
                 {
                   value: "300%",
-                  label: "Average Traffic Increase",
-                  description: "Organic traffic growth within 6 months",
+                  label: "More Website Visitors",
+                  description: "Triple your website traffic in 6 months",
                   icon: <Monitor className="w-8 h-8" />,
-                  color: "from-purple-500 to-pink-500",
+                  color: "from-purple-500 to-purple-700",
                   prefix: "",
                   suffix: "%"
                 },
                 {
                   value: "85%",
-                  label: "Conversion Rate Boost",
-                  description: "Better user experience = more sales",
+                  label: "Better Sales Results",
+                  description: "Turn more visitors into paying customers",
                   icon: <Target className="w-8 h-8" />,
-                  color: "from-indigo-500 to-purple-500",
+                  color: "from-purple-500 to-purple-700",
                   prefix: "",
                   suffix: "%"
                 },
                 {
                   value: "2.5",
-                  label: "Seconds Load Time",
-                  description: "Lightning-fast performance guaranteed",
+                  label: "Lightning Fast Speed",
+                  description: "Your site loads faster than 95% of websites",
                   icon: <Zap className="w-8 h-8" />,
-                  color: "from-blue-500 to-indigo-500",
+                  color: "from-purple-500 to-purple-700",
                   prefix: "",
                   suffix: "s"
                 },
                 {
                   value: "99.9%",
-                  label: "Uptime Reliability",
-                  description: "Your website, always available",
+                  label: "Always Online",
+                  description: "Your website works 24/7, every day",
                   icon: <Shield className="w-8 h-8" />,
-                  color: "from-cyan-500 to-blue-500",
+                  color: "from-purple-500 to-purple-700",
                   prefix: "",
                   suffix: "%"
                 }
@@ -1811,15 +1797,39 @@ const Home = () => {
                   {/* Hover effect background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
-                  {/* Icon */}
-                  <motion.div 
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r ${metric.color} mb-4 relative z-10`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  {/* Interactive Icon */}
+                  <motion.div
+                    className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r ${metric.color} mb-4 relative z-10 cursor-pointer`}
+                    whileHover={{
+                      scale: 1.2,
+                      rotate: [0, 15, -15, 0],
+                      boxShadow: "0 15px 40px rgba(168, 85, 247, 0.5)"
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 15,
+                      rotate: { duration: 0.8 }
+                    }}
+                    animate={{
+                      y: [0, -8, 0],
+                      rotateY: [0, 360]
+                    }}
+                    style={{
+                      animationDelay: `${index * 0.3}s`
+                    }}
                   >
-                    <div className="text-white">
+                    <motion.div
+                      className="text-white"
+                      whileHover={{
+                        scale: 1.15,
+                        filter: "brightness(1.2)"
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
                       {metric.icon}
-                    </div>
+                    </motion.div>
                   </motion.div>
                   
                   {/* Animated Value */}
@@ -1851,74 +1861,183 @@ const Home = () => {
               ))}
             </div>
 
-            {/* Success Stories Carousel */}
-            <motion.div 
-              className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10"
+            {/* Success Stories Showcase */}
+            <motion.div
+              className="bg-gradient-to-r from-purple-500/10 to-purple-700/10 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 relative overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-white mb-2">Client Success Highlights</h3>
-                <p className="text-white/70">Real transformations, real results</p>
+              {/* Animated Background */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-purple-700/5"
+                animate={{
+                  background: [
+                    "linear-gradient(45deg, rgba(168, 85, 247, 0.05), rgba(147, 51, 234, 0.05))",
+                    "linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(168, 85, 247, 0.05))",
+                    "linear-gradient(225deg, rgba(168, 85, 247, 0.05), rgba(147, 51, 234, 0.05))",
+                    "linear-gradient(315deg, rgba(147, 51, 234, 0.05), rgba(168, 85, 247, 0.05))",
+                  ]
+                }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              />
+
+              <div className="text-center mb-8 relative z-10">
+                <motion.h3
+                  className="text-3xl font-bold text-white mb-2"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  🎉 Amazing Success Stories
+                </motion.h3>
+                <motion.p
+                  className="text-white/70 text-lg"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  Real businesses, real growth, real happy customers!
+                </motion.p>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
                 {[
                   {
-                    company: "TechStart Inc.",
-                    industry: "SaaS Platform",
-                    result: "400% increase in sign-ups",
-                    timeframe: "3 months",
-                    highlight: "Conversion optimization",
-                    icon: "🚀"
-                  },
-                  {
-                    company: "Wellness Clinic",
-                    industry: "Healthcare",
-                    result: "250% more appointments",
+                    company: "Local Restaurant",
+                    industry: "Food & Dining",
+                    result: "5x more online orders",
                     timeframe: "2 months",
-                    highlight: "Online booking system",
-                    icon: "🏥"
+                    highlight: "Online ordering made easy",
+                    icon: "🍕",
+                    color: "from-orange-500 to-red-500",
+                    quote: "Our phone stopped ringing because everyone orders online now!"
                   },
                   {
-                    company: "Artisan Collective",
-                    industry: "Creative Agency",
-                    result: "300% client inquiries",
-                    timeframe: "4 months",
-                    highlight: "Portfolio showcase",
-                    icon: "🎨"
+                    company: "Fitness Studio",
+                    industry: "Health & Wellness",
+                    result: "300% more memberships",
+                    timeframe: "3 months",
+                    highlight: "Simple booking system",
+                    icon: "💪",
+                    color: "from-green-500 to-emerald-500",
+                    quote: "We went from 20 to 80 members in just 3 months!"
+                  },
+                  {
+                    company: "Home Services",
+                    industry: "Contractor",
+                    result: "10x more leads",
+                    timeframe: "1 month",
+                    highlight: "Easy contact forms",
+                    icon: "🔨",
+                    color: "from-blue-500 to-cyan-500",
+                    quote: "I'm booked solid for the next 6 months!"
                   }
                 ].map((story, index) => (
                   <motion.div
                     key={index}
-                    className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300 relative overflow-hidden group"
-                    whileHover={{ y: -3 }}
+                    className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-purple-500/50 transition-all duration-300 relative overflow-hidden group cursor-pointer"
+                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    whileHover={{
+                      y: -10,
+                      scale: 1.05,
+                      boxShadow: "0 20px 40px rgba(168, 85, 247, 0.3)"
+                    }}
                   >
-                    {/* Hover effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    {/* Icon */}
-                    <div className="text-3xl mb-4 relative z-10">{story.icon}</div>
-                    
-                    {/* Company */}
-                    <h4 className="text-lg font-semibold text-white mb-1 relative z-10">{story.company}</h4>
-                    <p className="text-purple-300 text-sm mb-3 relative z-10">{story.industry}</p>
-                    
-                    {/* Result */}
-                    <div className="bg-purple-500/20 rounded-lg p-3 mb-3 relative z-10">
-                      <p className="text-white font-medium text-center">{story.result}</p>
-                      <p className="text-purple-300 text-xs text-center">in {story.timeframe}</p>
-                    </div>
-                    
-                    {/* Highlight */}
-                    <span className="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded-full border border-indigo-500/30 relative z-10">
-                      {story.highlight}
-                    </span>
+                    {/* Animated Hover Background */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-700/10 opacity-0 group-hover:opacity-100"
+                      transition={{ duration: 0.3 }}
+                    />
+
+                    {/* Floating Icon */}
+                    <motion.div
+                      className="text-4xl mb-4 relative z-10"
+                      animate={{
+                        y: [0, -5, 0],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: index * 0.5
+                      }}
+                      whileHover={{
+                        scale: 1.3,
+                        rotate: 360
+                      }}
+                    >
+                      {story.icon}
+                    </motion.div>
+
+                    {/* Company Info */}
+                    <h4 className="text-xl font-bold text-white mb-1 relative z-10 group-hover:text-purple-300 transition-colors">
+                      {story.company}
+                    </h4>
+                    <p className="text-purple-300 text-sm mb-4 relative z-10">{story.industry}</p>
+
+                    {/* Quote */}
+                    <motion.div
+                      className="bg-purple-500/20 rounded-lg p-3 mb-4 relative z-10 border border-purple-500/30"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <p className="text-white/90 text-sm italic text-center">"{story.quote}"</p>
+                    </motion.div>
+
+                    {/* Result Badge */}
+                    <motion.div
+                      className={`bg-gradient-to-r ${story.color} rounded-lg p-3 mb-3 relative z-10 text-center`}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <p className="text-white font-bold text-lg">{story.result}</p>
+                      <p className="text-white/80 text-xs">in just {story.timeframe}</p>
+                    </motion.div>
+
+                    {/* Highlight Tag */}
+                    <motion.span
+                      className="inline-block px-3 py-1 bg-purple-600 text-white text-xs rounded-full relative z-10 font-medium"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      ✨ {story.highlight}
+                    </motion.span>
+
+                    {/* Decorative Elements */}
+                    <motion.div
+                      className="absolute top-4 right-4 w-8 h-8 border-2 border-purple-500/30 rounded-full opacity-0 group-hover:opacity-100"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    />
                   </motion.div>
                 ))}
               </div>
+
+              {/* Call to Action */}
+              <motion.div
+                className="mt-8 text-center relative z-10"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+              >
+                <motion.button
+                  className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-purple-500/40"
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.location.href = "/estimate"}
+                >
+                  🚀 Get Your Success Story Started!
+                </motion.button>
+              </motion.div>
             </motion.div>
 
             {/* Call to Action */}
