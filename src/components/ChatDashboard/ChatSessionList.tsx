@@ -1,10 +1,9 @@
-import { motion } from 'framer-motion'
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Building, 
-  Clock, 
+import {
+  User,
+  Mail,
+  Phone,
+  Building,
+  Clock,
   MessageCircle,
   AlertCircle,
   CheckCircle,
@@ -130,92 +129,98 @@ const ChatSessionList = ({ sessions, selectedSession, onSelectSession, loading }
   }
 
   return (
-    <div className="overflow-y-auto h-full">
+    <div className="overflow-y-auto h-full bg-gray-800">
       {sessions.map((session) => (
         <motion.div
           key={session.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          whileHover={{ backgroundColor: 'rgba(75, 85, 99, 0.5)' }}
           onClick={() => onSelectSession(session)}
-          className={`p-4 border-b border-gray-700 cursor-pointer transition-colors ${
-            selectedSession?.id === session.id ? 'bg-purple-600/20 border-purple-500' : ''
+          className={`mx-1 my-1 p-2 rounded-lg cursor-pointer transition-colors border ${
+            selectedSession?.id === session.id
+              ? 'bg-purple-600 border-purple-500'
+              : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
           }`}
         >
-          {/* Header with name and status */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2">
-                <User className="text-gray-400" size={16} />
-                <span className="text-white font-medium truncate max-w-[150px]">
-                  {session.user_name}
-                </span>
+          {/* Compact Header with name and status */}
+          <div className="flex items-center justify-between mb-2 relative z-10">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="bg-gradient-to-r from-purple-500/15 to-purple-600/15 p-1.5 rounded-full flex-shrink-0">
+                <User className="text-purple-300" size={12} />
               </div>
+              <span className="text-white font-medium truncate text-sm">
+                {session.user_name}
+              </span>
               {session.unread_count && session.unread_count > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full min-w-[20px] h-5 flex items-center justify-center">
+                <span className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[16px] h-4 flex items-center justify-center text-xs flex-shrink-0">
                   {session.unread_count}
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              {getStatusIcon(session.status)}
-              <div className={`w-2 h-2 rounded-full ${getStatusColor(session.status)}`} />
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <div className="text-gray-400">
+                {getStatusIcon(session.status)}
+              </div>
+              <div
+                className={`w-2 h-2 rounded-full ${getStatusColor(session.status)}`}
+              />
             </div>
           </div>
 
-          {/* Contact info */}
-          <div className="space-y-1 mb-2">
-            <div className="flex items-center gap-2 text-gray-400 text-sm">
-              <Mail size={12} />
+          {/* Compact Contact info */}
+          <div className="space-y-1 mb-2 relative z-10">
+            <div className="flex items-center gap-1 text-gray-400 text-xs">
+              <Mail size={8} className="text-blue-400 flex-shrink-0" />
               <span className="truncate">{session.user_email}</span>
             </div>
             {session.user_phone && (
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <Phone size={12} />
+              <div className="flex items-center gap-1 text-gray-400 text-xs">
+                <Phone size={8} className="text-green-400 flex-shrink-0" />
                 <span>{session.user_phone}</span>
               </div>
             )}
             {session.user_company && (
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <Building size={12} />
+              <div className="flex items-center gap-1 text-gray-400 text-xs">
+                <Building size={8} className="text-purple-400 flex-shrink-0" />
                 <span className="truncate">{session.user_company}</span>
               </div>
             )}
           </div>
 
-          {/* Inquiry type */}
-          {session.inquiry_type && (
-            <div className="mb-2">
-              <span className={`text-xs px-2 py-1 rounded-full ${getInquiryTypeColor(session.inquiry_type)}`}>
+          {/* Compact Inquiry type and last message */}
+          <div className="space-y-1 mb-2 relative z-10">
+            {session.inquiry_type && (
+              <span className={`text-xs px-2 py-0.5 rounded-full ${getInquiryTypeColor(session.inquiry_type)} font-medium`}>
                 {session.inquiry_type.charAt(0).toUpperCase() + session.inquiry_type.slice(1)}
               </span>
-            </div>
-          )}
+            )}
+            {session.last_message && (
+              <div className="bg-gray-800/30 rounded-lg p-1.5">
+                <p className="text-gray-400 text-xs leading-relaxed line-clamp-2">
+                  {session.last_message.length > 40
+                    ? session.last_message.substring(0, 40) + '...'
+                    : session.last_message
+                  }
+                </p>
+              </div>
+            )}
+          </div>
 
-          {/* Last message preview */}
-          {session.last_message && (
-            <div className="mb-2">
-              <p className="text-gray-300 text-sm line-clamp-2">
-                {session.last_message.length > 60 
-                  ? session.last_message.substring(0, 60) + '...'
-                  : session.last_message
-                }
-              </p>
-            </div>
-          )}
-
-          {/* Timestamp and Duration */}
+          {/* Timestamp and Status */}
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
-                <Clock size={12} />
+                <Clock size={8} className="text-blue-400" />
                 <span>{formatTime(session.last_message_time || session.created_at)}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <span>Duration: {getConversationDuration(session.created_at)}</span>
-              </div>
+              <span>{getConversationDuration(session.created_at)}</span>
             </div>
-            <span className="capitalize">{session.status}</span>
+            <span className={`capitalize px-1.5 py-0.5 rounded text-xs font-medium ${
+              session.status === 'active' ? 'bg-green-600 text-white' :
+              session.status === 'pending' ? 'bg-yellow-600 text-white' :
+              session.status === 'resolved' ? 'bg-gray-600 text-white' :
+              'bg-gray-600 text-white'
+            }`}>
+              {session.status}
+            </span>
           </div>
         </motion.div>
       ))}

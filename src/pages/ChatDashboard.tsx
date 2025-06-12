@@ -348,92 +348,94 @@ const ChatDashboard = () => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-900 z-50 overflow-hidden">
-      {/* Header - Mobile Responsive */}
-      <div className="bg-gray-800 border-b border-gray-700 px-3 sm:px-6 py-3 sm:py-4 h-16 sm:h-20">
+    <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col h-screen overflow-hidden">
+
+      {/* Compact Header */}
+      <div className="bg-gray-800 border-b border-gray-700 px-4 py-2 h-14 flex-shrink-0">
         <div className="flex items-center justify-between h-full">
-          <div className="flex items-center min-w-0 flex-1">
-            <MessageSquare className="text-purple-500 mr-2 sm:mr-3 flex-shrink-0" size={24} />
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-2xl font-bold text-white truncate">DevTone Chat Dashboard</h1>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <p className="text-gray-400 text-xs sm:text-sm truncate">Manage customer support conversations</p>
-                {/* Connection Status Indicator */}
-                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                  <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
-                    connectionStatus === 'connected' ? 'bg-green-400' :
-                    connectionStatus === 'error' ? 'bg-orange-400' :
-                    'bg-red-400'
-                  }`}></div>
-                  <span className="text-xs text-gray-500 hidden sm:inline">
-                    {usePolling ? 'Polling Mode' : 'Real-time'}
-                  </span>
-                </div>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="bg-purple-600 p-2 rounded-full">
+              <MessageSquare className="text-white" size={16} />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-white">DevTone Chat Dashboard</h1>
+              <p className="text-gray-400 text-xs">Manage customer support conversations</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded-full">
+              <div className={`w-2 h-2 rounded-full ${
+                connectionStatus === 'connected' ? 'bg-green-400' :
+                connectionStatus === 'error' ? 'bg-orange-400' :
+                'bg-red-400'
+              }`}></div>
+              <span className="text-xs text-gray-400">
+                {usePolling ? 'Polling' : 'Live'}
+              </span>
+            </div>
             <button
               onClick={() => {
                 fetchSessions()
                 fetchStats()
               }}
-              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm"
+              className="flex items-center gap-1 px-3 py-1 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors text-xs"
             >
-              <RefreshCw size={14} className="sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Refresh</span>
+              <RefreshCw size={12} />
+              <span>Refresh</span>
             </button>
             <button
               onClick={() => {
                 localStorage.removeItem('chat_dashboard_auth')
                 setIsAuthenticated(false)
-                window.location.href = '/' // Redirect to home instead of reload
+                window.location.href = '/'
               }}
-              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-xs sm:text-sm"
+              className="flex items-center gap-1 px-3 py-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors text-xs"
             >
-              <Users size={14} className="sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Logout</span>
+              <Users size={12} />
+              <span>Logout</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Stats - Mobile Responsive */}
-      <div className="h-20 sm:h-24">
+      {/* Compact Stats Section */}
+      <div className="h-16 flex-shrink-0">
         <ChatStats stats={stats} />
       </div>
 
-      {/* Main Content - Mobile Responsive */}
-      <div className="flex flex-col sm:flex-row h-[calc(100vh-144px)] sm:h-[calc(100vh-176px)]">
-        {/* Sessions List */}
-        <div className="w-full sm:w-1/3 bg-gray-800 border-b sm:border-b-0 sm:border-r border-gray-700 flex flex-col h-1/2 sm:h-full">
-          {/* Search and Filter */}
-          <div className="p-2 sm:p-4 border-b border-gray-700 flex-shrink-0">
-            <div className="relative mb-2 sm:mb-3">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search conversations..."
-                className="w-full pl-9 pr-3 py-1.5 sm:pl-10 sm:pr-4 sm:py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
+      {/* Fixed Layout - No Scroll */}
+      <div className="flex-1 flex h-[calc(100vh-112px)] overflow-hidden">
+        {/* Sessions List - Fixed Width */}
+        <div className="w-80 bg-gray-800 border-r border-gray-700 flex flex-col">
+          {/* Compact Search and Filter */}
+          <div className="p-2 border-b border-gray-700 flex-shrink-0 bg-gray-800">
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={12} />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search conversations..."
+                  className="w-full pl-8 pr-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-purple-500 placeholder-gray-400"
+                />
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-purple-500"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
             </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="resolved">Resolved</option>
-              <option value="closed">Closed</option>
-            </select>
           </div>
 
-          {/* Sessions List */}
-          <div className="flex-1 overflow-hidden">
+          {/* Sessions List - Fixed Height with Scroll */}
+          <div className="flex-1 overflow-y-auto">
             <ChatSessionList
               sessions={filteredSessions}
               selectedSession={selectedSession}
@@ -443,8 +445,8 @@ const ChatDashboard = () => {
           </div>
         </div>
 
-        {/* Chat Window */}
-        <div className="flex-1 flex flex-col h-1/2 sm:h-full">
+        {/* Chat Window - Fixed Layout */}
+        <div className="flex-1 flex flex-col overflow-hidden">
           <ChatWindow
             session={selectedSession}
             onSessionUpdate={fetchSessions}

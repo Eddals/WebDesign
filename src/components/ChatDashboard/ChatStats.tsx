@@ -66,43 +66,25 @@ const ChatStats = ({ stats }: ChatStatsProps) => {
   ]
 
   return (
-    <div className="bg-gray-800 border-b border-gray-700 px-6 py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="bg-gray-800 border-b border-gray-700 px-4 py-2 h-16 flex items-center">
+      <div className="grid grid-cols-5 gap-4 w-full">
         {statCards.map((stat, index) => (
-          <motion.div
+          <div
             key={stat.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`${stat.bgColor} ${stat.borderColor} border rounded-3xl p-4 hover:scale-105 transition-transform`}
+            className={`${stat.bgColor} ${stat.borderColor} border rounded-lg p-2 flex items-center gap-2`}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm font-medium">{stat.title}</p>
-                <p className={`text-2xl font-bold ${stat.color} mt-1`}>
-                  {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
-                </p>
-              </div>
-              <div className={`${stat.color} ${stat.bgColor} p-3 rounded-full`}>
-                <stat.icon size={24} />
-              </div>
+            <div className={`${stat.color} ${stat.bgColor} p-1.5 rounded-full flex-shrink-0`}>
+              <stat.icon size={12} />
             </div>
-            
-            {/* Optional trend indicator */}
-            {stat.title === 'Total Conversations' && (
-              <div className="flex items-center mt-2 text-green-400 text-sm">
-                <TrendingUp size={14} className="mr-1" />
-                <span>+12% from last week</span>
-              </div>
-            )}
-            
-            {stat.title === 'Avg Response Time' && (
-              <div className="flex items-center mt-2 text-green-400 text-sm">
-                <TrendingUp size={14} className="mr-1" />
-                <span>-15% faster</span>
-              </div>
-            )}
-          </motion.div>
+            <div className="min-w-0 flex-1">
+              <p className="text-gray-300 text-xs font-medium truncate">
+                {stat.title}
+              </p>
+              <p className={`text-sm font-bold ${stat.color}`}>
+                {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
+              </p>
+            </div>
+          </div>
         ))}
       </div>
     </div>

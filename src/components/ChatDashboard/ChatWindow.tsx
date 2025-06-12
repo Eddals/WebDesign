@@ -615,48 +615,38 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-900 max-h-full overflow-hidden">
-      {/* Chat Header */}
-      <div className="bg-gray-800 border-b border-gray-700 p-4 flex-shrink-0">
+    <div className="flex flex-col h-full bg-gray-900 overflow-hidden">
+      {/* Compact Chat Header */}
+      <div className="bg-gray-800 border-b border-gray-700 p-2 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-              <User className="text-white" size={20} />
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <User className="text-white" size={12} />
             </div>
-            <div>
-              <h3 className="text-white font-semibold">{session.user_name}</h3>
-              <div className="flex items-center gap-4 text-sm text-gray-400">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-white font-semibold text-sm truncate">
+                {session.user_name}
+              </h3>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
                 <div className="flex items-center gap-1">
-                  <Mail size={12} />
-                  <span>{session.user_email}</span>
+                  <Mail size={8} className="text-blue-400" />
+                  <span className="truncate max-w-[120px]">{session.user_email}</span>
                 </div>
-                {session.user_phone && (
-                  <div className="flex items-center gap-1">
-                    <Phone size={12} />
-                    <span>{session.user_phone}</span>
-                  </div>
-                )}
-                {session.user_company && (
-                  <div className="flex items-center gap-1">
-                    <Building size={12} />
-                    <span>{session.user_company}</span>
-                  </div>
-                )}
                 <div className="flex items-center gap-1">
-                  <Clock size={12} />
-                  <span>Duration: {getConversationDuration()}</span>
+                  <Clock size={8} className="text-orange-400" />
+                  <span>{getConversationDuration()}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 flex-shrink-0">
             {/* Status Display */}
-            <span className={`px-3 py-1 text-xs rounded-full font-medium ${
-              session.status === 'active' ? 'bg-green-500/20 text-green-400' :
-              session.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-              session.status === 'resolved' ? 'bg-blue-500/20 text-blue-400' :
-              'bg-gray-500/20 text-gray-400'
+            <span className={`px-2 py-1 text-xs rounded font-medium ${
+              session.status === 'active' ? 'bg-green-600 text-white' :
+              session.status === 'pending' ? 'bg-yellow-600 text-white' :
+              session.status === 'resolved' ? 'bg-blue-600 text-white' :
+              'bg-gray-600 text-white'
             }`}>
               {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
             </span>
@@ -664,56 +654,52 @@ const ChatWindow = ({ session, onSessionUpdate }: ChatWindowProps) => {
             {/* Action Buttons */}
             <button
               onClick={markAsResolved}
-              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Mark as Resolved"
               disabled={session.status === 'resolved' || actionLoading !== null}
             >
               {actionLoading === 'resolved' ? (
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={10} className="animate-spin" />
               ) : (
-                <CheckCircle size={14} />
+                <CheckCircle size={10} />
               )}
-              Resolved
+              <span>Resolved</span>
             </button>
 
             <button
               onClick={markAsNotResolved}
-              className="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white text-xs rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Mark as Not Resolved (Reopen)"
               disabled={session.status === 'active' || actionLoading !== null}
             >
               {actionLoading === 'not_resolved' ? (
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={10} className="animate-spin" />
               ) : (
-                <AlertCircle size={14} />
+                <AlertCircle size={10} />
               )}
-              Not Resolved
+              <span>Reopen</span>
             </button>
 
             <button
               onClick={closeConversation}
-              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Close Conversation (Close on Both Sides)"
+              className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Close Conversation"
               disabled={actionLoading !== null}
             >
               {actionLoading === 'close' ? (
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={10} className="animate-spin" />
               ) : (
-                <XCircle size={14} />
+                <XCircle size={10} />
               )}
-              Close
-            </button>
-
-            <button className="p-2 text-gray-400 hover:text-white">
-              <MoreVertical size={16} />
+              <span>Close</span>
             </button>
           </div>
         </div>
 
         {session.inquiry_type && (
-          <div className="mt-2">
-            <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-full">
-              {session.inquiry_type.charAt(0).toUpperCase() + session.inquiry_type.slice(1)} Inquiry
+          <div className="mt-1">
+            <span className="inline-block px-2 py-0.5 bg-purple-600 text-white text-xs rounded">
+              {session.inquiry_type.charAt(0).toUpperCase() + session.inquiry_type.slice(1)}
             </span>
           </div>
         )}
