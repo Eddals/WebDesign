@@ -125,9 +125,6 @@ const Footer = () => {
               <Link to="/contact" className="text-white/70 hover:text-purple-400 transition-colors">
                 Consultation
               </Link>
-              <Link to="/chat-dashboard" className="text-white/70 hover:text-purple-400 transition-colors">
-                Support Dashboard
-              </Link>
             </nav>
           </div>
 
@@ -206,10 +203,26 @@ const Footer = () => {
               <Link
                 to="/chat-dashboard"
                 className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
-                title="Admin Access"
+                title="Support Dashboard"
+              >
+                <Shield size={14} />
+                Support
+              </Link>
+              <Link
+                to="/admin-client-dashboard"
+                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
+                title="Client Management"
               >
                 <Shield size={14} />
                 Admin
+              </Link>
+              <Link
+                to="/client-portal"
+                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
+                title="Client Portal"
+              >
+                <Shield size={14} />
+                Client Portal
               </Link>
             </div>
           </div>

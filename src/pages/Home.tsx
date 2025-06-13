@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { 
-  ArrowRight, ExternalLink, CheckCircle, ChevronRight, Zap, Star, 
-  Briefcase, Rocket, Crown, Code, Laptop, Globe, Sparkles, 
+import {
+  ArrowRight, ExternalLink, CheckCircle, ChevronRight, Zap, Star,
+  Briefcase, Rocket, Crown, Code, Laptop, Globe, Sparkles,
   Lightbulb, Cpu, Layers, Smartphone, Palette, Gauge, Heart,
   Monitor, Database, FileText, Package, User, Mail, Phone,
-  Target, Loader, Shield
+  Target, Loader, Shield, Building, MapPin
 } from "lucide-react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import SEO from '@/components/SEO'
@@ -1724,16 +1724,16 @@ const Home = () => {
                 Real Results
               </motion.div>
               
-              <motion.h2 
+              <motion.h2
                 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-400"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Measurable Impact
+                🌟 Your Business, Everywhere Online
               </motion.h2>
-              
+
               <motion.p
                 className="text-white/80 max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
@@ -1741,7 +1741,7 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                Real numbers from real businesses. Here's what happens when you get a website that actually works for you.
+                We don't just build websites - we make sure your business gets found! Every website includes Google Business listing, industry directories, and local search optimization so customers can discover you easily.
               </motion.p>
             </motion.div>
 
@@ -1749,40 +1749,40 @@ const Home = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
               {[
                 {
-                  value: "300%",
-                  label: "More Website Visitors",
-                  description: "Triple your website traffic in 6 months",
-                  icon: <Monitor className="w-8 h-8" />,
+                  value: "100+",
+                  label: "Business Directories",
+                  description: "We list your business in Google, Yelp, Yellow Pages, and 100+ industry-specific directories",
+                  icon: <Globe className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
-                  suffix: "%"
+                  suffix: "+"
                 },
                 {
-                  value: "85%",
-                  label: "Better Sales Results",
-                  description: "Turn more visitors into paying customers",
+                  value: "24/7",
+                  label: "Google Visibility",
+                  description: "Your business shows up when customers search for your services in your area",
                   icon: <Target className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
-                  suffix: "%"
+                  suffix: ""
                 },
                 {
-                  value: "2.5",
-                  label: "Lightning Fast Speed",
-                  description: "Your site loads faster than 95% of websites",
-                  icon: <Zap className="w-8 h-8" />,
+                  value: "All",
+                  label: "Industry Types",
+                  description: "Restaurants, salons, contractors, doctors, lawyers - we know every business type",
+                  icon: <Building className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
-                  suffix: "s"
+                  suffix: ""
                 },
                 {
-                  value: "99.9%",
-                  label: "Always Online",
-                  description: "Your website works 24/7, every day",
-                  icon: <Shield className="w-8 h-8" />,
+                  value: "Local",
+                  label: "Search Domination",
+                  description: "When people search 'near me' for your services, they'll find YOU first",
+                  icon: <MapPin className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
-                  suffix: "%"
+                  suffix: ""
                 }
               ].map((metric, index) => (
                 <motion.div
@@ -1891,7 +1891,7 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                 >
-                  🎉 Amazing Success Stories
+                  💼 Real Business Transformations
                 </motion.h3>
                 <motion.p
                   className="text-white/70 text-lg"
@@ -1900,41 +1900,41 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                  Real businesses, real growth, real happy customers!
+                  See how we helped local businesses get found online and grow their customer base!
                 </motion.p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
                 {[
                   {
-                    company: "Local Restaurant",
-                    industry: "Food & Dining",
-                    result: "5x more online orders",
-                    timeframe: "2 months",
-                    highlight: "Online ordering made easy",
+                    company: "Tony's Pizza Palace",
+                    industry: "Restaurant",
+                    result: "Now #1 on Google Maps",
+                    timeframe: "1 month",
+                    highlight: "Google Business + Local SEO",
                     icon: "🍕",
                     color: "from-orange-500 to-red-500",
-                    quote: "Our phone stopped ringing because everyone orders online now!"
+                    quote: "Customers find us instantly when they search 'pizza near me'!"
                   },
                   {
-                    company: "Fitness Studio",
-                    industry: "Health & Wellness",
-                    result: "300% more memberships",
-                    timeframe: "3 months",
-                    highlight: "Simple booking system",
-                    icon: "💪",
-                    color: "from-green-500 to-emerald-500",
-                    quote: "We went from 20 to 80 members in just 3 months!"
+                    company: "Bella's Hair Salon",
+                    industry: "Beauty & Wellness",
+                    result: "Appears in 50+ directories",
+                    timeframe: "2 weeks",
+                    highlight: "Complete online presence",
+                    icon: "💇‍♀️",
+                    color: "from-pink-500 to-purple-500",
+                    quote: "New clients book appointments online every day!"
                   },
                   {
-                    company: "Home Services",
-                    industry: "Contractor",
-                    result: "10x more leads",
-                    timeframe: "1 month",
-                    highlight: "Easy contact forms",
-                    icon: "🔨",
+                    company: "Mike's Plumbing",
+                    industry: "Home Services",
+                    result: "Top 3 for 'plumber near me'",
+                    timeframe: "3 weeks",
+                    highlight: "Local search domination",
+                    icon: "🔧",
                     color: "from-blue-500 to-cyan-500",
-                    quote: "I'm booked solid for the next 6 months!"
+                    quote: "My phone rings non-stop with new customers!"
                   }
                 ].map((story, index) => (
                   <motion.div
@@ -2035,7 +2035,7 @@ const Home = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => window.location.href = "/estimate"}
                 >
-                  🚀 Get Your Success Story Started!
+                  🎯 Get Found Online Today!
                 </motion.button>
               </motion.div>
             </motion.div>

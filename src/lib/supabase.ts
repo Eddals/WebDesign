@@ -22,18 +22,46 @@ const createMockClient = () => ({
   }
 })
 
-export const supabase = isSupabaseConfigured 
+export const supabase = isSupabaseConfigured
   ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
       auth: {
-        persistSession: false,
-        autoRefreshToken: false
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce'
       },
       db: {
         schema: 'public'
       },
       global: {
         headers: {
-          'X-Client-Info': 'supabase-js-web'
+          'X-Client-Info': 'supabase-js-web',
+          'Content-Type': 'application/json'
+        }
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
+        }
+      }
+    })
+  : createMockClient() as any
+
+// Client Dashboard Supabase instance with authentication enabled
+export const clientSupabase = isSupabaseConfigured
+  ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage
+      },
+      db: {
+        schema: 'public'
+      },
+      global: {
+        headers: {
+          'X-Client-Info': 'client-dashboard'
         }
       }
     })

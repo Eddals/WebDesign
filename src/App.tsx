@@ -21,6 +21,8 @@ import Terms from "./pages/terms";
 import FAQ from "./pages/faq";
 import NotFound from "./pages/not-found";
 import ChatDashboard from "./pages/ChatDashboard";
+import ClientPortal from "./pages/ClientPortal";
+import AdminClientDashboard from "./pages/AdminClientDashboard";
 import WebDesign from './pages/services/WebDesign';
 import LandingPage from './pages/services/LandingPage';
 import SocialMediaMarketing from './pages/services/SocialMediaMarketing';
@@ -57,6 +59,8 @@ export default function App() {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/chat-dashboard" element={<ChatDashboard />} />
+              <Route path="/client-portal" element={<ClientPortal />} />
+              <Route path="/admin-client-dashboard" element={<AdminClientDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <LiveChat />
