@@ -78,8 +78,8 @@ const MessageModal: React.FC<MessageModalProps> = ({
         project_id: formData.project_id || undefined,
         subject: formData.subject,
         message: formData.message,
-        message_type: formData.message_type,
-        priority: formData.priority,
+        message_type: formData.message_type as 'general' | 'project_update' | 'support' | 'billing' | 'feedback',
+        priority: formData.priority as 'low' | 'medium' | 'high' | 'urgent',
         reply_to: replyTo?.id,
         thread_id: replyTo?.thread_id || replyTo?.id
       };
