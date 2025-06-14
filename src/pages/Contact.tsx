@@ -498,28 +498,32 @@ const Contact = () => {
                         Preferred Contact Method
                       </label>
                       <div className="flex gap-4">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="preferredContact"
-                            value="email"
-                            checked={formData.preferredContact === 'email'}
-                            onChange={handleInputChange}
-                            className="w-4 h-4 text-purple-500 bg-white/10 border-white/20 focus:ring-purple-500"
-                          />
-                          <span className="text-white">Email</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="preferredContact"
-                            value="phone"
-                            checked={formData.preferredContact === 'phone'}
-                            onChange={handleInputChange}
-                            className="w-4 h-4 text-purple-500 bg-white/10 border-white/20 focus:ring-purple-500"
-                          />
-                          <span className="text-white">Phone</span>
-                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, preferredContact: 'email' }))}
+                          className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm
+                            ${formData.preferredContact === 'email'
+                              ? 'bg-gradient-to-r from-purple-500 to-purple-700 text-white border-purple-600 shadow-lg'
+                              : 'bg-white/10 text-white border-white/20 hover:bg-purple-500/10'}
+                          `}
+                          aria-pressed={formData.preferredContact === 'email'}
+                        >
+                          <Mail className="w-4 h-4" />
+                          Email
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, preferredContact: 'phone' }))}
+                          className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm
+                            ${formData.preferredContact === 'phone'
+                              ? 'bg-gradient-to-r from-purple-500 to-purple-700 text-white border-purple-600 shadow-lg'
+                              : 'bg-white/10 text-white border-white/20 hover:bg-purple-500/10'}
+                          `}
+                          aria-pressed={formData.preferredContact === 'phone'}
+                        >
+                          <Phone className="w-4 h-4" />
+                          Phone
+                        </button>
                       </div>
                     </div>
 
@@ -530,7 +534,7 @@ const Contact = () => {
                       className={`w-full py-4 rounded-full font-semibold text-white transition-all duration-300 ${
                         isSubmitting
                           ? 'bg-gray-600 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600'
+                          : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
                       }`}
                       whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
                       whileTap={{ scale: isSubmitting ? 1 : 0.98 }}

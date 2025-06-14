@@ -1,68 +1,49 @@
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '../types/supabase'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Get environment variables with fallback to hardcoded values for debugging
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://csdejqgfzsxcldqqwfds.supabase.co'
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzZGVqcWdmenN4Y2xkcXF3ZmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4ODEzMjMsImV4cCI6MjA2NTQ1NzMyM30.sIpHefIwIjO4iTTNJc07krFHNM8rWih8H06MaftZAyQ'
+
+// Debug logging (only once)
+if (!window.__supabaseConfigLogged) {
+  console.log('🔧 Supabase Configuration:');
+  console.log('URL from env:', import.meta.env.VITE_SUPABASE_URL);
+  console.log('Key from env:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Present' : 'Missing');
+  console.log('Final URL:', supabaseUrl);
+  console.log('Final Key:', supabaseAnonKey ? 'Present' : 'Missing');
+  window.__supabaseConfigLogged = true;
+}
 
 // Check if Supabase is configured
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey)
 
-// Create a mock client for when Supabase is not configured
-const createMockClient = () => ({
-  from: () => ({
-    insert: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-    select: () => Promise.resolve({ data: [], error: null }),
-    update: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-    delete: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } })
-  }),
-  auth: {
-    signUp: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-    signIn: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-    signOut: () => Promise.resolve({ error: null })
+// Create single Supabase client instance
+let supabaseInstance: any = null;
+
+export const supabase = (() => {
+  if (!supabaseInstance) {
+    supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storage: window.localStorage,
+        storageKey: 'devtone-auth'
+      },
+      db: {
+        schema: 'public'
+      },
+      global: {
+        headers: {
+          'X-Client-Info': 'devtone-web'
+        }
+      }
+    });
   }
-})
+  return supabaseInstance;
+})();
 
-export const supabase = isSupabaseConfigured
-  ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce'
-      },
-      db: {
-        schema: 'public'
-      },
-      global: {
-        headers: {
-          'X-Client-Info': 'supabase-js-web',
-          'Content-Type': 'application/json'
-        }
-      },
-      realtime: {
-        params: {
-          eventsPerSecond: 10
-        }
-      }
-    })
-  : createMockClient() as any
-
-// Client Dashboard Supabase instance with authentication enabled
-export const clientSupabase = isSupabaseConfigured
-  ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        storage: window.localStorage
-      },
-      db: {
-        schema: 'public'
-      },
-      global: {
-        headers: {
-          'X-Client-Info': 'client-dashboard'
-        }
-      }
-    })
-  : createMockClient() as any
+// Use the same instance for client dashboard
+export const clientSupabase = supabase;

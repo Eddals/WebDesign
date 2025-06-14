@@ -27,11 +27,18 @@ const About = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCounts((prev) => ({
-        projects: prev.projects < 100 ? prev.projects + 2 : prev.projects,
-        clients: prev.clients < 50 ? prev.clients + 1 : prev.clients,
-        experience: prev.experience < 5 ? prev.experience + 1 : prev.experience,
-      }))
+      setCounts((prev) => {
+        const next = {
+          projects: prev.projects < 100 ? prev.projects + 2 : prev.projects,
+          clients: prev.clients < 50 ? prev.clients + 1 : prev.clients,
+          experience: prev.experience < 5 ? prev.experience + 1 : prev.experience,
+        }
+        // Stop interval if all targets reached
+        if (next.projects === 100 && next.clients === 50 && next.experience === 5) {
+          clearInterval(interval)
+        }
+        return next
+      })
     }, 50)
     return () => clearInterval(interval)
   }, [])
@@ -164,8 +171,10 @@ const About = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
+            aria-label="Company statistics"
+            role="region"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto" aria-live="polite">
               {[
                 { value: counts.projects, label: "Projects Completed", suffix: "+" },
                 { value: counts.clients, label: "Happy Clients", suffix: "+" },
@@ -176,6 +185,8 @@ const About = () => {
                   className="text-center p-6 backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl"
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  role="status"
+                  aria-label={stat.label + ': ' + stat.value + stat.suffix}
                 >
                   <div className="text-4xl font-bold text-purple-400 mb-2">{stat.value}{stat.suffix}</div>
                   <div className="text-white/70">{stat.label}</div>
@@ -430,10 +441,13 @@ const About = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
+                tabIndex={0}
+                aria-label="Contact DevTone - Get In Touch"
+                role="button"
               >
-                <MessageCircle className="h-5 w-5" />
+                <MessageCircle className="h-5 w-5" aria-hidden="true" focusable="false" />
                 Get In Touch
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" aria-hidden="true" focusable="false" />
               </motion.a>
             </div>
           </motion.section>
