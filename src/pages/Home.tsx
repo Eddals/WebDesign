@@ -443,7 +443,7 @@ const Home = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                   >
-                    <span className="inline-block">Websites That</span>{" "}
+                    <span className="inline-block">Transform Your</span>{" "}
                     <motion.div 
                       className="inline-block relative"
                       initial={{ opacity: 0 }}
@@ -451,7 +451,7 @@ const Home = () => {
                       transition={{ duration: 0.5, delay: 0.6 }}
                     >
                       <span className="relative z-10">
-                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Work</span>
+                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Online</span>
                       </span>
                       <motion.div 
                         className="absolute -bottom-2 left-0 h-3 w-full bg-purple-500/30 rounded-full blur-sm"
@@ -467,21 +467,9 @@ const Home = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                      Designs That{" "}
-                      <motion.span 
-                        className="relative inline-block"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.8 }}
-                      >
-                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Speak</span>
-                        <motion.div 
-                          className="absolute -bottom-2 left-0 h-3 w-full bg-purple-500/30 rounded-full blur-sm"
-                          initial={{ width: 0 }}
-                          animate={{ width: "100%" }}
-                          transition={{ duration: 0.8, delay: 1 }}
-                        />
-                      </motion.span>
+                      <span className="relative inline-block">
+                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Presence</span>
+                      </span>
                     </motion.span>
                   </motion.h1>
                 </div>
@@ -492,8 +480,8 @@ const Home = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  We create beautiful, fast, and SEO-friendly websites that help your business thrive. 
-                  Let's bring your <span className="text-purple-300">ideas</span> to <span className="text-purple-300">life</span>!
+                  We create stunning, high-performance websites that drive real business results.
+                  <span className="text-purple-300 font-medium block mt-2">More traffic. More leads. More customers.</span>
                 </motion.p>
                 
                 <motion.div 
@@ -596,7 +584,118 @@ const Home = () => {
           </motion.div>
         </section>
 
-        {/* New Services Showcase Section */}
+        {/* Portfolio Section */}
+        <section className="py-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e24] via-[#030718] to-[#0a0e24] opacity-80"></div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.div 
+                className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                Featured Work
+              </motion.div>
+              
+              <motion.h2 
+                className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                Recent Projects
+              </motion.h2>
+              
+              <motion.p 
+                className="text-white/70 max-w-2xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                Explore some of our recent work that showcases our expertise and creativity
+              </motion.p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {[
+                {
+                  title: "TechStart Website Redesign",
+                  category: "Web Design & Development",
+                  image: "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                  link: "/projects/techstart"
+                },
+                {
+                  title: "EcoSolutions E-commerce",
+                  category: "E-commerce Development",
+                  image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                  link: "/projects/ecosolutions"
+                },
+                {
+                  title: "CreativeHub Brand Portal",
+                  category: "Web Application",
+                  image: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                  link: "/projects/creativehub"
+                }
+              ].map((project, index) => (
+                <motion.div
+                  key={index}
+                  className="group relative overflow-hidden rounded-xl"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.1 * index }}
+                  whileHover={{ y: -5 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
+                    <h3 className="text-white text-xl font-bold mb-1">{project.title}</h3>
+                    <p className="text-purple-300 text-sm mb-4">{project.category}</p>
+                    <motion.a 
+                      href={project.link} 
+                      className="inline-flex items-center gap-2 text-white text-sm font-medium"
+                      whileHover={{ x: 5 }}
+                    >
+                      View Project <ArrowRight className="w-4 h-4" />
+                    </motion.a>
+                  </div>
+                  <img src={project.image} alt={project.title} className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105" />
+                </motion.div>
+              ))}
+            </div>
+            
+            <motion.div 
+              className="text-center mt-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <motion.a 
+                href="/projects"
+                className="px-8 py-3 border border-purple-500/30 hover:border-purple-500/50 
+                  bg-purple-500/10 hover:bg-purple-500/20 rounded-full font-medium 
+                  inline-flex items-center justify-center gap-2 transition-all text-white backdrop-blur-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                View All Projects
+                <ChevronRight className="w-5 h-5" />
+              </motion.a>
+            </motion.div>
+          </div>
+        </section>
+        
+        {/* Services Showcase Section */}
         <section className="py-20 relative overflow-hidden">
           {/* Background elements */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#030718] via-[#0a0e24] to-[#030718] opacity-80"></div>
@@ -793,67 +892,11 @@ const Home = () => {
           <div className="absolute bottom-20 right-10 w-32 h-32 border border-purple-500/20 rounded-full animate-spin-slow opacity-30" style={{ animationDuration: "15s" }}></div>
         </section>
 
-        {/* Enhanced Stats Section with Advanced Animations */}
+        {/* Success Stories Carousel Section */}
         <section className="py-24 relative overflow-hidden">
-          {/* Background with mesh gradient and noise texture */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#030718] via-purple-950/10 to-[#030718] opacity-80"></div>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9ImhzbCgyNzEsIDkxJSwgNjUlLCAwLjEpIi8+PC9zdmc+Cg==')] opacity-20"></div>
-          
-          {/* Animated background elements */}
-          <motion.div 
-            className="absolute top-1/4 left-10 w-64 h-64 bg-purple-600/10 rounded-full filter blur-[80px]"
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1]
-            }}
-            transition={{ 
-              duration: 8, 
-              repeat: Infinity,
-              ease: "easeInOut" 
-            }}
-          ></motion.div>
-          
-          <motion.div 
-            className="absolute bottom-1/4 right-10 w-80 h-80 bg-indigo-500/10 rounded-full filter blur-[100px]"
-            animate={{ 
-              scale: [1.2, 1, 1.2],
-              opacity: [0.15, 0.25, 0.15]
-            }}
-            transition={{ 
-              duration: 10, 
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1
-            }}
-          ></motion.div>
-          
-          {/* Decorative elements */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Floating particles */}
-            <motion.div 
-              className="absolute top-[20%] left-[15%] w-2 h-2 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -30, 0], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            ></motion.div>
-            <motion.div 
-              className="absolute top-[30%] right-[25%] w-3 h-3 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -40, 0], opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            ></motion.div>
-            <motion.div 
-              className="absolute bottom-[40%] left-[30%] w-2 h-2 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -25, 0], opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            ></motion.div>
-            <motion.div 
-              className="absolute bottom-[25%] right-[20%] w-2 h-2 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -35, 0], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-            ></motion.div>
-          </div>
-          
           <div className="container mx-auto px-4 relative z-10">
-            {/* Stats Header */}
             <motion.div 
               className="text-center mb-16"
               initial={{ opacity: 0, y: 20 }}
@@ -869,7 +912,7 @@ const Home = () => {
                 transition={{ duration: 0.5 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <span className="relative z-10">By The Numbers</span>
+                <span className="relative z-10">Vision to Reality</span>
                 <motion.div 
                   className="absolute inset-0 bg-purple-500/20"
                   initial={{ x: "-100%" }}
@@ -877,7 +920,6 @@ const Home = () => {
                   transition={{ duration: 0.6 }}
                 />
               </motion.div>
-              
               <motion.h2 
                 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 text-glow"
                 initial={{ opacity: 0, y: 20 }}
@@ -885,9 +927,8 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Proven Track Record
+                Turning Vision Into Digital Reality
               </motion.h2>
-              
               <motion.p 
                 className="text-white/70 max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
@@ -895,133 +936,48 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                Delivering exceptional results for clients across various industries
+                Be inspired by journeys of innovation, growth, and digital presence. Every project is a new story of creativity, transformation, and the future.
               </motion.p>
             </motion.div>
-            
-            {/* Stats Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {statsData.map((stat, index) => (
-                <motion.div 
-                  key={index} 
-                  className="relative group"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  whileHover={{ y: -5 }}
-                >
-                  <motion.div 
-                    className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl blur-lg opacity-25 group-hover:opacity-75"
-                    animate={{ 
-                      opacity: [0.25, 0.5, 0.25],
-                    }}
-                    transition={{ 
-                      duration: 3, 
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: index * 0.2
-                    }}
-                  ></motion.div>
-                  
-                  <div className="relative bg-[#0a0e24]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 h-full transition-all duration-300 group-hover:border-purple-500/50 group-hover:shadow-lg group-hover:shadow-purple-900/20 overflow-hidden">
-                    {/* Animated background pattern */}
-                    <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                          <pattern id={`grid-${index}`} width="20" height="20" patternUnits="userSpaceOnUse">
-                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" strokeWidth="0.5" opacity="0.3" />
-                          </pattern>
-                        </defs>
-                        <rect width="100%" height="100%" fill={`url(#grid-${index})`} />
-                      </svg>
-                    </div>
-                    
-                    {/* Stat Value with Animated Counter */}
-                    <div className="mb-4 relative">
-                      <motion.div
-                        className="relative z-10"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ 
-                          duration: 0.8, 
-                          delay: 0.3 + (index * 0.1),
-                          type: "spring",
-                          stiffness: 100
-                        }}
-                      >
-                        <span className={`text-4xl md:text-5xl font-bold ${stat.textColor} inline-block transition-all duration-500 group-hover:scale-110 group-hover:translate-y-[-2px] origin-left`}>
-                          {stat.value}
-                        </span>
-                        
-                        {/* Decorative element */}
-                        <motion.div 
-                          className="absolute -bottom-2 left-0 h-1 bg-purple-500/50 rounded-full"
-                          initial={{ width: 0 }}
-                          whileInView={{ width: "40%" }}
-                          viewport={{ once: true }}
-                          transition={{ 
-                            duration: 1, 
-                            delay: 0.5 + (index * 0.1),
-                            ease: "easeOut"
-                          }}
-                        />
-                      </motion.div>
-                      
-                      {/* Progress Bar */}
-                      <div className="absolute bottom-0 left-0 w-full h-[2px] bg-white/5 rounded-full overflow-hidden">
-                        <motion.div 
-                          className={`h-full bg-gradient-to-r ${stat.barColor}`}
-                          initial={{ width: 0 }}
-                          whileInView={{ width: stat.barWidth }}
-                          viewport={{ once: true }}
-                          transition={{ 
-                            duration: 1.2, 
-                            delay: 0.2 + (index * 0.1),
-                            ease: [0.34, 1.56, 0.64, 1]
-                          }}
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* Stat Label with Animation */}
-                    <motion.p 
-                      className="text-white/70 text-sm md:text-base font-medium group-hover:text-white/90 transition-colors duration-300"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: 0.4 + (index * 0.1) }}
-                    >
-                      {stat.label}
-                    </motion.p>
-                    
-                    {/* Decorative icon */}
-                    <motion.div 
-                      className="absolute top-4 right-4 text-purple-500/20 group-hover:text-purple-500/40 transition-colors duration-300"
-                      initial={{ opacity: 0, rotate: -20 }}
-                      whileInView={{ opacity: 1, rotate: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: 0.5 + (index * 0.1) }}
-                    >
-                      {index === 0 && <Briefcase size={24} />}
-                      {index === 1 && <Heart size={24} />}
-                      {index === 2 && <Rocket size={24} />}
-                      {index === 3 && <Zap size={24} />}
-                    </motion.div>
-                  </div>
-                </motion.div>
-              ))}
+            {/* Impact Cards */}
+            <div className="max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  {
+                    name: "Innovation that Drives",
+                    result: "From concept to launch",
+                    story: "Projects that go from idea to digital life, connecting brands to the future.",
+                    icon: <Rocket className="w-10 h-10 text-purple-400 mx-auto mb-4 animate-float" />,
+                  },
+                  {
+                    name: "Exponential Growth",
+                    result: "Results beyond expectations",
+                    story: "Digital solutions that accelerate business, expand reach, and amplify results.",
+                    icon: <Gauge className="w-10 h-10 text-purple-400 mx-auto mb-4 animate-float-fast" />,
+                  },
+                  {
+                    name: "Presence that Delights",
+                    result: "Experience & engagement",
+                    story: "Designs and platforms that delight users and strengthen your brand identity.",
+                    icon: <Palette className="w-10 h-10 text-purple-400 mx-auto mb-4 animate-float-slow" />,
+                  },
+                ].map((item, idx) => (
+                  <motion.div
+                    key={item.name}
+                    className="relative bg-[#0a0e24]/80 border border-purple-500/20 rounded-2xl p-8 text-center shadow-lg box-glow hover:border-purple-400 transition-all duration-300"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.1 * idx }}
+                  >
+                    {item.icon}
+                    <h3 className="text-2xl font-bold text-white mb-2 gradient-text">{item.name}</h3>
+                    <div className="text-purple-300 text-lg font-semibold mb-2">{item.result}</div>
+                    <p className="text-white/80 mb-4">{item.story}</p>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-            
-            {/* Additional decorative element */}
-            <motion.div 
-              className="mt-16 max-w-5xl mx-auto h-0.5 bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"
-              initial={{ opacity: 0, scaleX: 0 }}
-              whileInView={{ opacity: 1, scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.8 }}
-            />
           </div>
         </section>
 
@@ -1891,7 +1847,7 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                 >
-                  💼 Real Business Transformations
+                  🚀 Impactful Digital Success Stories
                 </motion.h3>
                 <motion.p
                   className="text-white/70 text-lg"
@@ -1902,6 +1858,20 @@ const Home = () => {
                 >
                   See how we helped local businesses get found online and grow their customer base!
                 </motion.p>
+                <motion.div
+                  className="flex items-center justify-center gap-2 mt-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                  <span className="text-purple-300 font-medium">Trusted by 100+ businesses</span>
+                  <span className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                    ))}
+                  </span>
+                </motion.div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
@@ -2026,17 +1996,27 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <motion.button
-                  className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-purple-500/40"
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => window.location.href = "/estimate"}
-                >
-                  🎯 Get Found Online Today!
-                </motion.button>
+                <div className="flex flex-wrap gap-4 justify-center">
+                  <motion.button
+                    className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-purple-500/40"
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => window.location.href = "/estimate"}
+                  >
+                    🎯 Get Found Online Today!
+                  </motion.button>
+                  <motion.a
+                    href="/portfolio"
+                    className="border-2 border-purple-500/30 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-purple-500/10 transition-all duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    View Our Work
+                  </motion.a>
+                </div>
               </motion.div>
             </motion.div>
 
@@ -2053,13 +2033,23 @@ const Home = () => {
                 <p className="text-white/70 mb-4 max-w-2xl mx-auto">
                   Join the growing list of businesses that have transformed their online presence and achieved remarkable growth.
                 </p>
-                <motion.button 
-                  className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-full font-medium hover:from-purple-600 hover:to-indigo-600 transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Get Your Results
-                </motion.button>
+                <div className="flex flex-wrap gap-4 justify-center">
+                  <motion.button 
+                    className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-full font-medium hover:from-purple-600 hover:to-indigo-600 transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Get Your Results
+                  </motion.button>
+                  <motion.a
+                    href="/projects"
+                    className="border border-purple-500/30 bg-purple-500/10 text-white px-6 py-2 rounded-full font-medium hover:bg-purple-500/20 transition-all duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    View Our Portfolio
+                  </motion.a>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -2125,12 +2115,48 @@ const Home = () => {
                 Let's work together to create something amazing. Get started with a free consultation and see how we can bring your ideas to life.
               </motion.p>
               
+              {/* Quick Contact Form */}
+              <motion.div
+                className="mb-8 max-w-md mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <form className="space-y-4">
+                  <div>
+                    <input 
+                      type="email" 
+                      placeholder="Your email" 
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-purple-500/50 focus:outline-none focus:ring-1 focus:ring-purple-500/30 text-white placeholder-white/50"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <textarea 
+                      placeholder="How can we help you?" 
+                      rows={3}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-purple-500/50 focus:outline-none focus:ring-1 focus:ring-purple-500/30 text-white placeholder-white/50 resize-none"
+                      required
+                    ></textarea>
+                  </div>
+                  <motion.button
+                    type="submit"
+                    className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 rounded-lg font-semibold text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Send Message
+                  </motion.button>
+                </form>
+              </motion.div>
+              
               <motion.div 
                 className="flex flex-col sm:flex-row gap-4 justify-center"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
               >
                 <motion.a
                   href="/services"

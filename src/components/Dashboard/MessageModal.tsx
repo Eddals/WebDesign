@@ -45,10 +45,27 @@ const MessageModal: React.FC<MessageModalProps> = ({
     { value: 'urgent', label: 'Urgent', color: 'text-red-400' }
   ];
 
+  // Simple UUID v4 validation regex
+  const isValidUUID = (str: string) =>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Validate to_user_id
+    if (!isValidUUID(formData.to_user_id)) {
+      setLoading(false);
+      setError('Recipient (To) must be a valid UUID.');
+      return;
+    }
+    // Validate project_id if provided
+    if (formData.project_id && !isValidUUID(formData.project_id)) {
+      setLoading(false);
+      setError('Project ID must be a valid UUID or left blank.');
+      return;
+    }
 
     try {
       // For demo purposes, we'll use a fixed admin user ID
