@@ -195,7 +195,8 @@ export const dashboardService = {
           pending_feedbacks: 1,
           unread_messages: 2,
           total_files: 8,
-          recent_activity: 5
+          upcoming_milestones: 2,
+          overall_progress: 65
         };
         return { data: mockStats, error: null, success: true };
       }
@@ -256,7 +257,8 @@ export const dashboardService = {
         pending_feedbacks: feedbacks?.length || 0,
         unread_messages: messages?.length || 0,
         total_files: files?.length || 0,
-        recent_activity: activities?.length || 0
+        upcoming_milestones: 0, // Default value
+        overall_progress: 0 // Default value
       };
 
       console.log('✅ Dashboard stats loaded:', stats);

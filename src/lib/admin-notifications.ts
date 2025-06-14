@@ -75,7 +75,7 @@ class AdminNotificationService {
             schema: 'public',
             table: 'admin_notifications'
           },
-          (payload) => {
+          (payload: any) => {
             console.log('🔔 Nova notificação administrativa:', payload.new);
             this.emit('new_notification', payload.new as AdminNotification);
           }
@@ -87,7 +87,7 @@ class AdminNotificationService {
             schema: 'public',
             table: 'admin_notifications'
           },
-          (payload) => {
+          (payload: any) => {
             console.log('📝 Notificação atualizada:', payload.new);
             this.emit('notification_updated', payload.new as AdminNotification);
           }
@@ -99,7 +99,7 @@ class AdminNotificationService {
             schema: 'public',
             table: 'client_registrations'
           },
-          (payload) => {
+          (payload: any) => {
             console.log('👤 Novo cliente registrado:', payload.new);
             this.emit('new_client_registration', payload.new);
           }
@@ -111,7 +111,7 @@ class AdminNotificationService {
             schema: 'public',
             table: 'client_communications'
           },
-          (payload) => {
+          (payload: any) => {
             console.log('💬 Nova comunicação:', payload.new);
             this.emit('new_communication', payload.new);
           }

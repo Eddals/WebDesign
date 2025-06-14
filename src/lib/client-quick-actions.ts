@@ -367,7 +367,7 @@ export const realtimeService = {
           table: 'projects',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('📊 Project update:', payload);
           callback({ type: 'project', payload });
         }
@@ -381,7 +381,7 @@ export const realtimeService = {
           table: 'client_feedbacks',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('💬 Feedback update:', payload);
           callback({ type: 'feedback', payload });
         }
