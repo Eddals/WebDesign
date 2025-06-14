@@ -236,7 +236,7 @@ export const dashboardService = {
       const { data: files } = await supabase
         .from('project_files')
         .select('id')
-        .in('project_id', projects?.map(p => p.id) || [])
+        .in('project_id', projects?.map((p: any) => p.id) || [])
         .eq('is_public', true);
 
       // Get recent activity count
@@ -247,8 +247,8 @@ export const dashboardService = {
         .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
 
       const totalProjects = projects?.length || 0;
-      const activeProjects = projects?.filter(p => p.status === 'in_progress').length || 0;
-      const completedProjects = projects?.filter(p => p.status === 'completed').length || 0;
+      const activeProjects = projects?.filter((p: any) => p.status === 'in_progress').length || 0;
+      const completedProjects = projects?.filter((p: any) => p.status === 'completed').length || 0;
 
       const stats: DashboardStats = {
         total_projects: totalProjects,
@@ -307,7 +307,7 @@ export const dashboardService = {
       const { data: milestones, error: milestonesError } = await supabase
         .from('project_milestones')
         .select('id')
-        .in('project_id', projects?.map(p => p.id) || [])
+        .in('project_id', projects?.map((p: any) => p.id) || [])
         .gte('due_date', new Date().toISOString().split('T')[0])
         .eq('status', 'pending');
 
@@ -319,7 +319,7 @@ export const dashboardService = {
       const { data: files, error: filesError } = await supabase
         .from('project_files')
         .select('id')
-        .in('project_id', projects?.map(p => p.id) || [])
+        .in('project_id', projects?.map((p: any) => p.id) || [])
         .eq('is_public', true);
 
       if (filesError) {
@@ -327,8 +327,8 @@ export const dashboardService = {
       }
 
       const totalProjects = projects?.length || 0;
-      const activeProjects = projects?.filter(p => p.status === 'in_progress').length || 0;
-      const completedProjects = projects?.filter(p => p.status === 'completed').length || 0;
+      const activeProjects = projects?.filter((p: any) => p.status === 'in_progress').length || 0;
+      const completedProjects = projects?.filter((p: any) => p.status === 'completed').length || 0;
       const overallProgress = totalProjects > 0
         ? Math.round(projects.reduce((sum, p) => sum + p.progress_percentage, 0) / totalProjects)
         : 0;
@@ -651,7 +651,7 @@ export const commentsService = {
 
       // Get replies for each comment
       const commentsWithReplies = await Promise.all(
-        (data || []).map(async (comment) => {
+        (data || []).map(async (comment: any) => {
           const { data: replies } = await supabase
             .from('client_comments')
             .select(`
@@ -735,7 +735,7 @@ export const realtimeService = {
           table: 'projects',
           filter: `id=eq.${projectId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Project change:', payload);
           callback(payload);
         }
@@ -748,7 +748,7 @@ export const realtimeService = {
           table: 'project_milestones',
           filter: `project_id=eq.${projectId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Milestone change:', payload);
           callback(payload);
         }
@@ -761,7 +761,7 @@ export const realtimeService = {
           table: 'project_tasks',
           filter: `project_id=eq.${projectId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Task change:', payload);
           callback(payload);
         }
@@ -774,7 +774,7 @@ export const realtimeService = {
           table: 'project_files',
           filter: `project_id=eq.${projectId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('File change:', payload);
           callback(payload);
         }
@@ -787,12 +787,12 @@ export const realtimeService = {
           table: 'client_comments',
           filter: `project_id=eq.${projectId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Comment change:', payload);
           callback(payload);
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         console.log(`Project ${projectId} subscription status:`, status);
       });
 
@@ -816,7 +816,7 @@ export const realtimeService = {
           table: 'client_feedbacks',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Feedback change:', payload);
           callback(payload);
         }
@@ -829,12 +829,12 @@ export const realtimeService = {
           table: 'projects',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Client project change:', payload);
           callback(payload);
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         console.log(`Client ${clientId} subscription status:`, status);
       });
 
@@ -876,7 +876,7 @@ export const realtimeService = {
         },
         callback
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         console.log('Admin subscription status:', status);
       });
 
