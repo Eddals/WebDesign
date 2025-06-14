@@ -208,22 +208,6 @@ const Footer = () => {
                 <Shield size={14} />
                 Support
               </Link>
-              <Link
-                to="/admin-client-dashboard"
-                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
-                title="Client Management"
-              >
-                <Shield size={14} />
-                Admin
-              </Link>
-              <Link
-                to="/client-portal"
-                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
-                title="Client Portal"
-              >
-                <Shield size={14} />
-                Client Portal
-              </Link>
             </div>
           </div>
         </motion.div>
