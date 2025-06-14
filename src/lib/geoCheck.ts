@@ -3,8 +3,7 @@
 
 export async function getUserCountry(): Promise<string | null> {
   try {
-    const res = await fetch('https://ipinfo.io/json?token=149388dbdb5641
-'); // Replace with your ipinfo.io token
+    const res = await fetch('https://ipinfo.io/json?token=149388dbdb5641'); // Replace with your ipinfo.io token
     if (!res.ok) return null;
     const data = await res.json();
     return data.country || null;
