@@ -60,7 +60,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
         ...formData,
         project_type: formData.project_type as 'website' | 'ecommerce' | 'mobile_app' | 'web_app' | 'branding' | 'seo' | 'maintenance',
         priority: formData.priority as 'low' | 'medium' | 'high' | 'urgent',
-        status: 'planning', // Default status for new projects
+        status: 'planning' as 'planning' | 'in_progress' | 'review' | 'completed' | 'on_hold' | 'cancelled', // Default status for new projects
         budget: formData.budget ? parseFloat(formData.budget) : undefined,
         estimated_hours: formData.estimated_hours ? parseInt(formData.estimated_hours) : undefined,
         start_date: formData.start_date || undefined,
