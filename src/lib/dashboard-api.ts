@@ -649,18 +649,18 @@ class DashboardService {
             new_clients_this_month: clients?.filter((c: any) =>
               new Date(c.created_at).getMonth() === new Date().getMonth()
             ).length || 0,
-            by_status: clients?.reduce((acc, c) => {
+            by_status: clients?.reduce((acc: any, c: any) => {
               acc[c.status] = (acc[c.status] || 0) + 1;
               return acc;
             }, {} as Record<string, number>) || {},
-            by_industry: clients?.reduce((acc, c) => {
+            by_industry: clients?.reduce((acc: any, c: any) => {
               if (c.industry) {
                 acc[c.industry] = (acc[c.industry] || 0) + 1;
               }
               return acc;
             }, {} as Record<string, number>) || {},
             total_messages: messages?.length || 0,
-            messages_this_month: messages?.filter(m =>
+            messages_this_month: messages?.filter((m: any) =>
               new Date(m.created_at).getMonth() === new Date().getMonth()
             ).length || 0
           };
@@ -680,22 +680,22 @@ class DashboardService {
             console.error('❌ Error fetching projects for performance report:', performanceError);
           }
 
-          const completedPerformanceProjects = performanceProjects?.filter(p => p.status === 'completed') || [];
+          const completedPerformanceProjects = performanceProjects?.filter((p: any) => p.status === 'completed') || [];
 
           reportData = {
             total_projects: performanceProjects?.length || 0,
             completed_projects: completedPerformanceProjects.length,
-            in_progress_projects: performanceProjects?.filter(p => p.status === 'in_progress').length || 0,
-            on_time_delivery: completedPerformanceProjects.filter(p =>
+            in_progress_projects: performanceProjects?.filter((p: any) => p.status === 'in_progress').length || 0,
+            on_time_delivery: completedPerformanceProjects.filter((p: any) =>
               p.actual_completion_date && p.estimated_completion_date &&
               new Date(p.actual_completion_date) <= new Date(p.estimated_completion_date)
             ).length,
             average_hours_variance: completedPerformanceProjects.length ?
-              completedPerformanceProjects.reduce((sum, p) =>
+              completedPerformanceProjects.reduce((sum: any, p: any) =>
                 sum + ((p.actual_hours || 0) - (p.estimated_hours || 0)), 0
               ) / completedPerformanceProjects.length : 0,
             efficiency_rate: completedPerformanceProjects.length ?
-              (completedPerformanceProjects.filter(p =>
+              (completedPerformanceProjects.filter((p: any) =>
                 (p.actual_hours || 0) <= (p.estimated_hours || 0)
               ).length / completedPerformanceProjects.length) * 100 : 0
           };
