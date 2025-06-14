@@ -147,7 +147,7 @@ class DashboardService {
         throw clientError;
       }
 
-      const clientStats = clients?.reduce((acc, client) => {
+      const clientStats = clients?.reduce((acc: any, client: any) => {
         acc.total_clients++;
         if (client.status === 'pending') acc.pending_clients++;
         if (client.status === 'approved') acc.approved_clients++;
@@ -164,7 +164,7 @@ class DashboardService {
         // Don't throw, just use empty stats
       }
 
-      const projectStats = projects?.reduce((acc, project) => {
+      const projectStats = projects?.reduce((acc: any, project: any) => {
         acc.total_projects++;
         if (['planning', 'in_progress', 'review'].includes(project.status)) acc.active_projects++;
         if (project.status === 'completed') acc.completed_projects++;
@@ -581,13 +581,13 @@ class DashboardService {
             console.error('❌ Error fetching projects for financial report:', projectsError);
           }
 
-          const totalRevenue = projects?.reduce((sum, p) => sum + (p.budget || 0), 0) || 0;
-          const completedProjects = projects?.filter(p => p.status === 'completed').length || 0;
+          const totalRevenue = projects?.reduce((sum: any, p: any) => sum + (p.budget || 0), 0) || 0;
+          const completedProjects = projects?.filter((p: any) => p.status === 'completed').length || 0;
 
           reportData = {
             total_revenue: totalRevenue,
             completed_projects: completedProjects,
-            active_projects: projects?.filter(p => ['planning', 'in_progress', 'review'].includes(p.status)).length || 0,
+            active_projects: projects?.filter((p: any) => ['planning', 'in_progress', 'review'].includes(p.status)).length || 0,
             average_project_value: projects?.length ? totalRevenue / projects.length : 0,
             total_projects: projects?.length || 0
           };
@@ -609,16 +609,16 @@ class DashboardService {
 
           reportData = {
             total_projects: allProjects?.length || 0,
-            by_status: allProjects?.reduce((acc, p) => {
+            by_status: allProjects?.reduce((acc: any, p: any) => {
               acc[p.status] = (acc[p.status] || 0) + 1;
               return acc;
             }, {} as Record<string, number>) || {},
-            by_priority: allProjects?.reduce((acc, p) => {
+            by_priority: allProjects?.reduce((acc: any, p: any) => {
               acc[p.priority] = (acc[p.priority] || 0) + 1;
               return acc;
             }, {} as Record<string, number>) || {},
             average_progress: allProjects?.length ?
-              allProjects.reduce((sum, p) => sum + p.progress_percentage, 0) / allProjects.length : 0
+              allProjects.reduce((sum: any, p: any) => sum + p.progress_percentage, 0) / allProjects.length : 0
           };
 
           title = `Project Status Report - ${new Date().toLocaleDateString('en-US')}`;
@@ -646,7 +646,7 @@ class DashboardService {
 
           reportData = {
             total_clients: clients?.length || 0,
-            new_clients_this_month: clients?.filter(c =>
+            new_clients_this_month: clients?.filter((c: any) =>
               new Date(c.created_at).getMonth() === new Date().getMonth()
             ).length || 0,
             by_status: clients?.reduce((acc, c) => {

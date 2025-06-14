@@ -395,7 +395,7 @@ export const realtimeService = {
           table: 'project_files',
           filter: `uploaded_by_client=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('📁 File update:', payload);
           callback({ type: 'file', payload });
         }
@@ -409,7 +409,7 @@ export const realtimeService = {
           table: 'meeting_schedules',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('📅 Meeting update:', payload);
           callback({ type: 'meeting', payload });
         }
@@ -423,12 +423,12 @@ export const realtimeService = {
           table: 'activity_logs',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('🔔 Activity update:', payload);
           callback({ type: 'activity', payload });
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         console.log('📡 Real-time subscription status:', status);
       });
 

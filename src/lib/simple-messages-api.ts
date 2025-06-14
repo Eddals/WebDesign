@@ -282,7 +282,7 @@ class SimpleMessagesService {
           table: 'client_dashboard_messages',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('📨 Dashboard message update:', payload);
           callback({ type: 'dashboard_message', payload });
         }
@@ -296,12 +296,12 @@ class SimpleMessagesService {
           table: 'messages',
           filter: `client_id=eq.${clientId}`,
         },
-        (payload) => {
+        (payload: any) => {
           console.log('📨 Message update:', payload);
           callback({ type: 'message', payload });
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         console.log('📡 Message subscription status:', status);
       });
 
