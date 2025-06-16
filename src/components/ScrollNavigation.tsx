@@ -1,31 +1,36 @@
 import { useState, useEffect } from 'react'
+import { ChevronUp, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronUp, ChevronDown } from 'lucide-react'
 
-const ScrollNavigation = () => {
-  const [showScrollTop, setShowScrollTop] = useState(false)
-  const [showScrollDown, setShowScrollDown] = useState(true)
+export default function ScrollNavigation() {
+  const [isVisible, setIsVisible] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
   const [isAtBottom, setIsAtBottom] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset
+    const toggleVisibility = () => {
+      // Show buttons after scrolling down a bit
+      if (window.pageYOffset > 300) {
+        setIsVisible(true)
+      } else {
+        setIsVisible(false)
+      }
+
+      // Calculate scroll progress
       const windowHeight = window.innerHeight
       const documentHeight = document.documentElement.scrollHeight
-
-      // Show scroll to top button when user scrolls down 200px
-      setShowScrollTop(scrollTop > 200)
-
-      // Check if user is at the bottom of the page
-      const atBottom = scrollTop + windowHeight >= documentHeight - 50
-      setIsAtBottom(atBottom)
-      setShowScrollDown(!atBottom && scrollTop < documentHeight - windowHeight - 200)
+      const scrollTop = window.pageYOffset
+      const scrollableHeight = documentHeight - windowHeight
+      
+      const progress = scrollTop / scrollableHeight
+      setScrollProgress(progress)
+      
+      // Check if we're at the bottom
+      setIsAtBottom(Math.abs(progress - 1) < 0.02)
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Check initial position
-
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', toggleVisibility)
+    return () => window.removeEventListener('scroll', toggleVisibility)
   }, [])
 
   const scrollToTop = () => {
@@ -42,120 +47,98 @@ const ScrollNavigation = () => {
     })
   }
 
-  const scrollDown = () => {
-    const currentPosition = window.pageYOffset
-    const windowHeight = window.innerHeight
-    const nextPosition = currentPosition + windowHeight
+  const scrollPageUp = () => {
+    window.scrollBy({
+      top: -window.innerHeight * 0.8,
+      behavior: 'smooth'
+    })
+  }
 
-    window.scrollTo({
-      top: nextPosition,
+  const scrollPageDown = () => {
+    window.scrollBy({
+      top: window.innerHeight * 0.8,
       behavior: 'smooth'
     })
   }
 
   return (
-    <div className="fixed left-3 bottom-4 sm:left-4 sm:bottom-6 z-50 flex flex-col gap-2">
-      {/* Scroll to Top Button */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.button
-            onClick={scrollToTop}
-            className="bg-purple-600 hover:bg-purple-700 text-white p-3 sm:p-4 rounded-full shadow-lg hover:shadow-purple-500/25 transition-all duration-300 backdrop-blur-sm border border-purple-500/20 group"
-            initial={{ opacity: 0, scale: 0, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0, y: 20 }}
-            whileHover={{
-              scale: 1.1,
-              boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
-            }}
-            whileTap={{ scale: 0.9 }}
-            title="Go to Top"
-          >
-            <motion.div
-              animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="group-hover:scale-110 transition-transform duration-200"
-            >
-              <ChevronUp size={20} className="sm:w-6 sm:h-6" />
-            </motion.div>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Scroll Down Button */}
-      <AnimatePresence>
-        {showScrollDown && (
-          <motion.button
-            onClick={scrollDown}
-            className="bg-purple-600 hover:bg-purple-700 text-white p-3 sm:p-4 rounded-full shadow-lg hover:shadow-purple-500/25 transition-all duration-300 backdrop-blur-sm border border-purple-500/20 group"
-            initial={{ opacity: 0, scale: 0, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0, y: -20 }}
-            whileHover={{
-              scale: 1.1,
-              boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
-            }}
-            whileTap={{ scale: 0.9 }}
-            title="Scroll Down"
-          >
-            <motion.div
-              animate={{ y: [0, 3, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="group-hover:scale-110 transition-transform duration-200"
-            >
-              <ChevronDown size={20} className="sm:w-6 sm:h-6" />
-            </motion.div>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Mobile-specific: Scroll to Bottom Button (when at top) */}
-      <AnimatePresence>
-        {!showScrollTop && !isAtBottom && (
-          <motion.button
-            onClick={scrollToBottom}
-            className="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full shadow-lg hover:shadow-purple-500/25 transition-all duration-300 backdrop-blur-sm border border-purple-500/20 md:hidden"
-            initial={{ opacity: 0, scale: 0, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0, y: -20 }}
-            whileHover={{ 
-              scale: 1.1,
-              boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
-            }}
-            whileTap={{ scale: 0.9 }}
-            title="Scroll to Bottom"
-          >
-            <motion.div
-              animate={{ y: [0, 3, 0] }}
-              transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <ChevronDown size={20} className="opacity-75" />
-              <ChevronDown size={20} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-50" />
-            </motion.div>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Progress Indicator */}
-      <motion.div
-        className="w-12 h-1 bg-gray-700 rounded-full overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showScrollTop ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-      >
+    <AnimatePresence>
+      {isVisible && (
         <motion.div
-          className="h-full bg-gradient-to-r from-purple-500 to-purple-700 rounded-full"
-          style={{
-            width: `${Math.min(100, (window.pageYOffset / (document.documentElement.scrollHeight - window.innerHeight)) * 100)}%`
-          }}
-          animate={{
-            width: `${Math.min(100, (window.pageYOffset / (document.documentElement.scrollHeight - window.innerHeight)) * 100)}%`
-          }}
-          transition={{ duration: 0.1 }}
-        />
-      </motion.div>
-    </div>
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 20 }}
+          className="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 flex flex-col gap-3"
+        >
+          {/* Progress indicator */}
+          <div className="w-1 h-32 bg-gray-700/50 rounded-full mx-auto relative overflow-hidden">
+            <motion.div 
+              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-purple-600 to-purple-400"
+              style={{ height: `${scrollProgress * 100}%` }}
+            />
+          </div>
+          
+          {/* Scroll to top button */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            className="p-3 bg-gradient-to-r from-purple-600 to-purple-700 
+              hover:from-purple-700 hover:to-purple-800 text-white rounded-full shadow-xl 
+              transition-all duration-300 backdrop-blur-sm border border-purple-500/30
+              hover:shadow-purple-500/25 hover:shadow-lg"
+            aria-label="Scroll to top"
+            disabled={scrollProgress < 0.05}
+          >
+            <ArrowUp size={20} className={scrollProgress < 0.05 ? "opacity-50" : ""} />
+          </motion.button>
+          
+          {/* Scroll up one page */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollPageUp}
+            className="p-3 bg-gradient-to-r from-purple-600/80 to-purple-700/80
+              hover:from-purple-700 hover:to-purple-800 text-white rounded-full shadow-xl 
+              transition-all duration-300 backdrop-blur-sm border border-purple-500/30
+              hover:shadow-purple-500/25 hover:shadow-lg"
+            aria-label="Scroll page up"
+            disabled={scrollProgress < 0.05}
+          >
+            <ChevronUp size={20} className={scrollProgress < 0.05 ? "opacity-50" : ""} />
+          </motion.button>
+          
+          {/* Scroll down one page */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollPageDown}
+            className="p-3 bg-gradient-to-r from-purple-600/80 to-purple-700/80
+              hover:from-purple-700 hover:to-purple-800 text-white rounded-full shadow-xl 
+              transition-all duration-300 backdrop-blur-sm border border-purple-500/30
+              hover:shadow-purple-500/25 hover:shadow-lg"
+            aria-label="Scroll page down"
+            disabled={isAtBottom}
+          >
+            <ChevronDown size={20} className={isAtBottom ? "opacity-50" : ""} />
+          </motion.button>
+          
+          {/* Scroll to bottom button */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToBottom}
+            className="p-3 bg-gradient-to-r from-purple-600 to-purple-700 
+              hover:from-purple-700 hover:to-purple-800 text-white rounded-full shadow-xl 
+              transition-all duration-300 backdrop-blur-sm border border-purple-500/30
+              hover:shadow-purple-500/25 hover:shadow-lg"
+            aria-label="Scroll to bottom"
+            disabled={isAtBottom}
+          >
+            <ArrowDown size={20} className={isAtBottom ? "opacity-50" : ""} />
+          </motion.button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
-
-export default ScrollNavigation

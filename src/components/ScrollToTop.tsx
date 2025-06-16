@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-const ScrollToTop = () => {
+export default function ScrollToTop() {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    // Scroll to top when route changes
+    // Smooth scroll to top when route changes
     window.scrollTo({
       top: 0,
       left: 0,
@@ -15,5 +15,3 @@ const ScrollToTop = () => {
 
   return null
 }
-
-export default ScrollToTop
