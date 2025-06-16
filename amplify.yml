@@ -4,7 +4,7 @@ frontend:
     preBuild:
       commands:
         - echo "Installing dependencies..."
-        - npm ci --cache .npm --prefer-offline
+        - npm install
         - echo "Dependencies installed successfully"
     build:
       commands:
@@ -12,7 +12,7 @@ frontend:
         - echo "Running TypeScript compilation..."
         - npx tsc --noEmit || echo "TypeScript check completed with warnings"
         - echo "Building application..."
-        - npm run build
+        - NODE_OPTIONS=--max-old-space-size=4096 npm run build
         - echo "Build completed successfully"
   artifacts:
     baseDirectory: dist
