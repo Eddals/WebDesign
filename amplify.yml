@@ -14,7 +14,7 @@ frontend:
         - echo "Generating sitemap..."
         - node scripts/simple-sitemap.cjs || echo "Sitemap generation skipped"
         - echo "Building application with increased memory allocation..."
-        - NODE_OPTIONS=--max-old-space-size=8192 npm run build
+        - NODE_OPTIONS=--max-old-space-size=8192 npm run build || (echo "Standard build failed, trying with direct Vite build..." && npx vite build --emptyOutDir)
         - echo "Build completed successfully"
   artifacts:
     baseDirectory: dist

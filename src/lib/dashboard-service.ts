@@ -262,15 +262,15 @@ export const getDashboardAnalytics = async () => {
   return {
     totalProjects: projects.length,
     projectsByStatus: {
-      pending: projects.filter(p => p.status === 'pending').length,
-      in_progress: projects.filter(p => p.status === 'in_progress').length,
-      completed: projects.filter(p => p.status === 'completed').length,
-      on_hold: projects.filter(p => p.status === 'on_hold').length,
+      pending: projects.filter((p: { status: string }) => p.status === 'pending').length,
+      in_progress: projects.filter((p: { status: string }) => p.status === 'in_progress').length,
+      completed: projects.filter((p: { status: string }) => p.status === 'completed').length,
+      on_hold: projects.filter((p: { status: string }) => p.status === 'on_hold').length,
     },
     totalUsers: users.length,
     usersByRole: {
-      admin: users.filter(u => u.role === 'admin').length,
-      client: users.filter(u => u.role === 'client').length,
+      admin: users.filter((u: { role: string }) => u.role === 'admin').length,
+      client: users.filter((u: { role: string }) => u.role === 'client').length,
     },
     totalFeedback: feedback.length,
     totalMessages: messages.length,
