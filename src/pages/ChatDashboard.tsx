@@ -59,8 +59,7 @@ const ChatDashboard = () => {
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'error'>('disconnected')
   const [usePolling, setUsePolling] = useState(false)
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  const subscriptionsRef = useRef<any[]>([])
-  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  // Remove unused subscriptionsRef and retryTimeoutRef for clarity
 
   // Simple authentication for demo purposes
   const handleAuth = (e: React.FormEvent) => {
@@ -192,70 +191,7 @@ const ChatDashboard = () => {
     }
   }
 
-  // Setup enhanced real-time subscriptions with fallback
-  const setupRealTimeSubscriptions = () => {
-    // Clean up existing subscriptions
-    subscriptionsRef.current.forEach(sub => sub.unsubscribe())
-    subscriptionsRef.current = []
-    stopPolling()
-
-    try {
-      setConnectionStatus('connected')
-
-      // Subscribe to session changes
-      const sessionsSubscription = supabase
-        .channel('dashboard_sessions_changes')
-        .on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'chat_sessions'
-        }, () => {
-          fetchSessions()
-          fetchStats()
-        })
-        .subscribe((status: any) => {
-          console.log('Sessions subscription status:', status)
-          if (status === 'SUBSCRIBED') {
-            setConnectionStatus('connected')
-          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-            setConnectionStatus('error')
-            startPolling()
-          }
-        })
-
-      // Subscribe to message changes
-      const messagesSubscription = supabase
-        .channel('dashboard_messages_changes')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'chat_messages'
-        }, () => {
-          fetchSessions() // Update unread counts
-        })
-        .subscribe((status: any) => {
-          console.log('Messages subscription status:', status)
-          if (status !== 'SUBSCRIBED' && status === 'CHANNEL_ERROR') {
-            if (!usePolling) startPolling()
-          }
-        })
-
-      subscriptionsRef.current = [sessionsSubscription, messagesSubscription]
-
-      // Fallback to polling if real-time doesn't work within 10 seconds
-      setTimeout(() => {
-        if (connectionStatus !== 'connected') {
-          console.log('Dashboard: Real-time timeout, starting polling')
-          startPolling()
-        }
-      }, 10000)
-
-    } catch (error) {
-      console.error('Error setting up real-time subscriptions:', error)
-      setConnectionStatus('error')
-      startPolling()
-    }
-  }
+  // Removed unused setupRealTimeSubscriptions and related fallback logic for clarity
 
   // Set up simple and fast real-time subscriptions
   useEffect(() => {
