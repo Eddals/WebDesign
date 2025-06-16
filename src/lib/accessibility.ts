@@ -59,7 +59,7 @@ class AccessibilityManager {
       hadKeyboardEvent = false;
     }
 
-    function onKeyDown(e: KeyboardEvent) {
+    function onKeyDown(e: globalThis.KeyboardEvent) {
       if (e.metaKey || e.altKey || e.ctrlKey) {
         return;
       }
@@ -142,7 +142,7 @@ class AccessibilityManager {
     document.body.insertBefore(skipLink, document.body.firstChild);
   }
 
-  private handleModalFocusTrap(e: KeyboardEvent) {
+  private handleModalFocusTrap(e: globalThis.KeyboardEvent) {
     if (e.key !== 'Tab') return;
 
     const modal = document.querySelector('[role="dialog"][aria-modal="true"]') as HTMLElement;
@@ -168,7 +168,7 @@ class AccessibilityManager {
     }
   }
 
-  private handleEscapeKey(e: KeyboardEvent) {
+  private handleEscapeKey(e: globalThis.KeyboardEvent) {
     if (e.key === 'Escape') {
       const modal = document.querySelector('[role="dialog"][aria-modal="true"]') as HTMLElement;
       if (modal) {
@@ -364,7 +364,7 @@ export const trapFocus = (container: HTMLElement) => {
   const firstElement = focusableElements[0];
   const lastElement = focusableElements[focusableElements.length - 1];
 
-  const handleTabKey = (e: KeyboardEvent) => {
+  const handleTabKey = (e: globalThis.KeyboardEvent) => {
     if (e.key !== 'Tab') return;
 
     if (e.shiftKey) {

@@ -51,7 +51,8 @@ export default defineConfig({
           router: ['react-router-dom'],
           ui: ['framer-motion', 'lucide-react'],
           query: ['@tanstack/react-query'],
-          supabase: ['@supabase/supabase-js']
+          supabase: ['@supabase/supabase-js'],
+          forms: ['react-hook-form']
         }
       }
     },
@@ -71,7 +72,8 @@ export default defineConfig({
       '@tanstack/react-query',
       '@supabase/supabase-js',
       'clsx', 
-      'tailwind-merge'
+      'tailwind-merge',
+      'react-hook-form'
     ]
   },
   // Enable CSS code splitting
