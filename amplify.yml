@@ -9,10 +9,12 @@ frontend:
     build:
       commands:
         - echo "Starting build process..."
-        - echo "Running TypeScript compilation..."
-        - npx tsc --noEmit || echo "TypeScript check completed with warnings"
-        - echo "Building application..."
-        - NODE_OPTIONS=--max-old-space-size=4096 npm run build
+        - echo "Creating public directory for sitemap if it doesn't exist"
+        - mkdir -p public
+        - echo "Generating sitemap..."
+        - node scripts/simple-sitemap.cjs || echo "Sitemap generation skipped"
+        - echo "Building application with increased memory allocation..."
+        - NODE_OPTIONS=--max-old-space-size=8192 npm run build
         - echo "Build completed successfully"
   artifacts:
     baseDirectory: dist

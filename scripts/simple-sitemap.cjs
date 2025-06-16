@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+/**
+ * Simple sitemap generator that works in both CommonJS and ES Module environments
+ */
+const fs = require('fs');
+const path = require('path');
 
 // Simple sitemap generation script
 const generateSitemap = () => {
@@ -38,11 +40,7 @@ ${urls.map(url => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
-  // Get current file directory when using ES modules
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  
-  const publicDir = path.join(path.resolve(__dirname, '..'), 'public');
+  const publicDir = path.join(process.cwd(), 'public');
   if (!fs.existsSync(publicDir)) {
     fs.mkdirSync(publicDir, { recursive: true });
   }

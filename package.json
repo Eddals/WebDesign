@@ -18,8 +18,8 @@
     "clean": "rm -rf dist",
     "build:analyze": "npm run build && npx vite-bundle-analyzer dist/stats.html",
     "serve": "npm run build && npm run preview",
-    "generate-sitemap": "node scripts/generate-sitemap.js || echo 'Sitemap generation skipped'",
-    "prebuild": "npm run generate-sitemap",
+    "generate-sitemap": "node scripts/simple-sitemap.cjs || echo 'Sitemap generation skipped'",
+    "prebuild": "npm run generate-sitemap || true",
     "start-dashboard": "node start-dashboard.js"
   },
   "dependencies": {
