@@ -1,4 +1,22 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://matheusweb.com/sitemap.xml
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /chat-dashboard/
+Disallow: /*.json$
+Disallow: /*.xml$
+
+# Allow specific bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap location
+Sitemap: https://devtone.agency/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1

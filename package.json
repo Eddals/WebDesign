@@ -4,9 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node start-dashboard.js && vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "build:analyze": "npm run build && npx vite-bundle-analyzer dist/stats.html",
+    "serve": "npm run build && npm run preview",
+    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "prebuild": "npm run generate-sitemap",
+    "start-dashboard": "node start-dashboard.js"
   },
   "dependencies": {
     "@stripe/stripe-js": "^7.3.1",

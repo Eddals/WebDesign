@@ -81,22 +81,22 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-white font-semibold">Services</h4>
             <nav className="flex flex-col space-y-2">
-              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+              <Link to="/services/business-websites" className="text-white/70 hover:text-purple-400 transition-colors">
                 Business Websites
               </Link>
-              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+              <Link to="/services/landing-pages" className="text-white/70 hover:text-purple-400 transition-colors">
                 Landing Pages
               </Link>
-              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+              <Link to="/services/e-commerce-stores" className="text-white/70 hover:text-purple-400 transition-colors">
                 E-Commerce Stores
               </Link>
-              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+              <Link to="/services/website-redesign" className="text-white/70 hover:text-purple-400 transition-colors">
                 Website Redesign
               </Link>
-              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+              <Link to="/services/seo-optimization" className="text-white/70 hover:text-purple-400 transition-colors">
                 SEO Optimization
               </Link>
-              <Link to="/services" className="text-white/70 hover:text-purple-400 transition-colors">
+              <Link to="/services/mobile-applications" className="text-white/70 hover:text-purple-400 transition-colors">
                 Mobile Applications
               </Link>
             </nav>
@@ -244,6 +244,14 @@ const Footer = () => {
               >
                 <Shield size={14} />
                 Support
+              </Link>
+              <Link
+                to="/dashboard"
+                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
+                title="Client Dashboard"
+              >
+                <Shield size={14} />
+                Dashboard
               </Link>
             </div>
           </div>
