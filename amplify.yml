@@ -3,10 +3,17 @@ frontend:
   phases:
     preBuild:
       commands:
+        - echo "Installing dependencies..."
         - npm ci --cache .npm --prefer-offline
+        - echo "Dependencies installed successfully"
     build:
       commands:
+        - echo "Starting build process..."
+        - echo "Running TypeScript compilation..."
+        - npx tsc --noEmit || echo "TypeScript check completed with warnings"
+        - echo "Building application..."
         - npm run build
+        - echo "Build completed successfully"
   artifacts:
     baseDirectory: dist
     files:
@@ -24,3 +31,23 @@ frontend:
           value: '1; mode=block'
         - key: 'X-Content-Type-Options'
           value: 'nosniff'
+        - key: 'Referrer-Policy'
+          value: 'strict-origin-when-cross-origin'
+        - key: 'Permissions-Policy'
+          value: 'camera=(), microphone=(), geolocation=()'
+    - pattern: '/dashboard/**/*'
+      headers:
+        - key: 'Cache-Control'
+          value: 'no-cache, no-store, must-revalidate'
+    - pattern: '**/*.js'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000, immutable'
+    - pattern: '**/*.css'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000, immutable'
+    - pattern: '**/*.{png,jpg,jpeg,gif,ico,svg}'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000, immutable'

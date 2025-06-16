@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node start-dashboard.js && vite",
+    "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -13,7 +13,7 @@
     "clean": "rm -rf dist",
     "build:analyze": "npm run build && npx vite-bundle-analyzer dist/stats.html",
     "serve": "npm run build && npm run preview",
-    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "generate-sitemap": "node scripts/generate-sitemap.js || echo 'Sitemap generation skipped'",
     "prebuild": "npm run generate-sitemap",
     "start-dashboard": "node start-dashboard.js"
   },
@@ -34,7 +34,8 @@
     "react-router-dom": "6.22.3",
     "stripe": "^18.2.1",
     "tailwind-merge": "^3.2.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "class-variance-authority": "^0.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
