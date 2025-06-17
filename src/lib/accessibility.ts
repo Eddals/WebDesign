@@ -81,7 +81,7 @@ class AccessibilityManager {
     });
 
     keyboardEvents.forEach(event => {
-      document.addEventListener(event, onKeyDown, true);
+      document.addEventListener(event, (e: Event) => onKeyDown(e as globalThis.KeyboardEvent), true);
     });
 
     document.addEventListener('focus', onFocus, true);
