@@ -245,14 +245,16 @@ const Footer = () => {
                 <Shield size={14} />
                 Support
               </Link>
-              <Link
-                to="/dashboard"
+              <a
+                href="https://dashboard.devtone.agency"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
                 title="Client Dashboard"
               >
                 <Shield size={14} />
                 Dashboard
-              </Link>
+              </a>
             </div>
           </div>
         </motion.div>
