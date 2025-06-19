@@ -10,8 +10,6 @@ import Footer from './components/Footer';
 import LiveChat from './components/LiveChat';
 import ScrollNavigation from './components/ScrollNavigation';
 import ScrollToTop from './components/ScrollToTop';
-import React, { useEffect, useState } from 'react';
-import { getUserCountry } from './lib/geoCheck';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));
@@ -39,57 +37,8 @@ const ECommerce = lazy(() => import('./pages/services/ECommerce'));
 const WebsiteRedesign = lazy(() => import('./pages/services/WebsiteRedesign'));
 const MobileApps = lazy(() => import('./pages/services/MobileApps'));
 
-function GeoVerificationModal({ onVerify }: { onVerify: () => void }) {
-  const [checked, setChecked] = useState(false);
-  return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-      background: 'rgba(0,0,0,0.85)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
-    }}>
-      <div style={{ background: '#fff', padding: 32, borderRadius: 8, maxWidth: 400, textAlign: 'center' }}>
-        <h2 style={{ color: '#111', marginBottom: 16 }}>Verification Required</h2>
-        <p style={{ color: '#333', marginBottom: 16 }}>
-          For security reasons, users from outside the United States must verify they are not a bot.
-        </p>
-        <label style={{ color: '#111', marginBottom: 16, display: 'block' }}>
-          <input type="checkbox" checked={checked} onChange={e => setChecked(e.target.checked)} /> I'm not a robot
-        </label>
-        <button
-          style={{ background: '#111', color: '#fff', padding: '8px 24px', border: 'none', borderRadius: 4, cursor: checked ? 'pointer' : 'not-allowed' }}
-          disabled={!checked}
-          onClick={onVerify}
-        >
-          Verify
-        </button>
-      </div>
-    </div>
-  );
-}
 
 export default function App() {
-  const [showVerification, setShowVerification] = useState(false);
-  const [checkedCountry, setCheckedCountry] = useState(false);
-
-  useEffect(() => {
-    async function checkCountry() {
-      const country = await getUserCountry();
-      if (country && country !== 'US') {
-        setShowVerification(true);
-      }
-      setCheckedCountry(true);
-    }
-    
-    // Use startTransition to avoid Suspense errors during initial load
-    startTransition(() => {
-      checkCountry();
-    });
-  }, []);
-
-  if (!checkedCountry) return <LoadingSpinner fullScreen text="Initializing..." />;
-  if (showVerification) {
-    return <GeoVerificationModal onVerify={() => setShowVerification(false)} />;
-  }
-
   return (
     <ErrorBoundary>
       <HelmetProvider>
