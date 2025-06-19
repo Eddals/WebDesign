@@ -5,16 +5,24 @@
   "main": "stripe-checkout.js",
   "scripts": {
     "start": "node stripe-checkout.js",
+    "start:estimate": "node estimate-api.js",
+    "start:all": "node start-all.js",
     "dev": "nodemon stripe-checkout.js",
-    "test": "node test-stripe.js"
+    "dev:estimate": "nodemon estimate-api.js",
+    "test": "node test-stripe.js",
+    "test:email": "node test-email.js",
+    "test:email:full": "node test-email.js --with-client",
+    "setup:email": "node setup-email.js"
   },
   "dependencies": {
-    "stripe": "^14.21.0",
-    "express": "^4.18.2",
+    "@types/nodemailer": "^6.4.17",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
-    "express-rate-limit": "^7.1.5"
+    "nodemailer": "^6.9.7",
+    "stripe": "^14.21.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
