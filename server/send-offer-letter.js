@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const nodemailer = require('nodemailer');
+const { addSignatureToEmail } = require('./email-signature');
 require('dotenv').config();
 
 console.log('📧 Sending Professional Offer Letter to team@devtone.agency\n');
@@ -377,7 +378,13 @@ async function sendOfferLetter() {
     console.log('✅ Connection verified\n');
     
     console.log('📤 Sending professional offer letter...');
-    const info = await transporter.sendMail(offerLetter);
+    // Add signature to offer letter
+    const offerLetterWithSignature = {
+      ...offerLetter,
+      ...addSignatureToEmail({ html: offerLetter.html, text: offerLetter.text })
+    };
+    
+    const info = await transporter.sendMail(offerLetterWithSignature);
     
     console.log('\n✅ SUCCESS! Professional offer letter sent to team@devtone.agency');
     console.log(`📧 Message ID: ${info.messageId}`);

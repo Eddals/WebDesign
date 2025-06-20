@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const nodemailer = require('nodemailer');
+const { addSignatureToEmail } = require('./email-signature');
 require('dotenv').config();
 
 console.log('📧 Sending test email to batatamalsururuca17@gmail.com\n');
@@ -121,7 +122,13 @@ async function sendTestEmail() {
     console.log('✅ SMTP connection verified\n');
     
     console.log('📤 Sending test email...');
-    const info = await transporter.sendMail(testData);
+    // Add signature to test email
+    const testDataWithSignature = {
+      ...testData,
+      ...addSignatureToEmail({ html: testData.html, text: testData.text })
+    };
+    
+    const info = await transporter.sendMail(testDataWithSignature);
     
     console.log('\n✅ SUCCESS! Test email sent to batatamalsururuca17@gmail.com');
     console.log(`📧 Message ID: ${info.messageId}`);

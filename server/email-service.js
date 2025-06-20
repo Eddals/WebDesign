@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { addSignatureToEmail } = require('./email-signature');
 require('dotenv').config();
 
 // Create reusable transporter object using SMTP transport
@@ -150,8 +151,13 @@ const sendEstimateEmail = async (formData) => {
       ...emailTemplate
     };
 
-    // Send email
-    const info = await transporter.sendMail(mailOptions);
+    // Add signature to email and send
+    const emailWithSignature = {
+      ...mailOptions,
+      ...addSignatureToEmail({ html: mailOptions.html, text: mailOptions.text })
+    };
+    
+    const info = await transporter.sendMail(emailWithSignature);
     
     console.log('Email sent successfully:', info.messageId);
     return { success: true, messageId: info.messageId };
@@ -241,7 +247,13 @@ This is an automated confirmation email. Please do not reply to this email.
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    // Add signature to email and send
+    const emailWithSignature = {
+      ...mailOptions,
+      ...addSignatureToEmail({ html: mailOptions.html, text: mailOptions.text })
+    };
+    
+    await transporter.sendMail(emailWithSignature);
     console.log('Client confirmation email sent successfully');
     return { success: true };
   } catch (error) {
