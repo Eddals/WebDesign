@@ -13,6 +13,7 @@ import SEO from '@/components/SEO'
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Quote, PackageType } from '../types/quotes';
 import { PostgrestError } from '@supabase/supabase-js';
+import ReviewsSection from '@/components/ReviewsSection';
 
 // Enhanced custom CSS for animations
 const customStyles = `
@@ -1025,145 +1026,8 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Client Testimonials Section */}
-        <section className="py-24 relative overflow-hidden">
-          {/* Background elements */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#030718] via-[#0a0e24] to-[#030718] opacity-80"></div>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiIgZD0iTTAgMGg2MHY2MEgweiIvPjxwYXRoIGQ9Ik0zNiAxOGgtMXYyNGgxeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PHBhdGggZD0iTTI0IDE4aC0xdjI0aDF6IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDQiLz48cGF0aCBkPSJNNjAgMzZ2MUgzNnYtMXoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNCIvPjxwYXRoIGQ9Ik02MCAyNHYxSDM2di0xeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <motion.div 
-                className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-              >
-                <span className="relative z-10">Client Love</span>
-                <motion.div 
-                  className="absolute inset-0 bg-purple-500/20"
-                  initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.6 }}
-                />
-              </motion.div>
-              
-              <motion.h2 
-                className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 text-glow"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                What Clients Say
-              </motion.h2>
-              
-              <motion.p 
-                className="text-white/70 max-w-2xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              >
-                Real feedback from real clients who trusted us with their digital presence
-              </motion.p>
-            </motion.div>
-
-            {/* Testimonials Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {[
-                {
-                  name: "Sarah Johnson",
-                  role: "CEO, TechStart",
-                  content: "Absolutely phenomenal work! The website exceeded all our expectations. The attention to detail and modern design really set us apart from competitors.",
-                  rating: 5,
-                  avatar: "SJ"
-                },
-                {
-                  name: "Michael Chen",
-                  role: "Founder, EcoSolutions",
-                  content: "Professional, fast, and incredibly talented. Our e-commerce site has seen a 300% increase in conversions since the redesign. Highly recommended!",
-                  rating: 5,
-                  avatar: "MC"
-                },
-                {
-                  name: "Emily Rodriguez",
-                  role: "Marketing Director, CreativeHub",
-                  content: "The team delivered exactly what we needed - a beautiful, responsive website that perfectly represents our brand. The process was smooth and collaborative.",
-                  rating: 5,
-                  avatar: "ER"
-                }
-              ].map((testimonial, index) => (
-                <motion.div
-                  key={index}
-                  className="relative group"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  whileHover={{ y: -5 }}
-                >
-                  <motion.div 
-                    className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl blur-lg opacity-25 group-hover:opacity-75"
-                    animate={{ 
-                      opacity: [0.25, 0.5, 0.25],
-                    }}
-                    transition={{ 
-                      duration: 3, 
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: index * 0.2
-                    }}
-                  />
-                  
-                  <div className="relative bg-[#0a0e24]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 h-full transition-all duration-300 group-hover:border-purple-500/50">
-                    {/* Quote Icon */}
-                    <div className="mb-4">
-                      <svg className="w-8 h-8 text-purple-400/60" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
-                      </svg>
-                    </div>
-                    
-                    {/* Content */}
-                    <p className="text-white/80 mb-6 leading-relaxed">
-                      "{testimonial.content}"
-                    </p>
-                    
-                    {/* Rating */}
-                    <div className="flex mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.3, delay: 0.5 + (i * 0.1) }}
-                        >
-                          <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        </motion.div>
-                      ))}
-                    </div>
-                    
-                    {/* Author */}
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold mr-4">
-                        {testimonial.avatar}
-                      </div>
-                      <div>
-                        <h4 className="text-white font-semibold">{testimonial.name}</h4>
-                        <p className="text-purple-300 text-sm">{testimonial.role}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Google Reviews Section */}
+        <ReviewsSection />
 
         {/* Interactive Process Timeline */}
         <section className="py-24 relative overflow-hidden">

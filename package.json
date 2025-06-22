@@ -9,8 +9,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit || echo 'TypeScript errors found but continuing build' && vite build",
-    "build:strict": "tsc && vite build",
+    "build": "node scripts/node-polyfills.cjs && (tsc --noEmit || echo 'TypeScript errors found but continuing build') && vite build",
+    "build:strict": "node scripts/node-polyfills.cjs && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",

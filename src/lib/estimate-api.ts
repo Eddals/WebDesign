@@ -1,5 +1,7 @@
 // API configuration
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+const API_URL = import.meta.env.VITE_API_URL || (
+  import.meta.env.DEV ? 'http://localhost:3002' : 'https://api.devtone.agency'
+);
 
 export interface EstimateFormData {
   // Personal Info

@@ -1,6 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { randomBytes } from 'crypto'
+
+// Polyfill for crypto.getRandomValues in Node.js environment
+if (!globalThis.crypto) {
+  globalThis.crypto = {
+    getRandomValues: (buffer) => {
+      const bytes = randomBytes(buffer.length)
+      buffer.set(new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength))
+      return buffer
+    }
+  }
+}
 
 export default defineConfig({
   plugins: [

@@ -13,8 +13,10 @@ frontend:
         - mkdir -p public
         - echo "Generating sitemap..."
         - node scripts/simple-sitemap.cjs || echo "Sitemap generation skipped"
+        - echo "Loading Node.js polyfills..."
+        - node scripts/node-polyfills.cjs
         - echo "Building application with increased memory allocation..."
-        - NODE_OPTIONS=--max-old-space-size=8192 npm run build || (echo "Standard build failed, trying with direct Vite build..." && NODE_OPTIONS=--max-old-space-size=8192 npx vite build --emptyOutDir)
+        - NODE_OPTIONS="--max-old-space-size=8192 --require ./scripts/node-polyfills.cjs" npm run build || (echo "Standard build failed, trying with direct Vite build..." && NODE_OPTIONS="--max-old-space-size=8192 --require ./scripts/node-polyfills.cjs" npx vite build --emptyOutDir)
         - echo "Build completed successfully"
   artifacts:
     baseDirectory: dist
