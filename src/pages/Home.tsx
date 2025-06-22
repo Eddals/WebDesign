@@ -329,8 +329,8 @@ const Home = () => {
     <>
       <SEO
         title="DevTone - Professional Web Development & Digital Marketing Agency"
-        description="DevTone delivers cutting-edge web development and digital marketing solutions. Specializing in responsive websites, SEO optimization, and custom web applications that drive business growth."
-        keywords={['web development', 'digital marketing', 'SEO services', 'responsive design', 'web design agency', 'DevTone', 'custom websites', 'business websites']}
+        description="DevTone delivers cutting-edge web development and digital marketing solutions. Specializing in responsive websites, SEO services, content creation, and custom web applications that drive business growth."
+        keywords={['web development', 'digital marketing', 'SEO services', 'content creation', 'responsive design', 'web design agency', 'DevTone', 'custom websites', 'business websites']}
         ogUrl="https://devtone.com"
       />
       <div className="min-h-screen bg-[#030718]">
@@ -492,8 +492,8 @@ const Home = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  We create beautiful, fast, and SEO-friendly websites that help your business thrive. 
-                  Let's bring your <span className="text-purple-300">ideas</span> to <span className="text-purple-300">life</span>!
+                  We create beautiful, fast, and SEO-friendly websites powered by strategic <span className="text-purple-300">digital marketing</span> and professional <span className="text-purple-300">content creation</span>. 
+                  Let's bring your ideas to life!
                 </motion.p>
                 
                 <motion.div 
@@ -635,7 +635,7 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                Comprehensive web solutions tailored to your specific needs and goals
+                Comprehensive web solutions including SEO services, digital marketing strategies, and content creation tailored to your specific needs
               </motion.p>
             </motion.div>
             
@@ -654,9 +654,9 @@ const Home = () => {
                   <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6 group-hover:bg-purple-500/30 transition-colors duration-300">
                     <Palette className="w-7 h-7 text-purple-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors duration-300">Web Design</h3>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors duration-300">Web Design & Content Creation</h3>
                   <p className="text-white/70 mb-6">
-                    Stunning, responsive designs that captivate your audience and reflect your brand identity.
+                    Stunning, responsive designs combined with professional content creation that captivates your audience and reflects your brand identity.
                   </p>
                   <ul className="space-y-2 mb-6">
                     <li className="flex items-center gap-2 text-white/70">
@@ -696,9 +696,9 @@ const Home = () => {
                   <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6 group-hover:bg-purple-500/30 transition-colors duration-300">
                     <Code className="w-7 h-7 text-purple-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors duration-300">Web Development</h3>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors duration-300">Web Development & Digital Marketing</h3>
                   <p className="text-white/70 mb-6">
-                    Clean, efficient code that brings your designs to life with seamless functionality.
+                    Clean, efficient code integrated with digital marketing best practices to bring your designs to life with seamless functionality.
                   </p>
                   <ul className="space-y-2 mb-6">
                     <li className="flex items-center gap-2 text-white/70">
@@ -738,9 +738,9 @@ const Home = () => {
                   <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6 group-hover:bg-purple-500/30 transition-colors duration-300">
                     <Gauge className="w-7 h-7 text-purple-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors duration-300">SEO Optimization</h3>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors duration-300">SEO Services & Optimization</h3>
                   <p className="text-white/70 mb-6">
-                    Strategic optimization to improve your visibility and drive organic traffic to your website.
+                    Professional SEO services and strategic optimization to improve your visibility and drive organic traffic to your website.
                   </p>
                   <ul className="space-y-2 mb-6">
                     <li className="flex items-center gap-2 text-white/70">
@@ -1228,7 +1228,7 @@ const Home = () => {
                   {
                     step: "01",
                     title: "Discovery & Planning",
-                    description: "We dive deep into your business goals, target audience, and project requirements to create a comprehensive strategy.",
+                    description: "We dive deep into your business goals, target audience, and project requirements to create a comprehensive digital marketing and content strategy.",
                     icon: <Lightbulb className="w-6 h-6" />,
                     side: "left"
                   },
@@ -1249,7 +1249,7 @@ const Home = () => {
                   {
                     step: "04",
                     title: "Launch & Optimization",
-                    description: "Deploying your website and providing ongoing support to ensure optimal performance and continuous improvement.",
+                    description: "Deploying your website with SEO services and providing ongoing support to ensure optimal performance and continuous improvement.",
                     icon: <Rocket className="w-6 h-6" />,
                     side: "right"
                   }
@@ -1618,7 +1618,7 @@ const Home = () => {
                 {
                   icon: <Target className="w-8 h-8" />,
                   title: "Easy to Find on Google",
-                  description: "We make sure people can find your business when they search online. More visibility = more customers.",
+                  description: "Our SEO services and digital marketing expertise ensure people can find your business when they search online. More visibility = more customers.",
                   color: "from-purple-500 to-purple-700"
                 },
                 {
@@ -1630,7 +1630,7 @@ const Home = () => {
                 {
                   icon: <Gauge className="w-8 h-8" />,
                   title: "Built for Results",
-                  description: "Every feature is designed to help your business grow. More leads, more sales, more success.",
+                  description: "Every feature is designed with content creation and digital marketing in mind to help your business grow. More leads, more sales, more success.",
                   color: "from-purple-500 to-purple-700"
                 }
               ].map((feature, index) => (
