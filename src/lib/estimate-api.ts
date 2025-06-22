@@ -32,6 +32,31 @@ export interface EstimateResponse {
 
 export const submitEstimate = async (formData: EstimateFormData): Promise<EstimateResponse> => {
   try {
+    // First, send to ActivePieces webhook
+    const activePiecesWebhook = 'https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg';
+    
+    try {
+      const webhookResponse = await fetch(activePiecesWebhook, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          timestamp: new Date().toISOString(),
+          source: 'devtone-estimate-form'
+        }),
+      });
+
+      if (!webhookResponse.ok) {
+        console.warn('ActivePieces webhook returned non-OK status:', webhookResponse.status);
+      }
+    } catch (webhookError) {
+      console.error('Error sending to ActivePieces webhook:', webhookError);
+      // Continue with the main API call even if webhook fails
+    }
+
+    // Then send to our API
     const response = await fetch(`${API_URL}/api/estimate`, {
       method: 'POST',
       headers: {

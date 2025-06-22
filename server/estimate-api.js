@@ -87,6 +87,35 @@ app.post('/api/estimate', estimateLimiter, async (req, res) => {
       features: req.body.features || []
     };
 
+    // Send to ActivePieces webhook
+    try {
+      const activePiecesWebhook = 'https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg';
+      const webhookPayload = {
+        ...formData,
+        timestamp: new Date().toISOString(),
+        source: 'devtone-estimate-api',
+        ip: req.ip,
+        userAgent: req.get('user-agent')
+      };
+
+      const webhookResponse = await fetch(activePiecesWebhook, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload),
+      });
+
+      if (!webhookResponse.ok) {
+        console.warn('ActivePieces webhook returned non-OK status:', webhookResponse.status);
+      } else {
+        console.log('Successfully sent to ActivePieces webhook');
+      }
+    } catch (webhookError) {
+      console.error('Error sending to ActivePieces webhook:', webhookError);
+      // Continue even if webhook fails
+    }
+
     // Send notification email to admin
     const adminEmailResult = await sendEstimateEmail(formData);
     
