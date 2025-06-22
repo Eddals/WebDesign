@@ -18,6 +18,8 @@ app.use(cors({
     const allowedOrigins = [
       'http://localhost:5173',
       'http://localhost:5174',
+      'https://devtone.online',
+      'https://www.devtone.online',
       process.env.FRONTEND_URL || 'https://devtone.agency'
     ];
     
