@@ -1,159 +1,85 @@
-#!/usr/bin/env node
-
-const nodemailer = require('nodemailer');
-const { addSignatureToEmail } = require('./email-signature');
+const fetch = require('node-fetch');
 require('dotenv').config();
 
-console.log('📧 Sending test email to batatamalsururuca17@gmail.com\n');
+async function sendTestToMatheus() {
+  console.log('📧 Sending test email to matheusnagringanyc@gmail.com\n');
 
-// Check if SMTP is configured
-if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-  console.error('❌ SMTP credentials not found in .env file');
-  console.log('\nPlease run: npm run setup:email');
-  process.exit(1);
-}
+  // Test data
+  const testEstimate = {
+    // Contact info
+    name: 'Matheus Test',
+    email: 'matheusnagringanyc@gmail.com', // This email will receive the confirmation
+    phone: '+1 (917) 555-0123',
+    company: 'NYC Digital Agency',
+    country: 'United States',
+    industry: 'Digital Marketing',
+    
+    // Project details
+    projectType: 'E-commerce Website',
+    budget: '$10,000 - $15,000',
+    timeline: '2-3 months',
+    description: 'Looking to build a modern e-commerce platform with advanced features. Need integration with payment systems, inventory management, and customer analytics. The design should be modern and mobile-first.',
+    features: ['Payment Integration', 'Inventory System', 'Analytics Dashboard', 'Mobile App'],
+    
+    // Additional fields
+    service_type: 'E-commerce Website',
+    project_description: 'Modern e-commerce platform with full features',
+    estimated_budget: '$10,000 - $15,000',
+    preferred_timeline: '2-3 months',
+    property_type: 'Online Store',
+    property_size: 'Large (500+ products)',
+    location: 'New York, NY'
+  };
 
-// Create transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.ionos.com',
-  port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
-
-// Test email data
-const testData = {
-  from: `"DevTone Test" <${process.env.SMTP_USER}>`,
-  to: 'batatamalsururuca17@gmail.com',
-  subject: 'Test Email from DevTone - SMTP Working! 🎉',
-  html: `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #6B46C1 0%, #4C1D95 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
-        .success { background-color: #10B981; color: white; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; }
-        .info-box { background-color: white; padding: 20px; border-radius: 5px; margin: 20px 0; border: 1px solid #e5e5e5; }
-        .footer { text-align: center; margin-top: 30px; color: #888; font-size: 12px; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>🚀 DevTone Email Test</h1>
-        </div>
-        <div class="content">
-          <div class="success">
-            <h2>✅ SMTP Configuration Successful!</h2>
-          </div>
-          
-          <p>Hi Matheus,</p>
-          
-          <p>Great news! Your SMTP email configuration is working perfectly. This test email confirms that your DevTone estimate form can now send email notifications.</p>
-          
-          <div class="info-box">
-            <h3>📋 Configuration Details:</h3>
-            <ul>
-              <li><strong>SMTP Host:</strong> ${process.env.SMTP_HOST || 'smtp.ionos.com'}</li>
-              <li><strong>SMTP Port:</strong> ${process.env.SMTP_PORT || 587}</li>
-              <li><strong>From Email:</strong> ${process.env.SMTP_USER}</li>
-              <li><strong>Sent at:</strong> ${new Date().toLocaleString()}</li>
-            </ul>
-          </div>
-          
-          <div class="info-box">
-            <h3>🎯 What's Next?</h3>
-            <p>When someone submits your estimate form:</p>
-            <ol>
-              <li>You'll receive a detailed notification at: <strong>${process.env.ESTIMATE_RECIPIENT_EMAIL || process.env.SMTP_USER}</strong></li>
-              <li>The client will receive a professional confirmation email</li>
-              <li>All form data will be beautifully formatted and easy to read</li>
-            </ol>
-          </div>
-          
-          <p>Your email system is now ready to handle estimate form submissions!</p>
-          
-          <div class="footer">
-            <p>This is a test email from your DevTone SMTP configuration.</p>
-            <p>© ${new Date().getFullYear()} DevTone. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    </body>
-    </html>
-  `,
-  text: `
-DevTone Email Test - SMTP Working! 🎉
-
-Hi Matheus,
-
-Great news! Your SMTP email configuration is working perfectly. This test email confirms that your DevTone estimate form can now send email notifications.
-
-Configuration Details:
-- SMTP Host: ${process.env.SMTP_HOST || 'smtp.ionos.com'}
-- SMTP Port: ${process.env.SMTP_PORT || 587}
-- From Email: ${process.env.SMTP_USER}
-- Sent at: ${new Date().toLocaleString()}
-
-What's Next?
-When someone submits your estimate form:
-1. You'll receive a detailed notification at: ${process.env.ESTIMATE_RECIPIENT_EMAIL || process.env.SMTP_USER}
-2. The client will receive a professional confirmation email
-3. All form data will be beautifully formatted and easy to read
-
-Your email system is now ready to handle estimate form submissions!
-
-This is a test email from your DevTone SMTP configuration.
-© ${new Date().getFullYear()} DevTone. All rights reserved.
-  `
-};
-
-// Send the email
-async function sendTestEmail() {
   try {
-    console.log('🔌 Connecting to SMTP server...');
-    await transporter.verify();
-    console.log('✅ SMTP connection verified\n');
+    console.log('🚀 Sending estimate request...\n');
     
-    console.log('📤 Sending test email...');
-    // Add signature to test email
-    const testDataWithSignature = {
-      ...testData,
-      ...addSignatureToEmail({ html: testData.html, text: testData.text })
-    };
+    const apiUrl = 'http://localhost:3002';
+    const response = await fetch(`${apiUrl}/api/estimate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(testEstimate)
+    });
+
+    const result = await response.json();
     
-    const info = await transporter.sendMail(testDataWithSignature);
-    
-    console.log('\n✅ SUCCESS! Test email sent to batatamalsururuca17@gmail.com');
-    console.log(`📧 Message ID: ${info.messageId}`);
-    console.log('\n🎉 Your email configuration is working perfectly!');
-    console.log('Check your Gmail inbox (and spam folder just in case).');
-    
-  } catch (error) {
-    console.error('\n❌ Failed to send test email:');
-    console.error(error.message);
-    
-    if (error.code === 'EAUTH') {
-      console.log('\n💡 Authentication failed. Please check:');
-      console.log('   - Your email address is correct');
-      console.log('   - Your password is correct');
-      console.log('   - For IONOS, use your email password');
-    } else if (error.code === 'ECONNECTION') {
-      console.log('\n💡 Connection failed. Please check:');
-      console.log('   - Your internet connection');
-      console.log('   - Firewall settings (port 587 should be open)');
-      console.log('   - SMTP host is correct');
+    if (response.ok && result.success) {
+      console.log('✅ SUCCESS! Email sent to matheusnagringanyc@gmail.com\n');
+      
+      console.log('📬 What you\'ll receive:');
+      console.log('\n1️⃣ CUSTOMER EMAIL (at matheusnagringanyc@gmail.com):');
+      console.log('   Subject: "✨ We received your estimate request - DevTone"');
+      console.log('   - Modern dark theme design');
+      console.log('   - Your project summary (E-commerce, $10k-15k)');
+      console.log('   - Visual timeline with 4 steps');
+      console.log('   - Contact information');
+      console.log('   - Purple gradient buttons\n');
+      
+      console.log('2️⃣ ADMIN EMAIL (at sweepeasellc@gmail.com):');
+      console.log('   Subject: "🚀 New Estimate Request from Matheus Test"');
+      console.log('   - Full contact details');
+      console.log('   - Project requirements');
+      console.log('   - Quick action buttons\n');
+      
+      console.log('🎨 Both emails feature:');
+      console.log('   - Dark modern design');
+      console.log('   - Purple gradients');
+      console.log('   - Your logo');
+      console.log('   - Mobile responsive');
+      console.log('   - Professional layout');
+      
+    } else {
+      console.log('❌ Failed to send email');
+      console.log('Error:', result.error || 'Unknown error');
     }
     
-    process.exit(1);
+  } catch (error) {
+    console.error('❌ Error:', error.message);
   }
 }
 
 // Run the test
-sendTestEmail();
+console.log('='.repeat(60));
+sendTestToMatheus();

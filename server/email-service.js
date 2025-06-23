@@ -28,30 +28,37 @@ const createEstimateEmailTemplate = (formData) => {
       <!DOCTYPE html>
       <html>
       <head>
+        <meta name="color-scheme" content="light only">
+        <meta name="supported-color-schemes" content="light only">
         <style>
+          :root {
+            color-scheme: light only;
+            supported-color-schemes: light only;
+          }
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
           
           body { 
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             line-height: 1.6; 
-            color: #e2e8f0;
+            color: #1f2937 !important;
             margin: 0;
             padding: 0;
-            background-color: #0f0f0f;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
           }
           
           .wrapper {
-            background-color: #0f0f0f;
+            background-color: #f9fafb;
             padding: 40px 20px;
           }
           
           .container { 
             max-width: 600px; 
             margin: 0 auto; 
-            background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+            background: #ffffff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
           }
           
           .header { 
@@ -102,19 +109,19 @@ const createEstimateEmailTemplate = (formData) => {
           
           .content { 
             padding: 40px 30px;
-            background-color: #1a1a1a;
+            background-color: #ffffff;
           }
           
           .alert-card {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.1) 100%);
-            border: 1px solid rgba(34, 197, 94, 0.3);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.05) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.2);
             border-radius: 12px;
             padding: 24px;
             margin: 0 0 24px 0;
           }
           
           .alert-title {
-            color: #4ade80;
+            color: #16a34a;
             font-size: 20px;
             font-weight: 600;
             margin: 0 0 16px 0;
@@ -124,13 +131,13 @@ const createEstimateEmailTemplate = (formData) => {
           }
           
           .alert-content {
-            color: #e2e8f0;
+            color: #374151;
             font-size: 16px;
             line-height: 1.6;
           }
           
           .alert-content strong {
-            color: #4ade80;
+            color: #16a34a;
           }
           
           .info-grid {
@@ -141,8 +148,8 @@ const createEstimateEmailTemplate = (formData) => {
           }
           
           .info-card {
-            background: rgba(30, 30, 30, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.1);
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
             padding: 20px;
           }
@@ -166,7 +173,7 @@ const createEstimateEmailTemplate = (formData) => {
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
-            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid #e5e7eb;
           }
           
           .info-item:last-child {
@@ -174,12 +181,12 @@ const createEstimateEmailTemplate = (formData) => {
           }
           
           .info-label {
-            color: #94a3b8;
+            color: #6b7280;
             font-size: 14px;
           }
           
           .info-value {
-            color: #e2e8f0;
+            color: #1f2937;
             font-size: 14px;
             font-weight: 500;
             text-align: right;
@@ -195,30 +202,30 @@ const createEstimateEmailTemplate = (formData) => {
           }
           
           .description-section {
-            background: rgba(139, 92, 246, 0.05);
-            border: 1px solid rgba(139, 92, 246, 0.1);
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
             padding: 24px;
             margin: 24px 0;
           }
           
           .description-title {
-            color: #8b5cf6;
+            color: #7c3aed;
             font-size: 18px;
             font-weight: 600;
             margin: 0 0 16px 0;
           }
           
           .description-text {
-            color: #cbd5e1;
+            color: #4b5563;
             font-size: 15px;
             line-height: 1.8;
             white-space: pre-wrap;
           }
           
           .action-section {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%);
-            border: 1px solid rgba(139, 92, 246, 0.3);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 12px;
             padding: 24px;
             margin: 24px 0;
@@ -226,7 +233,7 @@ const createEstimateEmailTemplate = (formData) => {
           }
           
           .action-title {
-            color: #e2e8f0;
+            color: #1f2937;
             font-size: 18px;
             font-weight: 600;
             margin: 0 0 16px 0;
@@ -257,19 +264,20 @@ const createEstimateEmailTemplate = (formData) => {
           }
           
           .action-button.secondary {
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid rgba(139, 92, 246, 0.3);
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            color: #7c3aed;
           }
           
           .footer {
             text-align: center;
             padding: 30px;
-            background-color: #0f0f0f;
-            border-top: 1px solid rgba(139, 92, 246, 0.1);
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
           }
           
           .footer-text {
-            color: #64748b;
+            color: #6b7280;
             font-size: 12px;
             line-height: 1.6;
           }
@@ -280,7 +288,10 @@ const createEstimateEmailTemplate = (formData) => {
           }
         </style>
       </head>
-      <body>
+      <body style="margin: 0; padding: 0; background-color: #ffffff;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ffffff;">
+          <tr>
+            <td>
         <div class="wrapper">
           <div class="container">
             <div class="header">
@@ -394,6 +405,9 @@ const createEstimateEmailTemplate = (formData) => {
             </div>
           </div>
         </div>
+            </td>
+          </tr>
+        </table>
       </body>
       </html>
     `,
@@ -473,30 +487,37 @@ const sendClientConfirmationEmail = async (formData) => {
         <!DOCTYPE html>
         <html>
         <head>
+          <meta name="color-scheme" content="light only">
+          <meta name="supported-color-schemes" content="light only">
           <style>
+            :root {
+              color-scheme: light only;
+              supported-color-schemes: light only;
+            }
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
             
             body { 
               font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
               line-height: 1.6; 
-              color: #e2e8f0;
+              color: #1f2937 !important;
               margin: 0;
               padding: 0;
-              background-color: #0f0f0f;
+              background-color: #ffffff !important;
+              background: #ffffff !important;
             }
             
             .wrapper {
-              background-color: #0f0f0f;
+              background-color: #f9fafb;
               padding: 40px 20px;
             }
             
             .container { 
               max-width: 600px; 
               margin: 0 auto; 
-              background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+              background: #ffffff;
               border-radius: 16px;
               overflow: hidden;
-              box-shadow: 0 20px 40px rgba(139, 92, 246, 0.1);
+              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             }
             
             .header { 
@@ -547,27 +568,26 @@ const sendClientConfirmationEmail = async (formData) => {
             
             .content { 
               padding: 40px 30px;
-              background-color: #1a1a1a;
+              background-color: #ffffff;
             }
             
             .greeting {
               font-size: 18px;
-              color: #e2e8f0;
+              color: #1f2937;
               margin-bottom: 20px;
             }
             
             .intro {
-              color: #94a3b8;
+              color: #6b7280;
               margin-bottom: 30px;
             }
             
             .summary-card {
-              background: rgba(139, 92, 246, 0.1);
-              border: 1px solid rgba(139, 92, 246, 0.2);
+              background: #f9fafb;
+              border: 1px solid #e5e7eb;
               border-radius: 12px;
               padding: 24px;
               margin: 24px 0;
-              backdrop-filter: blur(10px);
             }
             
             .summary-title {
@@ -585,7 +605,7 @@ const sendClientConfirmationEmail = async (formData) => {
               justify-content: space-between;
               align-items: center;
               padding: 12px 0;
-              border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+              border-bottom: 1px solid #e5e7eb;
             }
             
             .field-row:last-child {
@@ -593,35 +613,35 @@ const sendClientConfirmationEmail = async (formData) => {
             }
             
             .field-label {
-              color: #94a3b8;
+              color: #6b7280;
               font-size: 14px;
               font-weight: 500;
             }
             
             .field-value {
-              color: #e2e8f0;
+              color: #1f2937;
               font-size: 14px;
               font-weight: 600;
               text-align: right;
             }
             
             .description-box {
-              background: rgba(30, 30, 30, 0.5);
-              border: 1px solid rgba(139, 92, 246, 0.1);
+              background: #f3f4f6;
+              border: 1px solid #e5e7eb;
               border-radius: 12px;
               padding: 20px;
               margin: 24px 0;
             }
             
             .description-title {
-              color: #8b5cf6;
+              color: #7c3aed;
               font-size: 16px;
               font-weight: 600;
               margin: 0 0 12px 0;
             }
             
             .description-text {
-              color: #cbd5e1;
+              color: #4b5563;
               font-size: 14px;
               line-height: 1.6;
             }
@@ -631,7 +651,7 @@ const sendClientConfirmationEmail = async (formData) => {
             }
             
             .timeline-title {
-              color: #e2e8f0;
+              color: #1f2937;
               font-size: 20px;
               font-weight: 600;
               margin: 0 0 24px 0;
@@ -667,7 +687,7 @@ const sendClientConfirmationEmail = async (formData) => {
               top: 32px;
               width: 2px;
               height: calc(100% + 8px);
-              background: rgba(139, 92, 246, 0.2);
+              background: #e5e7eb;
             }
             
             .timeline-item:last-child::after {
@@ -682,7 +702,7 @@ const sendClientConfirmationEmail = async (formData) => {
             }
             
             .timeline-desc {
-              color: #94a3b8;
+              color: #6b7280;
               font-size: 14px;
               line-height: 1.5;
             }
@@ -693,14 +713,14 @@ const sendClientConfirmationEmail = async (formData) => {
             }
             
             .timeline-list li {
-              color: #cbd5e1;
+              color: #4b5563;
               font-size: 13px;
               margin-bottom: 4px;
             }
             
             .contact-card {
-              background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%);
-              border: 1px solid rgba(139, 92, 246, 0.3);
+              background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+              border: 1px solid rgba(139, 92, 246, 0.2);
               border-radius: 12px;
               padding: 20px;
               margin: 24px 0;
@@ -708,14 +728,14 @@ const sendClientConfirmationEmail = async (formData) => {
             }
             
             .contact-title {
-              color: #e2e8f0;
+              color: #1f2937;
               font-size: 16px;
               font-weight: 600;
               margin: 0 0 12px 0;
             }
             
             .contact-info {
-              color: #cbd5e1;
+              color: #4b5563;
               font-size: 14px;
               line-height: 1.8;
             }
@@ -735,7 +755,7 @@ const sendClientConfirmationEmail = async (formData) => {
             }
             
             .resources-title {
-              color: #e2e8f0;
+              color: #1f2937;
               font-size: 16px;
               font-weight: 600;
               margin: 0 0 16px 0;
@@ -789,12 +809,12 @@ const sendClientConfirmationEmail = async (formData) => {
             .footer {
               text-align: center;
               padding: 30px;
-              background-color: #0f0f0f;
-              border-top: 1px solid rgba(139, 92, 246, 0.1);
+              background-color: #f9fafb;
+              border-top: 1px solid #e5e7eb;
             }
             
             .footer-text {
-              color: #64748b;
+              color: #6b7280;
               font-size: 12px;
               line-height: 1.6;
             }
@@ -812,7 +832,10 @@ const sendClientConfirmationEmail = async (formData) => {
             }
           </style>
         </head>
-        <body>
+        <body style="margin: 0; padding: 0; background-color: #ffffff;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ffffff;">
+            <tr>
+              <td>
           <div class="wrapper">
             <div class="container">
               <div class="header">
@@ -923,13 +946,13 @@ const sendClientConfirmationEmail = async (formData) => {
                   <a href="https://devtone.agency" class="cta-button">Visit Our Website</a>
                 </div>
                 
-                <p style="color: #cbd5e1; text-align: center; margin-top: 32px;">
+                <p style="color: #4b5563; text-align: center; margin-top: 32px;">
                   We're looking forward to working with you on this exciting project!
                 </p>
                 
-                <p style="color: #94a3b8; text-align: center; margin-top: 24px;">
+                <p style="color: #6b7280; text-align: center; margin-top: 24px;">
                   Best regards,<br>
-                  <strong style="color: #e2e8f0;">The DevTone Team</strong>
+                  <strong style="color: #1f2937;">The DevTone Team</strong>
                 </p>
               </div>
               
@@ -941,6 +964,9 @@ const sendClientConfirmationEmail = async (formData) => {
               </div>
             </div>
           </div>
+              </td>
+            </tr>
+          </table>
         </body>
         </html>
       `,
