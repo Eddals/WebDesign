@@ -90,26 +90,44 @@ app.post('/api/estimate', estimateLimiter, async (req, res) => {
     // Send to ActivePieces webhook
     try {
       const activePiecesWebhook = 'https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg';
+      
+      // ActivePieces credentials - should be in environment variables
+      const username = process.env.ACTIVEPIECES_USERNAME || "eae";
+      const password = process.env.ACTIVEPIECES_PASSWORD || "SUA_SENHA_AQUI";
+      
+      // Prepare webhook data in Portuguese format as expected by ActivePieces
       const webhookPayload = {
-        ...formData,
+        nome: formData.name,
+        email: formData.email,
+        telefone: formData.phone || '',
+        empresa: formData.company || '',
+        pais: formData.country || '',
+        industria: formData.industry || '',
+        tipo_projeto: formData.projectType,
+        orcamento: formData.budget,
+        prazo: formData.timeline,
+        mensagem: formData.description || '',
+        recursos: formData.features.join(', ') || '',
         timestamp: new Date().toISOString(),
-        source: 'devtone-estimate-api',
+        fonte: 'devtone-estimate-api',
         ip: req.ip,
-        userAgent: req.get('user-agent')
+        navegador: req.get('user-agent')
       };
 
       const webhookResponse = await fetch(activePiecesWebhook, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Basic ' + Buffer.from(username + ':' + password).toString('base64')
         },
         body: JSON.stringify(webhookPayload),
       });
 
-      if (!webhookResponse.ok) {
-        console.warn('ActivePieces webhook returned non-OK status:', webhookResponse.status);
-      } else {
+      if (webhookResponse.ok) {
         console.log('Successfully sent to ActivePieces webhook');
+      } else {
+        const responseText = await webhookResponse.text();
+        console.warn('ActivePieces webhook returned non-OK status:', webhookResponse.status, responseText);
       }
     } catch (webhookError) {
       console.error('Error sending to ActivePieces webhook:', webhookError);

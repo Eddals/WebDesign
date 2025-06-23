@@ -1,0 +1,35 @@
+<form id="form-contato">
+  <input type="text" name="nome" placeholder="Seu nome" required />
+  <input type="email" name="email" placeholder="Seu email" required />
+  <textarea name="mensagem" placeholder="Digite sua mensagem" required></textarea>
+  <button type="submit">Enviar</button>
+</form>
+
+<script>
+  const form = document.getElementById('form-contato');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {};
+
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    const response = await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      alert('Mensagem enviada com sucesso!');
+    } else {
+      alert('Erro ao enviar. Tente novamente.');
+    }
+  });
+</script>

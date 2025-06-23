@@ -49,43 +49,120 @@ const EstimateForm: React.FC = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
+      console.log('Submitting form data...');
+      
+      // Format data for the estimate API
+      const estimateData = {
+        name: formData.full_name,
+        email: formData.email,
+        phone: formData.phone,
+        company: '', // Not collected in this form
+        country: formData.location, // Using location as country
+        industry: '', // Not collected in this form
+        projectType: formData.service_type,
+        budget: formData.estimated_budget,
+        timeline: formData.preferred_timeline,
+        description: formData.project_description,
+        features: [] // Not collected in this form
+      };
 
-      const response = await fetch('/submit_estimate.php', {
-        method: 'POST',
-        body: formDataToSend
-      });
+      // Additional data for ActivePieces webhook
+      const webhookData = {
+        nome: formData.full_name,
+        email: formData.email,
+        telefone: formData.phone,
+        tipo_servico: formData.service_type,
+        descricao_projeto: formData.project_description,
+        orcamento: formData.estimated_budget,
+        prazo: formData.preferred_timeline,
+        tipo_propriedade: formData.property_type,
+        tamanho_propriedade: formData.property_size,
+        localizacao: formData.location,
+        data_envio: new Date().toISOString(),
+        origem: 'formulario-estimate'
+      };
 
-      const result = await response.json();
-
-      if (result.success) {
-        setSubmitStatus({
-          type: 'success',
-          message: 'Your estimate request has been submitted successfully!'
+      // Send to estimate API (which will handle email notifications)
+      try {
+        const apiUrl = import.meta.env.VITE_ESTIMATE_API_URL || 'http://localhost:3002';
+        const response = await fetch(`${apiUrl}/api/estimate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(estimateData)
         });
-        setFormData({
-          full_name: '',
-          email: '',
-          phone: '',
-          service_type: '',
-          project_description: '',
-          estimated_budget: '',
-          preferred_timeline: '',
-          property_type: '',
-          property_size: '',
-          location: ''
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to submit estimate');
+        }
+
+        const result = await response.json();
+        console.log('Estimate API response:', result);
+      } catch (apiError) {
+        console.error('Error sending to estimate API:', apiError);
+        // Continue even if API fails - we'll still try ActivePieces
+      }
+      
+      // Also send to ActivePieces webhook
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const response = await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('ActivePieces webhook response status:', response.status);
+      } catch (webhookError) {
+        console.error('Error sending to ActivePieces:', webhookError);
+        // Continue even if webhook fails
+      }
+
+      // Show success message
+      setSubmitStatus({
+        type: 'success',
+        message: 'Your estimate request has been submitted successfully! We will contact you soon.'
+      });
+      
+      // Reset form after successful submission
+      setFormData({
+        full_name: '',
+        email: '',
+        phone: '',
+        service_type: '',
+        project_description: '',
+        estimated_budget: '',
+        preferred_timeline: '',
+        property_type: '',
+        property_size: '',
+        location: ''
+      });
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      
+      // Handle specific error types
+      if (error.name === 'AbortError') {
+        setSubmitStatus({
+          type: 'error',
+          message: 'Request timed out. Please try again later.'
         });
       } else {
-        throw new Error(result.message || 'Failed to submit form');
+        setSubmitStatus({
+          type: 'error',
+          message: error instanceof Error 
+            ? error.message 
+            : 'An error occurred while submitting the form. Please try again.'
+        });
       }
-    } catch (error) {
-      setSubmitStatus({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'An error occurred while submitting the form'
-      });
     } finally {
       setIsSubmitting(false);
     }
@@ -270,10 +347,33 @@ const EstimateForm: React.FC = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className={`p-4 rounded-lg ${
-              submitStatus.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+              submitStatus.type === 'success' ? 'bg-green-500/20 border border-green-500/30' : 'bg-red-500/20 border border-red-500/30'
             }`}
           >
-            {submitStatus.message}
+            <div className="flex items-start gap-3">
+              {submitStatus.type === 'success' ? (
+                <svg className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+              <div>
+                <p className={submitStatus.type === 'success' ? 'text-green-400 font-medium' : 'text-red-400 font-medium'}>
+                  {submitStatus.type === 'success' ? 'Success!' : 'Error'}
+                </p>
+                <p className={submitStatus.type === 'success' ? 'text-green-300' : 'text-red-300'}>
+                  {submitStatus.message}
+                </p>
+                {submitStatus.type === 'success' && (
+                  <p className="text-green-300 mt-2">
+                    We'll review your request and get back to you shortly.
+                  </p>
+                )}
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -287,7 +387,13 @@ const EstimateForm: React.FC = () => {
           whileTap={{ scale: 0.98 }}
         >
           {isSubmitting ? (
-            'Submitting...'
+            <>
+              <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Submitting...
+            </>
           ) : (
             <>
               Get Your Estimate <ArrowRight className="w-5 h-5" />

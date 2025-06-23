@@ -39,14 +39,14 @@ const ContactForm: React.FC = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
-
-      const response = await fetch('/submit_contact.php', {
+      // Send to contact API
+      const apiUrl = import.meta.env.VITE_CONTACT_API_URL || 'http://localhost:3003';
+      const response = await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
-        body: formDataToSend
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
       });
 
       const result = await response.json();
@@ -54,7 +54,7 @@ const ContactForm: React.FC = () => {
       if (result.success) {
         setSubmitStatus({
           type: 'success',
-          message: 'Your message has been sent successfully!'
+          message: 'Your message has been sent successfully! We\'ll get back to you soon.'
         });
         setFormData({
           full_name: '',
@@ -64,9 +64,10 @@ const ContactForm: React.FC = () => {
           message: ''
         });
       } else {
-        throw new Error(result.message || 'Failed to send message');
+        throw new Error(result.error || 'Failed to send message');
       }
     } catch (error) {
+      console.error('Error submitting contact form:', error);
       setSubmitStatus({
         type: 'error',
         message: error instanceof Error ? error.message : 'An error occurred while sending the message'
