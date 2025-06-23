@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { HelmetProvider } from 'react-helmet-async';
 import { Suspense, lazy, startTransition } from 'react';
+import { Analytics } from "@vercel/analytics/react";
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navbar from "./components/Navbar";
@@ -45,6 +46,7 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
           <Router>
             <ScrollToTop />
+            <Analytics />
             <Suspense fallback={<LoadingSpinner fullScreen text="Loading..." />}>
               <Routes>
                 {/* Dashboard routes - no navbar/footer */}
