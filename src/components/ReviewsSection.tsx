@@ -24,15 +24,18 @@ const ReviewsSection = () => {
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030718] via-[#0a0e24] to-[#030718] opacity-80"></div>
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiIgZD0iTTAgMGg2MHY2MEgweiIvPjxwYXRoIGQ9Ik0zNiAxOGgtMXYyNGgxeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PHBhdGggZD0iTTI0IDE4aC0xdjI0aDF6IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDQiLz48cGF0aCBkPSJNNjAgMzZ2MUgzNnYtMXoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNCIvPjxwYXRoIGQ9Ik02MCAyNHYxSDM2di0xeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#030718] via-[#0a0e24] to-[#030718] opacity-90"></div>
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiIgZD0iTTAgMGg2MHY2MEgweiIvPjxwYXRoIGQ9Ik0zNiAxOGgtMXYyNGgxeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PHBhdGggZD0iTTI0IDE4aC0xdjI0aDF6IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDQiLz48cGF0aCBkPSJNNjAgMzZ2MUgzNnYtMXoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNCIvPjxwYXRoIGQ9Ik02MCAyNHYxSDM2di0xeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PC9nPjwvc3ZnPg==')] opacity-15"></div>
       
-      {/* Animated gradient orbs */}
+      {/* Enhanced background with dark overlay */}
+      <div className="absolute inset-0 bg-[#030718]/70"></div>
+      
+      {/* Animated gradient orbs with improved visibility */}
       <motion.div 
-        className="absolute -top-20 -right-20 w-96 h-96 bg-purple-600 rounded-full opacity-10 blur-[100px]"
+        className="absolute -top-20 -right-20 w-96 h-96 bg-purple-600 rounded-full opacity-20 blur-[100px]"
         animate={{ 
           scale: [1, 1.2, 1],
-          opacity: [0.1, 0.2, 0.1]
+          opacity: [0.2, 0.3, 0.2]
         }}
         transition={{ 
           duration: 8, 
@@ -41,10 +44,10 @@ const ReviewsSection = () => {
         }}
       />
       <motion.div 
-        className="absolute bottom-0 -left-20 w-80 h-80 bg-indigo-500 rounded-full opacity-10 blur-[100px]"
+        className="absolute bottom-0 -left-20 w-80 h-80 bg-indigo-500 rounded-full opacity-20 blur-[100px]"
         animate={{ 
           scale: [1.2, 1, 1.2],
-          opacity: [0.15, 0.25, 0.15]
+          opacity: [0.25, 0.35, 0.25]
         }}
         transition={{ 
           duration: 10, 
@@ -64,12 +67,12 @@ const ReviewsSection = () => {
           transition={{ duration: 0.8 }}
         >
           <motion.div 
-            className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden"
+            className="inline-block px-5 py-1.5 mb-4 text-purple-200 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden shadow-md"
             whileHover={{ scale: 1.05 }}
           >
-            <span className="relative z-10">Client Reviews</span>
+            <span className="relative z-10 font-medium">Client Reviews</span>
             <motion.div 
-              className="absolute inset-0 bg-purple-500/20"
+              className="absolute inset-0 bg-purple-500/30"
               initial={{ x: "-100%" }}
               whileHover={{ x: "100%" }}
               transition={{ duration: 0.6 }}
@@ -77,7 +80,7 @@ const ReviewsSection = () => {
           </motion.div>
           
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400"
+            className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 drop-shadow-lg"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -87,7 +90,7 @@ const ReviewsSection = () => {
           </motion.h2>
           
           <motion.p 
-            className="text-white/70 max-w-2xl mx-auto text-lg"
+            className="text-white/80 max-w-2xl mx-auto text-lg leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -151,10 +154,14 @@ const ReviewsSection = () => {
               }}
             />
             
-            {/* Main container */}
-            <div className="relative bg-[#0a0e24]/80 backdrop-blur-md border border-white/10 rounded-2xl p-8 overflow-hidden">
+            {/* Main container with enhanced styling */}
+            <div className="relative bg-[#0a0e24]/90 backdrop-blur-md border border-purple-500/20 rounded-2xl p-8 overflow-hidden shadow-xl">
               {/* Top decorative element */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50"></div>
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-70"></div>
+              
+              {/* Side decorative elements */}
+              <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-transparent via-purple-500/40 to-transparent"></div>
+              <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-transparent via-purple-500/40 to-transparent"></div>
               
               {/* Google Reviews Widget */}
               <div className="relative z-10">
@@ -163,7 +170,8 @@ const ReviewsSection = () => {
                   style={{
                     width: "100%",
                     height: "600px",
-                    overflow: "auto"
+                    overflow: "auto",
+                    background: "rgba(10, 14, 36, 0.7)"
                   }} 
                   data-widget-id="289312" 
                   data-website="1"
@@ -171,7 +179,7 @@ const ReviewsSection = () => {
               </div>
               
               {/* Bottom decorative element */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-70"></div>
             </div>
           </div>
         </motion.div>
