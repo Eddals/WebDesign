@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Menu, X, Home, User, Phone, Pen, Calculator, ChevronDown, Globe, Laptop, ShoppingBag, RefreshCw, Search, Smartphone } from "lucide-react"
+import { Menu, X, Home, User, Phone, Pen, Calculator, ChevronDown, Globe, Laptop, ShoppingBag, RefreshCw, Search, Smartphone, Star } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const serviceItems = [
