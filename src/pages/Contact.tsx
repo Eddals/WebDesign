@@ -229,7 +229,7 @@ const Contact = () => {
         title="Contact DevTone - Get Professional Web Development Support"
         description="Contact DevTone for expert web development services, technical support, and project consultations. We're here to help bring your digital vision to life. Get in touch today!"
         keywords={['contact DevTone', 'web development support', 'project consultation', 'technical support', 'get in touch', 'DevTone contact']}
-        ogUrl="https://devtone.com/contact"
+        ogUrl="https://devtone.agency/contact"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}

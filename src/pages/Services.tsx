@@ -71,7 +71,7 @@ export default function Services() {
         title="Web Development & Digital Marketing Services - DevTone"
         description="Professional web development, design, and digital marketing services. From business websites to e-commerce stores and SEO optimization."
         keywords={['web development services', 'digital marketing', 'website design', 'e-commerce development', 'SEO services', 'DevTone']}
-        ogUrl="https://devtone.com/services"
+        ogUrl="https://devtone.agency/services"
       />
       
       <div className="min-h-screen pt-24 pb-16 bg-[#030718]">

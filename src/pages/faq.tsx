@@ -362,7 +362,7 @@ const FAQ = () => {
         title="FAQ - DevTone Web Development Services"
         description="Get answers to frequently asked questions about DevTone's web development services, pricing packages, development process, and ongoing support. Everything you need to know."
         keywords={['DevTone FAQ', 'web development questions', 'pricing packages', 'development process', 'support', 'DevTone services']}
-        ogUrl="https://devtone.com/faq"
+        ogUrl="https://devtone.agency/faq"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">
         {/* Add the custom styles */}

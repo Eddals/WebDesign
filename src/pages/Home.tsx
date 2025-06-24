@@ -331,7 +331,7 @@ const Home = () => {
         title="DevTone - Professional Web Development & Digital Marketing Agency"
         description="DevTone delivers cutting-edge web development and digital marketing solutions. Specializing in responsive websites, SEO services, content creation, and custom web applications that drive business growth."
         keywords={['web development', 'digital marketing', 'SEO services', 'content creation', 'responsive design', 'web design agency', 'DevTone', 'custom websites', 'business websites']}
-        ogUrl="https://devtone.com"
+        ogUrl="https://devtone.agency"
       />
       <div className="min-h-screen bg-[#030718]">
         {/* Add the custom styles */}

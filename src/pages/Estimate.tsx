@@ -262,7 +262,7 @@ const Estimate = () => {
           title="Estimate Request Submitted - DevTone"
           description="Thank you for your estimate request! DevTone will review your project details and get back to you within 24 hours."
           keywords={['estimate submitted', 'DevTone response', 'project quote']}
-          ogUrl="https://devtone.com/estimate"
+          ogUrl="https://devtone.agency/estimate"
         />
         <div className="min-h-screen bg-[#030718] pt-24 pb-12">
           <div className="container mx-auto px-6">
@@ -311,7 +311,7 @@ const Estimate = () => {
         title="Get Your Project Estimate - DevTone Web Development"
         description="Get an instant estimate for your web development project with DevTone. Transparent pricing, professional service, and secure payment options. Start your project today!"
         keywords={['DevTone estimate', 'web development pricing', 'project quote', 'website cost calculator', 'development estimate', 'transparent pricing']}
-        ogUrl="https://devtone.com/estimate"
+        ogUrl="https://devtone.agency/estimate"
       />
 
       <div className="min-h-screen bg-[#030718] pt-24 pb-12">
