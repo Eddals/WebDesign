@@ -125,7 +125,7 @@ const Blog = () => {
         title="DevTone Blog - Web Development & Digital Marketing Insights"
         description="Stay updated with the latest web development trends, SEO strategies, and digital marketing insights from DevTone's expert team. Learn, grow, and succeed online."
         keywords={['web development blog', 'SEO tips', 'digital marketing insights', 'DevTone blog', 'web design trends', 'development tutorials']}
-        ogUrl="https://devtone.com/blog"
+        ogUrl="https://devtone.agency/blog"
       />
       <div className="min-h-screen bg-[#030718]">
       {/* Hero Section */}

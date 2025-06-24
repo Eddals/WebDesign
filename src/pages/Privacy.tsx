@@ -242,7 +242,7 @@ export default function Privacy() {
                     If you have questions about this Privacy Policy or want to exercise your rights, please contact us:
                   </p>
                   <div className="space-y-2">
-                    <p><strong>Email:</strong> privacy@devtone.com</p>
+                    <p><strong>Email:</strong> privacy@devtone.agency</p>
                     <p><strong>Website:</strong> <a href="/contact" className="text-purple-400 hover:text-purple-300 transition-colors">Contact Form</a></p>
                   </div>
                   <p className="text-sm text-white/60 mt-6">

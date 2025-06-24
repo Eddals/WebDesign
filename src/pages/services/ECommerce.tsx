@@ -11,7 +11,7 @@ export default function ECommerce() {
         title="E-Commerce Development Services - DevTone"
         description="Professional e-commerce website development services. Custom online stores with secure payment processing, inventory management, and conversion optimization."
         keywords={['e-commerce development', 'online store', 'shopping cart', 'payment integration', 'inventory management', 'DevTone']}
-        ogUrl="https://devtone.com/services/ecommerce"
+        ogUrl="https://devtone.agency/services/ecommerce"
       />
       
       <div className="min-h-screen pt-24 pb-16 bg-[#030718]">

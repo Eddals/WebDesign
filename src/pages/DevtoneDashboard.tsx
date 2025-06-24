@@ -28,7 +28,7 @@ export default function DevtoneDashboard() {
         title="Devtone Client Dashboard - DevTone"
         description="Access your client dashboard to manage your projects, view progress, and communicate with our team."
         keywords={['client dashboard', 'project management', 'client portal', 'DevTone']}
-        ogUrl="https://devtone.com/devtone-dashboard"
+        ogUrl="https://devtone.agency/devtone-dashboard"
       />
       <div className="min-h-screen flex items-center justify-center bg-[#030718]">
         <div className="text-center max-w-md mx-auto p-8 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">

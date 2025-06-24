@@ -11,7 +11,7 @@ export default function WebsiteRedesign() {
         title="Website Redesign Services - DevTone"
         description="Transform your outdated website with our professional redesign services. Modern design, improved performance, and better user experience."
         keywords={['website redesign', 'website makeover', 'modern web design', 'website refresh', 'UI/UX improvement', 'DevTone']}
-        ogUrl="https://devtone.com/services/website-redesign"
+        ogUrl="https://devtone.agency/services/website-redesign"
       />
       
       <div className="min-h-screen pt-24 pb-16 bg-[#030718]">

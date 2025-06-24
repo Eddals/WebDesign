@@ -11,7 +11,7 @@ export default function MobileApps() {
         title="Mobile App Development Services - DevTone"
         description="Professional mobile app development for iOS and Android. Custom mobile applications with native performance and modern features."
         keywords={['mobile app development', 'iOS app', 'Android app', 'React Native', 'mobile applications', 'DevTone']}
-        ogUrl="https://devtone.com/services/mobile-apps"
+        ogUrl="https://devtone.agency/services/mobile-apps"
       />
       
       <div className="min-h-screen pt-24 pb-16 bg-[#030718]">

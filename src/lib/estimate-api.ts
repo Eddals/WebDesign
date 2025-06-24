@@ -2,7 +2,7 @@ import { ACTIVEPIECES_CONFIG, getActivePiecesAuthHeader } from '@/config/activep
 
 // API configuration
 const API_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.DEV ? 'http://localhost:3002' : 'https://api.devtone.online'
+  import.meta.env.DEV ? 'http://localhost:3002' : 'https://api.devtone.agency'
 );
 
 export interface EstimateFormData {
