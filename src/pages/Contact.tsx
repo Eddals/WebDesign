@@ -40,8 +40,7 @@ const Contact = () => {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
 
-  // State for chat
-  const [isChatOpen, setIsChatOpen] = useState(false)
+  // State for form
 
   // Creative contact methods section
   const contactMethods = [
@@ -64,14 +63,13 @@ const Contact = () => {
       response: 'Available during business hours only'
     },
     {
-      icon: <MessageSquare className="w-8 h-8" />,
-      title: 'Live Chat',
-      description: 'Chat with our support team',
-      details: 'Start a conversation',
-      action: () => setIsChatOpen(true),
-      isButton: true,
+      icon: <Mail className="w-8 h-8" />,
+      title: 'Email Us',
+      description: 'Send us an email anytime',
+      details: 'info@devtone.agency',
+      link: 'mailto:info@devtone.agency',
       color: 'from-purple-600 to-purple-800',
-      response: 'Available Mon-Fri 12am to 6pm EST'
+      response: 'Response within 24 hours'
     },
     {
       icon: <Calendar className="w-8 h-8" />,

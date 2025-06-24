@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import FAQ from "@/pages/FAQ";
-import FAQChatButton from "@/components/FAQChatButton";
+
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { useEffect } from "react";
 import { trackPageView } from "@/lib/analytics";
@@ -32,7 +32,6 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <GoogleAnalytics />
       <Router />
-      <FAQChatButton />
       <Toaster />
     </QueryClientProvider>
   );
