@@ -22,8 +22,40 @@ const createEstimateEmailTemplate = (formData) => {
     ? formData.features.join(', ') 
     : 'None selected';
 
+  // Generate a priority indicator based on budget and timeline
+  const getPriorityIndicator = () => {
+    if (formData.budget === 'enterprise' || formData.timeline === 'asap') {
+      return '🔥 HIGH PRIORITY';
+    } else if (formData.budget === 'premium') {
+      return '⭐ PRIORITY';
+    }
+    return '📋 STANDARD';
+  };
+
+  // Generate budget range in dollars
+  const getBudgetRange = () => {
+    const ranges = {
+      'starter': '$500 - $2,000',
+      'professional': '$2,000 - $5,000',
+      'premium': '$5,000 - $15,000',
+      'enterprise': '$15,000+'
+    };
+    return ranges[formData.budget] || formData.budget;
+  };
+
+  // Generate timeline description
+  const getTimelineDescription = () => {
+    const timelines = {
+      'asap': '1-2 Weeks (Rush)',
+      '1month': '1 Month',
+      '2months': '2-3 Months',
+      'flexible': 'Flexible Timeline'
+    };
+    return timelines[formData.timeline] || formData.timeline;
+  };
+
   return {
-    subject: `🚀 New Estimate Request from ${formData.name} - ${formData.projectType}`,
+    subject: `${getPriorityIndicator()} New ${formData.projectType} Project - ${formData.name} (${getBudgetRange()})`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -304,13 +336,15 @@ const createEstimateEmailTemplate = (formData) => {
             <div class="content">
               <div class="alert-card">
                 <h2 class="alert-title">
-                  <span>🎯</span> New Lead Alert
+                  <span>🎯</span> ${getPriorityIndicator()} - New Lead Alert
                 </h2>
                 <div class="alert-content">
                   <strong>${formData.name}</strong> from <strong>${formData.company || 'Individual'}</strong> 
+                  ${formData.country ? `in <strong>${formData.country}</strong>` : ''} 
                   has requested an estimate for a <strong>${formData.projectType}</strong> project.
                   <br><br>
-                  Budget: <strong>${formData.budget}</strong> | Timeline: <strong>${formData.timeline}</strong>
+                  💰 Budget: <strong>${getBudgetRange()}</strong> | ⏱️ Timeline: <strong>${getTimelineDescription()}</strong>
+                  ${formData.industry ? `<br>🏢 Industry: <strong>${formData.industry}</strong>` : ''}
                 </div>
               </div>
 
@@ -347,11 +381,11 @@ const createEstimateEmailTemplate = (formData) => {
                   </div>
                   <div class="info-item">
                     <span class="info-label">Budget</span>
-                    <span class="info-value">${formData.budget}</span>
+                    <span class="info-value">${getBudgetRange()}</span>
                   </div>
                   <div class="info-item">
                     <span class="info-label">Timeline</span>
-                    <span class="info-value">${formData.timeline}</span>
+                    <span class="info-value">${getTimelineDescription()}</span>
                   </div>
                   <div class="info-item">
                     <span class="info-label">Features</span>
@@ -391,9 +425,23 @@ const createEstimateEmailTemplate = (formData) => {
               <div class="action-section">
                 <h3 class="action-title">Quick Actions</h3>
                 <div class="action-buttons">
-                  <a href="mailto:${formData.email}" class="action-button">Reply to Client</a>
-                  <a href="tel:${formData.phone}" class="action-button secondary">Call Client</a>
+                  <a href="mailto:${formData.email}?subject=Re: Your ${formData.projectType} Project Estimate&body=Hi ${formData.name},%0D%0A%0D%0AThank you for your interest in DevTone! I've reviewed your project requirements and I'm excited to discuss how we can help bring your vision to life.%0D%0A%0D%0ABased on your requirements for a ${formData.projectType} with a budget of ${getBudgetRange()} and timeline of ${getTimelineDescription()}, I'd like to schedule a brief call to better understand your needs and provide you with a detailed proposal.%0D%0A%0D%0AWould you be available for a 15-minute call tomorrow? Please let me know what time works best for you.%0D%0A%0D%0ALooking forward to speaking with you!%0D%0A%0D%0ABest regards,%0D%0ADevTone Team" class="action-button">Reply with Template</a>
+                  ${formData.phone ? `<a href="tel:${formData.phone}" class="action-button secondary">Call Client</a>` : ''}
                 </div>
+              </div>
+
+              <div class="info-card full-width" style="margin-top: 24px; background: #fef3c7; border-color: #fbbf24;">
+                <h3 class="card-title" style="color: #d97706;">
+                  <span>💡</span> Response Tips
+                </h3>
+                <ul style="margin: 0; padding-left: 20px; color: #92400e;">
+                  <li>Respond within 2-4 hours for best conversion rates</li>
+                  <li>Reference their specific project type and requirements</li>
+                  <li>Suggest a brief discovery call to understand their needs better</li>
+                  <li>Mention similar projects you've completed in their industry</li>
+                  ${formData.timeline === 'asap' ? '<li><strong>⚡ This is a RUSH project - prioritize immediate response!</strong></li>' : ''}
+                  ${formData.budget === 'enterprise' ? '<li><strong>💎 Enterprise budget - ensure senior team involvement</strong></li>' : ''}
+                </ul>
               </div>
             </div>
             
@@ -412,7 +460,10 @@ const createEstimateEmailTemplate = (formData) => {
       </html>
     `,
     text: `
-New Estimate Request from ${formData.name}
+${getPriorityIndicator()} - NEW ESTIMATE REQUEST
+
+LEAD SUMMARY:
+${formData.name} from ${formData.company || 'Individual'} ${formData.country ? `in ${formData.country}` : ''} has requested an estimate for a ${formData.projectType} project.
 
 CONTACT INFORMATION:
 Name: ${formData.name}
@@ -424,12 +475,23 @@ Industry: ${formData.industry || 'Not provided'}
 
 PROJECT DETAILS:
 Project Type: ${formData.projectType}
-Budget Range: ${formData.budget}
-Timeline: ${formData.timeline}
+Budget Range: ${getBudgetRange()}
+Timeline: ${getTimelineDescription()}
 Additional Features: ${features}
 
 PROJECT DESCRIPTION:
 ${formData.description || 'No description provided'}
+
+QUICK ACTIONS:
+- Reply to client: ${formData.email}
+${formData.phone ? `- Call client: ${formData.phone}` : ''}
+
+RESPONSE TIPS:
+- Respond within 2-4 hours for best conversion rates
+- Reference their specific project type and requirements
+- Suggest a brief discovery call
+${formData.timeline === 'asap' ? '⚡ RUSH PROJECT - Prioritize immediate response!' : ''}
+${formData.budget === 'enterprise' ? '💎 ENTERPRISE BUDGET - Ensure senior team involvement' : ''}
 
 Submitted on: ${new Date().toLocaleString()}
     `
@@ -891,31 +953,32 @@ const sendClientConfirmationEmail = async (formData) => {
                   </h3>
                   
                   <div class="timeline-item">
-                    <div class="timeline-step">1. Project Review</div>
-                    <div class="timeline-desc">Our team will carefully analyze your requirements within 2-4 hours</div>
+                  <div class="timeline-step">1. Immediate Review (Next 2-4 hours)</div>
+                  <div class="timeline-desc">Our expert team is analyzing your ${formData.projectType} requirements right now</div>
                   </div>
                   
                   <div class="timeline-item">
-                    <div class="timeline-step">2. Detailed Proposal</div>
-                    <div class="timeline-desc">
-                      Within 24 hours, you'll receive:
-                      <ul class="timeline-list">
-                        <li>Comprehensive project scope</li>
-                        <li>Detailed timeline with milestones</li>
-                        <li>Transparent pricing breakdown</li>
-                        <li>Our recommended approach</li>
-                      </ul>
-                    </div>
+                  <div class="timeline-step">2. Custom Proposal (Within 24 hours)</div>
+                  <div class="timeline-desc">
+                  You'll receive a personalized proposal including:
+                  <ul class="timeline-list">
+                  <li>Detailed project roadmap tailored to your needs</li>
+                  <li>Clear milestone schedule with deliverables</li>
+                  <li>Transparent investment breakdown</li>
+                  <li>Technology stack recommendations</li>
+                  <li>Success metrics and KPIs</li>
+                  </ul>
+                  </div>
                   </div>
                   
                   <div class="timeline-item">
-                    <div class="timeline-step">3. Consultation Call</div>
-                    <div class="timeline-desc">We'll schedule a call to discuss your project in detail and answer any questions</div>
+                  <div class="timeline-step">3. Strategy Session (Within 48 hours)</div>
+                  <div class="timeline-desc">We'll schedule a 30-minute strategy call to dive deep into your vision and ensure perfect alignment</div>
                   </div>
                   
                   <div class="timeline-item">
-                    <div class="timeline-step">4. Project Kickoff</div>
-                    <div class="timeline-desc">Once approved, we'll begin working on your project immediately</div>
+                  <div class="timeline-step">4. Fast-Track Development</div>
+                  <div class="timeline-desc">Upon approval, your dedicated team begins immediately${formData.timeline === 'asap' ? ' with rush priority' : ''}</div>
                   </div>
                 </div>
                 
@@ -946,8 +1009,44 @@ const sendClientConfirmationEmail = async (formData) => {
                   <a href="https://devtone.agency" class="cta-button">Visit Our Website</a>
                 </div>
                 
+                ${formData.projectType === 'ecommerce' ? `
+                <div class="info-card full-width" style="margin-top: 24px; background: #e0e7ff; border-color: #6366f1;">
+                  <h3 class="card-title" style="color: #4f46e5;">
+                    <span>🛍️</span> E-commerce Expertise
+                  </h3>
+                  <p style="color: #4338ca; margin: 0;">
+                    Great choice! Our e-commerce solutions have helped businesses increase their online sales by an average of 150%. 
+                    We'll ensure your store is optimized for conversions, mobile-friendly, and equipped with all the features modern shoppers expect.
+                  </p>
+                </div>
+                ` : ''}
+
+                ${formData.projectType === 'webapp' ? `
+                <div class="info-card full-width" style="margin-top: 24px; background: #dcfce7; border-color: #22c55e;">
+                  <h3 class="card-title" style="color: #16a34a;">
+                    <span>💻</span> Web Application Excellence
+                  </h3>
+                  <p style="color: #15803d; margin: 0;">
+                    Exciting! We specialize in building scalable, secure web applications using cutting-edge technologies. 
+                    Your custom application will be built with performance, security, and user experience at its core.
+                  </p>
+                </div>
+                ` : ''}
+
+                ${formData.projectType === 'business' ? `
+                <div class="info-card full-width" style="margin-top: 24px; background: #fef3c7; border-color: #fbbf24;">
+                  <h3 class="card-title" style="color: #d97706;">
+                    <span>🏢</span> Professional Business Solutions
+                  </h3>
+                  <p style="color: #92400e; margin: 0;">
+                    Perfect! A professional website is crucial for business growth. We'll create a stunning, SEO-optimized site 
+                    that establishes your credibility and converts visitors into customers.
+                  </p>
+                </div>
+                ` : ''}
+
                 <p style="color: #4b5563; text-align: center; margin-top: 32px;">
-                  We're looking forward to working with you on this exciting project!
+                  We're looking forward to bringing your ${formData.projectType} vision to life!
                 </p>
                 
                 <p style="color: #6b7280; text-align: center; margin-top: 24px;">

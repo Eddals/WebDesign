@@ -19,7 +19,8 @@ import {
   Phone,
   MessageSquare,
   Send,
-  MapPin
+  MapPin,
+  Calendar
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { supabase } from '@/lib/supabase';
@@ -112,12 +113,21 @@ const Estimate = () => {
 
   // Available features
   const availableFeatures = [
+    { id: 'contact_form', name: 'Contact Form', icon: <Mail className="w-4 h-4" /> },
+    { id: 'blog', name: 'Blog System', icon: <MessageSquare className="w-4 h-4" /> },
+    { id: 'gallery', name: 'Image Gallery', icon: <Palette className="w-4 h-4" /> },
+    { id: 'booking', name: 'Booking/Appointment System', icon: <Calendar className="w-4 h-4" /> },
+    { id: 'newsletter', name: 'Newsletter Signup', icon: <Mail className="w-4 h-4" /> },
+    { id: 'multilingual', name: 'Multilingual Support', icon: <Globe className="w-4 h-4" /> },
     { id: 'seo', name: 'SEO Optimization', icon: <CheckCircle className="w-4 h-4" /> },
-    { id: 'analytics', name: 'Analytics Setup', icon: <CheckCircle className="w-4 h-4" /> },
+    { id: 'analytics', name: 'Analytics Integration', icon: <CheckCircle className="w-4 h-4" /> },
     { id: 'social', name: 'Social Media Integration', icon: <Users className="w-4 h-4" /> },
     { id: 'security', name: 'Security Package', icon: <Shield className="w-4 h-4" /> },
-    { id: 'maintenance', name: 'Ongoing Support', icon: <CheckCircle className="w-4 h-4" /> },
-    { id: 'training', name: 'Training Session', icon: <Users className="w-4 h-4" /> }
+    { id: 'maintenance', name: 'Maintenance Plan', icon: <CheckCircle className="w-4 h-4" /> },
+    { id: 'training', name: 'Admin Training', icon: <Users className="w-4 h-4" /> },
+    { id: 'live_chat', name: 'Live Chat Feature', icon: <MessageSquare className="w-4 h-4" /> },
+    { id: 'payment', name: 'Payment Processing', icon: <DollarSign className="w-4 h-4" /> },
+    { id: 'membership', name: 'Membership/Login System', icon: <User className="w-4 h-4" /> }
   ];
 
   // Countries list for notifications
@@ -566,8 +576,9 @@ const Estimate = () => {
               >
                 <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                   <CheckCircle className="w-6 h-6 text-purple-400" />
-                  Additional Features
+                  What Features Would You Like?
                 </h2>
+                <p className="text-white/70 mb-6">Select the specific features you'd like to include in your project:</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {availableFeatures.map((feature) => (
