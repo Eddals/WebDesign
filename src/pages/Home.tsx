@@ -13,7 +13,6 @@ import SEO from '@/components/SEO'
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Quote, PackageType } from '../types/quotes';
 import { PostgrestError } from '@supabase/supabase-js';
-import ReviewsSection from '@/components/ReviewsSection';
 
 // Enhanced custom CSS for animations
 const customStyles = `
@@ -1025,9 +1024,6 @@ const Home = () => {
             />
           </div>
         </section>
-
-        {/* Google Reviews Section */}
-        <ReviewsSection />
 
         {/* Interactive Process Timeline */}
         <section className="py-24 relative overflow-hidden">
