@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/estimate.js": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "SMTP_HOST": "@smtp_host",
+    "SMTP_PORT": "@smtp_port",
+    "SMTP_USER": "@smtp_user",
+    "SMTP_PASS": "@smtp_pass",
+    "ESTIMATE_RECIPIENT_EMAIL": "@estimate_recipient_email",
+    "ACTIVEPIECES_USERNAME": "@activepieces_username",
+    "ACTIVEPIECES_PASSWORD": "@activepieces_password"
+  }
+}
