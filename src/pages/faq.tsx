@@ -10,7 +10,6 @@ import {
   FileText, Target, Layers, Send, Mail, Phone, Calendar
 } from 'lucide-react';
 import SEO from '@/components/SEO';
-import LiveChat from '@/components/LiveChat';
 
 interface FAQItem {
   category: string;
@@ -23,7 +22,6 @@ const FAQ = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [isInView, setIsInView] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   
   const searchRef = useRef(null);
   
@@ -73,14 +71,13 @@ const FAQ = () => {
       response: 'Available during business hours only'
     },
     {
-      icon: <MessageSquare className="w-8 h-8" />,
-      title: 'Live Chat',
-      description: 'Chat with our support team',
-      details: 'Start a conversation',
-      action: () => setIsChatOpen(true),
-      isButton: true,
+      icon: <Mail className="w-8 h-8" />,
+      title: 'Email Support',
+      description: 'Send us an email anytime',
+      details: 'support@devtone.agency',
+      link: 'mailto:support@devtone.agency',
       color: 'from-purple-600 to-purple-800',
-      response: 'Available Mon-Fri 12am to 6pm EST'
+      response: 'Response within 24 hours'
     },
     {
       icon: <Calendar className="w-8 h-8" />,
@@ -359,7 +356,7 @@ const FAQ = () => {
   return (
     <>
       {/* Live Chat Component */}
-      <LiveChat isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
+
       
       <SEO
         title="FAQ - DevTone Web Development Services"

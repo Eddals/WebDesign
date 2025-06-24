@@ -8,8 +8,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
-import LiveChat from './components/LiveChat';
-import ScrollNavigation from './components/ScrollNavigation';
 import ScrollToTop from './components/ScrollToTop';
 
 // Lazy load pages for better performance
@@ -98,8 +96,6 @@ export default function App() {
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>
-                    <LiveChat />
-                    <ScrollNavigation />
                     <Footer />
                   </div>
                 } />

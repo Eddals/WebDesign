@@ -14,7 +14,6 @@ import {
   MapPin
 } from "lucide-react"
 import SEO from '@/components/SEO'
-import LiveChat from '@/components/LiveChat'
 import GoogleMapsWidget from '@/components/GoogleMapsWidget'
 import { supabase } from '@/lib/supabase'
 
@@ -226,7 +225,7 @@ const Contact = () => {
   return (
     <>
       {/* Live Chat Component */}
-      <LiveChat isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
+
       
       <SEO
         title="Contact DevTone - Get Professional Web Development Support"
