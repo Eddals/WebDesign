@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Estimate Form Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5558e3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Estimate Form Submission</h1>
+        <p>This page tests the estimate form submission to ensure it's working correctly.</p>
+        
+        <button id="testWebhook">Test ActivePieces Webhook Only</button>
+        <button id="testFull">Test Full Submission (Webhook + API)</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Test data
+        const testData = {
+            name: 'Test User',
+            email: 'test@example.com',
+            phone: '(555) 123-4567',
+            company: 'Test Company',
+            country: 'United States',
+            industry: 'Technology',
+            projectType: 'landing',
+            budget: '$500 - $1,500',
+            timeline: '1 Month',
+            description: 'This is a test submission from the browser',
+            features: ['contact_form', 'seo', 'newsletter']
+        };
+
+        // Show result
+        function showResult(type, title, content) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `<h3>${title}</h3>${content}`;
+            resultDiv.style.display = 'block';
+        }
+
+        // Test webhook only
+        document.getElementById('testWebhook').addEventListener('click', async function() {
+            this.disabled = true;
+            
+            try {
+                const webhookData = {
+                    nome: testData.name,
+                    email: testData.email,
+                    telefone: testData.phone,
+                    empresa: testData.company,
+                    pais: testData.country,
+                    industria: testData.industry,
+                    tipo_projeto: testData.projectType,
+                    orcamento: testData.budget,
+                    prazo: testData.timeline,
+                    mensagem: testData.description,
+                    recursos: testData.features.join(', '),
+                    timestamp: new Date().toISOString(),
+                    fonte: 'browser-test'
+                };
+
+                const response = await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(webhookData),
+                });
+
+                const responseText = await response.text();
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText || '{}');
+                } catch {
+                    responseData = responseText;
+                }
+
+                if (response.ok) {
+                    showResult('success', '✅ Webhook Test Successful!', `
+                        <p>Status: ${response.status}</p>
+                        <p>Response:</p>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                    `);
+                } else {
+                    showResult('error', '❌ Webhook Test Failed', `
+                        <p>Status: ${response.status}</p>
+                        <p>Response:</p>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                    `);
+                }
+            } catch (error) {
+                showResult('error', '❌ Test Failed', `<p>Error: ${error.message}</p>`);
+            } finally {
+                this.disabled = false;
+            }
+        });
+
+        // Test full submission
+        document.getElementById('testFull').addEventListener('click', async function() {
+            this.disabled = true;
+            
+            try {
+                // Import the actual submission function
+                const module = await import('./src/lib/estimate-api.ts');
+                const result = await module.submitEstimate(testData);
+
+                if (result.success) {
+                    showResult('success', '✅ Full Submission Test Successful!', `
+                        <p>${result.message}</p>
+                        ${result.emailsSent ? `
+                            <p>Emails sent:</p>
+                            <ul>
+                                <li>Admin: ${result.emailsSent.admin ? '✅' : '❌'}</li>
+                                <li>Client: ${result.emailsSent.client ? '✅' : '❌'}</li>
+                            </ul>
+                        ` : ''}
+                    `);
+                } else {
+                    showResult('error', '❌ Submission Failed', `<p>${result.error}</p>`);
+                }
+            } catch (error) {
+                // If module import fails, test directly
+                showResult('info', 'ℹ️ Testing with direct fetch...', '');
+                
+                try {
+                    // Test webhook
+                    const webhookData = {
+                        nome: testData.name,
+                        email: testData.email,
+                        telefone: testData.phone,
+                        empresa: testData.company,
+                        pais: testData.country,
+                        industria: testData.industry,
+                        tipo_projeto: testData.projectType,
+                        orcamento: testData.budget,
+                        prazo: testData.timeline,
+                        mensagem: testData.description,
+                        recursos: testData.features.join(', '),
+                        timestamp: new Date().toISOString(),
+                        fonte: 'browser-test-direct'
+                    };
+
+                    const webhookResponse = await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(webhookData),
+                    });
+
+                    let webhookSuccess = false;
+                    if (webhookResponse.ok) {
+                        webhookSuccess = true;
+                    }
+
+                    // Test API
+                    let apiSuccess = false;
+                    let apiError = '';
+                    try {
+                        const apiResponse = await fetch('https://api.devtone.agency/api/estimate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(testData),
+                        });
+                        
+                        if (apiResponse.ok) {
+                            apiSuccess = true;
+                        } else {
+                            apiError = `API returned ${apiResponse.status}`;
+                        }
+                    } catch (e) {
+                        apiError = e.message;
+                    }
+
+                    showResult(webhookSuccess ? 'success' : 'error', 
+                        webhookSuccess ? '✅ Submission Successful!' : '❌ Submission Failed',
+                        `
+                        <p>Webhook: ${webhookSuccess ? '✅ Success' : '❌ Failed'}</p>
+                        <p>API: ${apiSuccess ? '✅ Success' : `❌ Failed (${apiError})`}</p>
+                        ${webhookSuccess ? '<p><strong>Your estimate request has been received. We will contact you soon.</strong></p>' : ''}
+                    `);
+                } catch (error) {
+                    showResult('error', '❌ Test Failed', `<p>Error: ${error.message}</p>`);
+                }
+            } finally {
+                this.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

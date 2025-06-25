@@ -25,6 +25,7 @@ import {
   Search
 } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { submitEstimate } from '@/lib/estimate-api';
 
 interface FormData {
   // Personal Info
@@ -386,37 +387,33 @@ const Estimate = () => {
     }));
   };
 
-  // Handle form submission with Resend
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
     try {
-      // Format data for API
-      const apiData = {
-        ...formData,
-        features: formData.features.join(', '),
+      // Use the estimate API service
+      const result = await submitEstimate({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        country: formData.country,
+        industry: formData.industry,
+        projectType: formData.projectType,
         budget: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
         timeline: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
-        retainer: retainerOptions.find(r => r.value === formData.retainer)?.label || 'No retainer'
-      };
-
-      const response = await fetch('/api/send-estimate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiData),
+        description: formData.description,
+        features: formData.features
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (result.success) {
+        setIsSuccess(true);
+      } else {
         throw new Error(result.error || 'Failed to send estimate');
       }
-
-      setIsSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Form submission error:', err);
@@ -1097,7 +1094,7 @@ const Estimate = () => {
                   className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl"
                 >
                   <p className="text-red-400 text-sm text-center">
-                    {error}. Please try again or contact us at team@devtone.agency
+                    {error}
                   </p>
                 </motion.div>
               )}

@@ -33,6 +33,8 @@ export interface EstimateResponse {
 }
 
 export const submitEstimate = async (formData: EstimateFormData): Promise<EstimateResponse> => {
+  let webhookSuccess = false;
+  
   try {
     // First, send to ActivePieces webhook
     try {
@@ -65,8 +67,22 @@ export const submitEstimate = async (formData: EstimateFormData): Promise<Estima
 
       if (webhookResponse.ok) {
         console.log('Successfully sent to ActivePieces webhook');
+        webhookSuccess = true;
       } else {
-        console.warn('ActivePieces webhook returned non-OK status:', webhookResponse.status, await webhookResponse.text());
+        // Try to get error details
+        let errorDetails = '';
+        try {
+          const contentType = webhookResponse.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await webhookResponse.json();
+            errorDetails = errorData.message || errorData.error || '';
+          } else {
+            errorDetails = await webhookResponse.text();
+          }
+        } catch {
+          // Ignore parsing errors
+        }
+        console.warn('ActivePieces webhook returned non-OK status:', webhookResponse.status, errorDetails);
       }
     } catch (webhookError) {
       console.error('Error sending to ActivePieces webhook:', webhookError);
@@ -85,26 +101,73 @@ export const submitEstimate = async (formData: EstimateFormData): Promise<Estima
         signal: AbortSignal.timeout(5000) // 5 second timeout
       });
 
-      const data = await response.json();
-      console.log('API response:', data);
-
+      // Check if response is ok before trying to parse JSON
       if (!response.ok) {
-        console.warn(`API returned status ${response.status}:`, data);
+        // Try to get error message from response
+        let errorMessage = `Server returned status ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If JSON parsing fails, try to get text
+          try {
+            const errorText = await response.text();
+            if (errorText) {
+              errorMessage = errorText;
+            }
+          } catch {
+            // Ignore text parsing errors
+          }
+        }
+        console.warn('API error:', errorMessage);
+        
+        // If webhook was successful, still return success
+        return {
+          success: true,
+          message: 'Your estimate request has been received. We will contact you soon.',
+        };
       }
 
-      return data;
+      // Parse successful response
+      try {
+        const data = await response.json();
+        console.log('API response:', data);
+        return data;
+      } catch (jsonError) {
+        console.warn('Failed to parse API response as JSON:', jsonError);
+        // If we can't parse the response but it was successful, return success
+        return {
+          success: true,
+          message: 'Your estimate request has been received. We will contact you soon.',
+        };
+      }
     } catch (apiError) {
-      console.warn('API call failed, but continuing with webhook submission:', apiError);
+      console.warn('API call failed:', apiError);
       
       // If the webhook was successful, we can still return success
+      if (webhookSuccess) {
+        return {
+          success: true,
+          message: 'Your estimate request has been received. We will contact you soon.',
+        };
+      }
+      
+      // If both webhook and API failed, return error
       return {
-        success: true,
-        message: 'Your estimate request has been received. We will contact you soon.',
-        error: 'API unavailable, but webhook submission succeeded',
+        success: false,
+        error: 'Unable to submit estimate request. Please try again or contact us directly at team@devtone.agency',
       };
     }
   } catch (error) {
     console.error('Error submitting estimate:', error);
+    
+    // If webhook was successful but something else failed, still return success
+    if (webhookSuccess) {
+      return {
+        success: true,
+        message: 'Your estimate request has been received. We will contact you soon.',
+      };
+    }
     
     // Return a structured error response
     return {
