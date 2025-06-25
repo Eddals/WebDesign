@@ -32,11 +32,16 @@ export default async function handler(req, res) {
   try {
     const formData = req.body;
     console.log('Received estimate request:', formData);
+    console.log('Resend API configured:', !!resend);
+    console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
 
     // Send admin notification email
     if (resend) {
       try {
-        const adminEmailAddress = process.env.ADMIN_EMAIL || 'team@devtone.agency';
+        // ALWAYS send to admin@devtone.agency
+        const adminEmailAddress = 'admin@devtone.agency';
+        console.log('Sending admin notification to:', adminEmailAddress);
+        
         const { data: adminEmail, error: adminError } = await resend.emails.send({
         from: 'DevTone Estimates <noreply@devtone.agency>',
         to: [adminEmailAddress],
@@ -173,19 +178,23 @@ Submitted on: ${new Date().toLocaleString()}
 
       if (adminError) {
         console.error('Admin email error:', adminError);
+        console.error('Failed to send to admin@devtone.agency');
+        // Log the full error for debugging
+        console.error('Full error details:', JSON.stringify(adminError, null, 2));
       } else {
-        console.log('Admin email sent:', adminEmail);
+        console.log('Admin email sent successfully to admin@devtone.agency');
+        console.log('Email ID:', adminEmail?.id);
       }
       } catch (emailError) {
-        console.error('Error sending admin email:', emailError);
+        console.error('Critical error sending admin email:', emailError);
+        console.error('Failed to notify admin@devtone.agency about new estimate request');
       }
 
-      // Send client confirmation email (to both client and admin)
+      // Send client confirmation email (only to client)
       try {
-        const adminEmailAddress = process.env.ADMIN_EMAIL || 'team@devtone.agency';
         const { data: clientEmail, error: clientError } = await resend.emails.send({
         from: 'DevTone Agency <noreply@devtone.agency>',
-        to: [formData.email, adminEmailAddress], // Send to both client and admin
+        to: [formData.email], // Send only to client
         subject: 'We received your estimate request - DevTone',
         html: `
 <!DOCTYPE html>
