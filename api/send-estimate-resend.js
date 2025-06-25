@@ -36,9 +36,10 @@ export default async function handler(req, res) {
     // Send admin notification email
     if (resend) {
       try {
+        const adminEmailAddress = process.env.ADMIN_EMAIL || 'team@devtone.agency';
         const { data: adminEmail, error: adminError } = await resend.emails.send({
         from: 'DevTone Estimates <onboarding@resend.dev>', // Change this after domain verification
-        to: ['team@devtone.agency'],
+        to: [adminEmailAddress],
         subject: `New Estimate Request: ${formData.name} - ${formData.projectType}`,
         reply_to: formData.email,
         html: `
