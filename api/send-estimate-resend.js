@@ -31,9 +31,15 @@ export default async function handler(req, res) {
 
   try {
     const formData = req.body;
-    console.log('Received estimate request:', formData);
+    console.log('=== ESTIMATE REQUEST RECEIVED ===');
+    console.log('Client:', formData.name, formData.email);
+    console.log('Project:', formData.projectType);
     console.log('Resend API configured:', !!resend);
     console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+    
+    // Track email sending status
+    let adminEmailSent = false;
+    let clientEmailSent = false;
 
     // Send admin notification email
     if (resend) {
@@ -177,17 +183,45 @@ Submitted on: ${new Date().toLocaleString()}
       });
 
       if (adminError) {
-        console.error('Admin email error:', adminError);
+        console.error('❌ ADMIN EMAIL FAILED:', adminError);
         console.error('Failed to send to team@devtone.agency');
-        // Log the full error for debugging
         console.error('Full error details:', JSON.stringify(adminError, null, 2));
+        
+        // Try to understand the error
+        if (adminError.message) {
+          console.error('Error message:', adminError.message);
+        }
+        if (adminError.name === 'validation_error') {
+          console.error('Validation error - check email format and domain verification');
+        }
       } else {
-        console.log('Admin email sent successfully to team@devtone.agency');
+        adminEmailSent = true;
+        console.log('✅ ADMIN EMAIL SENT to team@devtone.agency');
         console.log('Email ID:', adminEmail?.id);
       }
       } catch (emailError) {
         console.error('Critical error sending admin email:', emailError);
         console.error('Failed to notify team@devtone.agency about new estimate request');
+        
+        // Try a simpler email format as fallback
+        try {
+          console.log('Attempting fallback email to team@devtone.agency...');
+          const { data: fallbackEmail, error: fallbackError } = await resend.emails.send({
+            from: 'noreply@devtone.agency',
+            to: 'team@devtone.agency',
+            subject: `Estimate Request: ${formData.name}`,
+            text: `New estimate request from ${formData.name} (${formData.email})\nProject: ${formData.projectType}\nBudget: ${formData.budget}`,
+          });
+          
+          if (fallbackError) {
+            console.error('❌ FALLBACK EMAIL ALSO FAILED:', fallbackError);
+          } else {
+            adminEmailSent = true;
+            console.log('✅ FALLBACK EMAIL SENT to team@devtone.agency');
+          }
+        } catch (fallbackErr) {
+          console.error('Fallback email error:', fallbackErr);
+        }
       }
 
       // Send client confirmation email (only to client)
@@ -307,19 +341,30 @@ devtone.agency
       });
 
       if (clientError) {
-        console.error('Client email error:', clientError);
+        console.error('❌ CLIENT EMAIL FAILED:', clientError);
       } else {
-        console.log('Client email sent:', clientEmail);
+        clientEmailSent = true;
+        console.log('✅ CLIENT EMAIL SENT to', formData.email);
       }
       } catch (emailError) {
         console.error('Error sending client email:', emailError);
       }
     } else {
-      console.log('Resend API key not configured - emails will not be sent');
+      console.error('❌ RESEND NOT CONFIGURED - No API key found!');
+      console.error('Please add RESEND_API_KEY to Vercel environment variables');
     }
+    
+    // Log final email status
+    console.log('=== EMAIL STATUS SUMMARY ===');
+    console.log('Admin email sent:', adminEmailSent ? '✅ YES' : '❌ NO');
+    console.log('Client email sent:', clientEmailSent ? '✅ YES' : '❌ NO');
+    
+    // CRITICAL: If admin email failed, include admin details in ActivePieces
+    const includeAdminNotification = !adminEmailSent;
 
     // Also send to ActivePieces as backup
     try {
+      console.log('Sending to ActivePieces webhook...');
       await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
         method: 'POST',
         headers: {
@@ -338,17 +383,33 @@ devtone.agency
           mensagem: formData.description || '',
           recursos: Array.isArray(formData.features) ? formData.features.join(', ') : formData.features || '',
           timestamp: new Date().toISOString(),
-          fonte: 'devtone-website'
+          fonte: 'devtone-website',
+          // Add notification flag if admin email failed
+          admin_notification_failed: includeAdminNotification,
+          notify_admin: includeAdminNotification ? 'URGENT: Admin email to team@devtone.agency failed!' : ''
         }),
       });
+      console.log('✅ ActivePieces webhook called successfully');
     } catch (error) {
-      console.error('ActivePieces error:', error);
+      console.error('❌ ActivePieces error:', error);
     }
-
-    return res.status(200).json({
+    
+    // Final response with status info
+    const response = {
       success: true,
-      message: 'Your estimate request has been received. We will contact you within 24 hours.'
-    });
+      message: 'Your estimate request has been received. We will contact you within 24 hours.',
+      // Include debug info in development
+      ...(process.env.NODE_ENV !== 'production' && {
+        debug: {
+          adminEmailSent,
+          clientEmailSent,
+          resendConfigured: !!resend
+        }
+      })
+    };
+
+    console.log('=== REQUEST COMPLETED ===');
+    return res.status(200).json(response);
 
   } catch (error) {
     console.error('Error processing estimate:', error);
