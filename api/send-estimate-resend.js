@@ -43,16 +43,20 @@ export default async function handler(req, res) {
 
     // Send admin notification email
     if (resend) {
-      try {
-        // ALWAYS send to team@devtone.agency
-        const adminEmailAddress = 'team@devtone.agency';
-        console.log('Sending admin notification to:', adminEmailAddress);
-        
-        const { data: adminEmail, error: adminError } = await resend.emails.send({
-        from: 'DevTone Estimates <noreply@devtone.agency>',
-        to: [adminEmailAddress],
-        subject: `New Estimate Request: ${formData.name} - ${formData.projectType}`,
-        reply_to: formData.email,
+      // Use Gmail address for admin notifications
+      const adminEmails = [
+        'sweepeasellc@gmail.com'
+      ];
+      
+      for (const adminEmail of adminEmails) {
+        try {
+          console.log(`Attempting to send admin notification to: ${adminEmail}`);
+          
+          const { data, error } = await resend.emails.send({
+            from: 'noreply@devtone.agency',
+            to: adminEmail,
+            subject: `New Estimate Request: ${formData.name} - ${formData.projectType}`,
+            reply_to: formData.email,
         html: `
 <!DOCTYPE html>
 <html>
@@ -264,47 +268,55 @@ ${formData.description || 'No description provided'}
 
 Submitted on: ${new Date().toLocaleString()}
         `
-      });
-
-      if (adminError) {
-        console.error('❌ ADMIN EMAIL FAILED:', adminError);
-        console.error('Failed to send to team@devtone.agency');
-        console.error('Full error details:', JSON.stringify(adminError, null, 2));
-        
-        // Try to understand the error
-        if (adminError.message) {
-          console.error('Error message:', adminError.message);
-        }
-        if (adminError.name === 'validation_error') {
-          console.error('Validation error - check email format and domain verification');
-        }
-      } else {
-        adminEmailSent = true;
-        console.log('✅ ADMIN EMAIL SENT to team@devtone.agency');
-        console.log('Email ID:', adminEmail?.id);
-      }
-      } catch (emailError) {
-        console.error('Critical error sending admin email:', emailError);
-        console.error('Failed to notify team@devtone.agency about new estimate request');
-        
-        // Try a simpler email format as fallback
-        try {
-          console.log('Attempting fallback email to team@devtone.agency...');
-          const { data: fallbackEmail, error: fallbackError } = await resend.emails.send({
-            from: 'noreply@devtone.agency',
-            to: 'team@devtone.agency',
-            subject: `Estimate Request: ${formData.name}`,
-            text: `New estimate request from ${formData.name} (${formData.email})\nProject: ${formData.projectType}\nBudget: ${formData.budget}`,
           });
-          
-          if (fallbackError) {
-            console.error('❌ FALLBACK EMAIL ALSO FAILED:', fallbackError);
+
+          if (error) {
+            console.error(`❌ Failed to send to ${adminEmail}:`, error);
+            if (error.message) {
+              console.error('Error message:', error.message);
+            }
           } else {
             adminEmailSent = true;
-            console.log('✅ FALLBACK EMAIL SENT to team@devtone.agency');
+            console.log(`✅ ADMIN EMAIL SENT to ${adminEmail}`);
+            console.log('Email ID:', data?.id);
+            break; // Stop trying other emails if one succeeds
           }
-        } catch (fallbackErr) {
-          console.error('Fallback email error:', fallbackErr);
+        } catch (emailError) {
+          console.error(`Error sending to ${adminEmail}:`, emailError);
+        }
+      }
+      
+      // If all admin emails failed, try a simple text email
+      if (!adminEmailSent) {
+        console.log('All HTML emails failed. Trying simple text format...');
+        try {
+          const { data, error } = await resend.emails.send({
+            from: 'noreply@devtone.agency',
+            to: 'sweepeasellc@gmail.com',
+            subject: `Estimate: ${formData.name}`,
+            text: `New estimate request:
+            
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone || 'N/A'}
+Company: ${formData.company || 'N/A'}
+Project Type: ${formData.projectType}
+Budget: ${formData.budget}
+Timeline: ${formData.timeline}
+Features: ${formData.features?.join(', ') || 'N/A'}
+Description: ${formData.description || 'N/A'}
+
+Submitted at: ${new Date().toISOString()}`
+          });
+          
+          if (!error) {
+            adminEmailSent = true;
+            console.log('✅ Simple text email sent successfully');
+          } else {
+            console.error('❌ Simple text email also failed:', error);
+          }
+        } catch (err) {
+          console.error('Text email error:', err);
         }
       }
 
@@ -502,7 +514,7 @@ Submitted on: ${new Date().toLocaleString()}
       
       <div style="text-align: center; margin-top: 30px;">
         <p style="color: #666; margin-bottom: 15px;">Questions? Contact us directly:</p>
-        <a href="mailto:team@devtone.agency" class="button">Email Us</a>
+        <a href="mailto:sweepeasellc@gmail.com" class="button">Email Us</a>
         <a href="https://wa.me/19177413468" class="button button-secondary">
           <img src="https://img.icons8.com/color/16/whatsapp.png" alt="WhatsApp" style="vertical-align: middle; margin-right: 5px;">
           WhatsApp
@@ -571,10 +583,12 @@ devtone.agency
     // CRITICAL: If admin email failed, include admin details in ActivePieces
     const includeAdminNotification = !adminEmailSent;
 
-    // Also send to ActivePieces as backup
-    try {
-      console.log('Sending to ActivePieces webhook...');
-      await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
+    // CRITICAL: Send to multiple backup systems
+    const backupNotifications = [];
+    
+    // 1. ActivePieces webhook
+    backupNotifications.push(
+      fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -593,15 +607,37 @@ devtone.agency
           recursos: Array.isArray(formData.features) ? formData.features.join(', ') : formData.features || '',
           timestamp: new Date().toISOString(),
           fonte: 'devtone-website',
-          // Add notification flag if admin email failed
-          admin_notification_failed: includeAdminNotification,
-          notify_admin: includeAdminNotification ? 'URGENT: Admin email to team@devtone.agency failed!' : ''
+          admin_notification_failed: !adminEmailSent,
+          notify_admin: !adminEmailSent ? 'URGENT: Email to team@devtone.agency failed! Check logs.' : '',
+          email_status: {
+            admin_sent: adminEmailSent,
+            client_sent: clientEmailSent
+          }
         }),
-      });
-      console.log('✅ ActivePieces webhook called successfully');
-    } catch (error) {
-      console.error('❌ ActivePieces error:', error);
+      }).then(() => console.log('✅ ActivePieces notified'))
+        .catch(err => console.error('❌ ActivePieces failed:', err))
+    );
+    
+    // 2. Try webhook.site as emergency backup
+    if (!adminEmailSent) {
+      console.log('⚠️  EMERGENCY: Trying webhook.site backup...');
+      backupNotifications.push(
+        fetch('https://webhook.site/your-unique-url-here', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            alert: 'ADMIN EMAIL FAILED',
+            estimate_request: formData,
+            timestamp: new Date().toISOString()
+          }),
+        }).catch(err => console.error('Webhook.site error:', err))
+      );
     }
+    
+    // Wait for all backup notifications
+    await Promise.allSettled(backupNotifications);
     
     // Final response with status info
     const response = {

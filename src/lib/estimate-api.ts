@@ -34,8 +34,57 @@ export interface EstimateResponse {
 
 export const submitEstimate = async (formData: EstimateFormData): Promise<EstimateResponse> => {
   let webhookSuccess = false;
+  let resendSuccess = false;
+  let backupSuccess = false;
   
   try {
+    // Try multiple endpoints to ensure delivery
+    const endpoints = [
+      {
+        name: 'Resend API',
+        url: '/api/send-estimate-resend',
+        timeout: 10000
+      },
+      {
+        name: 'Backup Handler',
+        url: '/api/send-estimate-backup',
+        timeout: 5000
+      }
+    ];
+    
+    // Try each endpoint
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`Trying ${endpoint.name}...`);
+        const response = await fetch(endpoint.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+          signal: AbortSignal.timeout(endpoint.timeout)
+        });
+        
+        if (response.ok) {
+          console.log(`✅ ${endpoint.name} successful`);
+          if (endpoint.name === 'Resend API') resendSuccess = true;
+          if (endpoint.name === 'Backup Handler') backupSuccess = true;
+          
+          try {
+            const data = await response.json();
+            if (data.debug) {
+              console.log('Debug info:', data.debug);
+            }
+          } catch {
+            // Ignore JSON parsing errors
+          }
+        } else {
+          console.warn(`${endpoint.name} returned ${response.status}`);
+        }
+      } catch (err) {
+        console.error(`${endpoint.name} error:`, err);
+      }
+    }
     // First, send to ActivePieces webhook
     try {
       // Prepare webhook data matching the expected format
@@ -154,22 +203,32 @@ export const submitEstimate = async (formData: EstimateFormData): Promise<Estima
         };
       }
       
-      // If both webhook and API failed, return error
+      // If any method was successful, return success
+      if (webhookSuccess || resendSuccess || backupSuccess) {
+        console.log('Submission status:', {
+          webhook: webhookSuccess,
+          resend: resendSuccess,
+          backup: backupSuccess
+        });
+        
+        return {
+          success: true,
+          message: 'Your estimate request has been received. We will contact you within 24 hours.',
+          emailsSent: {
+            admin: resendSuccess || backupSuccess,
+            client: resendSuccess
+          }
+        };
+      }
+      
+      // If all methods failed, return error
       return {
         success: false,
-        error: 'Unable to submit estimate request. Please try again or contact us directly at team@devtone.agency',
+        error: 'Unable to submit estimate request. Please try again or contact us directly at sweepeasellc@gmail.com',
       };
     }
   } catch (error) {
     console.error('Error submitting estimate:', error);
-    
-    // If webhook was successful but something else failed, still return success
-    if (webhookSuccess) {
-      return {
-        success: true,
-        message: 'Your estimate request has been received. We will contact you soon.',
-      };
-    }
     
     // Return a structured error response
     return {
