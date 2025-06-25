@@ -1,0 +1,22 @@
+
+New Estimate Request from DevTone Website
+
+CLIENT INFORMATION:
+Name: John Doe
+Email: john@example.com
+Phone: ${formData.phone || 'Not provided'}
+Company: ${formData.company || 'Not provided'}
+Country: ${formData.country || 'Not provided'}
+Industry: ${formData.industry || 'Not provided'}
+
+PROJECT DETAILS:
+Project Type: Web Application
+Budget: $10,000 - $15,000
+Timeline: 2-3 months
+Features: ${Array.isArray(formData.features) ? formData.features.join(', ') : 'None'}
+
+DESCRIPTION:
+${formData.description || 'No description provided'}
+
+Submitted on: ${new Date().toLocaleString()}
+        
