@@ -559,9 +559,9 @@ const Estimate = () => {
   return (
     <>
       <SEO
-        title="Get Your Project Estimate - DevTone Web Development"
-        description="Get an instant estimate for your web development project with DevTone. Transparent pricing, professional service, and secure payment options. Start your project today!"
-        keywords={['DevTone estimate', 'web development pricing', 'project quote', 'website cost calculator', 'development estimate', 'transparent pricing']}
+        title="Get Your Project Estimate - Devtone Agency"
+        description="Get a free estimate for your web development project. Unlock online success with Devtone Agency's cutting-edge web development & SEO services."
+        keywords={['DevTone estimate', 'web development pricing', 'project quote', 'website cost calculator', 'development estimate', 'transparent pricing', 'SEO services', 'digital marketing', 'branding agency', 'content creation']}
         ogUrl="https://devtone.agency/estimate"
       />
 

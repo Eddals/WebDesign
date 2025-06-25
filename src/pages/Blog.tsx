@@ -122,9 +122,9 @@ const Blog = () => {
   return (
     <>
       <SEO
-        title="DevTone Blog - Web Development & Digital Marketing Insights"
-        description="Stay updated with the latest web development trends, SEO strategies, and digital marketing insights from DevTone's expert team. Learn, grow, and succeed online."
-        keywords={['web development blog', 'SEO tips', 'digital marketing insights', 'DevTone blog', 'web design trends', 'development tutorials']}
+        title="Devtone Agency Blog - Web Development & SEO Insights"
+        description="Unlock online success with insights from Devtone Agency's blog. Expert tips on web development, SEO services, digital marketing, content creation, and branding strategies."
+        keywords={['web development blog', 'SEO tips', 'digital marketing insights', 'DevTone blog', 'web design trends', 'development tutorials', 'branding agency', 'content creation', 'PPC advertising', 'social media management']}
         ogUrl="https://devtone.agency/blog"
       />
       <div className="min-h-screen bg-[#030718]">

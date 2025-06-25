@@ -135,10 +135,10 @@ const DigitalMarketing = () => {
   return (
     <>
       <SEO 
-        title="Digital Marketing Services | Comprehensive Online Marketing Solutions"
-        description="Drive growth with our comprehensive digital marketing services. PPC, email marketing, SEO, and more to boost your online presence and ROI."
-        keywords={['digital marketing', 'PPC advertising', 'email marketing', 'online marketing', 'digital strategy']}
-        ogUrl="https://matheusweb.com/services/digital-marketing"
+        title="Digital Marketing Services - Devtone Agency"
+        description="Unlock online success with Devtone Agency's comprehensive digital marketing solutions. PPC advertising, email marketing, social media management, and content creation."
+        keywords={['digital marketing', 'PPC advertising', 'email marketing', 'online marketing', 'digital strategy', 'SEO services', 'social media management', 'content creation', 'branding agency']}
+        ogUrl="https://devtone.agency/services/digital-marketing"
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
         <style >{customStyles}</style>

@@ -68,9 +68,9 @@ export default function Services() {
   return (
     <>
       <SEO
-        title="Web Development & Digital Marketing Services - DevTone"
-        description="Professional web development, design, and digital marketing services. From business websites to e-commerce stores and SEO optimization."
-        keywords={['web development services', 'digital marketing', 'website design', 'e-commerce development', 'SEO services', 'DevTone']}
+        title="Web Development & SEO Services - Devtone Agency"
+        description="Unlock online success with Devtone Agency's cutting-edge web development & SEO services. Comprehensive digital marketing solutions including PPC, social media management, and content creation."
+        keywords={['web development services', 'digital marketing', 'website design', 'e-commerce development', 'SEO services', 'DevTone', 'branding agency', 'PPC advertising', 'social media management', 'email marketing', 'content creation']}
         ogUrl="https://devtone.agency/services"
       />
       

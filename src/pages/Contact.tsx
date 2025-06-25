@@ -226,9 +226,9 @@ const Contact = () => {
 
       
       <SEO
-        title="Contact DevTone - Get Professional Web Development Support"
-        description="Contact DevTone for expert web development services, technical support, and project consultations. We're here to help bring your digital vision to life. Get in touch today!"
-        keywords={['contact DevTone', 'web development support', 'project consultation', 'technical support', 'get in touch', 'DevTone contact']}
+        title="Contact Devtone Agency - Your Digital Marketing Partner"
+        description="Ready to propel your business forward? Partner with Devtone Agency for cutting-edge web development & SEO services. Reach us at team@devtone.agency or call +19295591729."
+        keywords={['contact DevTone', 'web development support', 'project consultation', 'technical support', 'get in touch', 'DevTone contact', 'SEO services', 'branding agency', 'PPC advertising', 'social media management', 'email marketing']}
         ogUrl="https://devtone.agency/contact"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">

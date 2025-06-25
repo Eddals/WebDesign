@@ -114,9 +114,9 @@ const About = () => {
   return (
     <>
       <SEO
-        title="About Us - Expert Web Development Agency"
-        description="Learn about DevTone, a professional web development agency specializing in custom websites, digital marketing, and innovative solutions. Meet our team and discover our commitment to excellence."
-        keywords={['about DevTone', 'web development agency', 'digital marketing experts', 'professional team', 'web design services', 'development expertise']}
+        title="About Devtone Agency - Your Digital Marketing Powerhouse"
+        description="Unlock online success with Devtone Agency's cutting-edge web development & SEO services. We're your premier partner for web development, branding, and digital marketing solutions."
+        keywords={['about DevTone', 'web development agency', 'digital marketing experts', 'professional team', 'web design services', 'development expertise', 'branding agency', 'SEO services', 'content creation', 'PPC advertising', 'social media management']}
         ogUrl="https://devtone.agency/about"
       />
       <div className="min-h-screen pt-24 bg-[#030718]">

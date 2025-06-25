@@ -359,9 +359,9 @@ const FAQ = () => {
 
       
       <SEO
-        title="FAQ - DevTone Web Development Services"
-        description="Get answers to frequently asked questions about DevTone's web development services, pricing packages, development process, and ongoing support. Everything you need to know."
-        keywords={['DevTone FAQ', 'web development questions', 'pricing packages', 'development process', 'support', 'DevTone services']}
+        title="FAQ - Devtone Agency Web Development & SEO Services"
+        description="Find answers about Devtone Agency's web development & SEO services. Learn about our digital marketing solutions, pricing, and how we help businesses unlock online success."
+        keywords={['DevTone FAQ', 'web development questions', 'pricing packages', 'development process', 'support', 'DevTone services', 'SEO services', 'digital marketing', 'branding agency', 'content creation']}
         ogUrl="https://devtone.agency/faq"
       />
       <div className="min-h-screen pt-24 bg-[#030718] overflow-hidden">

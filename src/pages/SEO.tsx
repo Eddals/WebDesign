@@ -115,11 +115,11 @@ const SEO = () => {
 
   return (
     <>
-      <SEOComponent 
-        title="SEO Services | Search Engine Optimization Expert"
-        description="Professional SEO services that drive real results. Improve your search rankings, increase organic traffic, and grow your business with data-driven strategies."
-        keywords={['SEO services', 'search engine optimization', 'technical SEO', 'local SEO', 'content strategy']}
-        ogUrl="https://matheusweb.com/seo"
+      <SEOComponent
+      title="Professional SEO Services - Devtone Agency"
+      description="Unlock online success with Devtone Agency's tailored SEO services. Our expertise ensures your brand commands attention, capturing the right audience at the right time."
+      keywords={['SEO services', 'search engine optimization', 'technical SEO', 'local SEO', 'content strategy', 'digital marketing', 'branding agency', 'web development', 'PPC advertising', 'social media management']}
+      ogUrl="https://devtone.agency/seo"
       />
       <div className="min-h-screen pt-24 pb-16 bg-[#030718] overflow-hidden">
         <style >{customStyles}</style>

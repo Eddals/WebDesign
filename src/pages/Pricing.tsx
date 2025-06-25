@@ -173,9 +173,9 @@ const Pricing = () => {
   return (
     <>
       <SEO
-        title="Pricing - DevTone Web Development Packages"
-        description="Transparent pricing for professional web development services. Choose from our affordable packages designed for businesses of all sizes. No hidden fees, just quality work."
-        keywords={['DevTone pricing', 'web development packages', 'website pricing', 'affordable web design', 'transparent pricing']}
+        title="Web Development Pricing - Devtone Agency Packages"
+        description="Unlock online success with Devtone Agency's affordable web development packages. From basic websites to premium e-commerce solutions with SEO optimization."
+        keywords={['DevTone pricing', 'web development packages', 'website pricing', 'affordable web design', 'transparent pricing', 'SEO services', 'digital marketing', 'branding agency', 'content creation', 'PPC advertising']}
         ogUrl="https://www.devtone.agency/pricing"
       />
       
