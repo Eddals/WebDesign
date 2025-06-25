@@ -328,9 +328,9 @@ const Home = () => {
   return (
     <>
       <SEO
-        title="DevTone - Professional Web Development & Digital Marketing Agency"
-        description="DevTone delivers cutting-edge web development and digital marketing solutions. Specializing in responsive websites, SEO services, content creation, and custom web applications that drive business growth."
-        keywords={['web development', 'digital marketing', 'SEO services', 'content creation', 'responsive design', 'web design agency', 'DevTone', 'custom websites', 'business websites']}
+        title="Unlock Web Development & SEO Services with Devtone Agency"
+        description="Unlock online success with Devtone Agency's cutting-edge web development & SEO services. Elevate your brand with a digital marketing powerhouse."
+        keywords={['web development', 'digital marketing', 'SEO services', 'content creation', 'responsive design', 'web design agency', 'DevTone', 'custom websites', 'business websites', 'branding agency', 'PPC advertising', 'social media management', 'email marketing']}
         ogUrl="https://devtone.agency"
       />
       <div className="min-h-screen bg-[#030718]">
@@ -1552,6 +1552,243 @@ const Home = () => {
                 </motion.div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* SEO & Digital Marketing Section */}
+        <section className="py-24 relative overflow-hidden">
+          {/* Background elements */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#030718] via-purple-950/20 to-[#030718] opacity-80"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiIgZD0iTTAgMGg2MHY2MEgweiIvPjxwYXRoIGQ9Ik0zNiAxOGgtMXYyNGgxeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PHBhdGggZD0iTTI0IDE4aC0xdjI0aDF6IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDQiLz48cGF0aCBkPSJNNjAgMzZ2MUgzNnYtMXoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNCIvPjxwYXRoIGQ9Ik02MCAyNHYxSDM2di0xeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+          
+          {/* Animated gradient orbs */}
+          <motion.div 
+            className="absolute top-1/3 left-10 w-80 h-80 bg-purple-600/10 rounded-full filter blur-[100px]"
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1]
+            }}
+            transition={{ 
+              duration: 10, 
+              repeat: Infinity,
+              ease: "easeInOut" 
+            }}
+          ></motion.div>
+          
+          <motion.div 
+            className="absolute bottom-1/3 right-10 w-96 h-96 bg-indigo-500/10 rounded-full filter blur-[120px]"
+            animate={{ 
+              scale: [1.2, 1, 1.2],
+              opacity: [0.15, 0.25, 0.15]
+            }}
+            transition={{ 
+              duration: 12, 
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          ></motion.div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.div 
+              className="max-w-4xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Main Heading */}
+              <motion.h1 
+                className="text-4xl md:text-5xl font-bold text-center mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.1 }}
+              >
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">
+                  Unleash Your Digital Potential with Devtone Agency
+                </span>
+              </motion.h1>
+              
+              {/* Subheading */}
+              <motion.h2 
+                className="text-2xl md:text-3xl font-semibold text-center mb-6 text-white/90"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <span className="text-white/80">Your Premier Partner for </span>
+                <span className="text-purple-300">Web Development</span>
+              </motion.h2>
+              
+              {/* Introduction Paragraph */}
+              <motion.p 
+                className="text-lg text-white/70 text-center mb-12 max-w-3xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                <span>Devtone Agency is not just a </span>
+                <b className="text-purple-300"><strong>branding agency</strong></b>
+                <span>, we are your key to unlocking an unparalleled online presence. Our expertise in </span>
+                <b className="text-purple-300"><strong>web development</strong></b>
+                <span> empowers businesses to build dynamic websites that engage and convert.</span>
+              </motion.p>
+              
+              {/* Why Choose Section */}
+              <motion.div 
+                className="mb-16"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6">
+                  <span className="text-white/90">Why Choose Devtone for </span>
+                  <span className="text-purple-300">SEO Services</span>
+                  <span className="text-white/90">?</span>
+                </h2>
+                
+                <p className="text-lg text-white/70 text-center max-w-3xl mx-auto">
+                  <span>In the digital realm, visibility is everything. Our tailored </span>
+                  <b className="text-purple-300"><strong>SEO services</strong></b>
+                  <span> ensure that your brand commands attention, capturing the right audience at the right time.</span>
+                </p>
+              </motion.div>
+              
+              {/* Digital Marketing Solutions */}
+              <motion.div 
+                className="mb-16"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              >
+                <h3 className="text-2xl md:text-3xl font-semibold text-center mb-8">
+                  <span className="text-white/90">Our Comprehensive </span>
+                  <span className="text-purple-300">Digital Marketing</span>
+                  <span className="text-white/90"> Solutions</span>
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                  {[
+                    {
+                      title: "Content Creation",
+                      description: "Compelling and strategically crafted to resonate with your target audience.",
+                      icon: <FileText className="w-6 h-6" />
+                    },
+                    {
+                      title: "Social Media Management",
+                      description: "Elevate your brand's voice on various platforms, enhancing engagement and brand loyalty.",
+                      icon: <Users className="w-6 h-6" />
+                    },
+                    {
+                      title: "PPC Advertising",
+                      description: "Get immediate results from your ad spend with our precise targeting strategies.",
+                      icon: <Target className="w-6 h-6" />
+                    },
+                    {
+                      title: "Email Marketing",
+                      description: "Nurture leads and drive conversions through personalized campaigns.",
+                      icon: <Mail className="w-6 h-6" />
+                    }
+                  ].map((service, index) => (
+                    <motion.div
+                      key={index}
+                      className="group relative bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.6 + (index * 0.1) }}
+                      whileHover={{ y: -5 }}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/30 transition-colors duration-300">
+                          {service.icon}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-lg font-semibold text-white mb-2">
+                            <b><strong>{service.title}</strong></b><b><strong>:</strong></b>
+                          </h4>
+                          <p className="text-white/70">
+                            <span>{service.description}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+              
+              {/* Contact CTA */}
+              <motion.div 
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+              >
+                <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-white/90">
+                  <span>Contact Devtone Agency Today</span>
+                </h2>
+                
+                <p className="text-lg text-white/70 mb-8">
+                  <span>Ready to propel your business forward? Partner with Devtone Agency, and let's make your business shine online. Reach us at </span>
+                  <a href="mailto:team@devtone.agency" className="text-purple-300 hover:text-purple-400 transition-colors">
+                    <b><strong>team@devtone.agency</strong></b>
+                  </a>
+                  <span> or call </span>
+                  <b className="text-purple-300"><strong>+19295591729</strong></b>
+                  <span>.</span>
+                </p>
+                
+                <motion.div 
+                  className="flex flex-col sm:flex-row gap-4 justify-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                >
+                  <motion.button
+                    onClick={() => window.location.href = "/contact"}
+                    className="group relative px-8 py-4 bg-gradient-to-br from-purple-600/90 via-purple-700/90 to-indigo-800/90
+                      rounded-xl font-semibold text-lg overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 transform translate-x-full group-hover:translate-x-[-150%] transition-transform duration-700">
+                      <div className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12" />
+                    </div>
+                    <div className="relative flex items-center justify-center">
+                      <span className="text-white/90 mr-4">Get Started Today</span>
+                      <ArrowRight className="w-5 h-5 text-purple-200/90" />
+                    </div>
+                  </motion.button>
+                  
+                  <motion.button
+                    onClick={() => window.location.href = "/estimate"}
+                    className="group relative px-8 py-4 bg-transparent border-2 border-purple-500/20
+                      rounded-xl font-semibold text-lg overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <div className="absolute inset-0 bg-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 transform translate-x-full group-hover:translate-x-[-150%] transition-transform duration-700">
+                      <div className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12" />
+                    </div>
+                    <div className="relative flex items-center justify-center">
+                      <span className="text-white/90 mr-4">Request Free Quote</span>
+                      <Sparkles className="w-5 h-5 text-purple-200/90" />
+                    </div>
+                  </motion.button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
