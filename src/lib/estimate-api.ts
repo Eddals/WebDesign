@@ -2,7 +2,7 @@ import { ACTIVEPIECES_CONFIG, getActivePiecesAuthHeader } from '@/config/activep
 
 // API configuration
 const API_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.DEV ? 'http://localhost:3002' : 'https://api.devtone.agency'
+  import.meta.env.DEV ? 'http://localhost:3002' : ''
 );
 
 export interface EstimateFormData {
@@ -91,7 +91,9 @@ export const submitEstimate = async (formData: EstimateFormData): Promise<Estima
 
     // Try to send to our API, but don't fail if it's not available
     try {
-      const response = await fetch(`${API_URL}/api/estimate`, {
+      // Use the correct endpoint based on environment
+      const endpoint = API_URL ? `${API_URL}/api/estimate` : '/api/send-estimate';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

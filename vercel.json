@@ -2,6 +2,9 @@
   "functions": {
     "api/estimate.js": {
       "maxDuration": 10
+    },
+    "api/send-estimate.js": {
+      "maxDuration": 10
     }
   },
   "env": {
@@ -11,6 +14,13 @@
     "SMTP_PASS": "@smtp_pass",
     "ESTIMATE_RECIPIENT_EMAIL": "@estimate_recipient_email",
     "ACTIVEPIECES_USERNAME": "@activepieces_username",
-    "ACTIVEPIECES_PASSWORD": "@activepieces_password"
-  }
+    "ACTIVEPIECES_PASSWORD": "@activepieces_password",
+    "ADMIN_EMAIL": "@admin_email"
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
+  ]
 }
