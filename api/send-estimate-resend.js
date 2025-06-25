@@ -59,100 +59,184 @@ export default async function handler(req, res) {
 <head>
   <meta charset="UTF-8">
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-    .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-    .field { margin-bottom: 20px; }
-    .label { font-weight: bold; color: #6366f1; }
-    .value { margin-top: 5px; padding: 10px; background: white; border-radius: 5px; }
-    .features { display: inline-block; margin: 5px; padding: 5px 10px; background: #e0e7ff; color: #6366f1; border-radius: 15px; font-size: 14px; }
-    .button { display: inline-block; padding: 12px 30px; background: #6366f1; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      line-height: 1.6; 
+      color: #1a1a1a;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header { 
+      background: linear-gradient(135deg, rgb(109 40 217 / .9) 0%, rgb(109 40 217) 100%); 
+      color: white; 
+      padding: 40px 30px; 
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .header p {
+      margin: 10px 0 0 0;
+      opacity: 0.9;
+      font-size: 16px;
+    }
+    .content { 
+      padding: 40px 30px;
+    }
+    .info-section {
+      border-left: 3px solid rgb(109 40 217);
+      padding-left: 20px;
+      margin-bottom: 30px;
+    }
+    .info-section h2 {
+      color: rgb(109 40 217);
+      font-size: 18px;
+      margin: 0 0 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .field { 
+      margin-bottom: 15px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .label { 
+      font-weight: 600; 
+      color: #666;
+      min-width: 120px;
+      font-size: 14px;
+    }
+    .value { 
+      color: #1a1a1a;
+      flex: 1;
+    }
+    .features { 
+      display: inline-block; 
+      margin: 2px; 
+      padding: 4px 12px; 
+      background: rgb(109 40 217 / .1); 
+      color: rgb(109 40 217); 
+      border-radius: 4px; 
+      font-size: 13px; 
+    }
+    .button { 
+      display: inline-block; 
+      padding: 12px 24px; 
+      background: rgb(109 40 217); 
+      color: white; 
+      text-decoration: none; 
+      border-radius: 4px; 
+      font-weight: 500;
+      margin-top: 20px;
+    }
+    .footer {
+      background: #f8f8f8;
+      padding: 20px 30px;
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      border-top: 1px solid #eee;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>New Estimate Request</h1>
-      <p>You have received a new project estimate request</p>
+      <p>Project inquiry received</p>
     </div>
     <div class="content">
-      <div class="field">
-        <div class="label">Client Name:</div>
-        <div class="value">${formData.name}</div>
-      </div>
-      
-      <div class="field">
-        <div class="label">Email:</div>
-        <div class="value"><a href="mailto:${formData.email}">${formData.email}</a></div>
-      </div>
-      
-      ${formData.phone ? `
-      <div class="field">
-        <div class="label">Phone:</div>
-        <div class="value"><a href="tel:${formData.phone}">${formData.phone}</a></div>
-      </div>
-      ` : ''}
-      
-      ${formData.company ? `
-      <div class="field">
-        <div class="label">Company:</div>
-        <div class="value">${formData.company}</div>
-      </div>
-      ` : ''}
-      
-      ${formData.country ? `
-      <div class="field">
-        <div class="label">Country:</div>
-        <div class="value">${formData.country}</div>
-      </div>
-      ` : ''}
-      
-      ${formData.industry ? `
-      <div class="field">
-        <div class="label">Industry:</div>
-        <div class="value">${formData.industry}</div>
-      </div>
-      ` : ''}
-      
-      <div class="field">
-        <div class="label">Project Type:</div>
-        <div class="value">${formData.projectType}</div>
-      </div>
-      
-      <div class="field">
-        <div class="label">Budget:</div>
-        <div class="value" style="font-weight: bold; color: #6366f1;">${formData.budget}</div>
-      </div>
-      
-      <div class="field">
-        <div class="label">Timeline:</div>
-        <div class="value">${formData.timeline}</div>
-      </div>
-      
-      ${formData.features && formData.features.length > 0 ? `
-      <div class="field">
-        <div class="label">Requested Features:</div>
-        <div class="value">
-          ${formData.features.map(f => `<span class="features">${f}</span>`).join(' ')}
+      <!-- Client Information Section -->
+      <div class="info-section">
+        <h2>
+          <img src="https://img.icons8.com/fluency/24/user-male-circle.png" alt="Client" width="20" height="20">
+          Client Information
+        </h2>
+        <div class="field">
+          <div class="label">Name:</div>
+          <div class="value">${formData.name}</div>
         </div>
+        <div class="field">
+          <div class="label">Email:</div>
+          <div class="value"><a href="mailto:${formData.email}" style="color: rgb(109 40 217);">${formData.email}</a></div>
+        </div>
+        ${formData.phone ? `
+        <div class="field">
+          <div class="label">Phone:</div>
+          <div class="value">${formData.phone}</div>
+        </div>
+        ` : ''}
+        ${formData.company ? `
+        <div class="field">
+          <div class="label">Company:</div>
+          <div class="value">${formData.company}</div>
+        </div>
+        ` : ''}
+        ${formData.country ? `
+        <div class="field">
+          <div class="label">Location:</div>
+          <div class="value">${formData.country}</div>
+        </div>
+        ` : ''}
+        ${formData.industry ? `
+        <div class="field">
+          <div class="label">Industry:</div>
+          <div class="value">${formData.industry}</div>
+        </div>
+        ` : ''}
       </div>
-      ` : ''}
-      
-      ${formData.description ? `
-      <div class="field">
-        <div class="label">Project Description:</div>
-        <div class="value">${formData.description}</div>
+
+      <!-- Project Details Section -->
+      <div class="info-section">
+        <h2>
+          <img src="https://img.icons8.com/fluency/24/project.png" alt="Project" width="20" height="20">
+          Project Details
+        </h2>
+        <div class="field">
+          <div class="label">Type:</div>
+          <div class="value">${formData.projectType}</div>
+        </div>
+        <div class="field">
+          <div class="label">Budget:</div>
+          <div class="value" style="font-weight: 600; color: rgb(109 40 217);">${formData.budget}</div>
+        </div>
+        <div class="field">
+          <div class="label">Timeline:</div>
+          <div class="value">${formData.timeline}</div>
+        </div>
+        ${formData.features && formData.features.length > 0 ? `
+        <div class="field">
+          <div class="label">Features:</div>
+          <div class="value">
+            ${formData.features.map(f => `<span class="features">${f}</span>`).join(' ')}
+          </div>
+        </div>
+        ` : ''}
+        ${formData.description ? `
+        <div class="field">
+          <div class="label">Description:</div>
+          <div class="value">${formData.description}</div>
+        </div>
+        ` : ''}
       </div>
-      ` : ''}
-      
-      <div style="text-align: center;">
+
+      <div style="text-align: center; margin-top: 30px;">
         <a href="mailto:${formData.email}" class="button">Reply to Client</a>
       </div>
-      
-      <p style="text-align: center; color: #999; margin-top: 30px; font-size: 12px;">
-        Submitted on ${new Date().toLocaleString()}
-      </p>
+    </div>
+    <div class="footer">
+      <p>Submitted on ${new Date().toLocaleString()}</p>
+      <p>DevTone Agency - Professional Web Solutions</p>
     </div>
   </div>
 </body>
@@ -236,73 +320,198 @@ Submitted on: ${new Date().toLocaleString()}
 <head>
   <meta charset="UTF-8">
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; padding: 40px; text-align: center; border-radius: 10px 10px 0 0; }
-    .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-    .timeline { background: white; padding: 20px; border-radius: 10px; margin: 20px 0; }
-    .step { display: flex; align-items: start; margin-bottom: 15px; }
-    .step-number { background: #6366f1; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0; }
-    .button { display: inline-block; padding: 12px 30px; background: #6366f1; color: white; text-decoration: none; border-radius: 5px; margin: 10px; }
-    .button-whatsapp { background: #25D366; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      line-height: 1.6; 
+      color: #1a1a1a;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header { 
+      background: linear-gradient(135deg, rgb(109 40 217 / .9) 0%, rgb(109 40 217) 100%); 
+      color: white; 
+      padding: 40px 30px; 
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .header p {
+      margin: 10px 0 0 0;
+      opacity: 0.9;
+      font-size: 16px;
+    }
+    .content { 
+      padding: 40px 30px;
+    }
+    .timeline { 
+      background: #f9f9f9; 
+      padding: 25px; 
+      border-radius: 8px; 
+      margin: 25px 0;
+      border: 1px solid #eee;
+    }
+    .timeline h2 {
+      color: rgb(109 40 217);
+      font-size: 18px;
+      margin: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step { 
+      display: flex; 
+      align-items: flex-start; 
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    .step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .step-icon { 
+      width: 40px;
+      height: 40px;
+      margin-right: 15px; 
+      flex-shrink: 0;
+    }
+    .step-content strong {
+      color: rgb(109 40 217);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .summary {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #eee;
+    }
+    .summary-item {
+      display: flex;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+    .summary-label {
+      font-weight: 600;
+      color: #666;
+      min-width: 100px;
+    }
+    .summary-value {
+      color: #1a1a1a;
+    }
+    .button { 
+      display: inline-block; 
+      padding: 12px 24px; 
+      background: rgb(109 40 217); 
+      color: white; 
+      text-decoration: none; 
+      border-radius: 4px; 
+      font-weight: 500;
+      margin: 8px;
+    }
+    .button-secondary { 
+      background: #f0f0f0; 
+      color: #333;
+    }
+    .footer {
+      background: #f8f8f8;
+      padding: 20px 30px;
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      border-top: 1px solid #eee;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>Thank You, ${formData.name}!</h1>
-      <p>We've received your estimate request</p>
+      <p>Your estimate request has been received</p>
     </div>
     <div class="content">
-      <p>Thank you for choosing DevTone Agency for your ${formData.projectType} project. We're excited about the opportunity to work with you!</p>
+      <p>Thank you for choosing DevTone Agency. We appreciate your interest in our services and look forward to bringing your vision to life.</p>
       
       <div class="timeline">
-        <h2 style="color: #6366f1; margin-bottom: 20px;">What Happens Next?</h2>
+        <h2>
+          <img src="https://img.icons8.com/fluency/24/time-machine.png" alt="Timeline" width="20" height="20">
+          Next Steps
+        </h2>
         
         <div class="step">
-          <div class="step-number">1</div>
-          <div>
-            <strong>Project Review (2-4 hours)</strong><br>
-            Our team will carefully review your requirements and project details.
+          <img src="https://img.icons8.com/fluency/48/task-planning.png" alt="Review" class="step-icon">
+          <div class="step-content">
+            <strong>Project Review</strong>
+            Our team will analyze your requirements within 2-4 hours
           </div>
         </div>
         
         <div class="step">
-          <div class="step-number">2</div>
-          <div>
-            <strong>Custom Proposal (Within 24 hours)</strong><br>
-            You'll receive a detailed proposal with pricing breakdown and timeline.
+          <img src="https://img.icons8.com/fluency/48/document.png" alt="Proposal" class="step-icon">
+          <div class="step-content">
+            <strong>Custom Proposal</strong>
+            You'll receive a detailed proposal within 24 hours
           </div>
         </div>
         
         <div class="step">
-          <div class="step-number">3</div>
-          <div>
-            <strong>Consultation Call (Within 48 hours)</strong><br>
-            We'll schedule a call to discuss your project in detail and answer any questions.
+          <img src="https://img.icons8.com/fluency/48/phone.png" alt="Call" class="step-icon">
+          <div class="step-content">
+            <strong>Consultation</strong>
+            We'll schedule a call to discuss your project in detail
           </div>
         </div>
       </div>
       
-      <h3 style="color: #6366f1;">Your Project Summary:</h3>
-      <ul style="background: white; padding: 20px; border-radius: 10px;">
-        <li><strong>Project Type:</strong> ${formData.projectType}</li>
-        <li><strong>Budget Range:</strong> ${formData.budget}</li>
-        <li><strong>Timeline:</strong> ${formData.timeline}</li>
-        ${formData.features && formData.features.length > 0 ? `<li><strong>Features:</strong> ${formData.features.join(', ')}</li>` : ''}
-      </ul>
+      <div class="summary">
+        <h3 style="color: rgb(109 40 217); margin: 0 0 15px 0; font-size: 16px;">Project Summary</h3>
+        <div class="summary-item">
+          <div class="summary-label">Project Type:</div>
+          <div class="summary-value">${formData.projectType}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Budget:</div>
+          <div class="summary-value">${formData.budget}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Timeline:</div>
+          <div class="summary-value">${formData.timeline}</div>
+        </div>
+        ${formData.features && formData.features.length > 0 ? `
+        <div class="summary-item">
+          <div class="summary-label">Features:</div>
+          <div class="summary-value">${formData.features.join(', ')}</div>
+        </div>
+        ` : ''}
+      </div>
       
       <div style="text-align: center; margin-top: 30px;">
-        <p style="color: #666;">Need to reach us sooner?</p>
-        <a href="https://wa.me/19177413468" class="button button-whatsapp">WhatsApp Us</a>
+        <p style="color: #666; margin-bottom: 15px;">Questions? Contact us directly:</p>
         <a href="mailto:team@devtone.agency" class="button">Email Us</a>
+        <a href="https://wa.me/19177413468" class="button button-secondary">
+          <img src="https://img.icons8.com/color/16/whatsapp.png" alt="WhatsApp" style="vertical-align: middle; margin-right: 5px;">
+          WhatsApp
+        </a>
       </div>
-      
-      <p style="text-align: center; color: #999; margin-top: 30px; font-size: 14px;">
-        Best regards,<br>
-        <strong>The DevTone Team</strong><br>
-        <a href="https://devtone.agency" style="color: #6366f1;">devtone.agency</a>
-      </p>
+    </div>
+    <div class="footer">
+      <p>Best regards,<br><strong>The DevTone Team</strong></p>
+      <p><a href="https://devtone.agency" style="color: rgb(109 40 217); text-decoration: none;">devtone.agency</a></p>
     </div>
   </div>
 </body>
