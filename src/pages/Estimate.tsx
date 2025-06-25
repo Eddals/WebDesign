@@ -25,8 +25,6 @@ import {
 import SEO from '@/components/SEO';
 import { supabase } from '@/lib/supabase';
 import { submitEstimate } from '@/lib/estimate-api';
-import emailjs from '@emailjs/browser';
-import { EMAILJS_CONFIG } from '@/config/emailjs';
 
 interface FormData {
   // Personal Info
@@ -176,38 +174,225 @@ const Estimate = () => {
     console.log('📋 Form data:', formData);
 
     try {
-      // Initialize EmailJS (only needed once, but safe to call multiple times)
-      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+      // Format budget and timeline for display
+      const budgetFormatted = budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget;
+      const timelineFormatted = timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline;
+      const featuresFormatted = formData.features.join(', ') || 'None selected';
 
-      // Prepare email parameters
-      const emailParams = {
-        to_email: 'team@devtone.agency',
-        from_name: formData.name,
-        from_email: formData.email,
-        phone: formData.phone || 'Not provided',
-        company: formData.company || 'Not provided',
-        country: formData.country || 'Not provided',
-        industry: formData.industry || 'Not provided',
-        project_type: formData.projectType,
-        budget: formData.budget,
-        timeline: formData.timeline,
-        description: formData.description || 'No description provided',
-        features: formData.features.join(', ') || 'None selected',
-        // Additional fields for better formatting
-        budget_formatted: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
-        timeline_formatted: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
-      };
-
-      console.log('📧 Sending email via EmailJS...');
+      console.log('📧 Sending email via Web3Forms...');
       
-      // Send email using EmailJS
-      const emailResponse = await emailjs.send(
-        EMAILJS_CONFIG.SERVICE_ID,
-        EMAILJS_CONFIG.TEMPLATE_ID,
-        emailParams
-      );
+      // Send email using Web3Forms
+      const web3Response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: '3dba5685-e5bf-4a0e-9f94-15f2d38e47ff',
+          
+          // Email configuration
+          subject: `New Estimate Request - ${formData.name} - ${formData.projectType}`,
+          from_name: formData.name,
+          email: formData.email,
+          to: 'team@devtone.agency',
+          
+          // Main message
+          message: `
+NEW ESTIMATE REQUEST
 
-      console.log('📧 EmailJS response:', emailResponse);
+CONTACT INFORMATION:
+• Name: ${formData.name}
+• Email: ${formData.email}
+• Phone: ${formData.phone || 'Not provided'}
+• Company: ${formData.company || 'Not provided'}
+• Country: ${formData.country || 'Not provided'}
+• Industry: ${formData.industry || 'Not provided'}
+
+PROJECT DETAILS:
+• Project Type: ${formData.projectType}
+• Budget: ${budgetFormatted}
+• Timeline: ${timelineFormatted}
+• Features: ${featuresFormatted}
+
+PROJECT DESCRIPTION:
+${formData.description || 'No description provided'}
+
+---
+Submitted at: ${new Date().toLocaleString()}
+          `.trim(),
+          
+          // Additional fields for better organization
+          name: formData.name,
+          phone: formData.phone || 'Not provided',
+          company: formData.company || 'Not provided',
+          country: formData.country || 'Not provided',
+          industry: formData.industry || 'Not provided',
+          project_type: formData.projectType,
+          budget: budgetFormatted,
+          timeline: timelineFormatted,
+          features: featuresFormatted,
+          
+          // Web3Forms settings
+          botcheck: false,
+          replyto: formData.email
+        })
+      });
+
+      const result = await web3Response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to send email');
+      }
+
+      console.log('📧 Web3Forms response:', result);
+
+      // Send confirmation email to client
+      console.log('📧 Sending confirmation email to client...');
+      
+      // Check if client is from Brazil for Portuguese email
+      const isPortuguese = formData.country === 'Brazil' || formData.email.endsWith('.br');
+      
+      const clientEmailResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: '3dba5685-e5bf-4a0e-9f94-15f2d38e47ff',
+          
+          // Email configuration for client
+          subject: isPortuguese ? 'Recebemos sua solicitação de orçamento - DevTone' : 'We received your estimate request - DevTone',
+          from_name: 'DevTone Team',
+          email: 'team@devtone.agency',
+          to: formData.email, // Send to client's email
+          
+          // Confirmation message
+          message: isPortuguese ? `
+Olá ${formData.name},
+
+Obrigado pelo seu interesse na DevTone! Recebemos sua solicitação de orçamento e nossa equipe está animada para conhecer mais sobre seu projeto.
+
+RESUMO DA SUA SOLICITAÇÃO:
+
+INFORMAÇÕES DE CONTATO:
+• Nome: ${formData.name}
+• Email: ${formData.email}
+• Telefone: ${formData.phone || 'Não informado'}
+• Empresa: ${formData.company || 'Não informado'}
+• País: ${formData.country || 'Não informado'}
+• Indústria: ${formData.industry || 'Não informado'}
+
+DETALHES DO PROJETO:
+• Tipo de Projeto: ${formData.projectType}
+• Orçamento: ${budgetFormatted}
+• Prazo: ${timelineFormatted}
+• Recursos Solicitados: ${featuresFormatted}
+
+DESCRIÇÃO DO SEU PROJETO:
+${formData.description || 'Nenhuma descrição fornecida'}
+
+O QUE ACONTECE AGORA?
+
+1. ANÁLISE DO PROJETO (Em 2-4 horas)
+   Nossa equipe especializada está analisando seus requisitos agora mesmo.
+
+2. PROPOSTA PERSONALIZADA (Em 24 horas)
+   Você receberá uma proposta detalhada incluindo:
+   • Roadmap do projeto adaptado às suas necessidades
+   • Cronograma claro com marcos
+   • Detalhamento transparente de preços
+   • Recomendações de tecnologia
+
+3. CHAMADA DE CONSULTORIA (Em 48 horas)
+   Agendaremos uma chamada para discutir seu projeto em detalhes e responder suas dúvidas.
+
+4. INÍCIO DO PROJETO
+   Uma vez aprovado, sua equipe dedicada começa imediatamente.
+
+PRECISA DE ASSISTÊNCIA IMEDIATA?
+• Telefone: +1 917-741-3468
+• Email: team@devtone.agency
+• Site: https://devtone.agency
+
+Estamos ansiosos para dar vida à sua visão!
+
+Atenciosamente,
+Equipe DevTone
+
+---
+Este é um email de confirmação automático. Sua solicitação foi enviada em ${new Date().toLocaleString('pt-BR')}.
+          `.trim() : `
+Hi ${formData.name},
+
+Thank you for your interest in DevTone! We've received your estimate request and our team is excited to learn more about your project.
+
+HERE'S A SUMMARY OF YOUR REQUEST:
+
+CONTACT INFORMATION:
+• Name: ${formData.name}
+• Email: ${formData.email}
+• Phone: ${formData.phone || 'Not provided'}
+• Company: ${formData.company || 'Not provided'}
+• Country: ${formData.country || 'Not provided'}
+• Industry: ${formData.industry || 'Not provided'}
+
+PROJECT DETAILS:
+• Project Type: ${formData.projectType}
+• Budget Range: ${budgetFormatted}
+• Timeline: ${timelineFormatted}
+• Features Requested: ${featuresFormatted}
+
+YOUR PROJECT DESCRIPTION:
+${formData.description || 'No description provided'}
+
+WHAT HAPPENS NEXT?
+
+1. PROJECT REVIEW (Within 2-4 hours)
+   Our expert team is analyzing your requirements right now.
+
+2. CUSTOM PROPOSAL (Within 24 hours)
+   You'll receive a detailed proposal including:
+   • Project roadmap tailored to your needs
+   • Clear milestone schedule
+   • Transparent pricing breakdown
+   • Technology recommendations
+
+3. CONSULTATION CALL (Within 48 hours)
+   We'll schedule a call to discuss your project in detail and answer any questions.
+
+4. PROJECT KICKOFF
+   Once approved, your dedicated team begins immediately.
+
+NEED IMMEDIATE ASSISTANCE?
+• Call us: +1 917-741-3468
+• Email: team@devtone.agency
+• Visit: https://devtone.agency
+
+We're looking forward to bringing your vision to life!
+
+Best regards,
+The DevTone Team
+
+---
+This is an automated confirmation email. Your request was submitted on ${new Date().toLocaleString()}.
+          `.trim(),
+          
+          // Web3Forms settings
+          botcheck: false,
+          replyto: 'team@devtone.agency'
+        })
+      });
+
+      const clientResult = await clientEmailResponse.json();
+      
+      if (!clientResult.success) {
+        console.error('Failed to send client confirmation:', clientResult.message);
+        // Don't throw error - admin email was sent successfully
+      } else {
+        console.log('✅ Client confirmation email sent');
+      }
 
       // Also try to send via API if available (for ActivePieces webhook)
       try {
@@ -280,11 +465,9 @@ const Estimate = () => {
     } catch (error) {
       console.error('❌ Error submitting form:', error);
       
-      // Check if it's an EmailJS error
-      if (error instanceof Error && error.message.includes('The public key is required')) {
-        alert('Email service not configured. Please contact support at team@devtone.agency');
-      } else if (error instanceof Error && error.message.includes('The service ID is required')) {
-        alert('Email service not configured. Please contact support at team@devtone.agency');
+      // Show user-friendly error message
+      if (error instanceof Error) {
+        alert(`Error: ${error.message}. Please try again or contact us directly at team@devtone.agency`);
       } else {
         alert('There was an error submitting your request. Please try again or contact us directly at team@devtone.agency');
       }

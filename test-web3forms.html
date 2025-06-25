@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Web3Forms - DevTone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #8b5cf6;
+            text-align: center;
+        }
+        .success-box {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #7c3aed;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #004085;
+        }
+        .info p {
+            margin: 5px 0;
+            color: #004085;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Web3Forms Test</h1>
+        
+        <div class="info">
+            <h3>Configuration:</h3>
+            <p><strong>Access Key:</strong> 3dba5685-e5bf-4a0e-9f94-15f2d38e47ff</p>
+            <p><strong>Sending to:</strong> team@devtone.agency</p>
+            <p><strong>Service:</strong> Web3Forms (250 free emails/month)</p>
+        </div>
+
+        <button id="testButton" onclick="sendTestEmail()">Send Test Email</button>
+        
+        <div id="successBox" class="success-box">
+            <h3>✅ Success!</h3>
+            <p>Email sent successfully! Check your inbox at team@devtone.agency</p>
+        </div>
+        
+        <div id="errorBox" class="error-box">
+            <h3>❌ Error</h3>
+            <p id="errorMessage"></p>
+        </div>
+        
+        <h3>Test Data Being Sent:</h3>
+        <pre id="testData"></pre>
+    </div>
+
+    <script>
+        // Test data
+        const testData = {
+            access_key: '3dba5685-e5bf-4a0e-9f94-15f2d38e47ff',
+            subject: 'Test Email - Web3Forms Integration',
+            from_name: 'Test User',
+            email: 'test@example.com',
+            to: 'team@devtone.agency',
+            message: `
+TEST EMAIL FROM WEB3FORMS
+
+This is a test to verify the Web3Forms integration is working correctly.
+
+CONTACT INFORMATION:
+• Name: Test User
+• Email: test@example.com
+• Phone: +1 (555) 123-4567
+• Company: Test Company Inc.
+
+PROJECT DETAILS:
+• Project Type: E-commerce Store
+• Budget: $2,000 - $5,000
+• Timeline: 1 Month
+• Features: Payment Processing, SEO, Analytics
+
+If you receive this email, the integration is working perfectly!
+
+Sent at: ${new Date().toLocaleString()}
+            `.trim(),
+            
+            // Additional fields
+            name: 'Test User',
+            phone: '+1 (555) 123-4567',
+            company: 'Test Company Inc.',
+            project_type: 'E-commerce Store',
+            budget: '$2,000 - $5,000',
+            timeline: '1 Month',
+            
+            // Settings
+            botcheck: false,
+            replyto: 'test@example.com'
+        };
+        
+        // Display test data
+        document.getElementById('testData').textContent = JSON.stringify(testData, null, 2);
+        
+        async function sendTestEmail() {
+            const button = document.getElementById('testButton');
+            const successBox = document.getElementById('successBox');
+            const errorBox = document.getElementById('errorBox');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Reset UI
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            successBox.style.display = 'none';
+            errorBox.style.display = 'none';
+            
+            try {
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                console.log('Response:', result);
+                
+                if (result.success) {
+                    successBox.style.display = 'block';
+                    button.textContent = 'Send Another Test';
+                } else {
+                    throw new Error(result.message || 'Failed to send email');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = error.message || 'Unknown error occurred';
+                errorBox.style.display = 'block';
+                button.textContent = 'Try Again';
+            } finally {
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
