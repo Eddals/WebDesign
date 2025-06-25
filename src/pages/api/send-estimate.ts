@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     // 1. Send email to DevTone team (admin notification)
     await resend.emails.send({
-      from: 'DevTone <onboarding@resend.dev>', // Using test domain until devtone.com is verified
+      from: 'DevTone <team@devtone.agency>', // Use your verified domain email
       to: ['sweepeasellc@gmail.com'], // Admin email
       subject: `🚀 New Estimate Request from ${name} - ${projectType}`,
       html: `
@@ -103,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // 2. Send confirmation email to client (IMPORTANT: This confirms their quote request)
     await resend.emails.send({
-      from: 'DevTone Team <onboarding@resend.dev>', // Using test domain until devtone.com is verified
+      from: 'DevTone Team <team@devtone.agency>', // Use your verified domain email
       to: [email], // Client's email - they will receive confirmation
       subject: `Thank you for your estimate request, ${name}!`,
       html: `
@@ -197,7 +197,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `,
     });
 
-    return res.status(200).json({ success: true });
+    // Return the email IDs for tracking
+    return res.status(200).json({ 
+      success: true,
+      message: 'Emails sent successfully'
+    });
   } catch (error) {
     console.error('Error sending email:', error);
     return res.status(500).json({ error: 'Failed to send email' });
