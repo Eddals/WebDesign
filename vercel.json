@@ -2,6 +2,12 @@
   "functions": {
     "api/send-estimate.js": {
       "maxDuration": 10
+    },
+    "api/send-estimate-email.js": {
+      "maxDuration": 10
+    },
+    "api/send-estimate-simple.js": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
