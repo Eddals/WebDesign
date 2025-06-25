@@ -92,7 +92,7 @@ export const submitEstimate = async (formData: EstimateFormData): Promise<Estima
     // Try to send to our API, but don't fail if it's not available
     try {
       // Use the correct endpoint based on environment
-      const endpoint = API_URL ? `${API_URL}/api/estimate` : '/api/send-estimate-resend';
+      const endpoint = API_URL ? `${API_URL}/api/estimate` : '/api/send-estimate-email';
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
