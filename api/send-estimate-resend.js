@@ -323,9 +323,9 @@ Submitted at: ${new Date().toISOString()}`
       // Send client confirmation email (only to client)
       try {
         const { data: clientEmail, error: clientError } = await resend.emails.send({
-        from: 'DevTone Agency <noreply@devtone.agency>',
+        from: 'DevTone Agency <hello@devtone.agency>',
         to: [formData.email], // Send only to client
-        subject: 'We received your estimate request - DevTone',
+        subject: 'Your Project Estimate Request - DevTone Agency',
         html: `
 <!DOCTYPE html>
 <html>
@@ -333,90 +333,87 @@ Submitted at: ${new Date().toISOString()}`
   <meta charset="UTF-8">
   <style>
     body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
       line-height: 1.6; 
-      color: #1a1a1a;
+      color: #333;
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background-color: #ffffff;
     }
     .container { 
       max-width: 600px; 
       margin: 0 auto; 
       background: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .header { 
-      background: linear-gradient(135deg, rgb(109 40 217 / .9) 0%, rgb(109 40 217) 100%); 
+      background: rgb(88, 28, 135); 
       color: white; 
-      padding: 40px 30px; 
-      text-align: center;
+      padding: 30px; 
+      text-align: left;
     }
     .header h1 {
       margin: 0;
-      font-size: 24px;
-      font-weight: 600;
-    }
-    .header p {
-      margin: 10px 0 0 0;
-      opacity: 0.9;
-      font-size: 16px;
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
     }
     .content { 
-      padding: 40px 30px;
+      padding: 30px;
+      background: white;
     }
-    .timeline { 
-      background: #f9f9f9; 
-      padding: 25px; 
-      border-radius: 8px; 
-      margin: 25px 0;
-      border: 1px solid #eee;
-    }
-    .timeline h2 {
-      color: rgb(109 40 217);
-      font-size: 18px;
-      margin: 0 0 20px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .step { 
-      display: flex; 
-      align-items: flex-start; 
+    .greeting {
+      font-size: 16px;
       margin-bottom: 20px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #eee;
     }
-    .step:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
+    .message {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 25px;
     }
-    .step-icon { 
-      width: 40px;
-      height: 40px;
-      margin-right: 15px; 
-      flex-shrink: 0;
-    }
-    .step-content strong {
-      color: rgb(109 40 217);
-      display: block;
-      margin-bottom: 4px;
-    }
-    .summary {
-      background: #f9f9f9;
+    .timeline-box {
+      border: 1px solid #e0e0e0;
       padding: 20px;
-      border-radius: 8px;
       margin: 20px 0;
-      border: 1px solid #eee;
+      background: #fafafa;
     }
-    .summary-item {
+    .timeline-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: rgb(88, 28, 135);
+      margin-bottom: 15px;
+    }
+    .timeline-item {
       display: flex;
-      padding: 8px 0;
-      border-bottom: 1px solid #e5e5e5;
+      align-items: flex-start;
+      margin-bottom: 15px;
+      font-size: 14px;
     }
-    .summary-item:last-child {
-      border-bottom: none;
+    .timeline-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+      flex-shrink: 0;
+      filter: brightness(0) saturate(100%) invert(17%) sepia(89%) saturate(1352%) hue-rotate(257deg) brightness(92%) contrast(109%);
+    }
+    .timeline-text {
+      flex: 1;
+    }
+    .timeline-text strong {
+      display: block;
+      color: #333;
+      margin-bottom: 2px;
+    }
+    .summary-box {
+      background: #f8f8f8;
+      border-left: 3px solid rgb(88, 28, 135);
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .summary-row {
+      display: flex;
+      padding: 5px 0;
     }
     .summary-label {
       font-weight: 600;
@@ -424,140 +421,168 @@ Submitted at: ${new Date().toISOString()}`
       min-width: 100px;
     }
     .summary-value {
-      color: #1a1a1a;
-    }
-    .button { 
-      display: inline-block; 
-      padding: 12px 24px; 
-      background: rgb(109 40 217); 
-      color: white; 
-      text-decoration: none; 
-      border-radius: 4px; 
-      font-weight: 500;
-      margin: 8px;
-    }
-    .button-secondary { 
-      background: #f0f0f0; 
       color: #333;
+    }
+    .contact-info {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 14px;
+      color: #666;
+    }
+    .signature {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 14px;
+      color: #333;
+    }
+    .signature-name {
+      font-weight: 600;
+      color: rgb(88, 28, 135);
+      margin-bottom: 5px;
     }
     .footer {
       background: #f8f8f8;
       padding: 20px 30px;
       text-align: center;
-      font-size: 13px;
-      color: #666;
-      border-top: 1px solid #eee;
+      font-size: 12px;
+      color: #999;
+      border-top: 1px solid #e0e0e0;
+    }
+    a {
+      color: rgb(88, 28, 135);
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>Thank You, ${formData.name}!</h1>
-      <p>Your estimate request has been received</p>
+      <h1>Estimate Request Confirmation</h1>
     </div>
     <div class="content">
-      <p>Thank you for choosing DevTone Agency. We appreciate your interest in our services and look forward to bringing your vision to life.</p>
+      <div class="greeting">
+        Dear ${formData.name},
+      </div>
       
-      <div class="timeline">
-        <h2>
-          <img src="https://img.icons8.com/fluency/24/time-machine.png" alt="Timeline" width="20" height="20">
-          Next Steps
-        </h2>
+      <div class="message">
+        Thank you for your interest in DevTone Agency. We have successfully received your project estimate request and our team is reviewing the details.
+      </div>
+      
+      <div class="timeline-box">
+        <div class="timeline-title">What Happens Next</div>
         
-        <div class="step">
-          <img src="https://img.icons8.com/fluency/48/task-planning.png" alt="Review" class="step-icon">
-          <div class="step-content">
-            <strong>Project Review</strong>
-            Our team will analyze your requirements within 2-4 hours
+        <div class="timeline-item">
+          <img src="https://img.icons8.com/ios-glyphs/30/000000/task-planning.png" alt="Review" class="timeline-icon">
+          <div class="timeline-text">
+            <strong>1. Project Review</strong>
+            Our team will analyze your requirements (2-4 hours)
           </div>
         </div>
         
-        <div class="step">
-          <img src="https://img.icons8.com/fluency/48/document.png" alt="Proposal" class="step-icon">
-          <div class="step-content">
-            <strong>Custom Proposal</strong>
-            You'll receive a detailed proposal within 24 hours
+        <div class="timeline-item">
+          <img src="https://img.icons8.com/ios-glyphs/30/000000/document.png" alt="Proposal" class="timeline-icon">
+          <div class="timeline-text">
+            <strong>2. Custom Proposal</strong>
+            You'll receive a detailed proposal (within 24 hours)
           </div>
         </div>
         
-        <div class="step">
-          <img src="https://img.icons8.com/fluency/48/phone.png" alt="Call" class="step-icon">
-          <div class="step-content">
-            <strong>Consultation</strong>
-            We'll schedule a call to discuss your project in detail
+        <div class="timeline-item">
+          <img src="https://img.icons8.com/ios-glyphs/30/000000/phone.png" alt="Consultation" class="timeline-icon">
+          <div class="timeline-text">
+            <strong>3. Consultation</strong>
+            We'll schedule a call to discuss your project
           </div>
         </div>
       </div>
       
-      <div class="summary">
-        <h3 style="color: rgb(109 40 217); margin: 0 0 15px 0; font-size: 16px;">Project Summary</h3>
-        <div class="summary-item">
+      <div class="summary-box">
+        <strong style="color: rgb(88, 28, 135); margin-bottom: 10px; display: block;">Your Project Details</strong>
+        <div class="summary-row">
           <div class="summary-label">Project Type:</div>
           <div class="summary-value">${formData.projectType}</div>
         </div>
-        <div class="summary-item">
+        <div class="summary-row">
           <div class="summary-label">Budget:</div>
           <div class="summary-value">${formData.budget}</div>
         </div>
-        <div class="summary-item">
+        <div class="summary-row">
           <div class="summary-label">Timeline:</div>
           <div class="summary-value">${formData.timeline}</div>
         </div>
         ${formData.features && formData.features.length > 0 ? `
-        <div class="summary-item">
+        <div class="summary-row">
           <div class="summary-label">Features:</div>
           <div class="summary-value">${formData.features.join(', ')}</div>
         </div>
         ` : ''}
       </div>
       
-      <div style="text-align: center; margin-top: 30px;">
-        <p style="color: #666; margin-bottom: 15px;">Questions? Contact us directly:</p>
-        <a href="mailto:sweepeasellc@gmail.com" class="button">Email Us</a>
-        <a href="https://wa.me/19177413468" class="button button-secondary">
-          <img src="https://img.icons8.com/color/16/whatsapp.png" alt="WhatsApp" style="vertical-align: middle; margin-right: 5px;">
-          WhatsApp
-        </a>
+      <div class="contact-info">
+        If you have any immediate questions, please don't hesitate to reach out:
+        <br><br>
+        <strong>Email:</strong> <a href="mailto:hello@devtone.agency">hello@devtone.agency</a><br>
+        <strong>Phone:</strong> <a href="tel:+19177413468">+1 (917) 741-3468</a><br>
+        <strong>WhatsApp:</strong> <a href="https://wa.me/19177413468">+1 (917) 741-3468</a>
+      </div>
+      
+      <div class="signature">
+        <div class="signature-name">Matheus Brito</div>
+        <div>Founder & Lead Developer</div>
+        <div>DevTone Agency</div>
+        <div style="margin-top: 10px;">
+          <a href="https://devtone.agency">devtone.agency</a> | 
+          <a href="https://linkedin.com/company/devtone">LinkedIn</a>
+        </div>
       </div>
     </div>
     <div class="footer">
-      <p>Best regards,<br><strong>The DevTone Team</strong></p>
-      <p><a href="https://devtone.agency" style="color: rgb(109 40 217); text-decoration: none;">devtone.agency</a></p>
+      © ${new Date().getFullYear()} DevTone Agency. All rights reserved.<br>
+      This email was sent to ${formData.email} regarding your estimate request.
     </div>
   </div>
 </body>
 </html>
         `,
         text: `
-Thank You, ${formData.name}!
+Dear ${formData.name},
 
-We've received your estimate request for your ${formData.projectType} project.
+Thank you for your interest in DevTone Agency. We have successfully received your project estimate request and our team is reviewing the details.
 
-What Happens Next?
+WHAT HAPPENS NEXT
 
-1. Project Review (2-4 hours)
-   Our team will carefully review your requirements and project details.
+1. Project Review
+   Our team will analyze your requirements (2-4 hours)
 
-2. Custom Proposal (Within 24 hours)
-   You'll receive a detailed proposal with pricing breakdown and timeline.
+2. Custom Proposal
+   You'll receive a detailed proposal (within 24 hours)
 
-3. Consultation Call (Within 48 hours)
-   We'll schedule a call to discuss your project in detail and answer any questions.
+3. Consultation
+   We'll schedule a call to discuss your project
 
-Your Project Summary:
+YOUR PROJECT DETAILS
 - Project Type: ${formData.projectType}
-- Budget Range: ${formData.budget}
+- Budget: ${formData.budget}
 - Timeline: ${formData.timeline}
 ${formData.features && formData.features.length > 0 ? `- Features: ${formData.features.join(', ')}` : ''}
 
-Need to reach us sooner?
-- WhatsApp: +1 917-741-3468
-- Email: team@devtone.agency
+If you have any immediate questions, please don't hesitate to reach out:
+
+Email: hello@devtone.agency
+Phone: +1 (917) 741-3468
+WhatsApp: +1 (917) 741-3468
 
 Best regards,
-The DevTone Team
+
+Matheus Brito
+Founder & Lead Developer
+DevTone Agency
 devtone.agency
+
+© ${new Date().getFullYear()} DevTone Agency. All rights reserved.
+This email was sent to ${formData.email} regarding your estimate request.
         `
       });
 
