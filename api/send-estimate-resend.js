@@ -38,8 +38,8 @@ export default async function handler(req, res) {
     // Send admin notification email
     if (resend) {
       try {
-        // ALWAYS send to admin@devtone.agency
-        const adminEmailAddress = 'admin@devtone.agency';
+        // ALWAYS send to team@devtone.agency
+        const adminEmailAddress = 'team@devtone.agency';
         console.log('Sending admin notification to:', adminEmailAddress);
         
         const { data: adminEmail, error: adminError } = await resend.emails.send({
@@ -178,16 +178,16 @@ Submitted on: ${new Date().toLocaleString()}
 
       if (adminError) {
         console.error('Admin email error:', adminError);
-        console.error('Failed to send to admin@devtone.agency');
+        console.error('Failed to send to team@devtone.agency');
         // Log the full error for debugging
         console.error('Full error details:', JSON.stringify(adminError, null, 2));
       } else {
-        console.log('Admin email sent successfully to admin@devtone.agency');
+        console.log('Admin email sent successfully to team@devtone.agency');
         console.log('Email ID:', adminEmail?.id);
       }
       } catch (emailError) {
         console.error('Critical error sending admin email:', emailError);
-        console.error('Failed to notify admin@devtone.agency about new estimate request');
+        console.error('Failed to notify team@devtone.agency about new estimate request');
       }
 
       // Send client confirmation email (only to client)
