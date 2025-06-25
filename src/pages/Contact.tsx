@@ -316,27 +316,15 @@ const Contact = () => {
                   <div className="text-purple-400 font-semibold mb-2">{method.details}</div>
                   <div className="text-xs text-white">{method.response}</div>
 
-                  {method.isButton ? (
-                    <motion.button
-                      onClick={method.action}
-                      className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Connect
-                      <ArrowRight className="w-3 h-3" />
-                    </motion.button>
-                  ) : (
-                    <motion.a
-                      href={method.link}
-                      className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Connect
-                      <ArrowRight className="w-3 h-3" />
-                    </motion.a>
-                  )}
+                  <motion.a
+                    href={method.link}
+                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Connect
+                    <ArrowRight className="w-3 h-3" />
+                  </motion.a>
                 </div>
               </motion.div>
             ))}

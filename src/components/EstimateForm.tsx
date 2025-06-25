@@ -150,7 +150,7 @@ const EstimateForm: React.FC = () => {
       console.error('Error submitting form:', error);
       
       // Handle specific error types
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         setSubmitStatus({
           type: 'error',
           message: 'Request timed out. Please try again later.'
