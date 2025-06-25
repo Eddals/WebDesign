@@ -180,11 +180,12 @@ Submitted on: ${new Date().toLocaleString()}
         console.error('Error sending admin email:', emailError);
       }
 
-      // Send client confirmation email
+      // Send client confirmation email (to both client and admin)
       try {
+        const adminEmailAddress = process.env.ADMIN_EMAIL || 'team@devtone.agency';
         const { data: clientEmail, error: clientError } = await resend.emails.send({
         from: 'DevTone Agency <noreply@devtone.agency>',
-        to: [formData.email],
+        to: [formData.email, adminEmailAddress], // Send to both client and admin
         subject: 'We received your estimate request - DevTone',
         html: `
 <!DOCTYPE html>
