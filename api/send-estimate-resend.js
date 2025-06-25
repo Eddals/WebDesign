@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       try {
         const adminEmailAddress = process.env.ADMIN_EMAIL || 'team@devtone.agency';
         const { data: adminEmail, error: adminError } = await resend.emails.send({
-        from: 'DevTone Estimates <onboarding@resend.dev>', // Change this after domain verification
+        from: 'DevTone Estimates <noreply@devtone.agency>',
         to: [adminEmailAddress],
         subject: `New Estimate Request: ${formData.name} - ${formData.projectType}`,
         reply_to: formData.email,
@@ -183,7 +183,7 @@ Submitted on: ${new Date().toLocaleString()}
       // Send client confirmation email
       try {
         const { data: clientEmail, error: clientError } = await resend.emails.send({
-        from: 'DevTone Agency <onboarding@resend.dev>', // Change this after domain verification
+        from: 'DevTone Agency <noreply@devtone.agency>',
         to: [formData.email],
         subject: 'We received your estimate request - DevTone',
         html: `
