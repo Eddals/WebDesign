@@ -441,7 +441,7 @@ const Estimate = () => {
               >
                 {/* Success Icon */}
                 <div className="text-center">
-                  <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-purple-700 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle className="w-12 h-12 text-white" />
                   </div>
                   <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -515,39 +515,7 @@ const Estimate = () => {
                   </div>
                 </motion.div>
 
-                {/* Quick Actions */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-8"
-                >
-                  <h3 className="text-lg font-semibold text-white mb-4">Need to Reach Us Sooner?</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <a
-                      href="tel:+19177413468"
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-all"
-                    >
-                      <Phone className="w-5 h-5" />
-                      Call Now
-                    </a>
-                    <a
-                      href="https://wa.me/19177413468"
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 rounded-full text-green-400 transition-all"
-                    >
-                      <MessageSquare className="w-5 h-5" />
-                      WhatsApp
-                    </a>
-                    <a
-                      href="mailto:team@devtone.agency"
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-all"
-                    >
-                      <Mail className="w-5 h-5" />
-                      Email Us
-                    </a>
-                  </div>
-                </motion.div>
-
+                
                 {/* Important Notes */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
