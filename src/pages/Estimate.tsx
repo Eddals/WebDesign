@@ -25,6 +25,8 @@ import {
 import SEO from '@/components/SEO';
 import { supabase } from '@/lib/supabase';
 import { submitEstimate } from '@/lib/estimate-api';
+import emailjs from '@emailjs/browser';
+import { EMAILJS_CONFIG } from '@/config/emailjs';
 
 interface FormData {
   // Personal Info
@@ -170,27 +172,64 @@ const Estimate = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    console.log('🚀 Iniciando submissão do formulário...');
-    console.log('📋 Dados do formulário:', formData);
+    console.log('🚀 Starting form submission...');
+    console.log('📋 Form data:', formData);
 
     try {
-      // First, try to send email via our API
-      console.log('📧 Sending estimate via email API...');
-      const emailResult = await submitEstimate({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        country: formData.country || 'United States',
-        industry: formData.industry,
-        projectType: formData.projectType,
+      // Initialize EmailJS (only needed once, but safe to call multiple times)
+      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+
+      // Prepare email parameters
+      const emailParams = {
+        to_email: 'team@devtone.agency',
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone || 'Not provided',
+        company: formData.company || 'Not provided',
+        country: formData.country || 'Not provided',
+        industry: formData.industry || 'Not provided',
+        project_type: formData.projectType,
         budget: formData.budget,
         timeline: formData.timeline,
-        description: formData.description,
-        features: formData.features
-      });
+        description: formData.description || 'No description provided',
+        features: formData.features.join(', ') || 'None selected',
+        // Additional fields for better formatting
+        budget_formatted: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
+        timeline_formatted: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
+      };
 
-      console.log('📧 Email API response:', emailResult);
+      console.log('📧 Sending email via EmailJS...');
+      
+      // Send email using EmailJS
+      const emailResponse = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        emailParams
+      );
+
+      console.log('📧 EmailJS response:', emailResponse);
+
+      // Also try to send via API if available (for ActivePieces webhook)
+      try {
+        console.log('🔄 Sending to API for webhook...');
+        const apiResult = await submitEstimate({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          country: formData.country || 'United States',
+          industry: formData.industry,
+          projectType: formData.projectType,
+          budget: formData.budget,
+          timeline: formData.timeline,
+          description: formData.description,
+          features: formData.features
+        });
+        console.log('📧 API response:', apiResult);
+      } catch (apiError) {
+        console.log('⚠️ API call failed (non-critical):', apiError);
+        // Continue even if API fails - EmailJS is our primary method now
+      }
 
       // Try to save to Supabase, but don't fail if it doesn't work
       try {
@@ -235,23 +274,27 @@ const Estimate = () => {
         // Continue with form submission even if Supabase fails
       }
 
-      // Always show success if we got a response from the API or webhook
-      // This ensures users see success even if there are backend issues
+      // Show success - EmailJS sent the email
       console.log('✅ Estimate submission completed');
       setIsSubmitted(true);
     } catch (error) {
-      console.error('❌ Erro geral na submissão:', error);
-      console.error('- Tipo:', typeof error);
-      if (error instanceof Error) {
-        console.error('- Mensagem:', error.message);
-        console.error('- Stack:', error.stack);
+      console.error('❌ Error submitting form:', error);
+      
+      // Check if it's an EmailJS error
+      if (error instanceof Error && error.message.includes('The public key is required')) {
+        alert('Email service not configured. Please contact support at team@devtone.agency');
+      } else if (error instanceof Error && error.message.includes('The service ID is required')) {
+        alert('Email service not configured. Please contact support at team@devtone.agency');
+      } else {
+        alert('There was an error submitting your request. Please try again or contact us directly at team@devtone.agency');
       }
-
-      // Still show success to user even if database fails
-      setIsSubmitted(true);
-    } finally {
+      
       setIsSubmitting(false);
-      console.log('🏁 Submissão finalizada');
+    } finally {
+      if (isSubmitted) {
+        setIsSubmitting(false);
+      }
+      console.log('🏁 Form submission completed');
     }
   };
 
