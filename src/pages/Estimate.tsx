@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calculator,
   CheckCircle,
@@ -20,7 +20,9 @@ import {
   MessageSquare,
   Send,
   MapPin,
-  Calendar
+  Calendar,
+  ChevronDown,
+  Search
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { supabase } from '@/lib/supabase';
@@ -41,6 +43,7 @@ interface FormData {
   timeline: string;
   description: string;
   features: string[];
+  retainer: string;
 }
 
 const Estimate = () => {
@@ -55,67 +58,113 @@ const Estimate = () => {
     budget: '',
     timeline: '',
     description: '',
-    features: []
+    features: [],
+    retainer: 'none'
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
+  const countryRef = useRef<HTMLDivElement>(null);
 
-  // Project types with detailed descriptions
+  // Project types - simplified
   const projectTypes = [
     {
       id: 'landing',
       name: 'Landing Page',
-      description: 'Single page to capture leads',
+      description: 'Professional single-page website',
       icon: <Globe className="w-6 h-6" />,
-      goodFor: 'Product launches, marketing campaigns, lead generation',
-      includes: 'Hero section, features, testimonials, contact form',
-      startingPrice: '$500'
+      minBudget: 'starter'
     },
     {
       id: 'portfolio',
       name: 'Portfolio Website',
-      description: 'Showcase your work',
+      description: 'Showcase your work professionally',
       icon: <Palette className="w-6 h-6" />,
-      goodFor: 'Freelancers, artists, photographers, designers',
-      includes: 'Gallery, about section, contact, project showcase',
-      startingPrice: '$800'
+      minBudget: 'starter'
     },
     {
       id: 'business',
       name: 'Business Website',
-      description: 'Professional company site',
+      description: 'Professional business presence',
       icon: <Briefcase className="w-6 h-6" />,
-      goodFor: 'Small to medium businesses, service providers',
-      includes: 'Multiple pages, services, team, blog-ready',
-      startingPrice: '$1,500'
+      minBudget: 'starter'
     },
     {
       id: 'ecommerce',
       name: 'E-commerce Store',
-      description: 'Online store with payments',
+      description: 'Secure online store',
       icon: <ShoppingCart className="w-6 h-6" />,
-      goodFor: 'Retail businesses, online sellers, dropshippers',
-      includes: 'Product catalog, cart, checkout, payment processing',
-      startingPrice: '$2,500'
+      minBudget: 'professional'
     },
     {
       id: 'webapp',
-      name: 'Web Application',
-      description: 'Custom web application',
+      name: 'Web Application / Dashboard',
+      description: 'Custom application or dashboard',
       icon: <Code className="w-6 h-6" />,
-      goodFor: 'SaaS products, dashboards, custom tools',
-      includes: 'User authentication, database, custom features',
-      startingPrice: '$5,000'
+      minBudget: 'professional'
     }
   ];
 
-  // Budget ranges
+  // Budget ranges - simplified and secure
   const budgetRanges = [
-    { id: 'starter', label: '$500 - $2,000', value: 'starter' },
-    { id: 'professional', label: '$2,000 - $5,000', value: 'professional' },
-    { id: 'premium', label: '$5,000 - $15,000', value: 'premium' },
-    { id: 'enterprise', label: '$15,000+', value: 'enterprise' }
+    { 
+      id: 'starter', 
+      label: '$500 - $1,500', 
+      value: 'starter',
+      minAmount: 500
+    },
+    { 
+      id: 'professional', 
+      label: '$1,500 - $5,000', 
+      value: 'professional',
+      minAmount: 1500
+    },
+    { 
+      id: 'premium', 
+      label: '$5,000 - $15,000', 
+      value: 'premium',
+      minAmount: 5000
+    },
+    { 
+      id: 'enterprise', 
+      label: '$15,000+', 
+      value: 'enterprise',
+      minAmount: 15000
+    }
+  ];
+
+  // Monthly retainer options
+  const retainerOptions = [
+    { 
+      id: 'none', 
+      label: 'No monthly retainer', 
+      value: 'none',
+      price: '$0/mo',
+      description: 'One-time project only'
+    },
+    { 
+      id: 'basic', 
+      label: 'Basic Maintenance', 
+      value: 'basic',
+      price: '$200/mo',
+      description: 'Monthly updates, backups, basic support'
+    },
+    { 
+      id: 'standard', 
+      label: 'Standard Support', 
+      value: 'standard',
+      price: '$500/mo',
+      description: 'Weekly updates, priority support, minor changes'
+    },
+    { 
+      id: 'premium', 
+      label: 'Premium Management', 
+      value: 'premium',
+      price: '$1,000/mo',
+      description: 'Daily monitoring, unlimited support, ongoing improvements'
+    }
   ];
 
   // Timeline options
@@ -247,36 +296,80 @@ const Estimate = () => {
     }
   ];
 
-  // Helper function to check if feature is available for selected budget
+  // Helper function to check if feature is available for selected budget and project type
   const isFeatureAvailable = (feature: any) => {
-    if (!formData.budget) return true; // Show all if no budget selected
+    if (!formData.budget || !formData.projectType) return false; // Hide all if no budget/type selected
     
     const budgetOrder = ['starter', 'professional', 'premium', 'enterprise'];
     const selectedBudgetIndex = budgetOrder.indexOf(formData.budget);
     const requiredBudgetIndex = budgetOrder.indexOf(feature.minBudget);
     
+    // Special restrictions for certain features
+    if (feature.id === 'admin_dashboard' || feature.id === 'membership' || feature.id === 'analytics') {
+      // These require at least professional budget AND specific project types
+      if (selectedBudgetIndex < 1) return false; // Must be at least professional
+      if (!['webapp', 'ecommerce', 'business'].includes(formData.projectType)) return false;
+    }
+    
+    if (feature.id === 'booking' || feature.id === 'payment') {
+      // These require at least professional budget
+      if (selectedBudgetIndex < 1) return false;
+    }
+    
     return selectedBudgetIndex >= requiredBudgetIndex;
   };
 
-  // Countries list for notifications
+  // Countries list with flags
   const countries = [
-    'United States', 'Canada', 'United Kingdom', 'Australia', 'Germany', 'France', 'Spain', 'Italy',
-    'Netherlands', 'Sweden', 'Norway', 'Denmark', 'Brazil', 'Mexico', 'Argentina', 'Japan',
-    'South Korea', 'Singapore', 'India', 'China', 'Russia', 'Poland', 'Czech Republic', 'Austria',
-    'Switzerland', 'Belgium', 'Portugal', 'Ireland', 'New Zealand', 'South Africa'
+    { name: 'United States', flag: '🇺🇸' },
+    { name: 'Canada', flag: '🇨🇦' },
+    { name: 'United Kingdom', flag: '🇬🇧' },
+    { name: 'Australia', flag: '🇦🇺' },
+    { name: 'Germany', flag: '🇩🇪' },
+    { name: 'France', flag: '🇫🇷' },
+    { name: 'Spain', flag: '🇪🇸' },
+    { name: 'Italy', flag: '🇮🇹' },
+    { name: 'Netherlands', flag: '🇳🇱' },
+    { name: 'Sweden', flag: '🇸🇪' },
+    { name: 'Norway', flag: '🇳🇴' },
+    { name: 'Denmark', flag: '🇩🇰' },
+    { name: 'Brazil', flag: '🇧🇷' },
+    { name: 'Mexico', flag: '🇲🇽' },
+    { name: 'Argentina', flag: '🇦🇷' },
+    { name: 'Japan', flag: '🇯🇵' },
+    { name: 'South Korea', flag: '🇰🇷' },
+    { name: 'Singapore', flag: '🇸🇬' },
+    { name: 'India', flag: '🇮🇳' },
+    { name: 'China', flag: '🇨🇳' },
+    { name: 'Russia', flag: '🇷🇺' },
+    { name: 'Poland', flag: '🇵🇱' },
+    { name: 'Czech Republic', flag: '🇨🇿' },
+    { name: 'Austria', flag: '🇦🇹' },
+    { name: 'Switzerland', flag: '🇨🇭' },
+    { name: 'Belgium', flag: '🇧🇪' },
+    { name: 'Portugal', flag: '🇵🇹' },
+    { name: 'Ireland', flag: '🇮🇪' },
+    { name: 'New Zealand', flag: '🇳🇿' },
+    { name: 'South Africa', flag: '🇿🇦' }
   ];
 
-  // Business industries for creative notifications
-  const businessIndustries = [
-    'Technology & Software', 'Healthcare & Medical', 'E-commerce & Retail', 'Real Estate',
-    'Finance & Banking', 'Education & Training', 'Food & Restaurant', 'Fashion & Beauty',
-    'Fitness & Wellness', 'Legal Services', 'Marketing & Advertising', 'Construction & Architecture',
-    'Travel & Tourism', 'Entertainment & Media', 'Non-profit & Charity', 'Automotive',
-    'Manufacturing', 'Consulting', 'Photography & Creative', 'Sports & Recreation',
-    'Agriculture & Farming', 'Energy & Environment', 'Transportation & Logistics', 'Art & Design',
-    'Music & Audio', 'Gaming & Apps', 'Security & Safety', 'Home Services', 'Pet Care & Veterinary',
-    'Wedding & Events'
-  ];
+  // Filter countries based on search
+  const filteredCountries = countries.filter(country =>
+    country.name.toLowerCase().includes(countrySearch.toLowerCase())
+  );
+
+  
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (countryRef.current && !countryRef.current.contains(event.target as Node)) {
+        setIsCountryOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Handle form updates
   const updateFormData = (field: keyof FormData, value: any) => {
@@ -306,6 +399,8 @@ const Estimate = () => {
       const budgetFormatted = budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget;
       const timelineFormatted = timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline;
       const featuresFormatted = formData.features.join(', ') || 'None selected';
+      const retainerFormatted = retainerOptions.find(r => r.value === formData.retainer)?.label || 'None';
+      const retainerPrice = retainerOptions.find(r => r.value === formData.retainer)?.price || '$0/mo';
 
       console.log('📧 Sending email via Web3Forms...');
       
@@ -342,6 +437,7 @@ PROJECT DETAILS:
 • Budget: ${budgetFormatted}
 • Timeline: ${timelineFormatted}
 • Features: ${featuresFormatted}
+• Monthly Retainer: ${retainerFormatted} (${retainerPrice})
 
 PROJECT DESCRIPTION:
 ${formData.description || 'No description provided'}
@@ -696,35 +792,14 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="max-w-4xl mx-auto mb-8"
+              className="flex justify-center mb-8"
             >
-              <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-purple-400" />
-                  Quick Budget Guide
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <p className="text-purple-400 font-semibold">Starter</p>
-                    <p className="text-white text-sm">$500 - $2,000</p>
-                    <p className="text-white/60 text-xs mt-1">Basic websites, landing pages</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-purple-400 font-semibold">Professional</p>
-                    <p className="text-white text-sm">$2,000 - $5,000</p>
-                    <p className="text-white/60 text-xs mt-1">Business sites, booking systems</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-purple-400 font-semibold">Premium</p>
-                    <p className="text-white text-sm">$5,000 - $15,000</p>
-                    <p className="text-white/60 text-xs mt-1">E-commerce, custom features</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-purple-400 font-semibold">Enterprise</p>
-                    <p className="text-white text-sm">$15,000+</p>
-                    <p className="text-white/60 text-xs mt-1">Complex apps, full systems</p>
-                  </div>
-                </div>
+              <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-4 max-w-2xl w-full">
+                <p className="text-white/80 text-sm text-center">
+                  <Shield className="w-4 h-4 text-purple-400 inline mr-2" />
+                  All projects are professionally built with secure, clean code. 
+                  Final pricing will be discussed during our consultation call.
+                </p>
               </div>
             </motion.div>
           </div>
@@ -755,7 +830,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                       required
                       value={formData.name}
                       onChange={(e) => updateFormData('name', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="Your full name"
                     />
                   </div>
@@ -769,71 +844,170 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                       required
                       value={formData.email}
                       onChange={(e) => updateFormData('email', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="your@email.com"
                     />
                   </div>
 
                   <div>
                     <label className="block text-white/80 font-medium mb-2">
-                      Phone Number
+                      Phone Number *
                     </label>
                     <input
                       type="tel"
+                      required
                       value={formData.phone}
                       onChange={(e) => updateFormData('phone', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="(555) 123-4567"
                     />
                   </div>
 
                   <div>
                     <label className="block text-white/80 font-medium mb-2">
-                      Company Name
+                      Company Name *
                     </label>
                     <input
                       type="text"
+                      required
                       value={formData.company}
                       onChange={(e) => updateFormData('company', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="Your company name"
                     />
                   </div>
 
-                  <div>
+                  <div ref={countryRef}>
                     <label className="block text-white/80 font-medium mb-2">
-                      Country
+                      Country *
                     </label>
-                    <select
-                      value={formData.country}
-                      onChange={(e) => updateFormData('country', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors"
-                    >
-                      <option value="" className="bg-gray-800">Select your country</option>
-                      {countries.map((country) => (
-                        <option key={country} value={country} className="bg-gray-800">
-                          {country}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setIsCountryOpen(!isCountryOpen)}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white focus:outline-none focus:border-purple-500 transition-colors flex items-center justify-between"
+                      >
+                        <span className={formData.country ? 'text-white' : 'text-white/50'}>
+                          {formData.country || 'Select your country'}
+                        </span>
+                        <ChevronDown className={`w-5 h-5 text-white/50 transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      <AnimatePresence>
+                        {isCountryOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute z-50 w-full mt-2 bg-gray-900 border border-white/20 rounded-xl shadow-2xl overflow-hidden"
+                          >
+                            {/* Search Input */}
+                            <div className="p-3 border-b border-white/10">
+                              <div className="relative">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/50" />
+                                <input
+                                  type="text"
+                                  value={countrySearch}
+                                  onChange={(e) => setCountrySearch(e.target.value)}
+                                  placeholder="Search countries..."
+                                  className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 text-sm"
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Country List */}
+                            <div className="max-h-64 overflow-y-auto">
+                              {filteredCountries.length > 0 ? (
+                                filteredCountries.map((country) => (
+                                  <button
+                                    key={country.name}
+                                    type="button"
+                                    onClick={() => {
+                                      updateFormData('country', country.name);
+                                      setIsCountryOpen(false);
+                                      setCountrySearch('');
+                                    }}
+                                    className={`w-full px-4 py-3 text-left hover:bg-purple-500/20 transition-colors flex items-center justify-between ${
+                                      formData.country === country.name ? 'bg-purple-500/10' : ''
+                                    }`}
+                                  >
+                                    <span className="text-white">{country.name}</span>
+                                    {formData.country === country.name && (
+                                      <CheckCircle className="w-5 h-5 text-purple-400" />
+                                    )}
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="px-4 py-8 text-center text-white/50">
+                                  No countries found matching "{countrySearch}"
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-white/80 font-medium mb-2">
-                      Business Industry
+                      Business Industry *
                     </label>
-                    <select
+                    <input
+                      type="text"
+                      required
                       value={formData.industry}
                       onChange={(e) => updateFormData('industry', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors"
-                    >
-                      <option value="" className="bg-gray-800">Select your industry</option>
-                      {businessIndustries.map((industry) => (
-                        <option key={industry} value={industry} className="bg-gray-800">
-                          {industry}
-                        </option>
-                      ))}
-                    </select>
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                      placeholder="e.g. Technology, Healthcare, Retail"
+                    />
+                  </div>
+                </div>
+
+                {/* Monthly Retainer */}
+                <div className="mt-8 pt-8 border-t border-white/10">
+                  <h3 className="text-lg font-semibold text-white mb-4">Monthly Retainer (Optional)</h3>
+                  <p className="text-white/60 text-sm mb-6">
+                    Keep your website updated and secure with ongoing support
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {retainerOptions.map((retainer) => (
+                      <label
+                        key={retainer.id}
+                        className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
+                          formData.retainer === retainer.value
+                            ? 'border-purple-500 bg-purple-500/20'
+                            : 'border-white/20 bg-white/5 hover:border-purple-400'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="retainer"
+                          value={retainer.value}
+                          checked={formData.retainer === retainer.value}
+                          onChange={(e) => updateFormData('retainer', e.target.value)}
+                          className="sr-only"
+                        />
+                        <div className={`w-4 h-4 rounded-full border-2 mr-3 mt-0.5 flex-shrink-0 ${
+                          formData.retainer === retainer.value
+                            ? 'border-purple-500 bg-purple-500'
+                            : 'border-white/40'
+                        }`}>
+                          {formData.retainer === retainer.value && (
+                            <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-white font-medium">{retainer.label}</span>
+                            <span className="text-purple-400 font-semibold">{retainer.price}</span>
+                          </div>
+                          <p className="text-white/60 text-sm">{retainer.description}</p>
+                        </div>
+                      </label>
+                    ))}
                   </div>
                 </div>
               </motion.div>
@@ -847,7 +1021,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
               >
                 <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                   <Briefcase className="w-6 h-6 text-purple-400" />
-                  Project Type
+                  Project Type *
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -866,19 +1040,8 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                       <div className="flex items-start gap-4">
                         <div className="text-purple-400 flex-shrink-0">{type.icon}</div>
                         <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-white font-semibold">{type.name}</h3>
-                            <span className="text-purple-400 text-sm font-medium">from {type.startingPrice}</span>
-                          </div>
-                          <p className="text-white/60 text-sm mb-3">{type.description}</p>
-                          <div className="space-y-2">
-                            <p className="text-xs text-purple-300">
-                              <span className="font-medium">Good for:</span> {type.goodFor}
-                            </p>
-                            <p className="text-xs text-white/50">
-                              <span className="font-medium">Includes:</span> {type.includes}
-                            </p>
-                          </div>
+                          <h3 className="text-white font-semibold mb-2">{type.name}</h3>
+                          <p className="text-white/60 text-sm">{type.description}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -895,15 +1058,15 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
               >
                 <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                   <DollarSign className="w-6 h-6 text-purple-400" />
-                  Budget & Timeline
+                  Budget & Timeline *
                 </h2>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Budget */}
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Budget Range</h3>
+                    <h3 className="text-lg font-semibold text-white mb-4">Budget Range *</h3>
                     <p className="text-white/60 text-sm mb-4">
-                      Your budget determines available features and project scope
+                    Your budget determines available features and project scope
                     </p>
                     <div className="space-y-3">
                       {budgetRanges.map((budget) => (
@@ -940,7 +1103,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
 
                   {/* Timeline */}
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Timeline</h3>
+                    <h3 className="text-lg font-semibold text-white mb-4">Timeline *</h3>
                     <div className="space-y-3">
                       {timelineOptions.map((timeline) => (
                         <label
@@ -988,11 +1151,12 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   What Features Would You Like?
                 </h2>
                 <p className="text-white/70 mb-6">
-                  Select the features for your project. 
-                  {formData.budget && formData.budget !== 'enterprise' && (
-                    <span className="text-yellow-400 text-sm block mt-2">
-                      ⚡ Some premium features require a higher budget
+                  {!formData.projectType || !formData.budget ? (
+                    <span className="text-yellow-400 text-sm">
+                      Please select a project type and budget first
                     </span>
+                  ) : (
+                    'Select additional features for your project'
                   )}
                 </p>
 
@@ -1050,7 +1214,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                             </p>
                             {!isAvailable && (
                               <p className="text-xs text-yellow-400/80 mt-1">
-                                Requires {feature.minBudget === 'professional' ? '$2,000+' : '$5,000+'} budget
+                                Not available for this selection
                               </p>
                             )}
                           </div>
@@ -1060,15 +1224,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   })}
                 </div>
 
-                {formData.budget === 'starter' && (
-                  <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                    <p className="text-yellow-400 text-sm">
-                      💡 <strong>Tip:</strong> Upgrade to Professional ($2,000+) to unlock premium features like booking systems, 
-                      membership areas, and admin dashboards.
-                    </p>
-                  </div>
-                )}
-              </motion.div>
+                              </motion.div>
 
               {/* Project Description */}
               <motion.div
@@ -1100,7 +1256,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
               >
                 <motion.button
                   type="submit"
-                  disabled={isSubmitting || !formData.name || !formData.email || !formData.projectType}
+                  disabled={isSubmitting || !formData.name || !formData.email || !formData.phone || !formData.company || !formData.country || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
                   className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-semibold text-lg transition-all duration-300 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -1121,6 +1277,20 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                 <p className="text-white/60 text-sm mt-4">
                   We'll review your request and get back to you within 24 hours
                 </p>
+
+                {/* Professional Notice */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="mt-8 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl max-w-2xl mx-auto"
+                >
+                  <p className="text-purple-300 text-sm text-center">
+                    <Shield className="w-4 h-4 text-purple-400 inline mr-2" />
+                    All projects are built with professional, secure code. 
+                    We'll discuss specific details and pricing during our consultation call.
+                  </p>
+                </motion.div>
               </motion.div>
             </form>
           </div>
