@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useForm, ValidationError } from '@formspree/react';
 import {
   Calculator,
   CheckCircle,
@@ -25,8 +26,6 @@ import {
   Search
 } from 'lucide-react';
 import SEO from '@/components/SEO';
-import { supabase } from '@/lib/supabase';
-import { submitEstimate } from '@/lib/estimate-api';
 
 interface FormData {
   // Personal Info
@@ -47,6 +46,9 @@ interface FormData {
 }
 
 const Estimate = () => {
+  // Formspree hook
+  const [formspreeState, handleFormspreeSubmit] = useForm("mwpbwvza");
+  
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -62,8 +64,6 @@ const Estimate = () => {
     retainer: 'none'
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const countryRef = useRef<HTMLDivElement>(null);
@@ -386,326 +386,8 @@ const Estimate = () => {
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    console.log('🚀 Starting form submission...');
-    console.log('📋 Form data:', formData);
-
-    try {
-      // Format budget and timeline for display
-      const budgetFormatted = budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget;
-      const timelineFormatted = timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline;
-      const featuresFormatted = formData.features.join(', ') || 'None selected';
-      const retainerFormatted = retainerOptions.find(r => r.value === formData.retainer)?.label || 'None';
-      const retainerPrice = retainerOptions.find(r => r.value === formData.retainer)?.price || '$0/mo';
-
-      console.log('📧 Sending email via Web3Forms...');
-      
-      // Send email using Web3Forms
-      const web3Response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: '3dba5685-e5bf-4a0e-9f94-15f2d38e47ff',
-          
-          // Email configuration
-          subject: `New Estimate Request - ${formData.name} - ${formData.projectType}`,
-          from_name: formData.name,
-          email: formData.email,
-          to: 'team@devtone.agency',
-          
-          // Main message
-          message: `
-NEW ESTIMATE REQUEST
-
-CONTACT INFORMATION:
-• Name: ${formData.name}
-• Email: ${formData.email}
-• Phone: ${formData.phone || 'Not provided'}
-• Company: ${formData.company || 'Not provided'}
-• Country: ${formData.country || 'Not provided'}
-• Industry: ${formData.industry || 'Not provided'}
-
-PROJECT DETAILS:
-• Project Type: ${formData.projectType}
-• Budget: ${budgetFormatted}
-• Timeline: ${timelineFormatted}
-• Features: ${featuresFormatted}
-• Monthly Retainer: ${retainerFormatted} (${retainerPrice})
-
-PROJECT DESCRIPTION:
-${formData.description || 'No description provided'}
-
----
-Submitted at: ${new Date().toLocaleString()}
-          `.trim(),
-          
-          // Additional fields for better organization
-          name: formData.name,
-          phone: formData.phone || 'Not provided',
-          company: formData.company || 'Not provided',
-          country: formData.country || 'Not provided',
-          industry: formData.industry || 'Not provided',
-          project_type: formData.projectType,
-          budget: budgetFormatted,
-          timeline: timelineFormatted,
-          features: featuresFormatted,
-          
-          // Web3Forms settings
-          botcheck: false,
-          replyto: formData.email
-        })
-      });
-
-      const result = await web3Response.json();
-      
-      if (!result.success) {
-        throw new Error(result.message || 'Failed to send email');
-      }
-
-      console.log('📧 Web3Forms response:', result);
-
-      // Send confirmation email to client
-      console.log('📧 Sending confirmation email to client...');
-      
-      // Check if client is from Brazil for Portuguese email
-      const isPortuguese = formData.country === 'Brazil' || formData.email.endsWith('.br');
-      
-      const clientEmailResponse = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: '3dba5685-e5bf-4a0e-9f94-15f2d38e47ff',
-          
-          // Email configuration for client
-          subject: isPortuguese ? 'Recebemos sua solicitação de orçamento - DevTone' : 'We received your estimate request - DevTone',
-          from_name: 'DevTone Team',
-          email: 'team@devtone.agency',
-          to: formData.email, // Send to client's email
-          
-          // Confirmation message
-          message: isPortuguese ? `
-Olá ${formData.name},
-
-Obrigado pelo seu interesse na DevTone! Recebemos sua solicitação de orçamento e nossa equipe está animada para conhecer mais sobre seu projeto.
-
-RESUMO DA SUA SOLICITAÇÃO:
-
-INFORMAÇÕES DE CONTATO:
-• Nome: ${formData.name}
-• Email: ${formData.email}
-• Telefone: ${formData.phone || 'Não informado'}
-• Empresa: ${formData.company || 'Não informado'}
-• País: ${formData.country || 'Não informado'}
-• Indústria: ${formData.industry || 'Não informado'}
-
-DETALHES DO PROJETO:
-• Tipo de Projeto: ${formData.projectType}
-• Orçamento: ${budgetFormatted}
-• Prazo: ${timelineFormatted}
-• Recursos Solicitados: ${featuresFormatted}
-
-DESCRIÇÃO DO SEU PROJETO:
-${formData.description || 'Nenhuma descrição fornecida'}
-
-O QUE ACONTECE AGORA?
-
-1. ANÁLISE DO PROJETO (Em 2-4 horas)
-   Nossa equipe especializada está analisando seus requisitos agora mesmo.
-
-2. PROPOSTA PERSONALIZADA (Em 24 horas)
-   Você receberá uma proposta detalhada incluindo:
-   • Roadmap do projeto adaptado às suas necessidades
-   • Cronograma claro com marcos
-   • Detalhamento transparente de preços
-   • Recomendações de tecnologia
-
-3. CHAMADA DE CONSULTORIA (Em 48 horas)
-   Agendaremos uma chamada para discutir seu projeto em detalhes e responder suas dúvidas.
-
-4. INÍCIO DO PROJETO
-   Uma vez aprovado, sua equipe dedicada começa imediatamente.
-
-PRECISA DE ASSISTÊNCIA IMEDIATA?
-• Telefone: +1 917-741-3468
-• Email: team@devtone.agency
-• Site: https://devtone.agency
-
-Estamos ansiosos para dar vida à sua visão!
-
-Atenciosamente,
-Equipe DevTone
-
----
-Este é um email de confirmação automático. Sua solicitação foi enviada em ${new Date().toLocaleString('pt-BR')}.
-          `.trim() : `
-Hi ${formData.name},
-
-Thank you for your interest in DevTone! We've received your estimate request and our team is excited to learn more about your project.
-
-HERE'S A SUMMARY OF YOUR REQUEST:
-
-CONTACT INFORMATION:
-• Name: ${formData.name}
-• Email: ${formData.email}
-• Phone: ${formData.phone || 'Not provided'}
-• Company: ${formData.company || 'Not provided'}
-• Country: ${formData.country || 'Not provided'}
-• Industry: ${formData.industry || 'Not provided'}
-
-PROJECT DETAILS:
-• Project Type: ${formData.projectType}
-• Budget Range: ${budgetFormatted}
-• Timeline: ${timelineFormatted}
-• Features Requested: ${featuresFormatted}
-
-YOUR PROJECT DESCRIPTION:
-${formData.description || 'No description provided'}
-
-WHAT HAPPENS NEXT?
-
-1. PROJECT REVIEW (Within 2-4 hours)
-   Our expert team is analyzing your requirements right now.
-
-2. CUSTOM PROPOSAL (Within 24 hours)
-   You'll receive a detailed proposal including:
-   • Project roadmap tailored to your needs
-   • Clear milestone schedule
-   • Transparent pricing breakdown
-   • Technology recommendations
-
-3. CONSULTATION CALL (Within 48 hours)
-   We'll schedule a call to discuss your project in detail and answer any questions.
-
-4. PROJECT KICKOFF
-   Once approved, your dedicated team begins immediately.
-
-NEED IMMEDIATE ASSISTANCE?
-• Call us: +1 917-741-3468
-• Email: team@devtone.agency
-• Visit: https://devtone.agency
-
-We're looking forward to bringing your vision to life!
-
-Best regards,
-The DevTone Team
-
----
-This is an automated confirmation email. Your request was submitted on ${new Date().toLocaleString()}.
-          `.trim(),
-          
-          // Web3Forms settings
-          botcheck: false,
-          replyto: 'team@devtone.agency'
-        })
-      });
-
-      const clientResult = await clientEmailResponse.json();
-      
-      if (!clientResult.success) {
-        console.error('Failed to send client confirmation:', clientResult.message);
-        // Don't throw error - admin email was sent successfully
-      } else {
-        console.log('✅ Client confirmation email sent');
-      }
-
-      // Also try to send via API if available (for ActivePieces webhook)
-      try {
-        console.log('🔄 Sending to API for webhook...');
-        const apiResult = await submitEstimate({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          company: formData.company,
-          country: formData.country || 'United States',
-          industry: formData.industry,
-          projectType: formData.projectType,
-          budget: formData.budget,
-          timeline: formData.timeline,
-          description: formData.description,
-          features: formData.features
-        });
-        console.log('📧 API response:', apiResult);
-      } catch (apiError) {
-        console.log('⚠️ API call failed (non-critical):', apiError);
-        // Continue even if API fails - EmailJS is our primary method now
-      }
-
-      // Try to save to Supabase, but don't fail if it doesn't work
-      try {
-        const userCountry = formData.country || 'United States';
-        const estimateData = {
-          full_name: formData.name,
-          email: formData.email,
-          phone: formData.phone || null,
-          company: formData.company || null,
-          country: userCountry,
-          industry: formData.industry || null,
-          project_type: formData.projectType,
-          description: formData.description,
-          budget_range: formData.budget,
-          timeline: formData.timeline,
-          features: formData.features,
-          status: 'pending'
-        };
-
-        console.log('💾 Attempting to save to Supabase...');
-        
-        // Add a timeout to the Supabase request
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Supabase request timed out')), 5000)
-        );
-        
-        // Race between the Supabase request and the timeout
-        const supabasePromise = supabase
-          .from('quotes')
-          .insert([estimateData])
-          .select();
-          
-        const result = await Promise.race([supabasePromise, timeoutPromise]);
-        
-        if (result.error) {
-          console.error('❌ Supabase error (non-critical):', result.error);
-        } else if (result.data) {
-          console.log('✅ Saved to Supabase:', result.data);
-        }
-      } catch (supabaseError) {
-        console.error('❌ Supabase error (non-critical):', supabaseError);
-        // Continue with form submission even if Supabase fails
-      }
-
-      // Show success - EmailJS sent the email
-      console.log('✅ Estimate submission completed');
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error('❌ Error submitting form:', error);
-      
-      // Show user-friendly error message
-      if (error instanceof Error) {
-        alert(`Error: ${error.message}. Please try again or contact us directly at team@devtone.agency`);
-      } else {
-        alert('There was an error submitting your request. Please try again or contact us directly at team@devtone.agency');
-      }
-      
-      setIsSubmitting(false);
-    } finally {
-      if (isSubmitted) {
-        setIsSubmitting(false);
-      }
-      console.log('🏁 Form submission completed');
-    }
-  };
-
-  if (isSubmitted) {
+  
+  if (formspreeState.succeeded) {
     return (
       <>
         <SEO
@@ -806,7 +488,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
 
           {/* Form */}
           <div className="max-w-4xl mx-auto">
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleFormspreeSubmit} className="space-y-8">
 
               {/* Personal Information */}
               <motion.div
@@ -827,11 +509,18 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                     </label>
                     <input
                       type="text"
+                      name="name"
                       required
                       value={formData.name}
                       onChange={(e) => updateFormData('name', e.target.value)}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="Your full name"
+                    />
+                    <ValidationError 
+                      prefix="Name" 
+                      field="name"
+                      errors={formspreeState.errors}
+                      className="text-red-400 text-sm mt-1"
                     />
                   </div>
 
@@ -841,11 +530,18 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                     </label>
                     <input
                       type="email"
+                      name="email"
                       required
                       value={formData.email}
                       onChange={(e) => updateFormData('email', e.target.value)}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="your@email.com"
+                    />
+                    <ValidationError 
+                      prefix="Email" 
+                      field="email"
+                      errors={formspreeState.errors}
+                      className="text-red-400 text-sm mt-1"
                     />
                   </div>
 
@@ -855,6 +551,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                     </label>
                     <input
                       type="tel"
+                      name="phone"
                       required
                       value={formData.phone}
                       onChange={(e) => updateFormData('phone', e.target.value)}
@@ -869,6 +566,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                     </label>
                     <input
                       type="text"
+                      name="company"
                       required
                       value={formData.company}
                       onChange={(e) => updateFormData('company', e.target.value)}
@@ -881,6 +579,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                     <label className="block text-white/80 font-medium mb-2">
                       Country *
                     </label>
+                    <input type="hidden" name="country" value={formData.country} required />
                     <div className="relative">
                       <button
                         type="button"
@@ -957,6 +656,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                     </label>
                     <input
                       type="text"
+                      name="industry"
                       required
                       value={formData.industry}
                       onChange={(e) => updateFormData('industry', e.target.value)}
@@ -972,6 +672,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   <p className="text-white/60 text-sm mb-6">
                     Keep your website updated and secure with ongoing support
                   </p>
+                  <input type="hidden" name="retainer" value={formData.retainer} />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {retainerOptions.map((retainer) => (
                       <label
@@ -1023,7 +724,8 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   <Briefcase className="w-6 h-6 text-purple-400" />
                   Project Type *
                 </h2>
-
+                
+                <input type="hidden" name="projectType" value={formData.projectType} required />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {projectTypes.map((type) => (
                     <motion.div
@@ -1060,7 +762,9 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   <DollarSign className="w-6 h-6 text-purple-400" />
                   Budget & Timeline *
                 </h2>
-
+                
+                <input type="hidden" name="budget" value={formData.budget} required />
+                <input type="hidden" name="timeline" value={formData.timeline} required />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Budget */}
                   <div>
@@ -1150,6 +854,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   <CheckCircle className="w-6 h-6 text-purple-400" />
                   What Features Would You Like?
                 </h2>
+                <input type="hidden" name="features" value={formData.features.join(', ')} />
                 <p className="text-white/70 mb-6">
                   {!formData.projectType || !formData.budget ? (
                     <span className="text-yellow-400 text-sm">
@@ -1239,6 +944,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                 </h2>
 
                 <textarea
+                  name="description"
                   value={formData.description}
                   onChange={(e) => updateFormData('description', e.target.value)}
                   rows={6}
@@ -1256,12 +962,12 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
               >
                 <motion.button
                   type="submit"
-                  disabled={isSubmitting || !formData.name || !formData.email || !formData.phone || !formData.company || !formData.country || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
+                  disabled={formspreeState.submitting || !formData.name || !formData.email || !formData.phone || !formData.company || !formData.country || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
                   className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-semibold text-lg transition-all duration-300 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {isSubmitting ? (
+                  {formspreeState.submitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       Submitting...
