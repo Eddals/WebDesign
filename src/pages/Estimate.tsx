@@ -61,37 +61,52 @@ const Estimate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Project types
+  // Project types with detailed descriptions
   const projectTypes = [
     {
       id: 'landing',
       name: 'Landing Page',
       description: 'Single page to capture leads',
-      icon: <Globe className="w-6 h-6" />
+      icon: <Globe className="w-6 h-6" />,
+      goodFor: 'Product launches, marketing campaigns, lead generation',
+      includes: 'Hero section, features, testimonials, contact form',
+      startingPrice: '$500'
     },
     {
       id: 'portfolio',
       name: 'Portfolio Website',
       description: 'Showcase your work',
-      icon: <Palette className="w-6 h-6" />
+      icon: <Palette className="w-6 h-6" />,
+      goodFor: 'Freelancers, artists, photographers, designers',
+      includes: 'Gallery, about section, contact, project showcase',
+      startingPrice: '$800'
     },
     {
       id: 'business',
       name: 'Business Website',
       description: 'Professional company site',
-      icon: <Briefcase className="w-6 h-6" />
+      icon: <Briefcase className="w-6 h-6" />,
+      goodFor: 'Small to medium businesses, service providers',
+      includes: 'Multiple pages, services, team, blog-ready',
+      startingPrice: '$1,500'
     },
     {
       id: 'ecommerce',
       name: 'E-commerce Store',
       description: 'Online store with payments',
-      icon: <ShoppingCart className="w-6 h-6" />
+      icon: <ShoppingCart className="w-6 h-6" />,
+      goodFor: 'Retail businesses, online sellers, dropshippers',
+      includes: 'Product catalog, cart, checkout, payment processing',
+      startingPrice: '$2,500'
     },
     {
       id: 'webapp',
       name: 'Web Application',
       description: 'Custom web application',
-      icon: <Code className="w-6 h-6" />
+      icon: <Code className="w-6 h-6" />,
+      goodFor: 'SaaS products, dashboards, custom tools',
+      includes: 'User authentication, database, custom features',
+      startingPrice: '$5,000'
     }
   ];
 
@@ -111,24 +126,137 @@ const Estimate = () => {
     { id: 'flexible', label: 'Flexible Timeline', value: 'flexible' }
   ];
 
-  // Available features
+  // Available features with descriptions and budget requirements
   const availableFeatures = [
-    { id: 'contact_form', name: 'Contact Form', icon: <Mail className="w-4 h-4" /> },
-    { id: 'blog', name: 'Blog System', icon: <MessageSquare className="w-4 h-4" /> },
-    { id: 'gallery', name: 'Image Gallery', icon: <Palette className="w-4 h-4" /> },
-    { id: 'booking', name: 'Booking/Appointment System', icon: <Calendar className="w-4 h-4" /> },
-    { id: 'newsletter', name: 'Newsletter Signup', icon: <Mail className="w-4 h-4" /> },
-    { id: 'multilingual', name: 'Multilingual Support', icon: <Globe className="w-4 h-4" /> },
-    { id: 'seo', name: 'SEO Optimization', icon: <CheckCircle className="w-4 h-4" /> },
-    { id: 'analytics', name: 'Analytics Integration', icon: <CheckCircle className="w-4 h-4" /> },
-    { id: 'social', name: 'Social Media Integration', icon: <Users className="w-4 h-4" /> },
-    { id: 'security', name: 'Security Package', icon: <Shield className="w-4 h-4" /> },
-    { id: 'maintenance', name: 'Maintenance Plan', icon: <CheckCircle className="w-4 h-4" /> },
-    { id: 'training', name: 'Admin Training', icon: <Users className="w-4 h-4" /> },
-    { id: 'live_chat', name: 'Live Chat Feature', icon: <MessageSquare className="w-4 h-4" /> },
-    { id: 'payment', name: 'Payment Processing', icon: <DollarSign className="w-4 h-4" /> },
-    { id: 'membership', name: 'Membership/Login System', icon: <User className="w-4 h-4" /> }
+    { 
+      id: 'contact_form', 
+      name: 'Contact Form', 
+      icon: <Mail className="w-4 h-4" />,
+      description: 'Let visitors reach you easily',
+      minBudget: 'starter'
+    },
+    { 
+      id: 'blog', 
+      name: 'Blog System', 
+      icon: <MessageSquare className="w-4 h-4" />,
+      description: 'Share updates and improve SEO',
+      minBudget: 'starter'
+    },
+    { 
+      id: 'gallery', 
+      name: 'Image Gallery', 
+      icon: <Palette className="w-4 h-4" />,
+      description: 'Showcase photos and portfolio',
+      minBudget: 'starter'
+    },
+    { 
+      id: 'newsletter', 
+      name: 'Newsletter Signup', 
+      icon: <Mail className="w-4 h-4" />,
+      description: 'Build your email list',
+      minBudget: 'starter'
+    },
+    { 
+      id: 'seo', 
+      name: 'SEO Optimization', 
+      icon: <CheckCircle className="w-4 h-4" />,
+      description: 'Rank higher on Google',
+      minBudget: 'starter'
+    },
+    { 
+      id: 'social', 
+      name: 'Social Media Integration', 
+      icon: <Users className="w-4 h-4" />,
+      description: 'Connect your social accounts',
+      minBudget: 'starter'
+    },
+    { 
+      id: 'live_chat', 
+      name: 'Live Chat Feature', 
+      icon: <MessageSquare className="w-4 h-4" />,
+      description: 'Real-time customer support',
+      minBudget: 'starter'
+    },
+    { 
+      id: 'multilingual', 
+      name: 'Multilingual Support', 
+      icon: <Globe className="w-4 h-4" />,
+      description: 'Multiple language versions',
+      minBudget: 'professional'
+    },
+    { 
+      id: 'payment', 
+      name: 'Payment Processing', 
+      icon: <DollarSign className="w-4 h-4" />,
+      description: 'Accept online payments',
+      minBudget: 'professional'
+    },
+    { 
+      id: 'booking', 
+      name: 'Booking/Appointment System', 
+      icon: <Calendar className="w-4 h-4" />,
+      description: 'Let clients book online',
+      minBudget: 'professional',
+      premium: true
+    },
+    { 
+      id: 'analytics', 
+      name: 'Analytics Dashboard', 
+      icon: <CheckCircle className="w-4 h-4" />,
+      description: 'Track visitor behavior',
+      minBudget: 'professional',
+      premium: true
+    },
+    { 
+      id: 'membership', 
+      name: 'Membership/Login System', 
+      icon: <User className="w-4 h-4" />,
+      description: 'User accounts & profiles',
+      minBudget: 'professional',
+      premium: true
+    },
+    { 
+      id: 'security', 
+      name: 'Advanced Security Package', 
+      icon: <Shield className="w-4 h-4" />,
+      description: 'Enhanced protection & SSL',
+      minBudget: 'professional',
+      premium: true
+    },
+    { 
+      id: 'admin_dashboard', 
+      name: 'Admin Dashboard', 
+      icon: <Code className="w-4 h-4" />,
+      description: 'Manage your site content',
+      minBudget: 'professional',
+      premium: true
+    },
+    { 
+      id: 'maintenance', 
+      name: 'Maintenance Plan', 
+      icon: <CheckCircle className="w-4 h-4" />,
+      description: 'Monthly updates & support',
+      minBudget: 'premium'
+    },
+    { 
+      id: 'training', 
+      name: 'Admin Training', 
+      icon: <Users className="w-4 h-4" />,
+      description: '1-on-1 training sessions',
+      minBudget: 'premium'
+    }
   ];
+
+  // Helper function to check if feature is available for selected budget
+  const isFeatureAvailable = (feature: any) => {
+    if (!formData.budget) return true; // Show all if no budget selected
+    
+    const budgetOrder = ['starter', 'professional', 'premium', 'enterprise'];
+    const selectedBudgetIndex = budgetOrder.indexOf(formData.budget);
+    const requiredBudgetIndex = budgetOrder.indexOf(feature.minBudget);
+    
+    return selectedBudgetIndex >= requiredBudgetIndex;
+  };
 
   // Countries list for notifications
   const countries = [
@@ -562,6 +690,43 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                 Share your project details and we'll provide you with a detailed estimate and timeline.
               </p>
             </motion.div>
+
+            {/* Budget Guide */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="max-w-4xl mx-auto mb-8"
+            >
+              <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-6">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-purple-400" />
+                  Quick Budget Guide
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <p className="text-purple-400 font-semibold">Starter</p>
+                    <p className="text-white text-sm">$500 - $2,000</p>
+                    <p className="text-white/60 text-xs mt-1">Basic websites, landing pages</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-purple-400 font-semibold">Professional</p>
+                    <p className="text-white text-sm">$2,000 - $5,000</p>
+                    <p className="text-white/60 text-xs mt-1">Business sites, booking systems</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-purple-400 font-semibold">Premium</p>
+                    <p className="text-white text-sm">$5,000 - $15,000</p>
+                    <p className="text-white/60 text-xs mt-1">E-commerce, custom features</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-purple-400 font-semibold">Enterprise</p>
+                    <p className="text-white text-sm">$15,000+</p>
+                    <p className="text-white/60 text-xs mt-1">Complex apps, full systems</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
           {/* Form */}
@@ -685,7 +850,7 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   Project Type
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {projectTypes.map((type) => (
                     <motion.div
                       key={type.id}
@@ -698,9 +863,24 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <div className="text-purple-400 mb-3">{type.icon}</div>
-                      <h3 className="text-white font-semibold mb-2">{type.name}</h3>
-                      <p className="text-white/60 text-sm">{type.description}</p>
+                      <div className="flex items-start gap-4">
+                        <div className="text-purple-400 flex-shrink-0">{type.icon}</div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-white font-semibold">{type.name}</h3>
+                            <span className="text-purple-400 text-sm font-medium">from {type.startingPrice}</span>
+                          </div>
+                          <p className="text-white/60 text-sm mb-3">{type.description}</p>
+                          <div className="space-y-2">
+                            <p className="text-xs text-purple-300">
+                              <span className="font-medium">Good for:</span> {type.goodFor}
+                            </p>
+                            <p className="text-xs text-white/50">
+                              <span className="font-medium">Includes:</span> {type.includes}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </motion.div>
                   ))}
                 </div>
@@ -722,6 +902,9 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   {/* Budget */}
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-4">Budget Range</h3>
+                    <p className="text-white/60 text-sm mb-4">
+                      Your budget determines available features and project scope
+                    </p>
                     <div className="space-y-3">
                       {budgetRanges.map((budget) => (
                         <label
@@ -804,40 +987,87 @@ This is an automated confirmation email. Your request was submitted on ${new Dat
                   <CheckCircle className="w-6 h-6 text-purple-400" />
                   What Features Would You Like?
                 </h2>
-                <p className="text-white/70 mb-6">Select the specific features you'd like to include in your project:</p>
+                <p className="text-white/70 mb-6">
+                  Select the features for your project. 
+                  {formData.budget && formData.budget !== 'enterprise' && (
+                    <span className="text-yellow-400 text-sm block mt-2">
+                      ⚡ Some premium features require a higher budget
+                    </span>
+                  )}
+                </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {availableFeatures.map((feature) => (
-                    <label
-                      key={feature.id}
-                      className={`flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
-                        formData.features.includes(feature.id)
-                          ? 'border-purple-500 bg-purple-500/20'
-                          : 'border-white/20 bg-white/5 hover:border-purple-400'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.features.includes(feature.id)}
-                        onChange={() => toggleFeature(feature.id)}
-                        className="sr-only"
-                      />
-                      <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
-                        formData.features.includes(feature.id)
-                          ? 'border-purple-500 bg-purple-500'
-                          : 'border-white/40'
-                      }`}>
-                        {formData.features.includes(feature.id) && (
-                          <CheckCircle className="w-3 h-3 text-white" />
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-purple-400">{feature.icon}</span>
-                        <span className="text-white font-medium">{feature.name}</span>
-                      </div>
-                    </label>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {availableFeatures.map((feature) => {
+                    const isAvailable = isFeatureAvailable(feature);
+                    const isSelected = formData.features.includes(feature.id);
+                    
+                    return (
+                      <label
+                        key={feature.id}
+                        className={`relative p-4 rounded-xl border transition-all duration-300 ${
+                          !isAvailable 
+                            ? 'opacity-50 cursor-not-allowed border-white/10 bg-white/5' 
+                            : isSelected
+                              ? 'border-purple-500 bg-purple-500/20 cursor-pointer'
+                              : 'border-white/20 bg-white/5 hover:border-purple-400 cursor-pointer'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => isAvailable && toggleFeature(feature.id)}
+                          disabled={!isAvailable}
+                          className="sr-only"
+                        />
+                        
+                        <div className="flex items-start gap-3">
+                          <div className={`w-5 h-5 rounded border-2 mt-0.5 flex-shrink-0 flex items-center justify-center ${
+                            !isAvailable
+                              ? 'border-white/20'
+                              : isSelected
+                                ? 'border-purple-500 bg-purple-500'
+                                : 'border-white/40'
+                          }`}>
+                            {isSelected && <CheckCircle className="w-3 h-3 text-white" />}
+                          </div>
+                          
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`${!isAvailable ? 'text-white/40' : 'text-purple-400'}`}>
+                                {feature.icon}
+                              </span>
+                              <span className={`font-medium ${!isAvailable ? 'text-white/40' : 'text-white'}`}>
+                                {feature.name}
+                              </span>
+                              {feature.premium && isAvailable && (
+                                <span className="text-xs bg-purple-500/30 text-purple-300 px-2 py-0.5 rounded-full">
+                                  Premium
+                                </span>
+                              )}
+                            </div>
+                            <p className={`text-xs ${!isAvailable ? 'text-white/30' : 'text-white/60'}`}>
+                              {feature.description}
+                            </p>
+                            {!isAvailable && (
+                              <p className="text-xs text-yellow-400/80 mt-1">
+                                Requires {feature.minBudget === 'professional' ? '$2,000+' : '$5,000+'} budget
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
+
+                {formData.budget === 'starter' && (
+                  <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+                    <p className="text-yellow-400 text-sm">
+                      💡 <strong>Tip:</strong> Upgrade to Professional ($2,000+) to unlock premium features like booking systems, 
+                      membership areas, and admin dashboards.
+                    </p>
+                  </div>
+                )}
               </motion.div>
 
               {/* Project Description */}
