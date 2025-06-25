@@ -436,37 +436,153 @@ const Estimate = () => {
         />
         <div className="min-h-screen bg-[#030718] pt-24 pb-12">
           <div className="container mx-auto px-6">
-            <div className="max-w-2xl mx-auto text-center">
+            <div className="max-w-4xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-8"
               >
-                <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-10 h-10 text-white" />
-                </div>
-
-                <div>
-                  <h1 className="text-4xl font-bold text-white mb-4">
-                    Thank You!
+                {/* Success Icon */}
+                <div className="text-center">
+                  <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle className="w-12 h-12 text-white" />
+                  </div>
+                  <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                    Thank You, {formData.name}!
                   </h1>
-                  <p className="text-xl text-white/80 mb-6">
+                  <p className="text-xl text-white/80">
                     Your estimate request has been submitted successfully.
                   </p>
-                  <p className="text-white/60">
-                    Our team will review your project details and get back to you within 24 hours with a detailed proposal.
-                  </p>
                 </div>
 
-                <motion.a
-                  href="/"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full font-semibold transition-all duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                {/* What Happens Next */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white/5 border border-white/10 rounded-2xl p-8"
                 >
-                  Back to Home
-                  <ArrowRight className="w-4 h-4" />
-                </motion.a>
+                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <Clock className="w-6 h-6 text-purple-400" />
+                    What Happens Next?
+                  </h2>
+                  
+                  <div className="space-y-6">
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-purple-400 font-bold">1</span>
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold mb-1">Check Your Email (Now)</h3>
+                        <p className="text-white/70">
+                          We've sent a confirmation to <span className="text-purple-400">{formData.email}</span> with a summary of your request.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-purple-400 font-bold">2</span>
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold mb-1">Project Review (2-4 hours)</h3>
+                        <p className="text-white/70">
+                          Our expert team is analyzing your requirements to create the perfect solution for your {formData.projectType.toLowerCase()}.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-purple-400 font-bold">3</span>
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold mb-1">Custom Proposal (Within 24 hours)</h3>
+                        <p className="text-white/70">
+                          You'll receive a detailed proposal including pricing breakdown, timeline, and our technical approach.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                        <span className="text-purple-400 font-bold">4</span>
+                      </div>
+                      <div>
+                        <h3 className="text-white font-semibold mb-1">Consultation Call (Within 48 hours)</h3>
+                        <p className="text-white/70">
+                          We'll schedule a call to discuss your project in detail, answer questions, and finalize the approach.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Quick Actions */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-8"
+                >
+                  <h3 className="text-lg font-semibold text-white mb-4">Need to Reach Us Sooner?</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <a
+                      href="tel:+19177413468"
+                      className="flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-all"
+                    >
+                      <Phone className="w-5 h-5" />
+                      Call Now
+                    </a>
+                    <a
+                      href="https://wa.me/19177413468"
+                      className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 rounded-full text-green-400 transition-all"
+                    >
+                      <MessageSquare className="w-5 h-5" />
+                      WhatsApp
+                    </a>
+                    <a
+                      href="mailto:team@devtone.agency"
+                      className="flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-all"
+                    >
+                      <Mail className="w-5 h-5" />
+                      Email Us
+                    </a>
+                  </div>
+                </motion.div>
+
+                {/* Important Notes */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-center space-y-4"
+                >
+                  <p className="text-white/60 text-sm">
+                    💡 <strong>Pro Tip:</strong> Check your spam folder if you don't see our email within 5 minutes.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <motion.a
+                      href="/"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full font-semibold transition-all duration-300"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Back to Home
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.a>
+                    
+                    <motion.button
+                      onClick={() => window.location.reload()}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-full font-semibold transition-all duration-300"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Submit Another Estimate
+                    </motion.button>
+                  </div>
+                </motion.div>
               </motion.div>
             </div>
           </div>
