@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useForm, ValidationError } from '@formspree/react';
 import {
   Calculator,
   CheckCircle,
@@ -46,8 +45,9 @@ interface FormData {
 }
 
 const Estimate = () => {
-  // Formspree hook
-  const [formspreeState, handleFormspreeSubmit] = useForm("mwpbwvza");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -386,8 +386,46 @@ const Estimate = () => {
     }));
   };
 
+  // Handle form submission with Resend
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Format data for API
+      const apiData = {
+        ...formData,
+        features: formData.features.join(', '),
+        budget: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
+        timeline: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
+        retainer: retainerOptions.find(r => r.value === formData.retainer)?.label || 'No retainer'
+      };
+
+      const response = await fetch('/api/send-estimate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to send estimate');
+      }
+
+      setIsSuccess(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Form submission error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   
-  if (formspreeState.succeeded) {
+  if (isSuccess) {
     return (
       <>
         <SEO
@@ -488,7 +526,7 @@ const Estimate = () => {
 
           {/* Form */}
           <div className="max-w-4xl mx-auto">
-            <form onSubmit={handleFormspreeSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
 
               {/* Personal Information */}
               <motion.div
@@ -516,12 +554,6 @@ const Estimate = () => {
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="Your full name"
                     />
-                    <ValidationError 
-                      prefix="Name" 
-                      field="name"
-                      errors={formspreeState.errors}
-                      className="text-red-400 text-sm mt-1"
-                    />
                   </div>
 
                   <div>
@@ -536,12 +568,6 @@ const Estimate = () => {
                       onChange={(e) => updateFormData('email', e.target.value)}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="your@email.com"
-                    />
-                    <ValidationError 
-                      prefix="Email" 
-                      field="email"
-                      errors={formspreeState.errors}
-                      className="text-red-400 text-sm mt-1"
                     />
                   </div>
 
@@ -579,7 +605,6 @@ const Estimate = () => {
                     <label className="block text-white/80 font-medium mb-2">
                       Country *
                     </label>
-                    <input type="hidden" name="country" value={formData.country} required />
                     <div className="relative">
                       <button
                         type="button"
@@ -672,7 +697,6 @@ const Estimate = () => {
                   <p className="text-white/60 text-sm mb-6">
                     Keep your website updated and secure with ongoing support
                   </p>
-                  <input type="hidden" name="retainer" value={formData.retainer} />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {retainerOptions.map((retainer) => (
                       <label
@@ -725,7 +749,6 @@ const Estimate = () => {
                   Project Type *
                 </h2>
                 
-                <input type="hidden" name="projectType" value={formData.projectType} required />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {projectTypes.map((type) => (
                     <motion.div
@@ -763,8 +786,6 @@ const Estimate = () => {
                   Budget & Timeline *
                 </h2>
                 
-                <input type="hidden" name="budget" value={formData.budget} required />
-                <input type="hidden" name="timeline" value={formData.timeline} required />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Budget */}
                   <div>
@@ -854,7 +875,6 @@ const Estimate = () => {
                   <CheckCircle className="w-6 h-6 text-purple-400" />
                   What Features Would You Like?
                 </h2>
-                <input type="hidden" name="features" value={formData.features.join(', ')} />
                 <p className="text-white/70 mb-6">
                   {!formData.projectType || !formData.budget ? (
                     <span className="text-yellow-400 text-sm">
@@ -953,6 +973,19 @@ const Estimate = () => {
                 />
               </motion.div>
 
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl"
+                >
+                  <p className="text-red-400 text-sm text-center">
+                    {error}. Please try again or contact us at team@devtone.agency
+                  </p>
+                </motion.div>
+              )}
+
               {/* Submit Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -962,12 +995,12 @@ const Estimate = () => {
               >
                 <motion.button
                   type="submit"
-                  disabled={formspreeState.submitting || !formData.name || !formData.email || !formData.phone || !formData.company || !formData.country || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
+                  disabled={isSubmitting || !formData.name || !formData.email || !formData.phone || !formData.company || !formData.country || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
                   className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-semibold text-lg transition-all duration-300 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {formspreeState.submitting ? (
+                  {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       Submitting...
