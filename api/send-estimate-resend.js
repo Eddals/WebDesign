@@ -524,17 +524,16 @@ Submitted at: ${new Date().toISOString()}`
         If you have any immediate questions, please don't hesitate to reach out:
         <br><br>
         <strong>Email:</strong> <a href="mailto:hello@devtone.agency">hello@devtone.agency</a><br>
-        <strong>Phone:</strong> <a href="tel:+19177413468">+1 (917) 741-3468</a><br>
-        <strong>WhatsApp:</strong> <a href="https://wa.me/19177413468">+1 (917) 741-3468</a>
+        <strong>Phone:</strong> <a href="tel:+19177413468">+1 (917) 741-3468</a>
       </div>
       
       <div class="signature">
-        <div class="signature-name">Matheus Brito</div>
+        <div class="signature-name">Matheus Silva</div>
         <div>Founder & Lead Developer</div>
         <div>DevTone Agency</div>
         <div style="margin-top: 10px;">
           <a href="https://devtone.agency">devtone.agency</a> | 
-          <a href="https://linkedin.com/company/devtone">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/devtone-agency-6a055b371/">LinkedIn</a>
         </div>
       </div>
     </div>
@@ -572,14 +571,14 @@ If you have any immediate questions, please don't hesitate to reach out:
 
 Email: hello@devtone.agency
 Phone: +1 (917) 741-3468
-WhatsApp: +1 (917) 741-3468
 
 Best regards,
 
-Matheus Brito
+Matheus Silva
 Founder & Lead Developer
 DevTone Agency
 devtone.agency
+LinkedIn: https://www.linkedin.com/in/devtone-agency-6a055b371/
 
 © ${new Date().getFullYear()} DevTone Agency. All rights reserved.
 This email was sent to ${formData.email} regarding your estimate request.
