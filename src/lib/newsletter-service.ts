@@ -36,15 +36,23 @@ export const subscribeToNewsletter = async (name: string, email: string): Promis
       }),
     });
 
-    const data = await response.json();
+    // Try to parse the JSON response, but handle parsing errors gracefully
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('Error parsing JSON response:', jsonError);
+      // If we can't parse the JSON, create a generic error response
+      throw new Error('Server returned an invalid response. Please try again later.');
+    }
     
     if (!response.ok) {
-      throw new Error(data.error || data.message || 'Failed to subscribe');
+      throw new Error(data?.error || data?.message || 'Failed to subscribe');
     }
     
     return {
       success: true,
-      message: data.message || 'Successfully subscribed to newsletter',
+      message: data?.message || 'Successfully subscribed to newsletter',
       data
     };
   } catch (error) {
@@ -117,3 +125,18 @@ export const addSubscriber = async (
 */
 
 // The isValidEmail function is already defined above
+
+/**
+ * Test the newsletter API connection
+ */
+export const testNewsletterApi = async (): Promise<boolean> => {
+  try {
+    const response = await fetch('/api/newsletter-test');
+    const data = await response.json();
+    console.log('Newsletter API test result:', data);
+    return data.success === true;
+  } catch (error) {
+    console.error('Newsletter API test failed:', error);
+    return false;
+  }
+};

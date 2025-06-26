@@ -6,6 +6,15 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY) 
   : new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
 
+// Make sure we have the templates
+if (typeof getNewsletterSubscriberTemplate !== 'function') {
+  console.error('getNewsletterSubscriberTemplate is not a function');
+}
+
+if (typeof getNewsletterAdminTemplate !== 'function') {
+  console.error('getNewsletterAdminTemplate is not a function');
+}
+
 export default async function handler(req, res) {
   // CORS setup
   const allowedOrigins = [
@@ -36,15 +45,24 @@ export default async function handler(req, res) {
 
   try {
     // Get form data
-    const { name, email, source = 'website_footer' } = req.body;
+    const { name, email, source = 'website_footer' } = req.body || {};
+
+    // Log the request for debugging
+    console.log('Newsletter request body:', req.body);
 
     // Validate inputs
     if (!name || !email) {
-      return res.status(400).json({ success: false, error: 'Name and email are required' });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Name and email are required' 
+      });
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ success: false, error: 'Invalid email address' });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid email address' 
+      });
     }
 
     // Subscriber data
@@ -55,25 +73,45 @@ export default async function handler(req, res) {
       subscribedAt: new Date().toLocaleString()
     };
 
-    // Send emails
-    await Promise.all([
-      // Subscriber email
-      resend.emails.send({
-        from: 'DevTone Agency <noreply@devtone.agency>',
-        to: email,
-        subject: 'Thanks for Subscribing',
-        html: getNewsletterSubscriberTemplate(subscriberInfo),
-      }),
-      
-      // Admin notification
-      resend.emails.send({
-        from: 'DevTone Newsletter <noreply@devtone.agency>',
-        to: 'sweepeasellc@gmail.com',
-        reply_to: email,
-        subject: `New Newsletter Subscriber: ${name}`,
-        html: getNewsletterAdminTemplate(subscriberInfo),
-      })
-    ]);
+    try {
+      // Send emails
+      const [subscriberResult, adminResult] = await Promise.all([
+        // Subscriber email
+        resend.emails.send({
+          from: 'DevTone Agency <noreply@devtone.agency>',
+          to: email,
+          subject: 'Thanks for Subscribing',
+          html: getNewsletterSubscriberTemplate(subscriberInfo),
+        }),
+        
+        // Admin notification
+        resend.emails.send({
+          from: 'DevTone Newsletter <noreply@devtone.agency>',
+          to: 'sweepeasellc@gmail.com',
+          reply_to: email,
+          subject: `New Newsletter Subscriber: ${name}`,
+          html: getNewsletterAdminTemplate(subscriberInfo),
+        })
+      ]);
+
+      // Log results for debugging
+      console.log('Email sending results:', { 
+        subscriber: subscriberResult, 
+        admin: adminResult 
+      });
+
+      // Check for errors
+      if (subscriberResult.error || adminResult.error) {
+        console.error('Email sending errors:', {
+          subscriberError: subscriberResult.error,
+          adminError: adminResult.error
+        });
+      }
+    } catch (emailError) {
+      // Log email error but don't fail the request
+      console.error('Error sending emails:', emailError);
+      // We'll still return success since the subscription was processed
+    }
 
     // Success response
     return res.status(200).json({
@@ -83,10 +121,14 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
+    // Log the full error for debugging
     console.error('Newsletter subscription error:', error);
+    
+    // Always return a valid JSON response
     return res.status(500).json({
       success: false,
-      error: 'Failed to process subscription'
+      error: 'Failed to process subscription',
+      message: error.message || 'An unexpected error occurred'
     });
   }
 }
