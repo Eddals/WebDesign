@@ -52,7 +52,7 @@ export const subscribeToNewsletter = async (name: string, email: string): Promis
     console.error('Newsletter subscription error:', error);
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'An error occurred while subscribing',
+      message: 'An error occurred while processing your request. Please try again later.',
       error: error instanceof Error ? error : new Error('Unknown error')
     };
   }
