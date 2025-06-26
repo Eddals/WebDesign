@@ -2,7 +2,6 @@
  * Newsletter Service
  * 
  * This service handles newsletter subscriptions.
- * It can be connected to your database or API of choice.
  */
 
 interface SubscribeResponse {
@@ -12,11 +11,19 @@ interface SubscribeResponse {
   error?: Error;
 }
 
-// Using fetch to submit to the API endpoint
+/**
+ * Validates if the provided string is a valid email address
+ */
+export const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+/**
+ * Subscribes a user to the newsletter
+ */
 export const subscribeToNewsletter = async (name: string, email: string): Promise<SubscribeResponse> => {
   try {
-    console.log('Submitting newsletter subscription:', { name, email });
-    
     const response = await fetch('/api/newsletter-subscribe', {
       method: 'POST',
       headers: {
@@ -29,18 +36,10 @@ export const subscribeToNewsletter = async (name: string, email: string): Promis
       }),
     });
 
-    let data;
-    try {
-      data = await response.json();
-    } catch (jsonError) {
-      console.error('Error parsing JSON response:', jsonError);
-      throw new Error('Invalid response from server. Please try again later.');
-    }
-    
-    console.log('Newsletter API response:', { status: response.status, data });
+    const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(data.message || data.error || 'Failed to subscribe');
+      throw new Error(data.error || data.message || 'Failed to subscribe');
     }
     
     return {

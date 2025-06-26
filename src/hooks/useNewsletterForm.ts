@@ -14,7 +14,7 @@ export function useNewsletterForm() {
     setSubscribeStatus({ type: null, message: "" });
 
     try {
-      // Sanitize name input
+      // Validate inputs
       const sanitizedName = DOMPurify.sanitize(name).trim();
       if (!sanitizedName) {
         throw new Error("Please enter a valid name.");
@@ -24,39 +24,34 @@ export function useNewsletterForm() {
         throw new Error("Please enter a valid email address");
       }
 
-      console.log('Submitting newsletter form with:', { name: sanitizedName, email });
+      // Submit subscription
       const result = await subscribeToNewsletter(sanitizedName, email);
-      console.log('Newsletter subscription result:', result);
 
       if (!result.success) {
         throw new Error(result.message);
       }
 
-      // Success message
+      // Handle success
       setSubscribeStatus({ 
         type: "success", 
-        message: "Thank you for subscribing to our newsletter! Please check your email for confirmation." 
+        message: "Thank you for subscribing to our newsletter!" 
       });
       
       // Clear form
       setName("");
       setEmail("");
       
-      // Clear success message after delay
-      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 8000);
+      // Clear message after delay
+      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 5000);
     } catch (error) {
-      console.error('Newsletter form submission error:', error);
-      
-      // Error message
+      // Handle error
       setSubscribeStatus({ 
         type: "error", 
-        message: error instanceof Error 
-          ? error.message 
-          : "Failed to subscribe. Please try again later." 
+        message: error instanceof Error ? error.message : "Failed to subscribe. Please try again later." 
       });
       
-      // Clear error message after delay
-      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 8000);
+      // Clear message after delay
+      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 5000);
     } finally {
       setIsSubmitting(false);
     }
