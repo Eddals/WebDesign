@@ -11,47 +11,29 @@ export function useNewsletterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubscribeStatus({ type: null, message: "" });
-
+    
     try {
-      // Validate inputs
+      // Basic validation
       const sanitizedName = DOMPurify.sanitize(name).trim();
-      if (!sanitizedName) {
-        throw new Error("Please enter a valid name.");
-      }
-
-      if (!isValidEmail(email)) {
-        throw new Error("Please enter a valid email address");
-      }
+      if (!sanitizedName) throw new Error("Please enter your name");
+      if (!isValidEmail(email)) throw new Error("Please enter a valid email");
 
       // Submit subscription
       const result = await subscribeToNewsletter(sanitizedName, email);
+      if (!result.success) throw new Error(result.message);
 
-      if (!result.success) {
-        throw new Error(result.message);
-      }
-
-      // Handle success
-      setSubscribeStatus({ 
-        type: "success", 
-        message: "Thank you for subscribing to our newsletter!" 
-      });
-      
-      // Clear form
+      // Success
+      setSubscribeStatus({ type: "success", message: "Thanks for subscribing!" });
       setName("");
       setEmail("");
-      
-      // Clear message after delay
-      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 5000);
+      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 3000);
     } catch (error) {
-      // Handle error
+      // Error
       setSubscribeStatus({ 
         type: "error", 
-        message: error instanceof Error ? error.message : "Failed to subscribe. Please try again later." 
+        message: error instanceof Error ? error.message : "Subscription failed" 
       });
-      
-      // Clear message after delay
-      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 5000);
+      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 3000);
     } finally {
       setIsSubmitting(false);
     }
