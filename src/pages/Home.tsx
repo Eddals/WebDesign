@@ -6,7 +6,8 @@ import {
   Briefcase, Rocket, Crown, Code, Laptop, Globe, Sparkles,
   Lightbulb, Cpu, Layers, Smartphone, Palette, Gauge, Heart,
   Monitor, Database, FileText, Package, User, Mail, Phone,
-  Target, Loader, Shield, Building, MapPin, Users, ShoppingCart
+  Target, Loader, Shield, Building, MapPin, Users, ShoppingCart,
+  LineChart, BarChart, MessageCircle, Eye
 } from "lucide-react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import SEO from '@/components/SEO'
@@ -1599,20 +1600,20 @@ const Home = () => {
             >
               {/* Main Heading */}
               <motion.h1 
-                className="text-4xl md:text-5xl font-bold text-center mb-8"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8 px-4 sm:px-0"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.1 }}
               >
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 leading-tight">
                   Unleash Your Digital Potential with Devtone Agency
                 </span>
               </motion.h1>
               
               {/* Subheading */}
               <motion.h2 
-                className="text-2xl md:text-3xl font-semibold text-center mb-6 text-white/90"
+                className="text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-4 sm:mb-6 text-white/90 px-4 sm:px-0"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -1624,7 +1625,7 @@ const Home = () => {
               
               {/* Introduction Paragraph */}
               <motion.p 
-                className="text-lg text-white/70 text-center mb-12 max-w-3xl mx-auto"
+                className="text-base sm:text-lg text-white/70 text-center mb-8 sm:mb-12 max-w-3xl mx-auto px-4 sm:px-0"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -1634,7 +1635,7 @@ const Home = () => {
                 <b className="text-purple-300"><strong>branding agency</strong></b>
                 <span>, we are your key to unlocking an unparalleled online presence. Our expertise in </span>
                 <b className="text-purple-300"><strong>web development</strong></b>
-                <span> empowers businesses to build dynamic websites that engage and convert.</span>
+                <span> empowers businesses to build dynamic websites that engage visitors and convert them into loyal customers.</span>
               </motion.p>
               
               {/* Why Choose Section */}
@@ -1645,16 +1646,16 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-4 sm:mb-6 px-4 sm:px-0">
                   <span className="text-white/90">Why Choose Devtone for </span>
                   <span className="text-purple-300">Web Development</span>
                   <span className="text-white/90">?</span>
                 </h2>
                 
-                <p className="text-lg text-white/70 text-center max-w-3xl mx-auto">
-                  <span>In the digital realm, visibility is everything. Our tailored </span>
+                <p className="text-base sm:text-lg text-white/70 text-center max-w-3xl mx-auto px-4 sm:px-0">
+                  <span>In the digital realm, a powerful web presence is essential. Our tailored </span>
                   <b className="text-purple-300"><strong>web development services</strong></b>
-                  <span> ensure that your brand commands attention, capturing the right audience at the right time.</span>
+                  <span> ensure your brand stands out with fast, responsive, and visually stunning websites that engage your target audience and drive business growth.</span>
                 </p>
               </motion.div>
               
@@ -1666,7 +1667,7 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.5 }}
               >
-                <h3 className="text-2xl md:text-3xl font-semibold text-center mb-8">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-6 sm:mb-8 px-4 sm:px-0">
                   <span className="text-white/90">Our Comprehensive </span>
                   <span className="text-purple-300">Web Development</span>
                   <span className="text-white/90"> Solutions</span>
@@ -1676,44 +1677,44 @@ const Home = () => {
                   {[
                     {
                       title: "Responsive Design",
-                      description: "Mobile-friendly websites that provide optimal viewing experience across all devices.",
-                      icon: <Smartphone className="w-6 h-6" />
+                      description: "Websites that look stunning on every device - from smartphones to desktops, ensuring your visitors have a seamless experience.",
+                      icon: <Smartphone className="w-5 h-5 sm:w-6 sm:h-6" />
                     },
                     {
                       title: "Custom Development",
-                      description: "Tailored solutions built with modern technologies to meet your specific business needs.",
-                      icon: <Code className="w-6 h-6" />
+                      description: "Bespoke solutions crafted with cutting-edge technologies that perfectly align with your unique business goals and requirements.",
+                      icon: <Code className="w-5 h-5 sm:w-6 sm:h-6" />
                     },
                     {
                       title: "E-commerce Solutions",
-                      description: "Powerful online stores with secure payment gateways and intuitive shopping experiences.",
-                      icon: <ShoppingCart className="w-6 h-6" />
+                      description: "Feature-rich online stores with secure checkout, inventory management, and intuitive shopping experiences that drive sales.",
+                      icon: <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
                     },
                     {
                       title: "Performance Optimization",
-                      description: "Fast-loading websites optimized for speed, SEO, and conversion rates.",
-                      icon: <Gauge className="w-6 h-6" />
+                      description: "Lightning-fast websites optimized for speed, search engines, and conversion rates to maximize your online success.",
+                      icon: <Gauge className="w-5 h-5 sm:w-6 sm:h-6" />
                     }
                   ].map((service, index) => (
                     <motion.div
                       key={index}
-                      className="group relative bg-white/5 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
+                      className="group relative bg-white/5 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300 hover:bg-purple-900/10"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.5, delay: 0.6 + (index * 0.1) }}
                       whileHover={{ y: -5 }}
                     >
-                      <div className="flex items-start gap-3 sm:gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/30 transition-colors duration-300">
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-4">
+                        <div className="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/30 transition-colors duration-300 shadow-lg shadow-purple-900/20 group-hover:scale-110 transform transition-transform">
                           {service.icon}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
-                            <b><strong>{service.title}</strong></b><b><strong>:</strong></b>
+                        <div className="flex-1 text-center sm:text-left">
+                          <h4 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-2 group-hover:text-purple-300 transition-colors">
+                            {service.title}
                           </h4>
-                          <p className="text-white/70 text-sm sm:text-base">
-                            <span>{service.description}</span>
+                          <p className="text-white/70 text-sm sm:text-base leading-relaxed">
+                            {service.description}
                           </p>
                         </div>
                       </div>
@@ -1724,24 +1725,26 @@ const Home = () => {
               
               {/* Contact CTA */}
               <motion.div 
-                className="text-center"
+                className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-6 sm:p-8 border border-white/10 max-w-3xl mx-auto mt-12 mb-8 shadow-xl shadow-purple-900/10"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.7 }}
               >
-                <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-white/90">
+                <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 mx-auto mb-6">
+                  <Mail className="w-8 h-8" />
+                </div>
+                
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4 sm:mb-6 text-white/90 px-2 sm:px-0">
                   <span>Contact Devtone Agency Today</span>
                 </h2>
                 
-                <p className="text-lg text-white/70 mb-8">
-                  <span>Ready to propel your business forward? Partner with Devtone Agency, and let's make your business shine online. Reach us at </span>
-                  <a href="mailto:team@devtone.agency" className="text-purple-300 hover:text-purple-400 transition-colors">
-                    <b><strong>team@devtone.agency</strong></b>
+                <p className="text-base sm:text-lg text-white/70 mb-6 sm:mb-8 px-2 sm:px-0">
+                  <span>Ready to propel your business forward? Partner with Devtone Agency, and let's make your digital vision a reality. Contact us at </span>
+                  <a href="mailto:team@devtone.agency" className="text-purple-300 hover:text-purple-400 transition-colors font-semibold">
+                    team@devtone.agency
                   </a>
-                  <span> or call </span>
-                  <b className="text-purple-300"><strong>+19295591729</strong></b>
-                  <span>.</span>
+                  <span> to discuss your project.</span>
                 </p>
                 
                 <motion.div 
@@ -1753,8 +1756,8 @@ const Home = () => {
                 >
                   <motion.button
                     onClick={() => window.location.href = "/contact"}
-                    className="group relative px-8 py-4 bg-gradient-to-br from-purple-600/90 via-purple-700/90 to-indigo-800/90
-                      rounded-xl font-semibold text-lg overflow-hidden"
+                    className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-br from-purple-600/90 via-purple-700/90 to-indigo-800/90
+                      rounded-xl font-semibold text-base sm:text-lg overflow-hidden shadow-lg shadow-purple-900/20"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -1764,15 +1767,15 @@ const Home = () => {
                       <div className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12" />
                     </div>
                     <div className="relative flex items-center justify-center">
-                      <span className="text-white/90 mr-4">Get Started Today</span>
-                      <ArrowRight className="w-5 h-5 text-purple-200/90" />
+                      <span className="text-white/90 mr-2 sm:mr-4">Get Started Today</span>
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-purple-200/90" />
                     </div>
                   </motion.button>
                   
                   <motion.button
                     onClick={() => window.location.href = "/estimate"}
-                    className="group relative px-8 py-4 bg-transparent border-2 border-purple-500/20
-                      rounded-xl font-semibold text-lg overflow-hidden"
+                    className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-purple-500/20
+                      rounded-xl font-semibold text-base sm:text-lg overflow-hidden"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -1782,8 +1785,8 @@ const Home = () => {
                       <div className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12" />
                     </div>
                     <div className="relative flex items-center justify-center">
-                      <span className="text-white/90 mr-4">Request Free Quote</span>
-                      <Sparkles className="w-5 h-5 text-purple-200/90" />
+                      <span className="text-white/90 mr-2 sm:mr-4">Free Quote</span>
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-200/90" />
                     </div>
                   </motion.button>
                 </motion.div>
@@ -1822,64 +1825,64 @@ const Home = () => {
               </motion.div>
               
               <motion.h2
-                className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-400"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-400 px-4 sm:px-0"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                🌟 Your Business, Everywhere Online
+                Real-Time Project Dashboard
               </motion.h2>
 
               <motion.p
-                className="text-white/80 max-w-2xl mx-auto"
+                className="text-white/80 max-w-2xl mx-auto px-4 sm:px-0 text-base sm:text-lg"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                We don't just build websites - we make sure your business gets found! Every website includes Google Business listing, industry directories, and local search optimization so customers can discover you easily.
+                After completing your estimate, gain access to our intuitive client dashboard where you can track your project's progress in real-time, communicate with our team, and visualize your website's performance metrics all in one place.
               </motion.p>
             </motion.div>
 
-            {/* Animated Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            {/* Dashboard Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-16 px-4 sm:px-0">
               {[
                 {
-                  value: "100+",
-                  label: "Business Directories",
-                  description: "We list your business in Google, Yelp, Yellow Pages, and 100+ industry-specific directories",
-                  icon: <Globe className="w-8 h-8" />,
+                  value: "100%",
+                  label: "Project Transparency",
+                  description: "Track every milestone and task in real-time with our intuitive visual progress indicators",
+                  icon: <LineChart className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
-                  suffix: "+"
+                  suffix: "%"
                 },
                 {
                   value: "24/7",
-                  label: "Google Visibility",
-                  description: "Your business shows up when customers search for your services in your area",
-                  icon: <Target className="w-8 h-8" />,
+                  label: "Access Anywhere",
+                  description: "Check your project status anytime, anywhere on any device with our responsive dashboard interface",
+                  icon: <Smartphone className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
                   suffix: ""
                 },
                 {
-                  value: "All",
-                  label: "Industry Types",
-                  description: "Restaurants, salons, contractors, doctors, lawyers - we know every business type",
-                  icon: <Building className="w-8 h-8" />,
+                  value: "Live",
+                  label: "Team Communication",
+                  description: "Direct messaging with our development team ensures your feedback is implemented promptly",
+                  icon: <MessageCircle className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
                   suffix: ""
                 },
                 {
-                  value: "Local",
-                  label: "Search Domination",
-                  description: "When people search 'near me' for your services, they'll find YOU first",
-                  icon: <MapPin className="w-8 h-8" />,
+                  value: "Real",
+                  label: "Performance Analytics",
+                  description: "Monitor your website's traffic, engagement, and conversion metrics with beautiful visual graphs",
+                  icon: <BarChart className="w-8 h-8" />,
                   color: "from-purple-500 to-purple-700",
                   prefix: "",
-                  suffix: ""
+                  suffix: "-time"
                 }
               ].map((metric, index) => (
                 <motion.div
@@ -1958,206 +1961,117 @@ const Home = () => {
               ))}
             </div>
 
-            {/* Success Stories Showcase */}
+            {/* Dashboard Mockup */}
             <motion.div
-              className="bg-gradient-to-r from-purple-500/10 to-purple-700/10 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 relative overflow-hidden"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              {/* Animated Background */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-purple-700/5"
-                animate={{
-                  background: [
-                    "linear-gradient(45deg, rgba(168, 85, 247, 0.05), rgba(147, 51, 234, 0.05))",
-                    "linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(168, 85, 247, 0.05))",
-                    "linear-gradient(225deg, rgba(168, 85, 247, 0.05), rgba(147, 51, 234, 0.05))",
-                    "linear-gradient(315deg, rgba(147, 51, 234, 0.05), rgba(168, 85, 247, 0.05))",
-                  ]
-                }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-              />
-
-              <div className="text-center mb-8 relative z-10">
-                <motion.h3
-                  className="text-3xl font-bold text-white mb-2"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                >
-                  💼 Real Business Transformations
-                </motion.h3>
-                <motion.p
-                  className="text-white/70 text-lg"
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                >
-                  See how we helped local businesses get found online and grow their customer base!
-                </motion.p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-                {[
-                  {
-                    company: "Tony's Pizza Palace",
-                    industry: "Restaurant",
-                    result: "Now #1 on Google Maps",
-                    timeframe: "1 month",
-                    highlight: "Google Business + Local SEO",
-                    icon: "🍕",
-                    color: "from-orange-500 to-red-500",
-                    quote: "Customers find us instantly when they search 'pizza near me'!"
-                  },
-                  {
-                    company: "Bella's Hair Salon",
-                    industry: "Beauty & Wellness",
-                    result: "Appears in 50+ directories",
-                    timeframe: "2 weeks",
-                    highlight: "Complete online presence",
-                    icon: "💇‍♀️",
-                    color: "from-pink-500 to-purple-500",
-                    quote: "New clients book appointments online every day!"
-                  },
-                  {
-                    company: "Mike's Plumbing",
-                    industry: "Home Services",
-                    result: "Top 3 for 'plumber near me'",
-                    timeframe: "3 weeks",
-                    highlight: "Local search domination",
-                    icon: "🔧",
-                    color: "from-blue-500 to-cyan-500",
-                    quote: "My phone rings non-stop with new customers!"
-                  }
-                ].map((story, index) => (
-                  <motion.div
-                    key={index}
-                    className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-purple-500/50 transition-all duration-300 relative overflow-hidden group cursor-pointer"
-                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.2 }}
-                    whileHover={{
-                      y: -10,
-                      scale: 1.05,
-                      boxShadow: "0 20px 40px rgba(168, 85, 247, 0.3)"
-                    }}
-                  >
-                    {/* Animated Hover Background */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-700/10 opacity-0 group-hover:opacity-100"
-                      transition={{ duration: 0.3 }}
-                    />
-
-                    {/* Floating Icon */}
-                    <motion.div
-                      className="text-4xl mb-4 relative z-10"
-                      animate={{
-                        y: [0, -5, 0],
-                        rotate: [0, 5, -5, 0]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: index * 0.5
-                      }}
-                      whileHover={{
-                        scale: 1.3,
-                        rotate: 360
-                      }}
-                    >
-                      {story.icon}
-                    </motion.div>
-
-                    {/* Company Info */}
-                    <h4 className="text-xl font-bold text-white mb-1 relative z-10 group-hover:text-purple-300 transition-colors">
-                      {story.company}
-                    </h4>
-                    <p className="text-purple-300 text-sm mb-4 relative z-10">{story.industry}</p>
-
-                    {/* Quote */}
-                    <motion.div
-                      className="bg-purple-500/20 rounded-lg p-3 mb-4 relative z-10 border border-purple-500/30"
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <p className="text-white/90 text-sm italic text-center">"{story.quote}"</p>
-                    </motion.div>
-
-                    {/* Result Badge */}
-                    <motion.div
-                      className={`bg-gradient-to-r ${story.color} rounded-lg p-3 mb-3 relative z-10 text-center`}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <p className="text-white font-bold text-lg">{story.result}</p>
-                      <p className="text-white/80 text-xs">in just {story.timeframe}</p>
-                    </motion.div>
-
-                    {/* Highlight Tag */}
-                    <motion.span
-                      className="inline-block px-3 py-1 bg-purple-600 text-white text-xs rounded-full relative z-10 font-medium"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      ✨ {story.highlight}
-                    </motion.span>
-
-                    {/* Decorative Elements */}
-                    <motion.div
-                      className="absolute top-4 right-4 w-8 h-8 border-2 border-purple-500/30 rounded-full opacity-0 group-hover:opacity-100"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Call to Action */}
-              <motion.div
-                className="mt-8 text-center relative z-10"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-              >
-                <motion.button
-                  className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-purple-500/40"
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => window.location.href = "/estimate"}
-                >
-                  🎯 Get Found Online Today!
-                </motion.button>
-              </motion.div>
-            </motion.div>
-
-            {/* Call to Action */}
-            <motion.div 
-              className="mt-12 text-center"
+              className="mt-12 mb-16 max-w-4xl mx-auto px-4 sm:px-0"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                <h3 className="text-xl font-semibold text-white mb-3">Ready to See Similar Results?</h3>
-                <p className="text-white/70 mb-4 max-w-2xl mx-auto">
-                  Join the growing list of businesses that have transformed their online presence and achieved remarkable growth.
-                </p>
-                <motion.button 
-                  className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-full font-medium hover:from-purple-600 hover:to-indigo-600 transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Get Your Results
-                </motion.button>
+              <div className="relative bg-gradient-to-br from-purple-900/30 to-indigo-900/30 rounded-xl p-4 border border-white/10 shadow-2xl overflow-hidden">
+                {/* Dashboard Header */}
+                <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center mr-3">
+                      <Monitor className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-white font-semibold">Project Dashboard</h3>
+                  </div>
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                </div>
+                
+                {/* Dashboard Content */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Project Progress */}
+                  <div className="bg-white/5 rounded-lg p-4 backdrop-blur-sm">
+                    <h4 className="text-white/90 text-sm font-medium mb-3 flex items-center">
+                      <Zap className="w-4 h-4 mr-2 text-purple-400" /> Project Progress
+                    </h4>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-white/70">Design</span>
+                          <span className="text-green-400">Completed</span>
+                        </div>
+                        <div className="w-full bg-white/10 rounded-full h-2">
+                          <div className="bg-green-500 h-2 rounded-full w-full"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-white/70">Development</span>
+                          <span className="text-purple-400">75%</span>
+                        </div>
+                        <div className="w-full bg-white/10 rounded-full h-2">
+                          <div className="bg-purple-500 h-2 rounded-full w-3/4"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-white/70">Testing</span>
+                          <span className="text-blue-400">25%</span>
+                        </div>
+                        <div className="w-full bg-white/10 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full w-1/4"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Analytics Chart */}
+                  <div className="bg-white/5 rounded-lg p-4 backdrop-blur-sm md:col-span-2">
+                    <h4 className="text-white/90 text-sm font-medium mb-3 flex items-center">
+                      <BarChart className="w-4 h-4 mr-2 text-purple-400" /> Website Performance
+                    </h4>
+                    <div className="h-32 flex items-end justify-between space-x-1">
+                      {[15, 25, 18, 30, 22, 35, 40, 30, 25, 45, 35, 55].map((height, i) => (
+                        <div key={i} className="h-full flex flex-col justify-end">
+                          <motion.div 
+                            className="w-5 bg-gradient-to-t from-purple-600 to-indigo-400 rounded-sm"
+                            initial={{ height: 0 }}
+                            whileInView={{ height: `${height}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: i * 0.1 }}
+                          ></motion.div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs text-white/50">
+                      <span>Jan</span>
+                      <span>Feb</span>
+                      <span>Mar</span>
+                      <span>Apr</span>
+                      <span>May</span>
+                      <span>Jun</span>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </motion.div>
+            
+            <motion.div
+              className="text-center relative z-10 mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <motion.button
+                className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-6 sm:px-8 py-3 rounded-full font-bold text-base sm:text-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-purple-500/40"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.href = "/estimate"}
+              >
+                Get Your Dashboard Access
+              </motion.button>
             </motion.div>
           </div>
         </section>
