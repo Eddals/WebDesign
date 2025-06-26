@@ -1,7 +1,18 @@
-import { Resend } from 'resend';
-import { getNewsletterSubscriberTemplate, getNewsletterAdminNotificationTemplate } from './lib/newsletter-templates.js';
+import nodemailer from 'nodemailer';
+import { getNewsletterSubscriberTemplate, getNewsletterAdminTemplate } from './lib/email-templates.js';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create reusable transporter
+const createTransporter = () => {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+};
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -25,49 +36,64 @@ export default async function handler(req, res) {
   try {
     const { name, email, source = 'website_footer' } = req.body;
 
-    // Validate required fields
+    // Validate input
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
     }
 
-    // Validate email format
+    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return res.status(400).json({ error: 'Invalid email address' });
     }
 
-    // Send confirmation email to subscriber
-    const subscriberEmailResult = await resend.emails.send({
-      from: 'DevTone Agency <newsletter@devtone.agency>',
+    // Create transporter
+    const transporter = createTransporter();
+
+    // Prepare email data
+    const subscriberData = {
+      name,
+      email,
+      source,
+      subscribedAt: new Date().toLocaleString()
+    };
+
+    // Send email to subscriber
+    const subscriberMailOptions = {
+      from: `"DevTone Agency" <${process.env.SMTP_USER}>`,
       to: email,
       subject: '🎉 Welcome to DevTone Newsletter!',
-      html: getNewsletterSubscriberTemplate({ name, email }),
-    });
+      html: getNewsletterSubscriberTemplate(subscriberData),
+    };
 
-    // Send notification to admin
-    const adminEmailResult = await resend.emails.send({
-      from: 'DevTone Newsletter <notifications@devtone.agency>',
-      to: 'team@devtone.agency',
-      subject: '📧 New Newsletter Subscriber',
-      html: getNewsletterAdminNotificationTemplate({ name, email, source }),
-    });
+    // Send email to admin
+    const adminMailOptions = {
+      from: `"DevTone Newsletter System" <${process.env.SMTP_USER}>`,
+      to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
+      subject: `📧 New Newsletter Subscriber: ${name}`,
+      html: getNewsletterAdminTemplate(subscriberData),
+    };
 
-    console.log('Newsletter subscription successful:', {
-      subscriber: subscriberEmailResult,
-      admin: adminEmailResult
-    });
+    // Send both emails
+    await Promise.all([
+      transporter.sendMail(subscriberMailOptions),
+      transporter.sendMail(adminMailOptions)
+    ]);
 
-    return res.status(200).json({
-      success: true,
+    // Log the subscription (you can also save to database here)
+    console.log('New newsletter subscription:', subscriberData);
+
+    res.status(200).json({ 
+      success: true, 
       message: 'Successfully subscribed to newsletter',
       data: { name, email }
     });
 
   } catch (error) {
     console.error('Newsletter subscription error:', error);
-    return res.status(500).json({
-      error: 'Failed to process newsletter subscription',
-      details: error.message
+    res.status(500).json({ 
+      error: 'Failed to process subscription',
+      message: error.message 
     });
   }
 }
