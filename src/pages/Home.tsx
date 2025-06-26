@@ -6,7 +6,7 @@ import {
   Briefcase, Rocket, Crown, Code, Laptop, Globe, Sparkles,
   Lightbulb, Cpu, Layers, Smartphone, Palette, Gauge, Heart,
   Monitor, Database, FileText, Package, User, Mail, Phone,
-  Target, Loader, Shield, Building, MapPin, Users
+  Target, Loader, Shield, Building, MapPin, Users, ShoppingCart
 } from "lucide-react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import SEO from '@/components/SEO'
@@ -329,8 +329,8 @@ const Home = () => {
     <>
       <SEO
         title="Unlock Web Development & SEO Services with Devtone Agency"
-        description="Unlock online success with Devtone Agency's cutting-edge web development & SEO services. Elevate your brand with a digital marketing powerhouse."
-        keywords={['web development', 'digital marketing', 'SEO services', 'content creation', 'responsive design', 'web design agency', 'DevTone', 'custom websites', 'business websites', 'branding agency', 'PPC advertising', 'social media management', 'email marketing']}
+        description="Unlock online success with Devtone Agency's cutting-edge web development & SEO services. Elevate your brand with our web development expertise."
+        keywords={['web development', 'responsive design', 'custom websites', 'e-commerce solutions', 'SEO services', 'web design agency', 'DevTone', 'business websites', 'branding agency', 'performance optimization', 'mobile-friendly websites']}
         ogUrl="https://devtone.agency"
       />
       <div className="min-h-screen bg-[#030718]">
@@ -1647,13 +1647,13 @@ const Home = () => {
               >
                 <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6">
                   <span className="text-white/90">Why Choose Devtone for </span>
-                  <span className="text-purple-300">SEO Services</span>
+                  <span className="text-purple-300">Web Development</span>
                   <span className="text-white/90">?</span>
                 </h2>
                 
                 <p className="text-lg text-white/70 text-center max-w-3xl mx-auto">
                   <span>In the digital realm, visibility is everything. Our tailored </span>
-                  <b className="text-purple-300"><strong>SEO services</strong></b>
+                  <b className="text-purple-300"><strong>web development services</strong></b>
                   <span> ensure that your brand commands attention, capturing the right audience at the right time.</span>
                 </p>
               </motion.div>
@@ -1668,51 +1668,51 @@ const Home = () => {
               >
                 <h3 className="text-2xl md:text-3xl font-semibold text-center mb-8">
                   <span className="text-white/90">Our Comprehensive </span>
-                  <span className="text-purple-300">Digital Marketing</span>
+                  <span className="text-purple-300">Web Development</span>
                   <span className="text-white/90"> Solutions</span>
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto px-4 sm:px-0">
                   {[
                     {
-                      title: "Content Creation",
-                      description: "Compelling and strategically crafted to resonate with your target audience.",
-                      icon: <FileText className="w-6 h-6" />
+                      title: "Responsive Design",
+                      description: "Mobile-friendly websites that provide optimal viewing experience across all devices.",
+                      icon: <Smartphone className="w-6 h-6" />
                     },
                     {
-                      title: "Social Media Management",
-                      description: "Elevate your brand's voice on various platforms, enhancing engagement and brand loyalty.",
-                      icon: <Users className="w-6 h-6" />
+                      title: "Custom Development",
+                      description: "Tailored solutions built with modern technologies to meet your specific business needs.",
+                      icon: <Code className="w-6 h-6" />
                     },
                     {
-                      title: "PPC Advertising",
-                      description: "Get immediate results from your ad spend with our precise targeting strategies.",
-                      icon: <Target className="w-6 h-6" />
+                      title: "E-commerce Solutions",
+                      description: "Powerful online stores with secure payment gateways and intuitive shopping experiences.",
+                      icon: <ShoppingCart className="w-6 h-6" />
                     },
                     {
-                      title: "Email Marketing",
-                      description: "Nurture leads and drive conversions through personalized campaigns.",
-                      icon: <Mail className="w-6 h-6" />
+                      title: "Performance Optimization",
+                      description: "Fast-loading websites optimized for speed, SEO, and conversion rates.",
+                      icon: <Gauge className="w-6 h-6" />
                     }
                   ].map((service, index) => (
                     <motion.div
                       key={index}
-                      className="group relative bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
+                      className="group relative bg-white/5 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.5, delay: 0.6 + (index * 0.1) }}
                       whileHover={{ y: -5 }}
                     >
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/30 transition-colors duration-300">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/30 transition-colors duration-300">
                           {service.icon}
                         </div>
                         <div className="flex-1">
-                          <h4 className="text-lg font-semibold text-white mb-2">
+                          <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
                             <b><strong>{service.title}</strong></b><b><strong>:</strong></b>
                           </h4>
-                          <p className="text-white/70">
+                          <p className="text-white/70 text-sm sm:text-base">
                             <span>{service.description}</span>
                           </p>
                         </div>
