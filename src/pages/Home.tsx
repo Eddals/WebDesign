@@ -6,7 +6,7 @@ import {
   Briefcase, Rocket, Crown, Code, Laptop, Globe, Sparkles,
   Lightbulb, Cpu, Layers, Smartphone, Palette, Gauge, Heart,
   Monitor, Database, FileText, Package, User, Mail, Phone,
-  Target, Loader, Shield, Building, MapPin
+  Target, Loader, Shield, Building, MapPin, Users
 } from "lucide-react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import SEO from '@/components/SEO'
