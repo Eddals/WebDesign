@@ -1,28 +1,28 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { getNewsletterSubscriberTemplate, getNewsletterAdminTemplate } from './lib/email-templates.js';
 
-// Create reusable transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-};
+// Initialize Resend - Use environment variable or fallback to direct API key
+const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY) 
+  : new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
 
 export default async function handler(req, res) {
   // Enable CORS
+  const allowedOrigins = [
+    'https://devtone.agency',
+    'https://www.devtone.agency',
+    'http://localhost:5173',
+    'http://localhost:5174'
+  ];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -34,6 +34,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('=== NEWSLETTER SUBSCRIPTION REQUEST RECEIVED ===');
+    console.log('Request body:', req.body);
+    console.log('Resend API configured:', !!resend);
+    console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+    
     const { name, email, source = 'website_footer' } = req.body;
 
     // Validate input
@@ -47,9 +52,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid email address' });
     }
 
-    // Create transporter
-    const transporter = createTransporter();
-
     // Prepare email data
     const subscriberData = {
       name,
@@ -58,42 +60,97 @@ export default async function handler(req, res) {
       subscribedAt: new Date().toLocaleString()
     };
 
-    // Send email to subscriber
-    const subscriberMailOptions = {
-      from: `"DevTone Agency" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: '🎉 Welcome to DevTone Newsletter!',
-      html: getNewsletterSubscriberTemplate(subscriberData),
-    };
+    // Track email sending status
+    let subscriberEmailSent = false;
+    let adminEmailSent = false;
+    let subscriberEmailData = null;
+    let adminEmailData = null;
+    let subscriberEmailError = null;
+    let adminEmailError = null;
 
-    // Send email to admin
-    const adminMailOptions = {
-      from: `"DevTone Newsletter System" <${process.env.SMTP_USER}>`,
-      to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
-      subject: `📧 New Newsletter Subscriber: ${name}`,
-      html: getNewsletterAdminTemplate(subscriberData),
-    };
+    // Send email to subscriber using Resend
+    try {
+      console.log(`Attempting to send welcome email to subscriber: ${email}`);
+      const { data, error } = await resend.emails.send({
+        from: 'DevTone Agency <noreply@devtone.agency>',
+        to: email,
+        subject: '🎉 Welcome to DevTone Newsletter!',
+        html: getNewsletterSubscriberTemplate(subscriberData),
+      });
+      
+      subscriberEmailData = data;
+      subscriberEmailError = error;
+      subscriberEmailSent = !error;
+      
+      console.log('Subscriber email result:', { data, error });
+    } catch (emailError) {
+      console.error('Error sending subscriber email:', emailError);
+      subscriberEmailError = emailError;
+    }
 
-    // Send both emails
-    await Promise.all([
-      transporter.sendMail(subscriberMailOptions),
-      transporter.sendMail(adminMailOptions)
-    ]);
+    // Admin email addresses
+    const adminEmails = [
+      process.env.ADMIN_EMAIL || 'team@devtone.agency',
+      'sweepeasellc@gmail.com'  // Add your email here as a backup
+    ];
+    
+    // Send email to admin using Resend
+    for (const adminEmail of adminEmails) {
+      try {
+        console.log(`Attempting to send admin notification to: ${adminEmail}`);
+        const { data, error } = await resend.emails.send({
+          from: 'DevTone Newsletter System <noreply@devtone.agency>',
+          to: adminEmail,
+          reply_to: email,
+          subject: `📧 New Newsletter Subscriber: ${name}`,
+          html: getNewsletterAdminTemplate(subscriberData),
+        });
+        
+        adminEmailData = data;
+        adminEmailError = error;
+        adminEmailSent = !error;
+        
+        console.log(`Admin email to ${adminEmail} result:`, { data, error });
+        
+        // If successful, break the loop
+        if (!error) break;
+      } catch (emailError) {
+        console.error(`Error sending admin email to ${adminEmail}:`, emailError);
+        adminEmailError = emailError;
+      }
+    }
 
-    // Log the subscription (you can also save to database here)
+    // Log the subscription
     console.log('New newsletter subscription:', subscriberData);
+    console.log('Email sending status:', { 
+      subscriberEmailSent, 
+      adminEmailSent,
+      subscriberEmailError: subscriberEmailError ? subscriberEmailError.message : null,
+      adminEmailError: adminEmailError ? adminEmailError.message : null
+    });
 
+    // Even if email sending fails, we consider the subscription successful
+    // as long as we received the data - we can retry email sending later
     res.status(200).json({ 
       success: true, 
       message: 'Successfully subscribed to newsletter',
-      data: { name, email }
+      data: { 
+        name, 
+        email,
+        subscriberEmailSent,
+        adminEmailSent
+      }
     });
 
   } catch (error) {
     console.error('Newsletter subscription error:', error);
+    
+    // Return a more detailed error response
     res.status(500).json({ 
+      success: false,
       error: 'Failed to process subscription',
-      message: error.message 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }

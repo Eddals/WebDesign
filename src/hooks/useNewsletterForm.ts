@@ -11,6 +11,7 @@ export function useNewsletterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubscribeStatus({ type: null, message: "" });
 
     try {
       // Sanitize name input
@@ -23,19 +24,39 @@ export function useNewsletterForm() {
         throw new Error("Please enter a valid email address");
       }
 
+      console.log('Submitting newsletter form with:', { name: sanitizedName, email });
       const result = await subscribeToNewsletter(sanitizedName, email);
+      console.log('Newsletter subscription result:', result);
 
       if (!result.success) {
         throw new Error(result.message);
       }
 
-      setSubscribeStatus({ type: "success", message: "Thank you for subscribing to our newsletter!" });
+      // Success message
+      setSubscribeStatus({ 
+        type: "success", 
+        message: "Thank you for subscribing to our newsletter! Please check your email for confirmation." 
+      });
+      
+      // Clear form
       setName("");
       setEmail("");
-      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 5000);
+      
+      // Clear success message after delay
+      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 8000);
     } catch (error) {
-      setSubscribeStatus({ type: "error", message: error instanceof Error ? error.message : "Failed to subscribe. Please try again." });
-      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 5000);
+      console.error('Newsletter form submission error:', error);
+      
+      // Error message
+      setSubscribeStatus({ 
+        type: "error", 
+        message: error instanceof Error 
+          ? error.message 
+          : "Failed to subscribe. Please try again later." 
+      });
+      
+      // Clear error message after delay
+      setTimeout(() => setSubscribeStatus({ type: null, message: "" }), 8000);
     } finally {
       setIsSubmitting(false);
     }
