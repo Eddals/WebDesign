@@ -87,8 +87,8 @@ const Contact = () => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    console.log('🚀 Enviando formulário de contato...');
-    console.log('📋 Dados do formulário:', formData);
+    console.log('🚀 Sending contact form...');
+    console.log('📋 Form data:', formData);
 
     try {
       // Prepare data for Supabase
@@ -103,7 +103,7 @@ const Contact = () => {
         status: 'new'
       };
 
-      console.log('💾 Dados preparados para Supabase:', contactData);
+      console.log('💾 Data prepared for Supabase:', contactData);
 
       // Save to Supabase
       const { data, error } = await supabase
@@ -111,16 +111,38 @@ const Contact = () => {
         .insert([contactData])
         .select();
 
-      console.log('📡 Resposta do Supabase:');
+      console.log('📡 Supabase response:');
       console.log('- Data:', data);
       console.log('- Error:', error);
 
       if (error) {
-        console.error('❌ Erro do Supabase:', error);
+        console.error('❌ Supabase error:', error);
         throw error;
       }
 
-      console.log('✅ Contato salvo com sucesso:', data);
+      console.log('✅ Contact saved successfully:', data);
+      
+      // Send email via Resend API
+      try {
+        const emailResponse = await fetch('/api/send-contact-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        
+        const emailResult = await emailResponse.json();
+        console.log('📧 Email API response:', emailResult);
+        
+        if (!emailResult.success) {
+          console.warn('⚠️ Email sending failed but form was submitted');
+        }
+      } catch (emailError) {
+        console.error('❌ Error sending email:', emailError);
+        // Continue with success flow even if email fails
+      }
+      
       setIsSubmitted(true);
 
       // Reset form after success
@@ -138,7 +160,7 @@ const Contact = () => {
       }, 3000)
 
     } catch (error) {
-      console.error('❌ Erro ao enviar formulário de contato:', error);
+      console.error('❌ Error submitting contact form:', error);
       // Still show success to user even if database fails
       setIsSubmitted(true);
 
@@ -157,7 +179,7 @@ const Contact = () => {
       }, 3000)
     } finally {
       setIsSubmitting(false)
-      console.log('🏁 Submissão de contato finalizada');
+      console.log('🏁 Contact submission completed');
     }
   }
 
