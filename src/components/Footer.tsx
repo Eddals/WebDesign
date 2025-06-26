@@ -196,7 +196,7 @@ const Footer = () => {
           </div>
         </motion.div>
       </div>
-    </footersection removed */}>
+    </footer>
   )
 }
 
