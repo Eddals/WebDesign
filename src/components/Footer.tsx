@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom"
 import { Instagram, Linkedin, Github, Shield } from "lucide-react"
 import { motion } from "framer-motion"
-import { useNewsletterForm } from "../hooks/useNewsletterForm"
 
 const Footer = () => {
-  const { name, setName, email, setEmail, isSubmitting, subscribeStatus, handleSubmit } = useNewsletterForm();
   return (
     <footer className="w-full bg-background/80 backdrop-blur-sm border-t border-white/10">
       <div className="container mx-auto px-4 py-12">
@@ -142,68 +140,7 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Newsletter Section - Now as a separate row */}
-        <motion.div 
-          className="mt-12 pt-8 border-t border-white/10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-        >
-          <div className="w-full max-w-3xl mx-auto bg-gradient-to-br from-white/10 to-purple-900/10 rounded-xl p-4 md:p-6 shadow-lg border border-white/10">
-            <div className="flex flex-col md:flex-row md:items-center">
-              <div className="md:w-1/3 mb-4 md:mb-0 md:pr-6">
-                <h4 className="text-white font-semibold text-lg mb-2">Newsletter</h4>
-                <p className="text-white/60 text-sm">Stay updated with our latest news and offers!</p>
-              </div>
-              
-              <div className="md:w-2/3">
-                {subscribeStatus.type && (
-                  <div className={`w-full mb-3 p-2 rounded-lg text-sm ${
-                    subscribeStatus.type === "success" 
-                      ? "bg-green-500/20 text-green-200 border border-green-500/30" 
-                      : "bg-red-500/20 text-red-200 border border-red-500/30"
-                  }`}>
-                    {subscribeStatus.message}
-                  </div>
-                )}
-                
-                <form
-                  className="w-full flex flex-col sm:flex-row gap-3 items-center"
-                  onSubmit={handleSubmit}
-                >
-                  <input
-                    type="text"
-                    name="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    placeholder="Your Name"
-                    disabled={isSubmitting}
-                    className="rounded-full px-4 py-2 bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-purple-400 transition w-full sm:flex-1 text-sm border border-white/10 disabled:opacity-50"
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="Your Email"
-                    disabled={isSubmitting}
-                    className="rounded-full px-4 py-2 bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-purple-400 transition w-full sm:flex-1 text-sm border border-white/10 disabled:opacity-50"
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium py-2 px-6 shadow-md hover:from-purple-600 hover:to-indigo-600 transition text-sm whitespace-nowrap w-full sm:w-auto"
-                  >
-                    {isSubmitting ? "Subscribing..." : "Subscribe"}
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {/* Newsletter section removed */}
 
         {/* Bottom Bar */}
         <motion.div 
@@ -259,7 +196,7 @@ const Footer = () => {
           </div>
         </motion.div>
       </div>
-    </footer>
+    </footersection removed */}>
   )
 }
 
