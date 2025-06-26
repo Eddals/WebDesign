@@ -15,6 +15,8 @@ interface SubscribeResponse {
 // Using fetch to submit to the API endpoint
 export const subscribeToNewsletter = async (name: string, email: string): Promise<SubscribeResponse> => {
   try {
+    console.log('Submitting newsletter subscription:', { name, email });
+    
     const response = await fetch('/api/newsletter-subscribe', {
       method: 'POST',
       headers: {
@@ -27,15 +29,23 @@ export const subscribeToNewsletter = async (name: string, email: string): Promis
       }),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('Error parsing JSON response:', jsonError);
+      throw new Error('Invalid response from server. Please try again later.');
+    }
+    
+    console.log('Newsletter API response:', { status: response.status, data });
     
     if (!response.ok) {
-      throw new Error(data.message || 'Failed to subscribe');
+      throw new Error(data.message || data.error || 'Failed to subscribe');
     }
     
     return {
       success: true,
-      message: 'Successfully subscribed to newsletter',
+      message: data.message || 'Successfully subscribed to newsletter',
       data
     };
   } catch (error) {
