@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     try {
       // Send email to client using Resend
       const clientEmailResult = await resend.emails.send({
-        from: 'DevTone Agency <noreply@devtone.agency>',
+        from: 'DevTone Agency <onboarding@resend.dev>',
         to: formData.email,
         subject: '✨ We Received Your Message - DevTone Agency',
         html: getContactClientTemplate(contactData),
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
 
       // Send email to admin using Resend
       const adminEmailResult = await resend.emails.send({
-        from: 'DevTone Contact System <noreply@devtone.agency>',
+        from: 'DevTone Contact System <onboarding@resend.dev>',
         to: process.env.ADMIN_EMAIL || 'team@devtone.agency',
         replyTo: formData.email,
         subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,

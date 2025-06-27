@@ -70,14 +70,14 @@ export default async function handler(req, res) {
       const [clientEmailResult, adminEmailResult] = await Promise.all([
         // Send email to client
         resend.emails.send({
-          from: 'DevTone Agency <noreply@devtone.agency>',
+          from: 'DevTone Agency <onboarding@resend.dev>',
           to: formData.email,
           subject: '✨ We Received Your Message - DevTone Agency',
           html: getContactClientTemplate(contactData),
         }),
         // Send email to admin
         resend.emails.send({
-          from: 'DevTone Contact System <noreply@devtone.agency>',
+          from: 'DevTone Contact System <onboarding@resend.dev>',
           to: process.env.ADMIN_EMAIL || 'team@devtone.agency',
           replyTo: formData.email,
           subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,

@@ -110,19 +110,63 @@ Then access the contact form at `http://localhost:3000`
 
 ### Common Issues
 
-1. **Emails not sending**
-   - Verify the Resend API key is correct
-   - Check if the domain is verified in Resend
-   - Ensure you have sufficient credits
+1. **Emails not being received**
+   - **Check spam/junk folder** - Emails from `onboarding@resend.dev` might go to spam
+   - **Verify email address** - Make sure the recipient email is correct
+   - **Check Resend dashboard** - View email logs at https://resend.com/emails
+   - **Wait a few minutes** - Sometimes there's a slight delay in delivery
+   - **Test with different email** - Try Gmail, Outlook, etc.
 
-2. **CORS errors**
+2. **Emails not sending from API**
+   - Verify the Resend API key is correct: `re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR`
+   - Check rate limits - Resend allows 2 emails per second
+   - Ensure you have sufficient credits in your Resend account
+   - Run test script: `node scripts/debug-resend-email.js`
+
+3. **CORS errors**
    - Make sure the origin is included in the allowed origins list
    - Check if the API endpoint URL is correct
+   - For local testing, use `vercel dev` instead of `npm run dev`
 
-3. **Form submission fails**
+4. **Form submission fails**
    - Verify all required fields are filled
    - Check browser console for errors
    - Ensure the API is deployed and running
+   - Test API directly: `node scripts/test-contact-api.js`
+
+### Quick Test Commands
+
+```bash
+# Test Resend email delivery
+node scripts/debug-resend-email.js
+
+# Send a test email to your address
+# First edit the YOUR_EMAIL variable in the script
+node scripts/send-test-email-now.js
+
+# Test the contact API endpoint
+node scripts/test-contact-api.js
+
+# Test with the HTML form
+open test-contact-form.html
+```
+
+### Email Not in Inbox?
+
+1. **Check these folders:**
+   - Spam/Junk
+   - Promotions (Gmail)
+   - Other/Updates tabs
+   - All Mail
+
+2. **Whitelist the sender:**
+   - Add `onboarding@resend.dev` to contacts
+   - Mark as "Not Spam" if found in spam
+
+3. **For production:**
+   - Verify your own domain in Resend
+   - Update from address to use your domain
+   - This improves deliverability significantly
 
 ### Debug Mode
 

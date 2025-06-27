@@ -30,7 +30,7 @@ async function testContactEmail() {
 
     // Send test email
     const result = await resend.emails.send({
-      from: 'DevTone Agency <noreply@devtone.agency>',
+      from: 'DevTone Agency <onboarding@resend.dev>',
       to: testData.email,
       subject: '✨ Test: We Received Your Message - DevTone Agency',
       html: `
@@ -52,7 +52,8 @@ async function testContactEmail() {
     });
 
     console.log('✅ Email sent successfully!');
-    console.log('Email ID:', result.id);
+    console.log('Full response:', JSON.stringify(result, null, 2));
+    console.log('Email ID:', result.id || result.data?.id);
     console.log('\n📊 Test Results:');
     console.log('- Email service: Working ✓');
     console.log('- API Key: Valid ✓');
