@@ -10,7 +10,11 @@ export default async function handler(req, res) {
     'https://devtone.agency',
     'https://www.devtone.agency',
     'http://localhost:5173',
-    'http://localhost:5174'
+    'http://localhost:5174',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003'
   ];
   
   const origin = req.headers.origin;
@@ -36,44 +40,58 @@ export default async function handler(req, res) {
     console.log('From:', formData.full_name || formData.name, formData.email);
     console.log('Subject:', formData.subject);
     
+    // Validate required fields
+    if (!formData.email || !formData.subject || !formData.message) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields: email, subject, and message are required'
+      });
+    }
+    
     // Prepare contact data
     const contactData = {
-      name: formData.full_name || formData.name,
+      name: formData.full_name || formData.name || 'Not provided',
       email: formData.email,
       phone: formData.phone || 'Not provided',
       subject: formData.subject,
       message: formData.message,
       company: formData.company || 'Not provided',
       preferredContact: formData.preferredContact || 'email',
-      submittedAt: new Date().toLocaleString(),
-      ipAddress: req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      submittedAt: new Date().toLocaleString('en-US', { 
+        timeZone: 'America/New_York',
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }),
+      ipAddress: req.headers['x-forwarded-for'] || req.connection?.remoteAddress || 'Not available'
     };
 
     try {
-      // Send email to client using Resend
-      const clientEmailResult = await resend.emails.send({
-        from: 'DevTone Agency <noreply@devtone.agency>',
-        to: formData.email,
-        subject: '✨ We Received Your Message - DevTone Agency',
-        html: getContactClientTemplate(contactData),
-      });
+      // Send both emails in parallel for better performance
+      const [clientEmailResult, adminEmailResult] = await Promise.all([
+        // Send email to client
+        resend.emails.send({
+          from: 'DevTone Agency <noreply@devtone.agency>',
+          to: formData.email,
+          subject: '✨ We Received Your Message - DevTone Agency',
+          html: getContactClientTemplate(contactData),
+        }),
+        // Send email to admin
+        resend.emails.send({
+          from: 'DevTone Contact System <noreply@devtone.agency>',
+          to: process.env.ADMIN_EMAIL || 'team@devtone.agency',
+          replyTo: formData.email,
+          subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,
+          html: getContactAdminTemplate(contactData),
+        })
+      ]);
 
-      console.log('✅ Client email sent:', clientEmailResult);
-
-      // Send email to admin using Resend
-      const adminEmailResult = await resend.emails.send({
-        from: 'DevTone Contact System <noreply@devtone.agency>',
-        to: process.env.ADMIN_EMAIL || 'team@devtone.agency',
-        replyTo: formData.email,
-        subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,
-        html: getContactAdminTemplate(contactData),
-      });
-
-      console.log('✅ Admin email sent:', adminEmailResult);
+      console.log('✅ Emails sent successfully');
+      console.log('Client email ID:', clientEmailResult.id);
+      console.log('Admin email ID:', adminEmailResult.id);
       
       return res.status(200).json({ 
         success: true, 
-        message: 'Contact form submitted successfully',
+        message: 'Your message has been sent successfully! We\'ll get back to you soon.',
         emailSent: true,
         details: {
           clientEmailId: clientEmailResult.id,
@@ -83,12 +101,17 @@ export default async function handler(req, res) {
     } catch (emailError) {
       console.error('❌ Error sending emails with Resend:', emailError);
       
+      // Log the specific error for debugging
+      if (emailError.response) {
+        console.error('Resend API response:', emailError.response);
+      }
+      
       // Still return success if email fails but form was received
       return res.status(200).json({ 
         success: true, 
         message: 'Contact form received. We will get back to you soon.',
         emailSent: false,
-        error: emailError.message
+        error: process.env.NODE_ENV === 'development' ? emailError.message : 'Email service temporarily unavailable'
       });
     }
 
@@ -97,7 +120,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ 
       success: false, 
       message: 'Server error processing your request',
-      error: error.message
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 }

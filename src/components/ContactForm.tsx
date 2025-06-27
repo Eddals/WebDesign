@@ -39,9 +39,13 @@ const ContactForm: React.FC = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      // Send to contact API
-      const apiUrl = import.meta.env.VITE_CONTACT_API_URL || 'http://localhost:3003';
-      const response = await fetch(`${apiUrl}/api/contact`, {
+      // Determine the API endpoint based on environment
+      const isProduction = window.location.hostname === 'devtone.agency' || window.location.hostname === 'www.devtone.agency';
+      const apiUrl = isProduction ? '/api/contact' : 'http://localhost:3000/api/contact';
+      
+      console.log('Submitting contact form to:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,8 +58,10 @@ const ContactForm: React.FC = () => {
       if (result.success) {
         setSubmitStatus({
           type: 'success',
-          message: 'Your message has been sent successfully! We\'ll get back to you soon.'
+          message: result.message || 'Your message has been sent successfully! We\'ll get back to you soon.'
         });
+        
+        // Clear form on success
         setFormData({
           full_name: '',
           email: '',
@@ -63,15 +69,32 @@ const ContactForm: React.FC = () => {
           subject: '',
           message: ''
         });
+        
+        // Log success for analytics
+        if (window.gtag) {
+          window.gtag('event', 'contact_form_submission', {
+            event_category: 'engagement',
+            event_label: formData.subject
+          });
+        }
       } else {
-        throw new Error(result.error || 'Failed to send message');
+        throw new Error(result.message || result.error || 'Failed to send message');
       }
     } catch (error) {
       console.error('Error submitting contact form:', error);
-      setSubmitStatus({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'An error occurred while sending the message'
-      });
+      
+      // Handle network errors
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        setSubmitStatus({
+          type: 'error',
+          message: 'Network error. Please check your connection and try again.'
+        });
+      } else {
+        setSubmitStatus({
+          type: 'error',
+          message: error instanceof Error ? error.message : 'An error occurred while sending the message'
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

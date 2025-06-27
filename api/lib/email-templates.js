@@ -99,6 +99,228 @@ export const getAdminEmailTemplate = (formData) => {
   `;
 };
 
+// Contact form client email template
+export const getContactClientTemplate = (contactData) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>We Received Your Message</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; line-height: 1.6;">
+  <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 20px; overflow: hidden;">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%); color: #ffffff; padding: 30px; text-align: center;">
+      <div style="width: 80px; height: 80px; margin: 0 auto 15px; background-color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 40px; color: #4a6cf7;">✉️</span>
+      </div>
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Thank You for Contacting Us!</h1>
+      <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.9;">We've received your message</p>
+    </div>
+    
+    <div style="padding: 40px 30px;">
+      
+      <p style="color: #333; font-size: 16px; margin: 0 0 20px 0;">
+        Hello ${contactData.name},
+      </p>
+      
+      <p style="color: #333; font-size: 16px; margin: 0 0 20px 0;">
+        Thank you for reaching out to DevTone Agency. We appreciate your interest and have successfully received your message.
+      </p>
+      
+      <!-- Message Summary -->
+      <div style="background-color: #f9f9f9; padding: 25px; border-radius: 15px; margin: 25px 0; border-left: 4px solid #4a6cf7;">
+        <h3 style="color: #2541b2; margin: 0 0 15px 0; font-size: 18px;">Your Message Summary</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; color: #666; font-weight: bold; width: 120px;">Subject:</td>
+            <td style="padding: 8px 0; color: #333;">${contactData.subject}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #666; font-weight: bold; vertical-align: top;">Message:</td>
+            <td style="padding: 8px 0; color: #333;">${contactData.message}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #666; font-weight: bold;">Submitted:</td>
+            <td style="padding: 8px 0; color: #333;">${contactData.submittedAt}</td>
+          </tr>
+        </table>
+      </div>
+      
+      <!-- What Happens Next -->
+      <div style="background-color: #f0f7ff; padding: 25px; border-radius: 15px; margin: 25px 0;">
+        <h3 style="color: #2541b2; margin: 0 0 15px 0; font-size: 18px; text-align: center;">What Happens Next?</h3>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="display: flex; align-items: center;">
+            <div style="width: 40px; height: 40px; background-color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+              <span style="font-size: 20px; color: #ffffff;">1</span>
+            </div>
+            <div>
+              <h4 style="color: #333; margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">Message Review</h4>
+              <p style="color: #666; margin: 0; font-size: 14px;">Our team will review your message within 2-4 business hours.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="display: flex; align-items: center;">
+            <div style="width: 40px; height: 40px; background-color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+              <span style="font-size: 20px; color: #ffffff;">2</span>
+            </div>
+            <div>
+              <h4 style="color: #333; margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">Personal Response</h4>
+              <p style="color: #666; margin: 0; font-size: 14px;">You'll receive a personalized response within 24 hours.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <div style="display: flex; align-items: center;">
+            <div style="width: 40px; height: 40px; background-color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+              <span style="font-size: 20px; color: #ffffff;">3</span>
+            </div>
+            <div>
+              <h4 style="color: #333; margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">Follow-up</h4>
+              <p style="color: #666; margin: 0; font-size: 14px;">If needed, we'll schedule a call to discuss your requirements in detail.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Contact Information -->
+      <div style="text-align: center; margin: 30px 0;">
+        <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Need immediate assistance?</p>
+        <p style="margin: 0; color: #333; font-size: 14px;">
+          Email: team@devtone.agency<br>
+          WhatsApp: +1 (917) 741-3468<br>
+          Website: <a href="https://devtone.agency" style="color: #4a6cf7; text-decoration: none;">devtone.agency</a>
+        </p>
+      </div>
+      
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color: #f5f7fa; padding: 25px; text-align: center; border-radius: 0 0 20px 20px;">
+      <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">
+        Best regards,<br>
+        <strong>The DevTone Team</strong>
+      </p>
+      <p style="color: #999; margin: 10px 0 0 0; font-size: 12px;">
+        © ${new Date().getFullYear()} DevTone Agency. All rights reserved.
+      </p>
+    </div>
+    
+  </div>
+</body>
+</html>
+  `;
+};
+
+// Contact form admin email template
+export const getContactAdminTemplate = (contactData) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Contact Form Submission</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; line-height: 1.6;">
+  <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 5px;">
+    
+    <!-- Header -->
+    <div style="background-color: #333; color: #ffffff; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+      <h1 style="margin: 0; font-size: 22px;">📬 New Contact Form Submission</h1>
+      <p style="margin: 8px 0 0 0; color: #ccc; font-size: 14px;">From: ${contactData.name}</p>
+    </div>
+    
+    <div style="padding: 30px;">
+      
+      <!-- Contact Information -->
+      <h2 style="color: #333; margin: 0 0 15px 0; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Contact Information</h2>
+      
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold; width: 140px;">Name:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Email:</td>
+          <td style="padding: 6px 0; color: #333;">
+            <a href="mailto:${contactData.email}" style="color: #4a6cf7; text-decoration: none;">${contactData.email}</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Phone:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.phone}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Company:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.company}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Preferred Contact:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.preferredContact}</td>
+        </tr>
+      </table>
+      
+      <!-- Message Details -->
+      <h2 style="color: #333; margin: 20px 0 15px 0; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Message Details</h2>
+      
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold; width: 140px;">Subject:</td>
+          <td style="padding: 6px 0; color: #333; font-weight: bold;">${contactData.subject}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold; vertical-align: top;">Message:</td>
+          <td style="padding: 6px 0; color: #333;">
+            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 3px; border-left: 3px solid #4a6cf7;">
+              ${contactData.message.replace(/\n/g, '<br>')}
+            </div>
+          </td>
+        </tr>
+      </table>
+      
+      <!-- Quick Actions -->
+      <div style="background-color: #f0f7ff; padding: 20px; border-radius: 5px; margin: 20px 0;">
+        <h3 style="color: #333; margin: 0 0 15px 0; font-size: 16px;">Quick Actions</h3>
+        <div style="text-align: center;">
+          <a href="mailto:${contactData.email}?subject=Re: ${contactData.subject}" style="display: inline-block; background-color: #4a6cf7; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 5px; margin: 0 10px 10px 0;">Reply via Email</a>
+          <a href="tel:${contactData.phone}" style="display: inline-block; background-color: #2a9d8f; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 5px; margin: 0 10px 10px 0;">Call Contact</a>
+          <a href="https://devtone.agency/admin/messages" style="display: inline-block; background-color: #6c5ce7; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 5px; margin: 0 0 10px 0;">View in Dashboard</a>
+        </div>
+      </div>
+      
+      <!-- Submission Info -->
+      <div style="background-color: #f9f9f9; padding: 15px; border-radius: 3px; margin-top: 20px;">
+        <p style="color: #666; margin: 0; font-size: 14px;">
+          <strong>Submitted at:</strong> ${contactData.submittedAt}<br>
+          <strong>Form source:</strong> Contact Page<br>
+          <strong>IP Address:</strong> ${contactData.ipAddress || 'Not available'}
+        </p>
+      </div>
+      
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color: #f9f9f9; padding: 15px; text-align: center; border-top: 1px solid #ddd; border-radius: 0 0 5px 5px;">
+      <p style="color: #666; margin: 0; font-size: 12px;">
+        This is an automated notification from DevTone Agency Contact System
+      </p>
+    </div>
+    
+  </div>
+</body>
+</html>
+  `;
+};
+
 export const getClientEmailTemplate = (formData) => {
   return `
 <!DOCTYPE html>
