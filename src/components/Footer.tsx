@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Instagram, Linkedin, Github, Shield } from "lucide-react"
+import { Instagram, Linkedin, Facebook, Shield } from "lucide-react"
 import { motion } from "framer-motion"
 
 const Footer = () => {
@@ -105,16 +105,16 @@ const Footer = () => {
             <h4 className="text-white font-semibold">Connect</h4>
             <div className="flex space-x-4">
               <a
-                href="https://github.com/devtone-agency"
+                href="https://www.facebook.com/profile.php?id=61577835353545"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-purple-400 transition-colors"
-                aria-label="GitHub"
+                aria-label="Facebook"
               >
-                <Github size={24} />
+                <Facebook size={24} />
               </a>
               <a
-                href="https://linkedin.com/company/devtone-agency"
+                href="https://www.linkedin.com/in/devtone-agency-6a055b371/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-purple-400 transition-colors"
@@ -123,7 +123,7 @@ const Footer = () => {
                 <Linkedin size={24} />
               </a>
               <a
-                href="https://instagram.com/devtone.agency"
+                href="https://www.instagram.com/devtone_agency/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-purple-400 transition-colors"
@@ -173,14 +173,6 @@ const Footer = () => {
               </Link>
               <Link to="/terms" className="text-white/50 hover:text-purple-400 transition-colors">
                 Terms of Service
-              </Link>
-              <Link
-                to="/chat-dashboard"
-                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
-                title="Support Dashboard"
-              >
-                <Shield size={14} />
-                Support
               </Link>
               <a
                 href="https://dashboard.devtone.agency"
