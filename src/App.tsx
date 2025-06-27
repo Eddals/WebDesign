@@ -35,6 +35,7 @@ const MarketingAutomation = lazy(() => import('./pages/services/MarketingAutomat
 const ECommerce = lazy(() => import('./pages/services/ECommerce'));
 const WebsiteRedesign = lazy(() => import('./pages/services/WebsiteRedesign'));
 const MobileApps = lazy(() => import('./pages/services/MobileApps'));
+const TestEmail = lazy(() => import('./pages/TestEmail'));
 
 
 export default function App() {
@@ -93,6 +94,7 @@ export default function App() {
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/chat-dashboard" element={<ChatDashboard />} />
+                        <Route path="/test-email" element={<TestEmail />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>

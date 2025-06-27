@@ -1,22 +1,25 @@
 import { Resend } from 'resend';
 
+// Initialize Resend with the API key directly
+const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
+
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
   
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  
-  console.log('Testing email with:', {
-    apiKeyExists: !!process.env.RESEND_API_KEY,
-    adminEmail: process.env.ADMIN_EMAIL || 'team@devtone.agency'
-  });
+  console.log('Testing email with direct API key');
   
   try {
     // Test admin email
-    const { data: adminData, error: adminError } = await resend.emails.send({
-      from: 'DevTone Test <noreply@devtone.agency>',
-      to: [process.env.ADMIN_EMAIL || 'team@devtone.agency'],
+    const adminResult = await resend.emails.send({
+      from: 'DevTone Test <onboarding@resend.dev>',
+      to: 'team@devtone.agency',
       subject: 'Test Email - Admin Notification',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
@@ -24,17 +27,17 @@ export default async function handler(req, res) {
           <p>This is a test of the admin notification system.</p>
           <p>If you're receiving this, the email system is working correctly.</p>
           <hr>
-          <p><strong>Sent from:</strong> noreply@devtone.agency</p>
-          <p><strong>Sent to:</strong> ${process.env.ADMIN_EMAIL || 'team@devtone.agency'}</p>
+          <p><strong>Sent from:</strong> onboarding@resend.dev</p>
+          <p><strong>Sent to:</strong> team@devtone.agency</p>
           <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
         </div>
       `
     });
     
     // Test client email (send to admin as well for testing)
-    const { data: clientData, error: clientError } = await resend.emails.send({
-      from: 'DevTone <noreply@devtone.agency>',
-      to: [process.env.ADMIN_EMAIL || 'team@devtone.agency'],
+    const clientResult = await resend.emails.send({
+      from: 'DevTone Agency <onboarding@resend.dev>',
+      to: 'team@devtone.agency',
       subject: 'Test Email - Client Confirmation',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
@@ -42,7 +45,7 @@ export default async function handler(req, res) {
           <p>This is a test of the client confirmation email.</p>
           <p>In production, this would go to the client's email address.</p>
           <hr>
-          <p><strong>Sent from:</strong> noreply@devtone.agency</p>
+          <p><strong>Sent from:</strong> onboarding@resend.dev</p>
           <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
         </div>
       `
@@ -52,29 +55,23 @@ export default async function handler(req, res) {
       success: true,
       message: 'Test emails sent!',
       results: {
-        admin: adminData ? { id: adminData.id, success: true } : { error: adminError },
-        client: clientData ? { id: clientData.id, success: true } : { error: clientError }
+        admin: adminResult,
+        client: clientResult
       },
-      debug: {
-        apiKeyExists: !!process.env.RESEND_API_KEY,
-        adminEmail: process.env.ADMIN_EMAIL || 'team@devtone.agency',
-        timestamp: new Date().toISOString()
-      }
+      timestamp: new Date().toISOString()
     };
     
-    console.log('Test email results:', response);
+    console.log('✅ Test email results:', response);
     
     return res.status(200).json(response);
     
   } catch (err) {
-    console.error('Test email error:', err);
+    console.error('❌ Test email error:', err);
     return res.status(500).json({ 
       success: false,
       error: err.message,
-      debug: {
-        apiKeyExists: !!process.env.RESEND_API_KEY,
-        adminEmail: process.env.ADMIN_EMAIL || 'team@devtone.agency'
-      }
+      stack: err.stack,
+      timestamp: new Date().toISOString()
     });
   }
 }

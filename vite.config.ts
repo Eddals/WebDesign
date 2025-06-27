@@ -42,11 +42,11 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/devtone-dashboard/, '')
       },
-      // Proxy API requests to the dashboard server
+      // Proxy API requests to the production API
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://devtone.agency',
         changeOrigin: true,
-        secure: false
+        secure: true
       }
     }
   },

@@ -39,11 +39,13 @@ const ContactForm: React.FC = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      // Determine the API endpoint based on environment
-      const isProduction = window.location.hostname === 'devtone.agency' || window.location.hostname === 'www.devtone.agency';
-      const apiUrl = isProduction ? '/api/contact' : 'http://localhost:3000/api/contact';
+      // Use the full URL for the API endpoint
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'https://devtone.agency/api/contact'
+        : '/api/contact';
       
       console.log('Submitting contact form to:', apiUrl);
+      console.log('Form data:', formData);
       
       const response = await fetch(apiUrl, {
         method: 'POST',

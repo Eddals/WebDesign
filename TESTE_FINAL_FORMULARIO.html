@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESTE FINAL - Formulário de Contato</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #4a6cf7;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success {
+            background: #28a745;
+            color: white;
+        }
+        .error {
+            background: #dc3545;
+            color: white;
+        }
+        button {
+            background: #4a6cf7;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #3a5ce7;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .info {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4a6cf7;
+        }
+        .log {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 TESTE FINAL DO FORMULÁRIO</h1>
+        
+        <div class="info">
+            <h3>📧 Configuração:</h3>
+            <p>✅ API: https://devtone.agency/api/contact-form</p>
+            <p>✅ Admin: sweepeasellc@gmail.com</p>
+            <p>✅ Domínio: noreply@devtone.agency</p>
+        </div>
+
+        <button id="testBtn" onclick="testarFormulario()">
+            🧪 TESTAR FORMULÁRIO AGORA
+        </button>
+
+        <div id="status"></div>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        function log(msg) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${msg}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function testarFormulario() {
+            const btn = document.getElementById('testBtn');
+            const statusDiv = document.getElementById('status');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Enviando...';
+            statusDiv.innerHTML = '';
+            document.getElementById('log').innerHTML = '';
+            
+            const dados = {
+                full_name: 'Teste Automático',
+                email: 'teste@exemplo.com',
+                phone: '+1 555-0123',
+                company: 'Empresa Teste',
+                subject: 'website-issue',
+                message: 'TESTE AUTOMÁTICO DO FORMULÁRIO - Se você recebeu este email, o sistema está funcionando!',
+                preferredContact: 'email'
+            };
+            
+            log('📋 Dados do teste:');
+            log(JSON.stringify(dados, null, 2));
+            log('');
+            log('📡 Enviando para: https://devtone.agency/api/contact-form');
+            
+            try {
+                const response = await fetch('https://devtone.agency/api/contact-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dados)
+                });
+                
+                log(`📡 Status HTTP: ${response.status}`);
+                
+                const result = await response.json();
+                log('📧 Resposta: ' + JSON.stringify(result, null, 2));
+                
+                if (result.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `
+                        <h2>✅ SUCESSO!</h2>
+                        <p>Email enviado para sweepeasellc@gmail.com</p>
+                        <p>Admin ID: ${result.adminId || 'N/A'}</p>
+                        <p>Customer ID: ${result.customerId || 'N/A'}</p>
+                        <p>VERIFIQUE SEU EMAIL AGORA!</p>
+                    `;
+                    log('✅ SUCESSO! Verifique sweepeasellc@gmail.com');
+                } else {
+                    throw new Error(result.error || 'Erro desconhecido');
+                }
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    <h2>❌ ERRO!</h2>
+                    <p>${error.message}</p>
+                `;
+                log('❌ ERRO: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🧪 TESTAR NOVAMENTE';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -15,7 +15,6 @@ import {
 } from "lucide-react"
 import SEO from '@/components/SEO'
 import GoogleMapsWidget from '@/components/GoogleMapsWidget'
-import { supabase } from '@/lib/supabase'
 
 const Contact = () => {
   // Form state
@@ -91,58 +90,93 @@ const Contact = () => {
     console.log('📋 Form data:', formData);
 
     try {
-      // Prepare data for Supabase
-      const contactData = {
+      // Prepare data for email
+      const emailData = {
         full_name: formData.name,
         email: formData.email,
-        phone: formData.phone || null,
-        company: formData.company || null,
+        phone: formData.phone || '',
+        company: formData.company || '',
         subject: formData.subject,
         message: formData.message,
-        preferred_contact: formData.preferredContact,
-        status: 'new'
+        preferredContact: formData.preferredContact
       };
 
-      console.log('💾 Data prepared for Supabase:', contactData);
+      console.log('📧 Sending email with data:', emailData);
 
-      // Save to Supabase
-      const { data, error } = await supabase
-        .from('contacts')
-        .insert([contactData])
-        .select();
-
-      console.log('📡 Supabase response:');
-      console.log('- Data:', data);
-      console.log('- Error:', error);
-
-      if (error) {
-        console.error('❌ Supabase error:', error);
-        throw error;
-      }
-
-      console.log('✅ Contact saved successfully:', data);
+      // Determinar a URL da API com base no ambiente
+      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       
-      // Send email via Resend API
+      // Tentar primeiro o endpoint principal, depois o de backup se falhar
+      const primaryApiUrl = isDevelopment 
+        ? '/api/send-contact-email'
+        : 'https://devtone.agency/api/send-contact-email';
+      
+      const backupApiUrl = isDevelopment
+        ? '/api/send-contact'
+        : 'https://devtone.agency/api/send-contact';
+      
+      console.log('📡 Tentando enviar para:', primaryApiUrl);
+      console.log('📧 Dados:', emailData);
+      
+      // Enviar o formulário e obter o resultado
+      let result;
+      
       try {
-        const emailResponse = await fetch('/api/send-contact-email', {
+        // Tentar o endpoint principal primeiro
+        const response = await fetch(primaryApiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(emailData)
         });
         
-        const emailResult = await emailResponse.json();
-        console.log('📧 Email API response:', emailResult);
+        console.log('📡 Status do endpoint principal:', response.status);
         
-        if (!emailResult.success) {
-          console.warn('⚠️ Email sending failed but form was submitted');
+        // Se o endpoint principal falhar, tentar o de backup
+        if (!response.ok) {
+          throw new Error(`Erro no servidor principal: ${response.status} ${response.statusText}`);
         }
-      } catch (emailError) {
-        console.error('❌ Error sending email:', emailError);
-        // Continue with success flow even if email fails
+        
+        // Processar a resposta do endpoint principal
+        result = await response.json();
+        console.log('📧 Resposta do endpoint principal:', result);
+      } catch (primaryError) {
+        console.warn('⚠️ Endpoint principal falhou, tentando endpoint de backup:', primaryError);
+        
+        // Tentar o endpoint de backup
+        console.log('📡 Tentando enviar para endpoint de backup:', backupApiUrl);
+        
+        try {
+          const backupResponse = await fetch(backupApiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(emailData)
+          });
+          
+          console.log('📡 Status do endpoint de backup:', backupResponse.status);
+          
+          if (!backupResponse.ok) {
+            throw new Error(`Erro no servidor de backup: ${backupResponse.status} ${backupResponse.statusText}`);
+          }
+          
+          // Processar a resposta do endpoint de backup
+          result = await backupResponse.json();
+          console.log('📧 Resposta do endpoint de backup:', result);
+        } catch (backupError) {
+          console.error('❌ Ambos os endpoints falharam:', backupError);
+          throw new Error(`Falha ao enviar mensagem: ${backupError.message}`);
+        }
       }
       
+      // Verificar se o resultado foi bem-sucedido
+      if (!result || !result.success) {
+        throw new Error((result?.error || result?.message || 'Falha ao enviar email'));
+      }
+      
+      console.log('✅ Email sent successfully!');
       setIsSubmitted(true);
 
       // Reset form after success
@@ -157,26 +191,26 @@ const Contact = () => {
           message: '',
           preferredContact: 'email'
         })
-      }, 3000)
+      }, 5000)
 
     } catch (error) {
       console.error('❌ Error submitting contact form:', error);
-      // Still show success to user even if database fails
-      setIsSubmitted(true);
-
-      // Reset form after "success"
-      setTimeout(() => {
-        setIsSubmitted(false)
-        setFormData({
-          name: '',
-          email: '',
-          company: '',
-          phone: '',
-          subject: '',
-          message: '',
-          preferredContact: 'email'
-        })
-      }, 3000)
+      
+      // More detailed error message
+      let errorMessage = 'There was an error sending your message. ';
+      if (error instanceof Error) {
+        errorMessage += error.message;
+      }
+      errorMessage += '\n\nPlease try again or contact us directly at sweepeasellc@gmail.com';
+      
+      alert(errorMessage);
+      
+      // Log more details for debugging
+      console.error('Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        formData: formData
+      });
     } finally {
       setIsSubmitting(false)
       console.log('🏁 Contact submission completed');

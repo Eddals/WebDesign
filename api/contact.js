@@ -66,54 +66,36 @@ export default async function handler(req, res) {
     };
 
     try {
-      // Check if we're in test mode (can only send to team@devtone.agency)
-      const isTestMode = true; // Set to false when domain is verified
-      const allowedTestEmail = 'team@devtone.agency';
-      
-      // Prepare email promises
-      const emailPromises = [];
-      
-      // Admin email (always sent)
-      emailPromises.push(
+      // Send both emails in parallel
+      const [adminEmailResult, clientEmailResult] = await Promise.all([
+        // Admin email to sweepeasellc@gmail.com
         resend.emails.send({
-          from: 'DevTone Contact System <onboarding@resend.dev>',
-          to: process.env.ADMIN_EMAIL || allowedTestEmail,
+          from: 'DevTone Contact System <noreply@devtone.agency>',
+          to: process.env.ADMIN_EMAIL || 'sweepeasellc@gmail.com',
           replyTo: formData.email,
           subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,
           html: getContactAdminTemplate(contactData),
+        }),
+        // Customer confirmation email
+        resend.emails.send({
+          from: 'DevTone Agency <noreply@devtone.agency>',
+          to: formData.email,
+          subject: '✨ We Received Your Message - DevTone Agency',
+          html: getContactClientTemplate(contactData),
         })
-      );
-      
-      // Client email (only if email matches allowed test email or test mode is off)
-      if (!isTestMode || formData.email === allowedTestEmail) {
-        emailPromises.push(
-          resend.emails.send({
-            from: 'DevTone Agency <onboarding@resend.dev>',
-            to: formData.email,
-            subject: '✨ We Received Your Message - DevTone Agency',
-            html: getContactClientTemplate(contactData),
-          })
-        );
-      } else {
-        console.log(`⚠️ Test mode: Client email not sent to ${formData.email} (only ${allowedTestEmail} is allowed)`);
-      }
-      
-      // Send emails
-      const emailResults = await Promise.all(emailPromises);
-      const adminEmailResult = emailResults[0];
-      const clientEmailResult = emailResults[1] || { id: 'not-sent-test-mode' };
+      ]);
 
       console.log('✅ Emails sent successfully');
-      console.log('Client email ID:', clientEmailResult.id);
-      console.log('Admin email ID:', adminEmailResult.id);
+      console.log('Admin email ID:', adminEmailResult.data?.id);
+      console.log('Client email ID:', clientEmailResult.data?.id);
       
       return res.status(200).json({ 
         success: true, 
         message: 'Your message has been sent successfully! We\'ll get back to you soon.',
         emailSent: true,
         details: {
-          clientEmailId: clientEmailResult.id,
-          adminEmailId: adminEmailResult.id
+          adminEmailId: adminEmailResult.data?.id,
+          clientEmailId: clientEmailResult.data?.id
         }
       });
     } catch (emailError) {

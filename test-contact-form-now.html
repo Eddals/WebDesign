@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Formulário de Contato</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            background-color: #4a6cf7;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #3a5ce7;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4a6cf7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste do Formulário de Contato</h1>
+        
+        <div class="info">
+            <h3>📧 Configuração Atual</h3>
+            <p><strong>Admin Email:</strong> sweepeasellc@gmail.com</p>
+            <p><strong>API Endpoint:</strong> /api/contact</p>
+            <p><strong>Domínio:</strong> noreply@devtone.agency</p>
+        </div>
+
+        <form id="contactForm">
+            <div class="form-group">
+                <label for="full_name">Nome Completo *</label>
+                <input type="text" id="full_name" name="full_name" required value="João Silva">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required value="joao@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Telefone</label>
+                <input type="tel" id="phone" name="phone" value="+1 (555) 123-4567">
+            </div>
+
+            <div class="form-group">
+                <label for="company">Empresa</label>
+                <input type="text" id="company" name="company" value="Empresa Exemplo">
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Assunto *</label>
+                <select id="subject" name="subject" required>
+                    <option value="">Selecione um assunto</option>
+                    <option value="general-inquiry" selected>Consulta Geral</option>
+                    <option value="technical-support">Suporte Técnico</option>
+                    <option value="billing-question">Questão de Faturamento</option>
+                    <option value="website-issue">Problema no Site</option>
+                    <option value="feedback">Feedback</option>
+                    <option value="partnership">Oportunidade de Parceria</option>
+                    <option value="other">Outro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Mensagem *</label>
+                <textarea id="message" name="message" required>Esta é uma mensagem de teste do formulário de contato. Por favor, verifique se o email está sendo enviado corretamente.</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Método de Contato Preferido</label>
+                <label style="font-weight: normal;">
+                    <input type="radio" name="preferredContact" value="email" checked> Email
+                </label>
+                <label style="font-weight: normal; margin-left: 20px;">
+                    <input type="radio" name="preferredContact" value="phone"> Telefone
+                </label>
+            </div>
+
+            <button type="submit" id="submitBtn">Enviar Mensagem</button>
+        </form>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusDiv = document.getElementById('status');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            statusDiv.style.display = 'none';
+            
+            // Coletar dados do formulário
+            const formData = {
+                full_name: form.full_name.value,
+                email: form.email.value,
+                phone: form.phone.value,
+                company: form.company.value,
+                subject: form.subject.value,
+                message: form.message.value,
+                preferredContact: form.preferredContact.value
+            };
+            
+            console.log('Enviando dados:', formData);
+            
+            try {
+                // Usar sempre a API de produção
+                const apiUrl = 'https://devtone.agency/api/contact';
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                console.log('Resposta:', result);
+                
+                if (result.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `
+                        <h3>✅ Sucesso!</h3>
+                        <p>${result.message}</p>
+                        <p>Verifique o email em: sweepeasellc@gmail.com</p>
+                        ${result.details ? `<p style="font-size: 12px;">IDs: Admin: ${result.details.adminEmailId}, Cliente: ${result.details.clientEmailId}</p>` : ''}
+                    `;
+                    statusDiv.style.display = 'block';
+                    form.reset();
+                } else {
+                    throw new Error(result.message || 'Falha ao enviar mensagem');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    <h3>❌ Erro</h3>
+                    <p>${error.message}</p>
+                    <p>Por favor, tente novamente ou contate diretamente: sweepeasellc@gmail.com</p>
+                `;
+                statusDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar Mensagem';
+            }
+        });
+    </script>
+</body>
+</html>

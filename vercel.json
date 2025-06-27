@@ -11,6 +11,15 @@
     },
     "api/send-estimate-resend.js": {
       "maxDuration": 10
+    },
+    "api/send-contact.js": {
+      "maxDuration": 15
+    },
+    "api/send-contact-email.js": {
+      "maxDuration": 15
+    },
+    "api/test-email.js": {
+      "maxDuration": 15
     }
   },
   "rewrites": [

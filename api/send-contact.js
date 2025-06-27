@@ -1,11 +1,10 @@
 import { Resend } from 'resend';
 import { getContactClientTemplate, getContactAdminTemplate } from './lib/email-templates.js';
 
-// Initialize Resend with the API key
 const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
 
 export default async function handler(req, res) {
-  // Enable CORS - aceitar todas as origens para facilitar o desenvolvimento
+  // CORS headers - aceitar todas as origens para facilitar o desenvolvimento
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,12 +23,10 @@ export default async function handler(req, res) {
 
   try {
     const formData = req.body;
-    console.log('=== CONTACT FORM SUBMISSION RECEIVED ===');
-    console.log('From:', formData.full_name || formData.name, formData.email);
-    console.log('Subject:', formData.subject);
+    const { full_name, email, phone, company, subject, message } = formData;
     
     // Validação básica
-    if (!formData.email || !formData.message || !(formData.full_name || formData.name)) {
+    if (!full_name || !email || !message) {
       return res.status(400).json({ 
         success: false, 
         message: 'Missing required fields',
@@ -37,26 +34,30 @@ export default async function handler(req, res) {
       });
     }
     
+    console.log('=== CONTACT FORM SUBMISSION RECEIVED ===');
+    console.log('From:', full_name, email);
+    console.log('Subject:', subject || 'Contact Form Submission');
+    
     // Prepare contact data
     const contactData = {
-      name: formData.full_name || formData.name,
-      email: formData.email,
-      phone: formData.phone || 'Not provided',
-      subject: formData.subject || 'Contact Form Submission',
-      message: formData.message,
-      company: formData.company || 'Not provided',
+      name: full_name,
+      email: email,
+      phone: phone || 'Not provided',
+      subject: subject || 'Contact Form Submission',
+      message: message,
+      company: company || 'Not provided',
       preferredContact: formData.preferredContact || 'email',
       submittedAt: new Date().toLocaleString(),
       ipAddress: req.headers['x-forwarded-for'] || req.connection.remoteAddress
     };
-
+    
     try {
       // Enviar email simples para o cliente (sem usar template)
       // Em modo de teste, só podemos enviar para team@devtone.agency
-      const clientEmailResult = await resend.emails.send({
+      const clientResult = await resend.emails.send({
         from: 'DevTone Agency <onboarding@resend.dev>',
         to: 'team@devtone.agency',
-        subject: `✨ [TESTE] Mensagem para ${formData.email} - DevTone Agency`,
+        subject: `✨ [TESTE] Mensagem para ${email} - DevTone Agency`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h1 style="color: #4a6cf7;">Thank You for Contacting Us!</h1>
@@ -80,17 +81,17 @@ export default async function handler(req, res) {
               Website: <a href="https://devtone.agency">devtone.agency</a>
             </p>
           </div>
-        `,
+        `
       });
-
-      console.log('✅ Client email sent:', clientEmailResult);
-
+      
+      console.log('✅ Client email sent:', clientResult);
+      
       // Enviar email simples para o admin (sem usar template)
       // Em modo de teste, só podemos enviar para team@devtone.agency
-      const adminEmailResult = await resend.emails.send({
+      const adminResult = await resend.emails.send({
         from: 'DevTone Contact Form <onboarding@resend.dev>',
         to: 'team@devtone.agency',
-        replyTo: formData.email,
+        replyTo: email,
         subject: `📬 [ADMIN] New Contact Form: ${contactData.name} - ${contactData.subject}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -110,18 +111,18 @@ export default async function handler(req, res) {
               Sent from DevTone Contact Form at ${contactData.submittedAt}
             </p>
           </div>
-        `,
+        `
       });
-
-      console.log('✅ Admin email sent:', adminEmailResult);
+      
+      console.log('✅ Admin email sent:', adminResult);
       
       return res.status(200).json({ 
         success: true, 
-        message: 'Contact form submitted successfully',
+        message: 'Your message has been sent successfully!',
         emailSent: true,
         details: {
-          clientEmailId: clientEmailResult.id,
-          adminEmailId: adminEmailResult.id
+          clientEmailId: clientResult.id,
+          adminEmailId: adminResult.id
         }
       });
     } catch (emailError) {
@@ -135,7 +136,7 @@ export default async function handler(req, res) {
         error: emailError.message
       });
     }
-
+    
   } catch (error) {
     console.error('❌ Server error processing contact form:', error);
     return res.status(500).json({ 
