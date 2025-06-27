@@ -66,24 +66,42 @@ export default async function handler(req, res) {
     };
 
     try {
-      // Send both emails in parallel for better performance
-      const [clientEmailResult, adminEmailResult] = await Promise.all([
-        // Send email to client
-        resend.emails.send({
-          from: 'DevTone Agency <onboarding@resend.dev>',
-          to: formData.email,
-          subject: '✨ We Received Your Message - DevTone Agency',
-          html: getContactClientTemplate(contactData),
-        }),
-        // Send email to admin
+      // Check if we're in test mode (can only send to team@devtone.agency)
+      const isTestMode = true; // Set to false when domain is verified
+      const allowedTestEmail = 'team@devtone.agency';
+      
+      // Prepare email promises
+      const emailPromises = [];
+      
+      // Admin email (always sent)
+      emailPromises.push(
         resend.emails.send({
           from: 'DevTone Contact System <onboarding@resend.dev>',
-          to: process.env.ADMIN_EMAIL || 'team@devtone.agency',
+          to: process.env.ADMIN_EMAIL || allowedTestEmail,
           replyTo: formData.email,
           subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,
           html: getContactAdminTemplate(contactData),
         })
-      ]);
+      );
+      
+      // Client email (only if email matches allowed test email or test mode is off)
+      if (!isTestMode || formData.email === allowedTestEmail) {
+        emailPromises.push(
+          resend.emails.send({
+            from: 'DevTone Agency <onboarding@resend.dev>',
+            to: formData.email,
+            subject: '✨ We Received Your Message - DevTone Agency',
+            html: getContactClientTemplate(contactData),
+          })
+        );
+      } else {
+        console.log(`⚠️ Test mode: Client email not sent to ${formData.email} (only ${allowedTestEmail} is allowed)`);
+      }
+      
+      // Send emails
+      const emailResults = await Promise.all(emailPromises);
+      const adminEmailResult = emailResults[0];
+      const clientEmailResult = emailResults[1] || { id: 'not-sent-test-mode' };
 
       console.log('✅ Emails sent successfully');
       console.log('Client email ID:', clientEmailResult.id);
