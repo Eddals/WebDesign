@@ -36,6 +36,8 @@ const ECommerce = lazy(() => import('./pages/services/ECommerce'));
 const WebsiteRedesign = lazy(() => import('./pages/services/WebsiteRedesign'));
 const MobileApps = lazy(() => import('./pages/services/MobileApps'));
 const TestEmail = lazy(() => import('./pages/TestEmail'));
+const ContactFormDemo = lazy(() => import('./pages/ContactFormDemo'));
+const EmailTest = lazy(() => import('./pages/EmailTest'));
 
 
 export default function App() {
@@ -95,6 +97,8 @@ export default function App() {
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/chat-dashboard" element={<ChatDashboard />} />
                         <Route path="/test-email" element={<TestEmail />} />
+                        <Route path="/contact-form-demo" element={<ContactFormDemo />} />
+                        <Route path="/email-test" element={<EmailTest />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>

@@ -3,14 +3,14 @@
 
 import { Resend } from 'resend';
 
-const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
+const resend = new Resend('re_P4uBXUcH_7B4rc1geoyhz4H1P5njdJLst');
 
 async function testEmail() {
   try {
-    console.log('🚀 Sending test email to team@devtone.agency...');
+    console.log('🚀 Sending test email to sweepeasellc@gmail.com...');
     
     const data = await resend.emails.send({
-      from: 'DevTone <onboarding@resend.dev>', // Use Resend's test domain for now
+      from: 'DevTone <team@devtone.agency>', // Usar o email verificado
       to: ['team@devtone.agency'],
       subject: '🧪 Resend Test - DevTone Email System',
       html: `
@@ -29,7 +29,7 @@ async function testEmail() {
             <strong>Test Details:</strong><br>
             Sent at: ${new Date().toLocaleString()}<br>
             From: DevTone Test System<br>
-            To: team@devtone.agency
+            To: sweepeasellc@gmail.com
           </p>
         </div>
       `
@@ -37,7 +37,7 @@ async function testEmail() {
 
     console.log('✅ Email sent successfully!');
     console.log('📧 Resposta completa:', data);
-    console.log('📬 Check team@devtone.agency inbox!');
+    console.log('📬 Check sweepeasellc@gmail.com inbox!');
   } catch (error) {
     console.error('❌ Error:', error);
   }

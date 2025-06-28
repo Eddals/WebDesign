@@ -161,24 +161,30 @@ const TestEmail = () => {
             <li>Clique em "Enviar Email de Teste Simples" para testar o envio básico de email</li>
             <li>Clique em "Testar Formulário de Contato" para testar o endpoint usado pelo formulário de contato</li>
             <li>Verifique o console do navegador para logs detalhados</li>
-            <li>Os emails de teste serão enviados para <strong>team@devtone.agency</strong></li>
+            <li>Os emails de teste serão enviados para <strong>sweepeasellc@gmail.com</strong></li>
           </ul>
           
-          <div className="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700">
-            <h3 className="font-bold">⚠️ Modo de Teste do Resend</h3>
+          <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-700">
+            <h3 className="font-bold">ℹ️ Sobre o Sistema de Email</h3>
             <p className="mt-2">
-              A conta do Resend está em modo de teste e só pode enviar emails para o endereço verificado: <strong>team@devtone.agency</strong>.
+              Este sistema de email usa o Resend para enviar emails automaticamente quando um cliente preenche o formulário de contato.
             </p>
             <p className="mt-2">
-              Para enviar emails para outros destinatários, é necessário:
+              Dois emails são enviados automaticamente:
             </p>
             <ol className="list-decimal pl-5 mt-2 space-y-1">
-              <li>Verificar um domínio no Resend (em resend.com/domains)</li>
-              <li>Atualizar o endereço de remetente para usar esse domínio</li>
-              <li>Sair do modo de teste</li>
+              <li>Um email de confirmação para o cliente que preencheu o formulário</li>
+              <li>Um email de notificação para o administrador (sweepeasellc@gmail.com)</li>
             </ol>
             <p className="mt-2">
-              Enquanto estiver em modo de teste, todos os emails serão enviados para <strong>team@devtone.agency</strong>, independentemente do destinatário informado.
+              Configuração atual:
+            </p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Remetente: <strong>team@devtone.agency</strong></li>
+              <li>Destinatários: o email do cliente e sweepeasellc@gmail.com</li>
+            </ul>
+            <p className="mt-2">
+              Use esta página para testar se o sistema de email está funcionando corretamente.
             </p>
           </div>
         </div>

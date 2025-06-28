@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 // Initialize Resend with the API key directly
-const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
+const resend = new Resend('re_P4uBXUcH_7B4rc1geoyhz4H1P5njdJLst');
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -18,8 +18,8 @@ export default async function handler(req, res) {
   try {
     // Test admin email
     const adminResult = await resend.emails.send({
-      from: 'DevTone Test <onboarding@resend.dev>',
-      to: 'team@devtone.agency',
+      from: 'DevTone Test <team@devtone.agency>',
+      to: 'sweepeasellc@gmail.com',
       subject: 'Test Email - Admin Notification',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
@@ -28,16 +28,16 @@ export default async function handler(req, res) {
           <p>If you're receiving this, the email system is working correctly.</p>
           <hr>
           <p><strong>Sent from:</strong> onboarding@resend.dev</p>
-          <p><strong>Sent to:</strong> team@devtone.agency</p>
+          <p><strong>Sent to:</strong> sweepeasellc@gmail.com</p>
           <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
         </div>
       `
     });
     
-    // Test client email (send to admin as well for testing)
+    // Test client email (send to test email for testing)
     const clientResult = await resend.emails.send({
-      from: 'DevTone Agency <onboarding@resend.dev>',
-      to: 'team@devtone.agency',
+      from: 'DevTone Agency <team@devtone.agency>',
+      to: 'test@example.com', // Este email será substituído pelo email do cliente real no formulário
       subject: 'Test Email - Client Confirmation',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">

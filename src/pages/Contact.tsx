@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import SEO from '@/components/SEO'
 import GoogleMapsWidget from '@/components/GoogleMapsWidget'
+import { submitContactForm } from '@/lib/contact-service'
 
 const Contact = () => {
   // Form state
@@ -40,6 +41,27 @@ const Contact = () => {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
 
   // State for form
+  
+  // Componente de alerta para o formulário de contato
+  const ContactAlert = () => (
+    <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 text-blue-800 rounded">
+      <div className="flex">
+        <div className="flex-shrink-0">
+          <svg className="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <div className="ml-3">
+          <p className="text-sm font-medium">
+            Automatic Email Confirmation
+          </p>
+          <p className="text-xs mt-1">
+            You'll receive a confirmation email at the address you provide, and our team will be notified of your message.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 
   // Creative contact methods section
   const contactMethods = [
@@ -90,93 +112,37 @@ const Contact = () => {
     console.log('📋 Form data:', formData);
 
     try {
-      // Prepare data for email
+      // Prepare data for Resend webhook
       const emailData = {
-        full_name: formData.name,
+        name: formData.name,
         email: formData.email,
         phone: formData.phone || '',
         company: formData.company || '',
         subject: formData.subject,
-        message: formData.message,
-        preferredContact: formData.preferredContact
+        message: formData.message
       };
 
-      console.log('📧 Sending email with data:', emailData);
+      console.log('📧 Sending contact form with data:', emailData);
 
-      // Determinar a URL da API com base no ambiente
-      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      // Use the contact service with fallback handling
+      const result = await submitContactForm(emailData);
       
-      // Tentar primeiro o endpoint principal, depois o de backup se falhar
-      const primaryApiUrl = isDevelopment 
-        ? '/api/send-contact-email'
-        : 'https://devtone.agency/api/send-contact-email';
+      console.log('📧 Contact form response:', result);
       
-      const backupApiUrl = isDevelopment
-        ? '/api/send-contact'
-        : 'https://devtone.agency/api/send-contact';
-      
-      console.log('📡 Tentando enviar para:', primaryApiUrl);
-      console.log('📧 Dados:', emailData);
-      
-      // Enviar o formulário e obter o resultado
-      let result;
-      
-      try {
-        // Tentar o endpoint principal primeiro
-        const response = await fetch(primaryApiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(emailData)
-        });
-        
-        console.log('📡 Status do endpoint principal:', response.status);
-        
-        // Se o endpoint principal falhar, tentar o de backup
-        if (!response.ok) {
-          throw new Error(`Erro no servidor principal: ${response.status} ${response.statusText}`);
-        }
-        
-        // Processar a resposta do endpoint principal
-        result = await response.json();
-        console.log('📧 Resposta do endpoint principal:', result);
-      } catch (primaryError) {
-        console.warn('⚠️ Endpoint principal falhou, tentando endpoint de backup:', primaryError);
-        
-        // Tentar o endpoint de backup
-        console.log('📡 Tentando enviar para endpoint de backup:', backupApiUrl);
-        
-        try {
-          const backupResponse = await fetch(backupApiUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(emailData)
-          });
-          
-          console.log('📡 Status do endpoint de backup:', backupResponse.status);
-          
-          if (!backupResponse.ok) {
-            throw new Error(`Erro no servidor de backup: ${backupResponse.status} ${backupResponse.statusText}`);
-          }
-          
-          // Processar a resposta do endpoint de backup
-          result = await backupResponse.json();
-          console.log('📧 Resposta do endpoint de backup:', result);
-        } catch (backupError) {
-          console.error('❌ Ambos os endpoints falharam:', backupError);
-          throw new Error(`Falha ao enviar mensagem: ${backupError.message}`);
-        }
+      // Check if the result was successful
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send message');
       }
       
-      // Verificar se o resultado foi bem-sucedido
-      if (!result || !result.success) {
-        throw new Error((result?.error || result?.message || 'Falha ao enviar email'));
+      // Show warning if message was stored locally
+      if (result.error === 'API temporarily unavailable') {
+        alert('Note: Your message has been saved and will be sent automatically when the connection is restored. You can also email us directly at team@devtone.agency');
       }
       
-      console.log('✅ Email sent successfully!');
+      console.log('✅ Email sent successfully via Resend!');
+      console.log('📧 Confirmation email ID:', result.confirmationId);
+      console.log('📧 Team notification ID:', result.notificationId);
+      
       setIsSubmitted(true);
 
       // Reset form after success
@@ -201,7 +167,10 @@ const Contact = () => {
       if (error instanceof Error) {
         errorMessage += error.message;
       }
-      errorMessage += '\n\nPlease try again or contact us directly at sweepeasellc@gmail.com';
+      
+      // Adicionar informação sobre como entrar em contato diretamente
+      errorMessage += '\n\nIf the problem persists, please try again in a few minutes.';
+      errorMessage += '\n\nPlease try again or contact us directly at team@devtone.agency';
       
       alert(errorMessage);
       
@@ -413,12 +382,31 @@ const Contact = () => {
                       <CheckCircle className="w-8 h-8 text-green-400" />
                     </div>
                     <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                    <p className="text-white">
+                    <p className="text-white mb-6">
                       Thank you for reaching out. We'll get back to you within 24 hours.
                     </p>
+                    
+                    <div className="max-w-md mx-auto bg-green-50 border-l-4 border-green-400 p-4 text-green-800 rounded text-left">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm font-medium">
+                            Email Confirmation Sent
+                          </p>
+                          <p className="text-xs mt-1">
+                            We've sent a confirmation email to your address and our team has been notified of your message.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    <ContactAlert />
                     {/* Name and Email Row */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>

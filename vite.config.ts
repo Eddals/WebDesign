@@ -42,11 +42,24 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/devtone-dashboard/, '')
       },
-      // Proxy API requests to the production API
+      // Proxy API requests
+      // For local development, you can run local-api-server.js and change target to http://localhost:3001
+      // For production API testing, use https://devtone.agency
       '/api': {
-        target: 'https://devtone.agency',
+        target: process.env.VITE_API_URL || 'https://devtone.agency',
         changeOrigin: true,
-        secure: true
+        secure: true,
+        configure: (proxy, options) => {
+          proxy.on('error', (err, req, res) => {
+            console.log('proxy error', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('Sending Request to the Target:', req.method, req.url);
+          });
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
+          });
+        }
       }
     }
   },

@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 import { getContactClientTemplate, getContactAdminTemplate } from './lib/email-templates.js';
 
 // Initialize Resend with the API key
-const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
+const resend = new Resend('re_P4uBXUcH_7B4rc1geoyhz4H1P5njdJLst');
 
 export default async function handler(req, res) {
   // Enable CORS - aceitar todas as origens para facilitar o desenvolvimento
@@ -51,48 +51,13 @@ export default async function handler(req, res) {
     };
 
     try {
-      // Enviar email simples para o cliente (sem usar template)
-      // Em modo de teste, só podemos enviar para team@devtone.agency
-      const clientEmailResult = await resend.emails.send({
-        from: 'DevTone Agency <onboarding@resend.dev>',
-        to: 'team@devtone.agency',
-        subject: `✨ [TESTE] Mensagem para ${formData.email} - DevTone Agency`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #4a6cf7;">Thank You for Contacting Us!</h1>
-            <p>Hello ${contactData.name},</p>
-            <p>We've received your message and will get back to you within 24 hours.</p>
-            <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <p><strong>Your message:</strong></p>
-              <p>${contactData.message.replace(/\n/g, '<br>')}</p>
-            </div>
-            <p>Next steps:</p>
-            <ol>
-              <li>Our team will review your message within 2-4 business hours</li>
-              <li>You'll receive a personalized response within 24 hours</li>
-              <li>If needed, we'll schedule a call to discuss your requirements in detail</li>
-            </ol>
-            <p>Best regards,<br>The DevTone Team</p>
-            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-            <p style="color: #666; font-size: 12px;">
-              DevTone Agency<br>
-              Email: team@devtone.com<br>
-              Website: <a href="https://devtone.agency">devtone.agency</a>
-            </p>
-          </div>
-        `,
-      });
-
-      console.log('✅ Client email sent:', clientEmailResult);
-
-      // Enviar email simples para o admin (sem usar template)
-      // Em modo de teste, só podemos enviar para team@devtone.agency
-      const adminEmailResult = await resend.emails.send({
-        from: 'DevTone Contact Form <onboarding@resend.dev>',
-        to: 'team@devtone.agency',
+      // Enviar email para o administrador
+      const emailResult = await resend.emails.send({
+        from: 'DevTone Agency <team@devtone.agency>',
+        to: 'sweepeasellc@gmail.com',
         replyTo: formData.email,
-        subject: `📬 [ADMIN] New Contact Form: ${contactData.name} - ${contactData.subject}`,
-        html: `
+        subject: `📬 New Contact Form: ${contactData.name} - ${contactData.subject}`,
+      html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h1 style="color: #333;">New Contact Form Submission</h1>
             <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px;">
@@ -113,15 +78,48 @@ export default async function handler(req, res) {
         `,
       });
 
-      console.log('✅ Admin email sent:', adminEmailResult);
+      console.log('✅ Email para administrador enviado:', emailResult);
+      
+      // Enviar email para o cliente
+      const clientEmailResult = await resend.emails.send({
+        from: 'DevTone Agency <team@devtone.agency>',
+        to: formData.email,
+        subject: '✨ We Received Your Message - DevTone Agency',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #4a6cf7;">Thank You for Contacting Us!</h1>
+            <p>Hello ${contactData.name},</p>
+            <p>We've received your message and will get back to you within 24 hours.</p>
+            <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <p><strong>Your message:</strong></p>
+              <p>${contactData.message.replace(/\n/g, '<br>')}</p>
+            </div>
+            <p>Next steps:</p>
+            <ol>
+              <li>Our team will review your message within 2-4 business hours</li>
+              <li>You'll receive a personalized response within 24 hours</li>
+              <li>If needed, we'll schedule a call to discuss your requirements in detail</li>
+            </ol>
+            <p>Best regards,<br>The DevTone Team</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="color: #666; font-size: 12px;">
+              DevTone Agency<br>
+              Email: team@devtone.agency<br>
+              Website: <a href="https://devtone.agency">devtone.agency</a>
+            </p>
+          </div>
+        `,
+      });
+      
+      console.log('✅ Email para cliente enviado:', clientEmailResult);
       
       return res.status(200).json({ 
         success: true, 
         message: 'Contact form submitted successfully',
         emailSent: true,
         details: {
-          clientEmailId: clientEmailResult.id,
-          adminEmailId: adminEmailResult.id
+          adminEmailId: emailResult.id,
+          clientEmailId: clientEmailResult.id
         }
       });
     } catch (emailError) {
