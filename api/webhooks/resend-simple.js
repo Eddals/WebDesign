@@ -1,118 +1,128 @@
 import { Resend } from 'resend';
 
-// Inicializar Resend com a chave correta do ambiente
 const resend = new Resend(process.env.RESEND_API_KEY || 're_P4uBXUcH_7B4rc1geoyhz4H1P5njdJLst');
 
-// Template HTML para o e-mail de confirmação
-const getConfirmationEmailHTML = (name, subject, message) => `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmação de Contato - DevTone Agency</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; overflow: hidden; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 32px 24px; text-align: center; }
-        .content { padding: 32px 24px; }
-        .message-box { background: #f8f9fa; border-left: 4px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 4px; }
-        .info-section { margin: 30px 0; }
-        .cta-button { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 14px 30px; border-radius: 25px; font-weight: 600; text-decoration: none; margin: 20px 0; }
-        .footer { background: #f8f9fa; padding: 24px; text-align: center; color: #666; font-size: 14px; }
-        .divider { height: 1px; background: #e0e0e0; margin: 30px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
+function getContactConfirmationEmailHTML(name, subject, message) {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; padding: 40px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+        .timeline { background: white; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .step { display: flex; align-items: start; margin-bottom: 15px; }
+        .step-number { background: #6366f1; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0; }
+        .button { display: inline-block; padding: 12px 30px; background: #6366f1; color: white; text-decoration: none; border-radius: 5px; margin: 10px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
         <div class="header">
-            <h1>✨ Obrigado pelo seu contato!</h1>
+          <h1>Thank You, ${name}!</h1>
+          <p>We've received your message</p>
         </div>
         <div class="content">
-            <h2>Olá ${name}! 👋</h2>
-            <p>Recebemos sua mensagem e este e-mail é para confirmar que seu contato foi registrado com sucesso.</p>
-            <div class="message-box">
-                <strong>Assunto:</strong> ${subject}<br>
-                <strong>Mensagem:</strong><br>${message.replace(/\n/g, '<br>')}
+          <p>Thank you for contacting DevTone Agency. We're excited to connect with you!</p>
+          <div class="timeline">
+            <h2 style="color: #6366f1; margin-bottom: 20px;">What Happens Next?</h2>
+            <div class="step">
+              <div class="step-number">1</div>
+              <div>
+                <strong>Message Review (0-2 hours)</strong><br>
+                Our team will review your message and requirements.
+              </div>
             </div>
-            <div class="info-section">
-                <h3>⏰ Próximos passos</h3>
-                <p>Nossa equipe já foi notificada e responderá em até <strong>24 horas úteis</strong>.</p>
-                <p>Se quiser, conheça mais sobre nossos serviços:</p>
-                <a href="https://devtone.agency" class="cta-button">Visitar nosso site</a>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div>
+                <strong>Personalized Response (within 24 hours)</strong><br>
+                You'll receive a detailed reply or proposal from our team.
+              </div>
             </div>
-            <div class="divider"></div>
-            <div class="info-section">
-                <h3>💡 Sobre a DevTone</h3>
-                <p>Somos especialistas em desenvolvimento web, SEO e marketing digital. Conte conosco para transformar suas ideias em realidade digital!</p>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div>
+                <strong>Schedule a Call (if needed)</strong><br>
+                We'll arrange a call to discuss your needs in detail if required.
+              </div>
             </div>
+          </div>
+          <h3 style="color: #6366f1;">Your Message:</h3>
+          <ul style="background: white; padding: 20px; border-radius: 10px;">
+            <li><strong>Subject:</strong> ${subject}</li>
+            <li><strong>Message:</strong> ${message.replace(/\n/g, '<br>')}</li>
+          </ul>
+          <div style="text-align: center; margin-top: 30px;">
+            <p style="color: #666;">Need to reach us sooner?</p>
+            <a href="mailto:team@devtone.agency" class="button">Email Us</a>
+            <a href="https://wa.me/19177413468" class="button" style="background: #25D366;">WhatsApp Us</a>
+          </div>
+          <p style="text-align: center; color: #999; margin-top: 30px; font-size: 14px;">
+            Best regards,<br>
+            <strong>The DevTone Team</strong><br>
+            <a href="https://devtone.agency" style="color: #6366f1;">devtone.agency</a>
+          </p>
         </div>
-        <div class="footer">
-            <strong>DevTone Agency</strong><br>
-            team@devtone.agency<br>
-            +1 (718) 419-3863<br>
-            <span style="font-size:12px;color:#999;">Este é um e-mail automático, por favor não responda.</span>
-        </div>
-    </div>
-</body>
-</html>
-`;
+      </div>
+    </body>
+    </html>
+  `;
+}
 
-const getConfirmationEmailText = (name, subject, message) => `
-Olá ${name}!
+const getContactConfirmationEmailText = (name, subject, message) => `
+Thank you, ${name}!
 
-Recebemos sua mensagem e este e-mail é para confirmar que seu contato foi registrado com sucesso.
+We've received your message at DevTone Agency.
 
-Assunto: ${subject}
-Mensagem: ${message}
+Subject: ${subject}
+Message: ${message}
 
-Nossa equipe já foi notificada e responderá em até 24 horas úteis.
+Our team will review your message and reply within 24 hours.
 
-DevTone Agency
-team@devtone.agency
-+1 (718) 419-3863
+Best regards,
+The DevTone Team
 https://devtone.agency
-
-Este é um e-mail automático, por favor não responda.
 `;
 
 export default async function handler(req, res) {
-  // CORS básico
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
     const { name, email, phone, company, subject, message } = req.body;
     if (!name || !email || !subject || !message) {
-      return res.status(400).json({ error: 'Campos obrigatórios faltando: nome, email, assunto e mensagem são necessários' });
+      return res.status(400).json({ error: 'Missing required fields: name, email, subject, message' });
     }
-    // Enviar e-mail de confirmação para o usuário
+    // Send confirmation email to the user
     const confirmationEmail = await resend.emails.send({
       from: 'DevTone Agency <team@devtone.agency>',
       to: email,
-      subject: `Confirmação de Contato - ${subject}`,
-      html: getConfirmationEmailHTML(name, subject, message),
-      text: getConfirmationEmailText(name, subject, message),
+      subject: `We received your message - DevTone Agency`,
+      html: getContactConfirmationEmailHTML(name, subject, message),
+      text: getContactConfirmationEmailText(name, subject, message),
     });
-    // Enviar notificação para a equipe
+    // Send notification to the team
     const teamNotification = await resend.emails.send({
       from: 'DevTone Contact Form <team@devtone.agency>',
       to: 'team@devtone.agency',
-      subject: `Novo Contato: ${subject} - ${name}`,
-      html: `<h2>Novo contato recebido</h2><p><strong>Nome:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Telefone:</strong> ${phone || 'Não informado'}</p><p><strong>Empresa:</strong> ${company || 'Não informada'}</p><p><strong>Assunto:</strong> ${subject}</p><p><strong>Mensagem:</strong></p><p>${message.replace(/\n/g, '<br>')}</p><hr><p><small>Enviado em: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</small></p>`,
-      text: `Novo contato recebido\n\nNome: ${name}\nEmail: ${email}\nTelefone: ${phone || 'Não informado'}\nEmpresa: ${company || 'Não informada'}\nAssunto: ${subject}\n\nMensagem:\n${message}\n\n--\nEnviado em: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}`,
+      subject: `📬 New Contact Form: ${name} - ${subject}`,
+      html: `<h2>New contact received</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone || 'Not provided'}</p><p><strong>Company:</strong> ${company || 'Not provided'}</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br>')}</p><hr><p><small>Sent at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}</small></p>`,
+      text: `New contact received\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nCompany: ${company || 'Not provided'}\nSubject: ${subject}\n\nMessage:\n${message}\n\n--\nSent at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}`,
     });
     return res.status(200).json({
       success: true,
-      message: 'E-mails enviados com sucesso',
+      message: 'Emails sent successfully',
       confirmationId: confirmationEmail.id,
       notificationId: teamNotification.id
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Erro ao processar solicitação', details: error.message });
+    return res.status(500).json({ error: 'Failed to process request', details: error.message });
   }
 }
