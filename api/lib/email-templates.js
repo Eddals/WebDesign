@@ -1,5 +1,67 @@
 // Clean professional email templates
 
+// Contact form styled like estimate admin template
+export const getContactPlainAdminTemplate = (contactData) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Contact Inquiry</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; line-height: 1.6;">
+  <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 5px;">
+    <div style="background-color: #333; color: #ffffff; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+      <h1 style="margin: 0; font-size: 22px;">New Contact Inquiry</h1>
+    </div>
+    <div style="padding: 30px;">
+      <h2 style="color: #333; margin: 0 0 15px 0; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Contact Information</h2>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold; width: 120px;">Name:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Email:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.email}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Phone:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.phone || 'Not provided'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Company:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.company || 'Not provided'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-weight: bold;">Preferred Contact:</td>
+          <td style="padding: 6px 0; color: #333;">${contactData.preferredContact || 'Not specified'}</td>
+        </tr>
+      </table>
+      <h2 style="color: #333; margin: 20px 0 15px 0; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Message</h2>
+      <div style="background-color: #f9f9f9; padding: 15px; border-radius: 3px; border-left: 3px solid #333; margin-bottom: 20px;">
+        <p style="color: #333; margin: 0;">${contactData.message.replace(/\n/g, '<br>')}</p>
+      </div>
+      <div style="background-color: #f9f9f9; padding: 15px; border-radius: 3px; margin-top: 20px;">
+        <p style="color: #666; margin: 0 0 8px 0; font-size: 14px; font-weight: bold;">Submission Details:</p>
+        <p style="margin: 0; color: #333; font-size: 14px;">
+          Submitted: ${contactData.submittedAt || 'N/A'}<br>
+          IP Address: ${contactData.ipAddress || 'N/A'}
+        </p>
+      </div>
+    </div>
+    <div style="background-color: #f9f9f9; padding: 15px; text-align: center; border-top: 1px solid #ddd; border-radius: 0 0 5px 5px;">
+      <p style="color: #666; margin: 0; font-size: 12px;">
+        This is an automated notification from DevTone Agency Contact System
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+};
+
 export const getAdminEmailTemplate = (formData) => {
   const features = Array.isArray(formData.features) ? formData.features.join(', ') : formData.features || 'None specified';
   
