@@ -388,7 +388,6 @@ const Contact = () => {
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <ContactAlert />
                     {/* Name and Email Row */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
