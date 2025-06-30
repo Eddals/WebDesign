@@ -6,28 +6,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Forward the request to N8N
-    const n8nResponse = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+    // Forward the request to N8N using the new webhook URL
+    const n8nResponse = await fetch('https://eae.app.n8n.cloud/webhook/a6db0e86-ac57-49bc-ac5b-aed7c1ddd0e3', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(req.body),
     });
-
-    // Also send to test webhook
-    try {
-      await fetch('https://eae.app.n8n.cloud/webhook-test/239bb0c5-e4c8-4de1-9b94-8686e41c7098', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(req.body),
-      });
-    } catch (testError) {
-      console.error('Error sending to test webhook:', testError);
-      // Continue even if test webhook fails
-    }
 
     // Return the response from N8N
     const data = await n8nResponse.text();

@@ -110,7 +110,7 @@ const Contact = () => {
         
         console.log('Sending data to N8N webhook:', webhookData);
         
-        // Use our proxy endpoint instead of calling N8N directly
+        // Use our proxy endpoint to avoid CORS issues
         const webhookUrl = window.location.hostname === 'localhost' 
           ? 'https://devtone.agency/api/webhook-proxy'
           : '/api/webhook-proxy';
@@ -123,7 +123,7 @@ const Contact = () => {
           body: JSON.stringify(webhookData)
         });
         
-        console.log('Webhook proxy response status:', webhookResponse.status);
+        console.log('Webhook response status:', webhookResponse.status);
       } catch (webhookError) {
         console.error('Error sending to webhooks:', webhookError);
         // Continue even if webhook fails
