@@ -110,7 +110,12 @@ const Contact = () => {
         
         console.log('Sending data to N8N webhook:', webhookData);
         
-        const webhookResponse = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+        // Use our proxy endpoint instead of calling N8N directly
+        const webhookUrl = window.location.hostname === 'localhost' 
+          ? 'https://devtone.agency/api/webhook-proxy'
+          : '/api/webhook-proxy';
+          
+        const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -118,18 +123,7 @@ const Contact = () => {
           body: JSON.stringify(webhookData)
         });
         
-        console.log('N8N webhook response status:', webhookResponse.status);
-        
-        // Also send to test webhook
-        const testResponse = await fetch('https://eae.app.n8n.cloud/webhook-test/239bb0c5-e4c8-4de1-9b94-8686e41c7098', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData)
-        });
-        
-        console.log('Test webhook response status:', testResponse.status);
+        console.log('Webhook proxy response status:', webhookResponse.status);
       } catch (webhookError) {
         console.error('Error sending to webhooks:', webhookError);
         // Continue even if webhook fails
