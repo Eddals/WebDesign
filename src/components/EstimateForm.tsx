@@ -105,7 +105,28 @@ const EstimateForm: React.FC = () => {
         // Continue even if API fails - we'll still try ActivePieces
       }
       
-      // Also send to ActivePieces webhook
+      // Send to N8N webhook
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const response = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('N8N webhook response status:', response.status);
+      } catch (webhookError) {
+        console.error('Error sending to N8N webhook:', webhookError);
+        // Continue even if webhook fails
+      }
+      
+      // Also send to ActivePieces webhook (keeping as backup)
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout

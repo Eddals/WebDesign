@@ -47,6 +47,38 @@ const ContactForm: React.FC = () => {
       console.log('Submitting contact form to:', apiUrl);
       console.log('Form data:', formData);
       
+      // Send to N8N webhook
+      try {
+        const webhookData = {
+          nome: formData.full_name,
+          email: formData.email,
+          telefone: formData.phone,
+          assunto: formData.subject,
+          mensagem: formData.message,
+          data_envio: new Date().toISOString(),
+          origem: 'formulario-contato'
+        };
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const webhookResponse = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('N8N webhook response status:', webhookResponse.status);
+      } catch (webhookError) {
+        console.error('Error sending to N8N webhook:', webhookError);
+        // Continue even if webhook fails
+      }
+      
+      // Also send to the original API endpoint
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {

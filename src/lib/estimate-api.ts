@@ -1,5 +1,8 @@
 import { ACTIVEPIECES_CONFIG, getActivePiecesAuthHeader } from '@/config/activepieces';
 
+// N8N webhook URL
+const N8N_WEBHOOK_URL = 'https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52';
+
 // API configuration
 const API_URL = import.meta.env.VITE_API_URL || '';
 
