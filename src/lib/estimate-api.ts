@@ -1,9 +1,7 @@
 import { ACTIVEPIECES_CONFIG, getActivePiecesAuthHeader } from '@/config/activepieces';
 
 // API configuration
-const API_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.DEV ? 'http://localhost:3002' : ''
-);
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export interface EstimateFormData {
   // Personal Info
@@ -141,6 +139,12 @@ export const submitEstimate = async (formData: EstimateFormData): Promise<Estima
     // Try to send to our API, but don't fail if it's not available
     try {
       // Use the correct endpoint based on environment
+      // Skip this API call in development since it's failing
+      if (import.meta.env.DEV) {
+        console.log('Skipping API call in development environment');
+        throw new Error('API call skipped in development');
+      }
+      
       const endpoint = API_URL ? `${API_URL}/api/estimate` : '/api/send-estimate-email';
       const response = await fetch(endpoint, {
         method: 'POST',

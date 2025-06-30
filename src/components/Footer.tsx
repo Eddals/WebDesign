@@ -70,7 +70,16 @@ const Footer = () => {
                 Home
               </Link>
               <Link to="/about" className="text-white/70 hover:text-purple-400 transition-colors">
-                About
+                About Us
+              </Link>
+              <Link to="/estimate" className="text-white/70 hover:text-purple-400 transition-colors">
+                Get Estimate
+              </Link>
+              <Link to="/faq" className="text-white/70 hover:text-purple-400 transition-colors">
+                FAQ
+              </Link>
+              <Link to="/contact" className="text-white/70 hover:text-purple-400 transition-colors">
+                Contact
               </Link>
             </nav>
           </div>
