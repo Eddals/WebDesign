@@ -110,10 +110,8 @@ const Contact = () => {
         
         console.log('Sending data to N8N webhook:', webhookData);
         
-        // Use our proxy endpoint to avoid CORS issues
-        const webhookUrl = window.location.hostname === 'localhost' 
-          ? 'https://devtone.agency/api/webhook-proxy'
-          : '/api/webhook-proxy';
+        // Direct webhook call to the new URL
+        const webhookUrl = 'https://eae.app.n8n.cloud/webhook/82a8cd70-e933-4a64-90e4-e6e1ec8525a2';
           
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
