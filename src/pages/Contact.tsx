@@ -94,6 +94,36 @@ const Contact = () => {
     console.log('📋 Form data:', formData);
 
     try {
+      // Send data to N8N webhook
+      try {
+        const webhookData = {
+          nome: formData.name,
+          email: formData.email,
+          telefone: formData.phone || '',
+          empresa: formData.company || '',
+          assunto: formData.subject,
+          mensagem: formData.message,
+          contato_preferido: formData.preferredContact,
+          data_envio: new Date().toISOString(),
+          origem: 'formulario-contato'
+        };
+        
+        console.log('Sending data to N8N webhook:', webhookData);
+        
+        const webhookResponse = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData)
+        });
+        
+        console.log('N8N webhook response status:', webhookResponse.status);
+      } catch (webhookError) {
+        console.error('Error sending to N8N webhook:', webhookError);
+        // Continue even if webhook fails
+      }
+      
       // Prepare data for Resend webhook
       const emailData = {
         name: formData.name,

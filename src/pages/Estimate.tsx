@@ -394,6 +394,40 @@ const Estimate = () => {
     setError(null);
 
     try {
+      // Send data to N8N webhook
+      try {
+        const webhookData = {
+          nome: formData.name,
+          email: formData.email,
+          telefone: formData.phone,
+          empresa: formData.company,
+          pais: formData.country,
+          industria: formData.industry,
+          tipo_projeto: formData.projectType,
+          orcamento: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
+          prazo: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
+          mensagem: formData.description,
+          recursos: formData.features.join(', '),
+          data_envio: new Date().toISOString(),
+          origem: 'formulario-estimate'
+        };
+        
+        console.log('Sending data to N8N webhook:', webhookData);
+        
+        const webhookResponse = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData)
+        });
+        
+        console.log('N8N webhook response status:', webhookResponse.status);
+      } catch (webhookError) {
+        console.error('Error sending to N8N webhook:', webhookError);
+        // Continue even if webhook fails
+      }
+      
       // Use the estimate API service
       const result = await submitEstimate({
         name: formData.name,
