@@ -423,8 +423,19 @@ const Estimate = () => {
         });
         
         console.log('N8N webhook response status:', webhookResponse.status);
+        
+        // Also send to test webhook
+        const testResponse = await fetch('https://eae.app.n8n.cloud/webhook-test/239bb0c5-e4c8-4de1-9b94-8686e41c7098', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData)
+        });
+        
+        console.log('Test webhook response status:', testResponse.status);
       } catch (webhookError) {
-        console.error('Error sending to N8N webhook:', webhookError);
+        console.error('Error sending to webhooks:', webhookError);
         // Continue even if webhook fails
       }
       
