@@ -4,6 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import chat animations */
+@import './styles/chat-animations.css';
+
 body {
   font-family: 'Inter', sans-serif;
 }
