@@ -24,9 +24,24 @@ const websiteInfo = {
     { name: "Mobile Applications", path: "/services/mobile-applications" }
   ],
   social: [
-    { name: "Facebook", icon: <Facebook size={16} />, url: "https://www.facebook.com/profile.php?id=61577835353545" },
-    { name: "LinkedIn", icon: <Linkedin size={16} />, url: "https://www.linkedin.com/in/devtone-agency-6a055b371/" },
-    { name: "Instagram", icon: <Instagram size={16} />, url: "https://www.instagram.com/devtone_agency/" }
+    { 
+      name: "Facebook", 
+      icon: <Facebook size={20} className="text-blue-400" />, 
+      url: "https://www.facebook.com/profile.php?id=61577835353545",
+      color: "bg-blue-500/20 hover:bg-blue-500/30"
+    },
+    { 
+      name: "LinkedIn", 
+      icon: <Linkedin size={20} className="text-blue-600" />, 
+      url: "https://www.linkedin.com/in/devtone-agency-6a055b371/",
+      color: "bg-blue-600/20 hover:bg-blue-600/30"
+    },
+    { 
+      name: "Instagram", 
+      icon: <Instagram size={20} className="text-pink-500" />, 
+      url: "https://www.instagram.com/devtone_agency/",
+      color: "bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-orange-500/20 hover:from-purple-500/30 hover:via-pink-500/30 hover:to-orange-500/30"
+    }
   ],
   contact: {
     email: "hello@devtone.agency",
@@ -58,7 +73,7 @@ const InteractiveChat = () => {
     if (!isOpen && messages.length === 0) {
       setTimeout(() => {
         addBotMessage(
-          "👋 Hi there! I'm your friendly assistant from DevTone. How can I help you today? You can ask me about our services, find contact information, or get help with anything related to our website."
+          "👋 Hi there! I'm your friendly assistant from DevTone. You can click on any of the question buttons below to learn more about our services, pricing, or how to get started. You can also connect with us through our social media channels at the bottom."
         )
       }, 500)
     }
@@ -192,6 +207,47 @@ const InteractiveChat = () => {
       )
       return
     }
+
+    // Check for website redesign queries
+    if (lowerMsg.includes('redesign') || lowerMsg.includes('rebuild') || lowerMsg.includes('revamp')) {
+      addBotMessage(
+        "We specialize in website redesign services to help modernize your online presence. Our team can transform your outdated website into a contemporary, user-friendly platform that better represents your brand and improves user experience.",
+        [
+          <Link 
+            key="redesign" 
+            to="/services/website-redesign"
+            className="chat-link block px-3 py-2 mt-1 text-sm bg-purple-600/30 hover:bg-purple-600/50 rounded-lg text-white transition-colors"
+          >
+            Website Redesign Services
+          </Link>
+        ]
+      )
+      return
+    }
+
+    // Check for getting started queries
+    if (lowerMsg.includes('get started') || lowerMsg.includes('begin') || lowerMsg.includes('start')) {
+      addBotMessage(
+        "Getting started with DevTone is easy! The first step is to request an estimate through our website. We'll then schedule a consultation to discuss your project requirements, goals, and timeline. From there, we'll create a customized proposal for your project.",
+        [
+          <Link 
+            key="estimate" 
+            to="/estimate"
+            className="chat-link block px-3 py-2 mt-1 text-sm bg-purple-600/30 hover:bg-purple-600/50 rounded-lg text-white transition-colors"
+          >
+            Request an Estimate
+          </Link>,
+          <Link 
+            key="contact" 
+            to="/contact"
+            className="chat-link block px-3 py-2 mt-1 text-sm bg-purple-600/30 hover:bg-purple-600/50 rounded-lg text-white transition-colors"
+          >
+            Contact Us
+          </Link>
+        ]
+      )
+      return
+    }
     
     // Default response for other queries
     addBotMessage(
@@ -272,14 +328,17 @@ const InteractiveChat = () => {
             {/* Chat Header */}
             <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-3 sm:p-4 flex items-center justify-between rounded-t-3xl">
               <div className="flex items-center min-w-0 flex-1">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0 float-animation">
                   <MessageSquare className="text-white" size={14} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-white font-semibold text-sm sm:text-base truncate">DevTone Assistant</h3>
-                  <p className="text-white/70 text-xs">
-                    How can we help you today?
-                  </p>
+                  <div className="flex items-center">
+                    <span className="w-2 h-2 bg-green-400 rounded-full mr-1.5"></span>
+                    <p className="text-white/70 text-xs">
+                      Online | Quick Answers
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
@@ -375,7 +434,7 @@ const InteractiveChat = () => {
 
                   {/* Quick Actions */}
                   <div className="p-3 bg-gray-900 border-t border-gray-700">
-                    <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
+                    <div className="grid grid-cols-2 gap-2 mb-3">
                       <button 
                         onClick={() => {
                           addUserMessage("What services do you offer?")
@@ -385,8 +444,9 @@ const InteractiveChat = () => {
                             setIsTyping(false)
                           }, 1000)
                         }}
-                        className="chat-action-button px-3 py-1.5 bg-gray-800 text-white text-xs rounded-full whitespace-nowrap hover:bg-gray-700 transition-colors"
+                        className="chat-action-button px-3 py-2 bg-gradient-to-r from-purple-600/30 to-purple-800/30 text-white text-xs rounded-lg whitespace-nowrap hover:from-purple-600/40 hover:to-purple-800/40 transition-colors flex items-center justify-center gap-1"
                       >
+                        <span className="w-4 h-4 bg-purple-500/30 rounded-full flex items-center justify-center text-xs">?</span>
                         Our Services
                       </button>
                       <button 
@@ -398,8 +458,9 @@ const InteractiveChat = () => {
                             setIsTyping(false)
                           }, 1000)
                         }}
-                        className="chat-action-button px-3 py-1.5 bg-gray-800 text-white text-xs rounded-full whitespace-nowrap hover:bg-gray-700 transition-colors"
+                        className="chat-action-button px-3 py-2 bg-gradient-to-r from-purple-600/30 to-purple-800/30 text-white text-xs rounded-lg whitespace-nowrap hover:from-purple-600/40 hover:to-purple-800/40 transition-colors flex items-center justify-center gap-1"
                       >
+                        <span className="w-4 h-4 bg-purple-500/30 rounded-full flex items-center justify-center text-xs">?</span>
                         Contact Info
                       </button>
                       <button 
@@ -411,32 +472,76 @@ const InteractiveChat = () => {
                             setIsTyping(false)
                           }, 1000)
                         }}
-                        className="chat-action-button px-3 py-1.5 bg-gray-800 text-white text-xs rounded-full whitespace-nowrap hover:bg-gray-700 transition-colors"
+                        className="chat-action-button px-3 py-2 bg-gradient-to-r from-purple-600/30 to-purple-800/30 text-white text-xs rounded-lg whitespace-nowrap hover:from-purple-600/40 hover:to-purple-800/40 transition-colors flex items-center justify-center gap-1"
                       >
+                        <span className="w-4 h-4 bg-purple-500/30 rounded-full flex items-center justify-center text-xs">?</span>
                         Pricing
                       </button>
-                    </div>
-
-                    {/* Message Input */}
-                    <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        placeholder="Type your message..."
-                        className="flex-1 bg-gray-800 border border-gray-700 rounded-full px-3 sm:px-4 py-2.5 sm:py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        disabled={isTyping}
-                      />
-                      <motion.button
-                        type="submit"
-                        className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-full hover:from-purple-600 hover:to-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
-                        disabled={isTyping || !inputMessage.trim()}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <button 
+                        onClick={() => {
+                          addUserMessage("Tell me about your company")
+                          setIsTyping(true)
+                          setTimeout(() => {
+                            processMessage("Tell me about your company")
+                            setIsTyping(false)
+                          }, 1000)
+                        }}
+                        className="chat-action-button px-3 py-2 bg-gradient-to-r from-purple-600/30 to-purple-800/30 text-white text-xs rounded-lg whitespace-nowrap hover:from-purple-600/40 hover:to-purple-800/40 transition-colors flex items-center justify-center gap-1"
                       >
-                        <Send size={16} className="sm:w-4.5 sm:h-4.5" />
-                      </motion.button>
-                    </form>
+                        <span className="w-4 h-4 bg-purple-500/30 rounded-full flex items-center justify-center text-xs">?</span>
+                        About Us
+                      </button>
+                      <button 
+                        onClick={() => {
+                          addUserMessage("Do you offer website redesign?")
+                          setIsTyping(true)
+                          setTimeout(() => {
+                            processMessage("Do you offer website redesign?")
+                            setIsTyping(false)
+                          }, 1000)
+                        }}
+                        className="chat-action-button px-3 py-2 bg-gradient-to-r from-purple-600/30 to-purple-800/30 text-white text-xs rounded-lg whitespace-nowrap hover:from-purple-600/40 hover:to-purple-800/40 transition-colors flex items-center justify-center gap-1"
+                      >
+                        <span className="w-4 h-4 bg-purple-500/30 rounded-full flex items-center justify-center text-xs">?</span>
+                        Website Redesign
+                      </button>
+                      <button 
+                        onClick={() => {
+                          addUserMessage("How do I get started?")
+                          setIsTyping(true)
+                          setTimeout(() => {
+                            processMessage("How do I get started?")
+                            setIsTyping(false)
+                          }, 1000)
+                        }}
+                        className="chat-action-button px-3 py-2 bg-gradient-to-r from-purple-600/30 to-purple-800/30 text-white text-xs rounded-lg whitespace-nowrap hover:from-purple-600/40 hover:to-purple-800/40 transition-colors flex items-center justify-center gap-1"
+                      >
+                        <span className="w-4 h-4 bg-purple-500/30 rounded-full flex items-center justify-center text-xs">?</span>
+                        Get Started
+                      </button>
+                    </div>
+                    
+                    {/* Social Media Links */}
+                    <div className="mt-4 border-t border-gray-700 pt-3">
+                      <p className="text-xs text-gray-400 mb-2">Connect with us:</p>
+                      <div className="flex justify-around">
+                        {websiteInfo.social.map((platform, index) => (
+                          <a 
+                            key={index} 
+                            href={platform.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex flex-col items-center gap-1 p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+                            title={platform.name}
+                          >
+                            <div className={`w-10 h-10 ${platform.color} rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110`}>
+                              {platform.icon}
+                            </div>
+                            <span className="text-xs text-gray-300">{platform.name}</span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               )}
