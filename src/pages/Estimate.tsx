@@ -416,6 +416,12 @@ const Estimate = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Only proceed if we're on the last step and the user clicked submit
+    if (currentStep !== 4) {
+      return;
+    }
+    
     setIsSubmitting(true);
     setError(null);
 
@@ -698,7 +704,7 @@ const Estimate = () => {
 
           {/* Form */}
           <div className="max-w-4xl mx-auto">
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
               <AnimatePresence mode="wait">
                 {/* Step 1: Personal Information */}
                 {currentStep === 1 && (
@@ -1197,7 +1203,8 @@ const Estimate = () => {
                   </motion.button>
                 ) : (
                   <motion.button
-                    type="submit"
+                    type="button" // Changed from submit to button to prevent auto-submission
+                    onClick={handleSubmit} // Explicitly call handleSubmit when clicked
                     disabled={isSubmitting}
                     className="ml-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-semibold text-lg transition-all duration-300 shadow-lg shadow-purple-500/25 flex items-center gap-2"
                     whileHover={{ scale: !isSubmitting ? 1.05 : 1 }}
