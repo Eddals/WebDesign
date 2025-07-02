@@ -1,9 +1,39 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY || 're_P4uBXUcH_7B4rc1geoyhz4H1P5njdJLst');
+// Move API key to environment variable (remove hardcoded fallback)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// NEW STYLE: Use the circular, modern style from getContactClientTemplate in email-templates.js
-function getContactConfirmationEmailHTML(name, subject, message) {
+// Validation schemas
+const validateEmailData = (data) => {
+  const { name, email, subject, message } = data;
+  const errors = [];
+
+  if (!name?.trim()) errors.push('Name is required');
+  if (!email?.trim()) errors.push('Email is required');
+  if (!subject?.trim()) errors.push('Subject is required');
+  if (!message?.trim()) errors.push('Message is required');
+  
+  // Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email && !emailRegex.test(email.trim())) {
+    errors.push('Invalid email format');
+  }
+
+  // Length validations
+  if (name && name.trim().length > 100) errors.push('Name too long (max 100 characters)');
+  if (subject && subject.trim().length > 200) errors.push('Subject too long (max 200 characters)');
+  if (message && message.trim().length > 5000) errors.push('Message too long (max 5000 characters)');
+
+  return { isValid: errors.length === 0, errors };
+};
+
+// Extract email templates to separate functions for better organization
+const getContactConfirmationEmailHTML = (name, subject, message) => {
+  // Sanitize inputs to prevent XSS
+  const safeName = name.replace(/[<>]/g, '');
+  const safeSubject = subject.replace(/[<>]/g, '');
+  const safeMessage = message.replace(/[<>]/g, '').replace(/\n/g, '<br>');
+  
   return `
 <!DOCTYPE html>
 <html>
@@ -24,7 +54,7 @@ function getContactConfirmationEmailHTML(name, subject, message) {
     </div>
     <div style="padding: 40px 30px;">
       <p style="color: #333; font-size: 16px; margin: 0 0 20px 0;">
-        Hello ${name},
+        Hello ${safeName},
       </p>
       <p style="color: #333; font-size: 16px; margin: 0 0 20px 0;">
         Thank you for reaching out to DevTone Agency. We appreciate your interest and have successfully received your message.
@@ -35,11 +65,11 @@ function getContactConfirmationEmailHTML(name, subject, message) {
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px 0; color: #666; font-weight: bold; width: 120px;">Subject:</td>
-            <td style="padding: 8px 0; color: #333;">${subject}</td>
+            <td style="padding: 8px 0; color: #333;">${safeSubject}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #666; font-weight: bold; vertical-align: top;">Message:</td>
-            <td style="padding: 8px 0; color: #333;">${message.replace(/\n/g, '<br>')}</td>
+            <td style="padding: 8px 0; color: #333;">${safeMessage}</td>
           </tr>
         </table>
       </div>
@@ -102,9 +132,8 @@ function getContactConfirmationEmailHTML(name, subject, message) {
     </div>
   </div>
 </body>
-</html>
-  `;
-}
+</html>`;
+};
 
 const getContactConfirmationEmailText = (name, subject, message) => `
 Thank you, ${name}!
@@ -121,42 +150,191 @@ The DevTone Team
 https://devtone.agency
 `;
 
+const getTeamNotificationHTML = (formData) => {
+  const { name, email, phone, company, subject, message } = formData;
+  const timestamp = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    dateStyle: 'full',
+    timeStyle: 'short'
+  });
+
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #2541b2; border-bottom: 2px solid #4a6cf7; padding-bottom: 10px;">📬 New Contact Form Submission</h2>
+      
+      <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #333; width: 100px;">Name:</td>
+            <td style="padding: 8px 0; color: #555;">${name}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #333;">Email:</td>
+            <td style="padding: 8px 0; color: #555;"><a href="mailto:${email}" style="color: #4a6cf7;">${email}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #333;">Phone:</td>
+            <td style="padding: 8px 0; color: #555;">${phone || 'Not provided'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #333;">Company:</td>
+            <td style="padding: 8px 0; color: #555;">${company || 'Not provided'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #333;">Subject:</td>
+            <td style="padding: 8px 0; color: #555;">${subject}</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div style="background-color: #fff; border-left: 4px solid #4a6cf7; padding: 20px; margin: 20px 0;">
+        <h3 style="color: #2541b2; margin: 0 0 10px 0;">Message:</h3>
+        <p style="color: #333; line-height: 1.6; margin: 0;">${message.replace(/\n/g, '<br>')}</p>
+      </div>
+      
+      <div style="background-color: #f0f7ff; padding: 15px; border-radius: 8px; text-align: center;">
+        <p style="margin: 0; color: #666; font-size: 14px;">
+          <strong>Quick Actions:</strong> 
+          <a href="mailto:${email}" style="color: #4a6cf7; margin: 0 10px;">Reply</a> | 
+          <a href="tel:${phone}" style="color: #4a6cf7; margin: 0 10px;">Call</a>
+        </p>
+      </div>
+      
+      <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+      <p style="color: #999; font-size: 12px; text-align: center;">
+        Received: ${timestamp}
+      </p>
+    </div>
+  `;
+};
+
+// Add rate limiting (simple in-memory store - use Redis in production)
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX_REQUESTS = 3;
+
+const checkRateLimit = (email) => {
+  const now = Date.now();
+  const userRequests = rateLimitStore.get(email) || [];
+  
+  // Clean old requests
+  const recentRequests = userRequests.filter(time => now - time < RATE_LIMIT_WINDOW);
+  
+  if (recentRequests.length >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+  
+  recentRequests.push(now);
+  rateLimitStore.set(email, recentRequests);
+  return true;
+};
+
+// Add logging utility
+const logError = (error, context = {}) => {
+  console.error({
+    timestamp: new Date().toISOString(),
+    error: error.message,
+    stack: error.stack,
+    context
+  });
+};
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGINS || '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ 
+      error: 'Method not allowed',
+      message: 'Only POST requests are accepted'
+    });
+  }
 
   try {
-    const { name, email, phone, company, subject, message } = req.body;
-    if (!name || !email || !subject || !message) {
-      return res.status(400).json({ error: 'Missing required fields: name, email, subject, message' });
+    // Check if API key is configured
+    if (!process.env.RESEND_API_KEY) {
+      logError(new Error('RESEND_API_KEY not configured'));
+      return res.status(500).json({ 
+        error: 'Server configuration error',
+        message: 'Email service not properly configured'
+      });
     }
-    // Send confirmation email to the user
-    const confirmationEmail = await resend.emails.send({
-      from: 'DevTone Agency <team@devtone.agency>',
-      to: email,
-      subject: `We received your message - DevTone Agency`,
-      html: getContactConfirmationEmailHTML(name, subject, message),
-      text: getContactConfirmationEmailText(name, subject, message),
-    });
-    // Send notification to the team
-    const teamNotification = await resend.emails.send({
-      from: 'DevTone Contact Form <team@devtone.agency>',
-      to: 'team@devtone.agency',
-      subject: `📬 New Contact Form: ${name} - ${subject}`,
-      html: `<h2>New contact received</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone || 'Not provided'}</p><p><strong>Company:</strong> ${company || 'Not provided'}</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br>')}</p><hr><p><small>Sent at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}</small></p>`,
-      text: `New contact received\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nCompany: ${company || 'Not provided'}\nSubject: ${subject}\n\nMessage:\n${message}\n\n--\nSent at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}`,
-    });
+
+    // Validate request body
+    const { name, email, phone, company, subject, message } = req.body;
+    const validation = validateEmailData({ name, email, subject, message });
+    
+    if (!validation.isValid) {
+      return res.status(400).json({ 
+        error: 'Validation failed',
+        details: validation.errors
+      });
+    }
+
+    // Check rate limiting
+    if (!checkRateLimit(email.trim().toLowerCase())) {
+      return res.status(429).json({
+        error: 'Rate limit exceeded',
+        message: 'Too many requests. Please try again later.'
+      });
+    }
+
+    // Sanitize inputs
+    const sanitizedData = {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone?.trim() || null,
+      company: company?.trim() || null,
+      subject: subject.trim(),
+      message: message.trim()
+    };
+
+    // Send emails concurrently for better performance
+    const [confirmationEmail, teamNotification] = await Promise.all([
+      resend.emails.send({
+        from: 'DevTone Agency <team@devtone.agency>',
+        to: sanitizedData.email,
+        subject: 'We received your message - DevTone Agency',
+        html: getContactConfirmationEmailHTML(sanitizedData.name, sanitizedData.subject, sanitizedData.message),
+        text: getContactConfirmationEmailText(sanitizedData.name, sanitizedData.subject, sanitizedData.message),
+      }),
+      resend.emails.send({
+        from: 'DevTone Contact Form <team@devtone.agency>',
+        to: 'team@devtone.agency',
+        subject: `📬 New Contact: ${sanitizedData.name} - ${sanitizedData.subject}`,
+        html: getTeamNotificationHTML(sanitizedData),
+        text: `New contact form submission\n\nName: ${sanitizedData.name}\nEmail: ${sanitizedData.email}\nPhone: ${sanitizedData.phone || 'Not provided'}\nCompany: ${sanitizedData.company || 'Not provided'}\nSubject: ${sanitizedData.subject}\n\nMessage:\n${sanitizedData.message}\n\n--\nReceived: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}`,
+      })
+    ]);
+
     return res.status(200).json({
       success: true,
-      message: 'Emails sent successfully',
-      confirmationId: confirmationEmail.id,
-      notificationId: teamNotification.id
+      message: 'Your message has been sent successfully',
+      data: {
+        confirmationId: confirmationEmail.data?.id,
+        notificationId: teamNotification.data?.id,
+        timestamp: new Date().toISOString()
+      }
     });
+
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to process request', details: error.message });
+    logError(error, { 
+      method: req.method, 
+      url: req.url, 
+      body: req.body 
+    });
+
+    // Don't expose internal errors to client
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      message: 'Failed to process your request. Please try again later.',
+      ...(process.env.NODE_ENV === 'development' && { details: error.message })
+    });
   }
 }
