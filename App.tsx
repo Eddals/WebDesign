@@ -28,6 +28,24 @@ function Router() {
 }
 
 function App() {
+  useEffect(() => {
+    // Add Zoho SalesIQ chatbox scripts
+    const zohoScript = document.createElement('script');
+    zohoScript.innerHTML = "window.$zoho=window.$zoho || {}; $zoho.salesiq=$zoho.salesiq||{ready:function(){}}";
+    document.body.appendChild(zohoScript);
+
+    const zsiqScript = document.createElement('script');
+    zsiqScript.id = "zsiqscript";
+    zsiqScript.src = "https://salesiq.zohopublic.com/widget?wc=siqd35609490db12740e1dffb562df59d10622e036ba3492f47cbe1a97daa56a515";
+    zsiqScript.defer = true;
+    document.body.appendChild(zsiqScript);
+
+    return () => {
+      document.body.removeChild(zohoScript);
+      document.body.removeChild(zsiqScript);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <GoogleAnalytics />
