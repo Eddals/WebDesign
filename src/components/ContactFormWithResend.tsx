@@ -45,8 +45,8 @@ export default function ContactFormWithResend() {
     try {
       console.log('📝 Enviando formulário para o webhook...');
       
-      // Enviar dados para o endpoint de email simples
-      const response = await fetch('/api/simple-email', {
+      // Enviar dados para o webhook do Make.com
+      const response = await fetch('https://hook.us2.make.com/9e3cokwmwww6kbxu27awfncy4hvfnja6', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

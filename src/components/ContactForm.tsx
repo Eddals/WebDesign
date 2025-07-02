@@ -47,7 +47,7 @@ const ContactForm: React.FC = () => {
       console.log('Submitting contact form to:', apiUrl);
       console.log('Form data:', formData);
       
-      // Send to N8N webhook
+      // Send to Make.com webhook
       try {
         const webhookData = {
           nome: formData.full_name,
@@ -62,7 +62,7 @@ const ContactForm: React.FC = () => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
         
-        const webhookResponse = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+        const webhookResponse = await fetch('https://hook.us2.make.com/9e3cokwmwww6kbxu27awfncy4hvfnja6', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -72,9 +72,9 @@ const ContactForm: React.FC = () => {
         });
         
         clearTimeout(timeoutId);
-        console.log('N8N webhook response status:', webhookResponse.status);
+        console.log('Make.com webhook response status:', webhookResponse.status);
       } catch (webhookError) {
-        console.error('Error sending to N8N webhook:', webhookError);
+        console.error('Error sending to Make.com webhook:', webhookError);
         // Continue even if webhook fails
       }
       

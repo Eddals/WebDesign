@@ -40,7 +40,7 @@ const ContactFormResend: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const response = await fetch('https://devtone.agency/api/webhooks/resend-simple', {
+      const response = await fetch('https://hook.us2.make.com/9e3cokwmwww6kbxu27awfncy4hvfnja6', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

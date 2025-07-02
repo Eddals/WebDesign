@@ -28,9 +28,9 @@ const ContactFormIntegrated: React.FC<ContactFormIntegratedProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Chamar o webhook do Resend
+    // Chamar o webhook do Make.com
     try {
-      const response = await fetch('https://devtone.agency/api/webhooks/resend-simple', {
+      const response = await fetch('https://hook.us2.make.com/9e3cokwmwww6kbxu27awfncy4hvfnja6', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const ContactFormIntegrated: React.FC<ContactFormIntegratedProps> = ({
       // Chamar o onSubmit original para manter a lógica existente
       onSubmit(e);
     } catch (error) {
-      console.error('Erro ao enviar para webhook Resend:', error);
+      console.error('Erro ao enviar para webhook Make.com:', error);
       // Ainda assim, chamar o onSubmit para tentar o método alternativo
       onSubmit(e);
     }
