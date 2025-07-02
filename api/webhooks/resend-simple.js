@@ -12,97 +12,86 @@ function getContactConfirmationEmailHTML(name, subject, message, email, phone, c
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>We Received Your Message</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; line-height: 1.6;">
-  <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 20px; overflow: hidden;">
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background-color:#f5f5f5;line-height:1.6;">
+  <div style="max-width:600px;margin:20px auto;background-color:#fff;border:1px solid #ddd;border-radius:20px;overflow:hidden;">
     <!-- Logo -->
-    <div style="text-align: center; padding: 30px 0 10px 0; background: #fff;">
-      <img src="https://devtone.agency/logo.png" alt="DevTone Agency Logo" style="height: 60px; margin-bottom: 10px;" />
+    <div style="text-align:center;padding:30px 0 10px 0;background:#fff;">
+      <img src="https://devtone.agency/logo.png" alt="DevTone Agency Logo" style="height:60px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;" />
     </div>
-    <!-- Decorative Image -->
-    <div style="text-align: center;">
-      <img src="https://devtone.agency/api/webhooks/images/image-1.png" alt="Decorative" style="max-width: 90%; border-radius: 12px; margin-bottom: 20px;" />
+    <!-- Decorative Image (must be in public/images) -->
+    <div style="text-align:center;">
+      <img src="https://devtone.agency/images/image-1.png" alt="Decorative" style="max-width:90%;border-radius:12px;margin-bottom:20px;display:block;margin-left:auto;margin-right:auto;" />
     </div>
     <!-- Header -->
-    <div style="background: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%); color: #ffffff; padding: 30px; text-align: center;">
-      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Thank You for Contacting Us!</h1>
-      <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.9;">We've received your message</p>
+    <div style="background:#4a6cf7;background:linear-gradient(135deg,#4a6cf7 0%,#2541b2 100%);color:#fff;padding:30px;text-align:center;">
+      <h1 style="margin:0;font-size:28px;font-weight:700;">Thank You for Contacting Us!</h1>
+      <p style="margin:10px 0 0 0;color:#fff;font-size:16px;opacity:0.9;">We've received your message</p>
     </div>
-    <div style="padding: 40px 30px;">
-      <p style="color: #333; font-size: 16px; margin: 0 0 20px 0;">
-        Hello ${name},
-      </p>
-      <p style="color: #333; font-size: 16px; margin: 0 0 20px 0;">
-        Thank you for reaching out to DevTone Agency. We appreciate your interest and have successfully received your message.
-      </p>
+    <div style="padding:40px 30px;">
+      <p style="color:#333;font-size:16px;margin:0 0 20px 0;">Hello ${name},</p>
+      <p style="color:#333;font-size:16px;margin:0 0 20px 0;">Thank you for reaching out to DevTone Agency. We appreciate your interest and have successfully received your message.</p>
       <!-- Message Summary -->
-      <div style="background-color: #f9f9f9; padding: 25px; border-radius: 15px; margin: 25px 0; border-left: 4px solid #4a6cf7;">
-        <h3 style="color: #2541b2; margin: 0 0 15px 0; font-size: 18px;">Your Message Summary</h3>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr><td style="padding: 8px 0; color: #666; font-weight: bold; width: 120px;">Name:</td><td style="padding: 8px 0; color: #333;">${name}</td></tr>
-          <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Email:</td><td style="padding: 8px 0; color: #333;">${email}</td></tr>
-          <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Phone:</td><td style="padding: 8px 0; color: #333;">${phone || 'Not provided'}</td></tr>
-          <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Company:</td><td style="padding: 8px 0; color: #333;">${company || 'Not provided'}</td></tr>
-          <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Preferred Contact:</td><td style="padding: 8px 0; color: #333;">${preferredContact || 'Not specified'}</td></tr>
-          <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Subject:</td><td style="padding: 8px 0; color: #333;">${subject}</td></tr>
-          <tr><td style="padding: 8px 0; color: #666; font-weight: bold; vertical-align: top;">Message:</td><td style="padding: 8px 0; color: #333;">${message.replace(/\n/g, '<br>')}</td></tr>
+      <div style="background-color:#f9f9f9;padding:25px;border-radius:15px;margin:25px 0;border-left:4px solid #4a6cf7;">
+        <h3 style="color:#2541b2;margin:0 0 15px 0;font-size:18px;">Your Message Summary</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td style="padding:8px 0;color:#666;font-weight:bold;width:120px;">Name:</td><td style="padding:8px 0;color:#333;">${name}</td></tr>
+          <tr><td style="padding:8px 0;color:#666;font-weight:bold;">Email:</td><td style="padding:8px 0;color:#333;">${email}</td></tr>
+          <tr><td style="padding:8px 0;color:#666;font-weight:bold;">Phone:</td><td style="padding:8px 0;color:#333;">${phone || 'Not provided'}</td></tr>
+          <tr><td style="padding:8px 0;color:#666;font-weight:bold;">Company:</td><td style="padding:8px 0;color:#333;">${company || 'Not provided'}</td></tr>
+          <tr><td style="padding:8px 0;color:#666;font-weight:bold;">Preferred Contact:</td><td style="padding:8px 0;color:#333;">${preferredContact || 'Not specified'}</td></tr>
+          <tr><td style="padding:8px 0;color:#666;font-weight:bold;">Subject:</td><td style="padding:8px 0;color:#333;">${subject}</td></tr>
+          <tr><td style="padding:8px 0;color:#666;font-weight:bold;vertical-align:top;">Message:</td><td style="padding:8px 0;color:#333;">${message.replace(/\n/g, '<br>')}</td></tr>
         </table>
       </div>
       <!-- What Happens Next -->
-      <div style="background-color: #f0f7ff; padding: 25px; border-radius: 15px; margin: 25px 0;">
-        <h3 style="color: #2541b2; margin: 0 0 15px 0; font-size: 18px; text-align: center;">What Happens Next?</h3>
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; align-items: center;">
-            <div style="width: 40px; height: 40px; background-color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-              <span style="font-size: 20px; color: #ffffff;">1</span>
-            </div>
-            <div>
-              <h4 style="color: #333; margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">Message Review</h4>
-              <p style="color: #666; margin: 0; font-size: 14px;">Our team will review your message within 2-4 business hours.</p>
-            </div>
-          </div>
-        </div>
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; align-items: center;">
-            <div style="width: 40px; height: 40px; background-color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-              <span style="font-size: 20px; color: #ffffff;">2</span>
-            </div>
-            <div>
-              <h4 style="color: #333; margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">Personal Response</h4>
-              <p style="color: #666; margin: 0; font-size: 14px;">You'll receive a personalized response within 24 hours.</p>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div style="display: flex; align-items: center;">
-            <div style="width: 40px; height: 40px; background-color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-              <span style="font-size: 20px; color: #ffffff;">3</span>
-            </div>
-            <div>
-              <h4 style="color: #333; margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">Follow-up</h4>
-              <p style="color: #666; margin: 0; font-size: 14px;">If needed, we'll schedule a call to discuss your requirements in detail.</p>
-            </div>
-          </div>
-        </div>
+      <div style="background-color:#f0f7ff;padding:25px;border-radius:15px;margin:25px 0;">
+        <h3 style="color:#2541b2;margin:0 0 15px 0;font-size:18px;text-align:center;">What Happens Next?</h3>
+        <table style="width:100%;border-spacing:0;border-collapse:collapse;">
+          <tr>
+            <td style="width:40px;text-align:center;vertical-align:top;">
+              <div style="width:40px;height:40px;background-color:#4a6cf7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px auto;">
+                <span style="font-size:20px;color:#fff;">1</span>
+              </div>
+            </td>
+            <td style="vertical-align:top;padding-bottom:10px;">
+              <h4 style="color:#333;margin:0 0 4px 0;font-size:14px;font-weight:bold;">Message Review</h4>
+              <p style="color:#666;margin:0;font-size:14px;">Our team will review your message within 2-4 business hours.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:40px;text-align:center;vertical-align:top;">
+              <div style="width:40px;height:40px;background-color:#4a6cf7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px auto;">
+                <span style="font-size:20px;color:#fff;">2</span>
+              </div>
+            </td>
+            <td style="vertical-align:top;padding-bottom:10px;">
+              <h4 style="color:#333;margin:0 0 4px 0;font-size:14px;font-weight:bold;">Personal Response</h4>
+              <p style="color:#666;margin:0;font-size:14px;">You'll receive a personalized response within 24 hours.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:40px;text-align:center;vertical-align:top;">
+              <div style="width:40px;height:40px;background-color:#4a6cf7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px auto;">
+                <span style="font-size:20px;color:#fff;">3</span>
+              </div>
+            </td>
+            <td style="vertical-align:top;">
+              <h4 style="color:#333;margin:0 0 4px 0;font-size:14px;font-weight:bold;">Follow-up</h4>
+              <p style="color:#666;margin:0;font-size:14px;">If needed, we'll schedule a call to discuss your requirements in detail.</p>
+            </td>
+          </tr>
+        </table>
       </div>
       <!-- Contact Information -->
-      <div style="text-align: center; margin: 30px 0;">
-        <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Need immediate assistance?</p>
-        <p style="margin: 0; color: #333; font-size: 14px;">
-          Email: team@devtone.agency<br>
-          WhatsApp: +1 (917) 741-3468<br>
-          Website: <a href="https://devtone.agency" style="color: #4a6cf7; text-decoration: none;">devtone.agency</a>
-        </p>
+      <div style="text-align:center;margin:30px 0;">
+        <p style="color:#666;margin:0 0 10px 0;font-size:14px;">Need immediate assistance?</p>
+        <p style="margin:0;color:#333;font-size:14px;">Email: team@devtone.agency<br>WhatsApp: +1 (917) 741-3468<br>Website: <a href="https://devtone.agency" style="color:#4a6cf7;text-decoration:none;">devtone.agency</a></p>
       </div>
     </div>
     <!-- Footer -->
-    <div style="background-color: #f5f7fa; padding: 25px; text-align: center; border-radius: 0 0 20px 20px;">
-      <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">
-        Best regards,<br>
-        <strong>The DevTone Team</strong>
-      </p>
-      <p style="color: #999; margin: 10px 0 0 0; font-size: 12px;">
-        © ${new Date().getFullYear()} DevTone Agency. All rights reserved.
-      </p>
+    <div style="background-color:#f5f7fa;padding:25px;text-align:center;border-radius:0 0 20px 20px;">
+      <p style="color:#666;margin:0 0 10px 0;font-size:14px;">Best regards,<br><strong>The DevTone Team</strong></p>
+      <p style="color:#999;margin:10px 0 0 0;font-size:12px;">© ${new Date().getFullYear()} DevTone Agency. All rights reserved.</p>
     </div>
   </div>
 </body>
