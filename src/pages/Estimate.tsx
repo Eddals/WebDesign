@@ -19,8 +19,6 @@ import {
   Phone,
   MessageSquare,
   Send,
-  MapPin,
-  Calendar,
   ChevronDown,
   Search
 } from 'lucide-react';
@@ -49,6 +47,7 @@ const Estimate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
   
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -244,7 +243,7 @@ const Estimate = () => {
     { 
       id: 'booking', 
       name: 'Booking/Appointment System', 
-      icon: <Calendar className="w-4 h-4" />,
+      icon: <Clock className="w-4 h-4" />,
       description: 'Let clients book online',
       minBudget: 'professional',
       premium: true
@@ -359,7 +358,6 @@ const Estimate = () => {
     country.name.toLowerCase().includes(countrySearch.toLowerCase())
   );
 
-  
   // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -387,6 +385,34 @@ const Estimate = () => {
     }));
   };
 
+  // Check if current step is valid to proceed
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1: // Personal Info
+        return formData.name && formData.email && formData.phone && formData.company && formData.country && formData.industry;
+      case 2: // Project Type
+        return formData.projectType;
+      case 3: // Budget & Timeline
+        return formData.budget && formData.timeline;
+      case 4: // Features & Description
+        return true; // Features are optional
+      default:
+        return false;
+    }
+  };
+
+  // Go to next step
+  const nextStep = () => {
+    if (isStepValid()) {
+      setCurrentStep(prev => Math.min(prev + 1, 4));
+    }
+  };
+
+  // Go to previous step
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -394,7 +420,7 @@ const Estimate = () => {
     setError(null);
 
     try {
-      // Send data to N8N webhook
+      // Send data to webhook
       try {
         const webhookData = {
           nome: formData.name,
@@ -412,12 +438,10 @@ const Estimate = () => {
           origem: 'formulario-estimate'
         };
         
-        console.log('Sending data to N8N webhook:', webhookData);
+        console.log('Sending data to webhook:', webhookData);
         
-        // Use our proxy endpoint instead of calling N8N directly
-        const webhookUrl = window.location.hostname === 'localhost' 
-          ? 'https://devtone.agency/api/webhook-proxy'
-          : '/api/webhook-proxy';
+        // Send to the new webhook URL
+        const webhookUrl = 'https://devtone.app.n8n.cloud/webhook-test/42fe2df8-50cc-499e-b1c7-0ffdac9f3454';
           
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
@@ -427,9 +451,9 @@ const Estimate = () => {
           body: JSON.stringify(webhookData)
         });
         
-        console.log('Webhook proxy response status:', webhookResponse.status);
+        console.log('Webhook response status:', webhookResponse.status);
       } catch (webhookError) {
-        console.error('Error sending to webhooks:', webhookError);
+        console.error('Error sending to webhook:', webhookError);
         // Continue even if webhook fails
       }
       
@@ -627,19 +651,47 @@ const Estimate = () => {
               </p>
             </motion.div>
 
-            {/* Budget Guide */}
+            {/* Progress Steps */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="flex justify-center mb-8"
+              className="flex justify-center mt-8 mb-8"
             >
-              <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-4 max-w-2xl w-full">
-                <p className="text-white/80 text-sm text-center">
-                  <Shield className="w-4 h-4 text-purple-400 inline mr-2" />
-                  All projects are professionally built with secure, clean code. 
-                  Final pricing will be discussed during our consultation call.
-                </p>
+              <div className="flex items-center max-w-md w-full">
+                {[1, 2, 3, 4].map((step) => (
+                  <React.Fragment key={step}>
+                    <div className="flex flex-col items-center flex-1">
+                      <div 
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                          currentStep === step 
+                            ? 'bg-purple-600 text-white' 
+                            : currentStep > step 
+                              ? 'bg-green-500 text-white' 
+                              : 'bg-gray-700 text-gray-300'
+                        }`}
+                      >
+                        {currentStep > step ? <CheckCircle size={16} /> : step}
+                      </div>
+                      <span className={`text-xs mt-2 ${
+                        currentStep === step 
+                          ? 'text-purple-400' 
+                          : currentStep > step 
+                            ? 'text-green-400' 
+                            : 'text-gray-500'
+                      }`}>
+                        {step === 1 ? 'Info' : 
+                         step === 2 ? 'Project' : 
+                         step === 3 ? 'Budget' : 'Details'}
+                      </span>
+                    </div>
+                    {step < 4 && (
+                      <div className={`h-1 flex-1 ${
+                        currentStep > step ? 'bg-green-500' : 'bg-gray-700'
+                      }`}></div>
+                    )}
+                  </React.Fragment>
+                ))}
               </div>
             </motion.div>
           </div>
@@ -647,451 +699,456 @@ const Estimate = () => {
           {/* Form */}
           <div className="max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="space-y-8">
+              <AnimatePresence mode="wait">
+                {/* Step 1: Personal Information */}
+                {currentStep === 1 && (
+                  <motion.div
+                    key="step1"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white/5 border border-white/10 rounded-2xl p-8"
+                  >
+                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                      <User className="w-6 h-6 text-purple-400" />
+                      Personal Information
+                    </h2>
 
-              {/* Personal Information */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                  <User className="w-6 h-6 text-purple-400" />
-                  Personal Information
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-white/80 font-medium mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={(e) => updateFormData('name', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                      placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-white/80 font-medium mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => updateFormData('email', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-white/80 font-medium mb-2">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={(e) => updateFormData('phone', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-white/80 font-medium mb-2">
-                      Company Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="company"
-                      required
-                      value={formData.company}
-                      onChange={(e) => updateFormData('company', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                      placeholder="Your company name"
-                    />
-                  </div>
-
-                  <div ref={countryRef}>
-                    <label className="block text-white/80 font-medium mb-2">
-                      Country *
-                    </label>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setIsCountryOpen(!isCountryOpen)}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white focus:outline-none focus:border-purple-500 transition-colors flex items-center justify-between"
-                      >
-                        <span className={formData.country ? 'text-white' : 'text-white/50'}>
-                          {formData.country || 'Select your country'}
-                        </span>
-                        <ChevronDown className={`w-5 h-5 text-white/50 transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
-                      </button>
-
-                      <AnimatePresence>
-                        {isCountryOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute z-50 w-full mt-2 bg-gray-900 border border-white/20 rounded-xl shadow-2xl overflow-hidden"
-                          >
-                            {/* Search Input */}
-                            <div className="p-3 border-b border-white/10">
-                              <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/50" />
-                                <input
-                                  type="text"
-                                  value={countrySearch}
-                                  onChange={(e) => setCountrySearch(e.target.value)}
-                                  placeholder="Search countries..."
-                                  className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 text-sm"
-                                  onClick={(e) => e.stopPropagation()}
-                                />
-                              </div>
-                            </div>
-
-                            {/* Country List */}
-                            <div className="max-h-64 overflow-y-auto">
-                              {filteredCountries.length > 0 ? (
-                                filteredCountries.map((country) => (
-                                  <button
-                                    key={country.name}
-                                    type="button"
-                                    onClick={() => {
-                                      updateFormData('country', country.name);
-                                      setIsCountryOpen(false);
-                                      setCountrySearch('');
-                                    }}
-                                    className={`w-full px-4 py-3 text-left hover:bg-purple-500/20 transition-colors flex items-center justify-between ${
-                                      formData.country === country.name ? 'bg-purple-500/10' : ''
-                                    }`}
-                                  >
-                                    <span className="text-white">{country.name}</span>
-                                    {formData.country === country.name && (
-                                      <CheckCircle className="w-5 h-5 text-purple-400" />
-                                    )}
-                                  </button>
-                                ))
-                              ) : (
-                                <div className="px-4 py-8 text-center text-white/50">
-                                  No countries found matching "{countrySearch}"
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-white/80 font-medium mb-2">
-                      Business Industry *
-                    </label>
-                    <input
-                      type="text"
-                      name="industry"
-                      required
-                      value={formData.industry}
-                      onChange={(e) => updateFormData('industry', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                      placeholder="e.g. Technology, Healthcare, Retail"
-                    />
-                  </div>
-                </div>
-
-                {/* Monthly Retainer */}
-                <div className="mt-8 pt-8 border-t border-white/10">
-                  <h3 className="text-lg font-semibold text-white mb-4">Monthly Retainer (Optional)</h3>
-                  <p className="text-white/60 text-sm mb-6">
-                    Keep your website updated and secure with ongoing support
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {retainerOptions.map((retainer) => (
-                      <label
-                        key={retainer.id}
-                        className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
-                          formData.retainer === retainer.value
-                            ? 'border-purple-500 bg-purple-500/20'
-                            : 'border-white/20 bg-white/5 hover:border-purple-400'
-                        }`}
-                      >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-white/80 font-medium mb-2">
+                          Full Name *
+                        </label>
                         <input
-                          type="radio"
-                          name="retainer"
-                          value={retainer.value}
-                          checked={formData.retainer === retainer.value}
-                          onChange={(e) => updateFormData('retainer', e.target.value)}
-                          className="sr-only"
+                          type="text"
+                          name="name"
+                          required
+                          value={formData.name}
+                          onChange={(e) => updateFormData('name', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                          placeholder="Your full name"
                         />
-                        <div className={`w-4 h-4 rounded-full border-2 mr-3 mt-0.5 flex-shrink-0 ${
-                          formData.retainer === retainer.value
-                            ? 'border-purple-500 bg-purple-500'
-                            : 'border-white/40'
-                        }`}>
-                          {formData.retainer === retainer.value && (
-                            <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-white font-medium">{retainer.label}</span>
-                            <span className="text-purple-400 font-semibold">{retainer.price}</span>
-                          </div>
-                          <p className="text-white/60 text-sm">{retainer.description}</p>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
+                      </div>
 
-              {/* Project Type */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                  <Briefcase className="w-6 h-6 text-purple-400" />
-                  Project Type *
-                </h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {projectTypes.map((type) => (
-                    <motion.div
-                      key={type.id}
-                      className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${
-                        formData.projectType === type.id
-                          ? 'border-purple-500 bg-purple-500/20'
-                          : 'border-white/20 bg-white/5 hover:border-purple-400 hover:bg-white/10'
-                      }`}
-                      onClick={() => updateFormData('projectType', type.id)}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="text-purple-400 flex-shrink-0">{type.icon}</div>
-                        <div className="flex-1">
-                          <h3 className="text-white font-semibold mb-2">{type.name}</h3>
-                          <p className="text-white/60 text-sm">{type.description}</p>
+                      <div>
+                        <label className="block text-white/80 font-medium mb-2">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => updateFormData('email', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                          placeholder="your@email.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-white/80 font-medium mb-2">
+                          Phone Number *
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          required
+                          value={formData.phone}
+                          onChange={(e) => updateFormData('phone', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                          placeholder="(555) 123-4567"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-white/80 font-medium mb-2">
+                          Company Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="company"
+                          required
+                          value={formData.company}
+                          onChange={(e) => updateFormData('company', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                          placeholder="Your company name"
+                        />
+                      </div>
+
+                      <div ref={countryRef}>
+                        <label className="block text-white/80 font-medium mb-2">
+                          Country *
+                        </label>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setIsCountryOpen(!isCountryOpen)}
+                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white focus:outline-none focus:border-purple-500 transition-colors flex items-center justify-between"
+                          >
+                            <span className={formData.country ? 'text-white' : 'text-white/50'}>
+                              {formData.country || 'Select your country'}
+                            </span>
+                            <ChevronDown className={`w-5 h-5 text-white/50 transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
+                          </button>
+
+                          <AnimatePresence>
+                            {isCountryOpen && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute z-50 w-full mt-2 bg-gray-900 border border-white/20 rounded-xl shadow-2xl overflow-hidden"
+                              >
+                                {/* Search Input */}
+                                <div className="p-3 border-b border-white/10">
+                                  <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/50" />
+                                    <input
+                                      type="text"
+                                      value={countrySearch}
+                                      onChange={(e) => setCountrySearch(e.target.value)}
+                                      placeholder="Search countries..."
+                                      className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 text-sm"
+                                      onClick={(e) => e.stopPropagation()}
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Country List */}
+                                <div className="max-h-64 overflow-y-auto">
+                                  {filteredCountries.length > 0 ? (
+                                    filteredCountries.map((country) => (
+                                      <button
+                                        key={country.name}
+                                        type="button"
+                                        onClick={() => {
+                                          updateFormData('country', country.name);
+                                          setIsCountryOpen(false);
+                                          setCountrySearch('');
+                                        }}
+                                        className={`w-full px-4 py-3 text-left hover:bg-purple-500/20 transition-colors flex items-center justify-between ${
+                                          formData.country === country.name ? 'bg-purple-500/10' : ''
+                                        }`}
+                                      >
+                                        <span className="text-white">{country.name}</span>
+                                        {formData.country === country.name && (
+                                          <CheckCircle className="w-5 h-5 text-purple-400" />
+                                        )}
+                                      </button>
+                                    ))
+                                  ) : (
+                                    <div className="px-4 py-8 text-center text-white/50">
+                                      No countries found matching "{countrySearch}"
+                                    </div>
+                                  )}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
 
-              {/* Budget & Timeline */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                  <DollarSign className="w-6 h-6 text-purple-400" />
-                  Budget & Timeline *
-                </h2>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Budget */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Budget Range *</h3>
-                    <p className="text-white/60 text-sm mb-4">
-                    Your budget determines available features and project scope
-                    </p>
-                    <div className="space-y-3">
-                      {budgetRanges.map((budget) => (
-                        <label
-                          key={budget.id}
-                          className={`flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
-                            formData.budget === budget.value
-                              ? 'border-purple-500 bg-purple-500/20'
-                              : 'border-white/20 bg-white/5 hover:border-purple-400'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="budget"
-                            value={budget.value}
-                            checked={formData.budget === budget.value}
-                            onChange={(e) => updateFormData('budget', e.target.value)}
-                            className="sr-only"
-                          />
-                          <div className={`w-4 h-4 rounded-full border-2 mr-3 ${
-                            formData.budget === budget.value
-                              ? 'border-purple-500 bg-purple-500'
-                              : 'border-white/40'
-                          }`}>
-                            {formData.budget === budget.value && (
-                              <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
-                            )}
-                          </div>
-                          <span className="text-white font-medium">{budget.label}</span>
+                      <div>
+                        <label className="block text-white/80 font-medium mb-2">
+                          Business Industry *
                         </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Timeline */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Timeline *</h3>
-                    <div className="space-y-3">
-                      {timelineOptions.map((timeline) => (
-                        <label
-                          key={timeline.id}
-                          className={`flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
-                            formData.timeline === timeline.value
-                              ? 'border-purple-500 bg-purple-500/20'
-                              : 'border-white/20 bg-white/5 hover:border-purple-400'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="timeline"
-                            value={timeline.value}
-                            checked={formData.timeline === timeline.value}
-                            onChange={(e) => updateFormData('timeline', e.target.value)}
-                            className="sr-only"
-                          />
-                          <div className={`w-4 h-4 rounded-full border-2 mr-3 ${
-                            formData.timeline === timeline.value
-                              ? 'border-purple-500 bg-purple-500'
-                              : 'border-white/40'
-                          }`}>
-                            {formData.timeline === timeline.value && (
-                              <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
-                            )}
-                          </div>
-                          <span className="text-white font-medium">{timeline.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Features */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-purple-400" />
-                  What Features Would You Like?
-                </h2>
-                <p className="text-white/70 mb-6">
-                  {!formData.projectType || !formData.budget ? (
-                    <span className="text-yellow-400 text-sm">
-                      Please select a project type and budget first
-                    </span>
-                  ) : (
-                    'Select additional features for your project'
-                  )}
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {availableFeatures.map((feature) => {
-                    const isAvailable = isFeatureAvailable(feature);
-                    const isSelected = formData.features.includes(feature.id);
-                    
-                    return (
-                      <label
-                        key={feature.id}
-                        className={`relative p-4 rounded-xl border transition-all duration-300 ${
-                          !isAvailable 
-                            ? 'opacity-50 cursor-not-allowed border-white/10 bg-white/5' 
-                            : isSelected
-                              ? 'border-purple-500 bg-purple-500/20 cursor-pointer'
-                              : 'border-white/20 bg-white/5 hover:border-purple-400 cursor-pointer'
-                        }`}
-                      >
                         <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => isAvailable && toggleFeature(feature.id)}
-                          disabled={!isAvailable}
-                          className="sr-only"
+                          type="text"
+                          name="industry"
+                          required
+                          value={formData.industry}
+                          onChange={(e) => updateFormData('industry', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
+                          placeholder="e.g. Technology, Healthcare, Retail"
                         />
-                        
-                        <div className="flex items-start gap-3">
-                          <div className={`w-5 h-5 rounded border-2 mt-0.5 flex-shrink-0 flex items-center justify-center ${
-                            !isAvailable
-                              ? 'border-white/20'
-                              : isSelected
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 2: Project Type */}
+                {currentStep === 2 && (
+                  <motion.div
+                    key="step2"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white/5 border border-white/10 rounded-2xl p-8"
+                  >
+                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                      <Briefcase className="w-6 h-6 text-purple-400" />
+                      Project Type *
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {projectTypes.map((type) => (
+                        <motion.div
+                          key={type.id}
+                          className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${
+                            formData.projectType === type.id
+                              ? 'border-purple-500 bg-purple-500/20'
+                              : 'border-white/20 bg-white/5 hover:border-purple-400 hover:bg-white/10'
+                          }`}
+                          onClick={() => updateFormData('projectType', type.id)}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="text-purple-400 flex-shrink-0">{type.icon}</div>
+                            <div className="flex-1">
+                              <h3 className="text-white font-semibold mb-2">{type.name}</h3>
+                              <p className="text-white/60 text-sm">{type.description}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 3: Budget & Timeline */}
+                {currentStep === 3 && (
+                  <motion.div
+                    key="step3"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white/5 border border-white/10 rounded-2xl p-8"
+                  >
+                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                      <DollarSign className="w-6 h-6 text-purple-400" />
+                      Budget & Timeline *
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      {/* Budget */}
+                      <div>
+                        <h3 className="text-lg font-semibold text-white mb-4">Budget Range *</h3>
+                        <p className="text-white/60 text-sm mb-4">
+                        Your budget determines available features and project scope
+                        </p>
+                        <div className="space-y-3">
+                          {budgetRanges.map((budget) => (
+                            <label
+                              key={budget.id}
+                              className={`flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
+                                formData.budget === budget.value
+                                  ? 'border-purple-500 bg-purple-500/20'
+                                  : 'border-white/20 bg-white/5 hover:border-purple-400'
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="budget"
+                                value={budget.value}
+                                checked={formData.budget === budget.value}
+                                onChange={(e) => updateFormData('budget', e.target.value)}
+                                className="sr-only"
+                              />
+                              <div className={`w-4 h-4 rounded-full border-2 mr-3 ${
+                                formData.budget === budget.value
+                                  ? 'border-purple-500 bg-purple-500'
+                                  : 'border-white/40'
+                              }`}>
+                                {formData.budget === budget.value && (
+                                  <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
+                                )}
+                              </div>
+                              <span className="text-white font-medium">{budget.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Timeline */}
+                      <div>
+                        <h3 className="text-lg font-semibold text-white mb-4">Timeline *</h3>
+                        <div className="space-y-3">
+                          {timelineOptions.map((timeline) => (
+                            <label
+                              key={timeline.id}
+                              className={`flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
+                                formData.timeline === timeline.value
+                                  ? 'border-purple-500 bg-purple-500/20'
+                                  : 'border-white/20 bg-white/5 hover:border-purple-400'
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="timeline"
+                                value={timeline.value}
+                                checked={formData.timeline === timeline.value}
+                                onChange={(e) => updateFormData('timeline', e.target.value)}
+                                className="sr-only"
+                              />
+                              <div className={`w-4 h-4 rounded-full border-2 mr-3 ${
+                                formData.timeline === timeline.value
+                                  ? 'border-purple-500 bg-purple-500'
+                                  : 'border-white/40'
+                              }`}>
+                                {formData.timeline === timeline.value && (
+                                  <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
+                                )}
+                              </div>
+                              <span className="text-white font-medium">{timeline.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 4: Features & Description */}
+                {currentStep === 4 && (
+                  <motion.div
+                    key="step4"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-8"
+                  >
+                    {/* Features */}
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <CheckCircle className="w-6 h-6 text-purple-400" />
+                        What Features Would You Like?
+                      </h2>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {availableFeatures.map((feature) => {
+                          const isAvailable = isFeatureAvailable(feature);
+                          const isSelected = formData.features.includes(feature.id);
+                          
+                          return (
+                            <label
+                              key={feature.id}
+                              className={`relative p-4 rounded-xl border transition-all duration-300 ${
+                                !isAvailable 
+                                  ? 'opacity-50 cursor-not-allowed border-white/10 bg-white/5' 
+                                  : isSelected
+                                    ? 'border-purple-500 bg-purple-500/20 cursor-pointer'
+                                    : 'border-white/20 bg-white/5 hover:border-purple-400 cursor-pointer'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => isAvailable && toggleFeature(feature.id)}
+                                disabled={!isAvailable}
+                                className="sr-only"
+                              />
+                              
+                              <div className="flex items-start gap-3">
+                                <div className={`w-5 h-5 rounded border-2 mt-0.5 flex-shrink-0 flex items-center justify-center ${
+                                  !isAvailable
+                                    ? 'border-white/20'
+                                    : isSelected
+                                      ? 'border-purple-500 bg-purple-500'
+                                      : 'border-white/40'
+                                }`}>
+                                  {isSelected && <CheckCircle className="w-3 h-3 text-white" />}
+                                </div>
+                                
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className={`${!isAvailable ? 'text-white/40' : 'text-purple-400'}`}>
+                                      {feature.icon}
+                                    </span>
+                                    <span className={`font-medium ${!isAvailable ? 'text-white/40' : 'text-white'}`}>
+                                      {feature.name}
+                                    </span>
+                                    {feature.premium && isAvailable && (
+                                      <span className="text-xs bg-purple-500/30 text-purple-300 px-2 py-0.5 rounded-full">
+                                        Premium
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className={`text-xs ${!isAvailable ? 'text-white/30' : 'text-white/60'}`}>
+                                    {feature.description}
+                                  </p>
+                                  {!isAvailable && (
+                                    <p className="text-xs text-yellow-400/80 mt-1">
+                                      Not available for this selection
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Monthly Retainer */}
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                      <h3 className="text-lg font-semibold text-white mb-4">Monthly Retainer (Optional)</h3>
+                      <p className="text-white/60 text-sm mb-6">
+                        Keep your website updated and secure with ongoing support
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {retainerOptions.map((retainer) => (
+                          <label
+                            key={retainer.id}
+                            className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
+                              formData.retainer === retainer.value
+                                ? 'border-purple-500 bg-purple-500/20'
+                                : 'border-white/20 bg-white/5 hover:border-purple-400'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="retainer"
+                              value={retainer.value}
+                              checked={formData.retainer === retainer.value}
+                              onChange={(e) => updateFormData('retainer', e.target.value)}
+                              className="sr-only"
+                            />
+                            <div className={`w-4 h-4 rounded-full border-2 mr-3 mt-0.5 flex-shrink-0 ${
+                              formData.retainer === retainer.value
                                 ? 'border-purple-500 bg-purple-500'
                                 : 'border-white/40'
-                          }`}>
-                            {isSelected && <CheckCircle className="w-3 h-3 text-white" />}
-                          </div>
-                          
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`${!isAvailable ? 'text-white/40' : 'text-purple-400'}`}>
-                                {feature.icon}
-                              </span>
-                              <span className={`font-medium ${!isAvailable ? 'text-white/40' : 'text-white'}`}>
-                                {feature.name}
-                              </span>
-                              {feature.premium && isAvailable && (
-                                <span className="text-xs bg-purple-500/30 text-purple-300 px-2 py-0.5 rounded-full">
-                                  Premium
-                                </span>
+                            }`}>
+                              {formData.retainer === retainer.value && (
+                                <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
                               )}
                             </div>
-                            <p className={`text-xs ${!isAvailable ? 'text-white/30' : 'text-white/60'}`}>
-                              {feature.description}
-                            </p>
-                            {!isAvailable && (
-                              <p className="text-xs text-yellow-400/80 mt-1">
-                                Not available for this selection
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </label>
-                    );
-                  })}
-                </div>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-white font-medium">{retainer.label}</span>
+                                <span className="text-purple-400 font-semibold">{retainer.price}</span>
+                              </div>
+                              <p className="text-white/60 text-sm">{retainer.description}</p>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
 
-                              </motion.div>
+                    {/* Project Description */}
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <MessageSquare className="w-6 h-6 text-purple-400" />
+                        Project Description
+                      </h2>
 
-              {/* Project Description */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                  <MessageSquare className="w-6 h-6 text-purple-400" />
-                  Project Description
-                </h2>
-
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={(e) => updateFormData('description', e.target.value)}
-                  rows={6}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors resize-none"
-                  placeholder="Tell us more about your project, goals, and any specific requirements..."
-                />
-              </motion.div>
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={(e) => updateFormData('description', e.target.value)}
+                        rows={6}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                        placeholder="Tell us more about your project, goals, and any specific requirements..."
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Error Message */}
               {error && (
@@ -1106,50 +1163,59 @@ const Estimate = () => {
                 </motion.div>
               )}
 
-              {/* Submit Button */}
+              {/* Navigation Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="text-center"
+                transition={{ delay: 0.3 }}
+                className="flex justify-between"
               >
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting || !formData.name || !formData.email || !formData.phone || !formData.company || !formData.country || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-semibold text-lg transition-all duration-300 shadow-lg shadow-purple-500/25"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5" />
-                      Get My Estimate
-                    </>
-                  )}
-                </motion.button>
-
-                <p className="text-white/60 text-sm mt-4">
-                  We'll review your request and get back to you within 24 hours
-                </p>
-
-                {/* Professional Notice */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="mt-8 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl max-w-2xl mx-auto"
-                >
-                  <p className="text-purple-300 text-sm text-center">
-                    <Shield className="w-4 h-4 text-purple-400 inline mr-2" />
-                    All projects are built with professional, secure code. 
-                    We'll discuss specific details and pricing during our consultation call.
-                  </p>
-                </motion.div>
+                {currentStep > 1 && (
+                  <motion.button
+                    type="button"
+                    onClick={prevStep}
+                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full font-medium transition-all duration-300 flex items-center gap-2"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <ArrowRight className="w-4 h-4 rotate-180" />
+                    Back
+                  </motion.button>
+                )}
+                
+                {currentStep < 4 ? (
+                  <motion.button
+                    type="button"
+                    onClick={nextStep}
+                    disabled={!isStepValid()}
+                    className="ml-auto px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-medium transition-all duration-300 flex items-center gap-2"
+                    whileHover={{ scale: isStepValid() ? 1.05 : 1 }}
+                    whileTap={{ scale: isStepValid() ? 0.95 : 1 }}
+                  >
+                    Next
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                ) : (
+                  <motion.button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="ml-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-semibold text-lg transition-all duration-300 shadow-lg shadow-purple-500/25 flex items-center gap-2"
+                    whileHover={{ scale: !isSubmitting ? 1.05 : 1 }}
+                    whileTap={{ scale: !isSubmitting ? 0.95 : 1 }}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Get My Estimate
+                      </>
+                    )}
+                  </motion.button>
+                )}
               </motion.div>
             </form>
           </div>
