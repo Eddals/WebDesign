@@ -29,9 +29,9 @@ function Router() {
 
 function App() {
   useEffect(() => {
-    // Add Zoho SalesIQ chatbox scripts
+    // Add Zoho SalesIQ chatbox scripts (clean version)
     const zohoScript = document.createElement('script');
-    zohoScript.innerHTML = "window.$zoho=window.$zoho || {}; $zoho.salesiq=$zoho.salesiq||{ready:function(){}}";
+    zohoScript.innerHTML = `window.$zoho=window.$zoho || {}; $zoho.salesiq=$zoho.salesiq||{ready:function(){}}`;
     document.body.appendChild(zohoScript);
 
     const zsiqScript = document.createElement('script');
@@ -41,8 +41,8 @@ function App() {
     document.body.appendChild(zsiqScript);
 
     return () => {
-      document.body.removeChild(zohoScript);
-      document.body.removeChild(zsiqScript);
+      if (zohoScript.parentNode) zohoScript.parentNode.removeChild(zohoScript);
+      if (zsiqScript.parentNode) zsiqScript.parentNode.removeChild(zsiqScript);
     };
   }, []);
 
