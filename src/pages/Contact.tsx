@@ -112,7 +112,9 @@ const Contact = () => {
         
         // Direct webhook call to the new URL
         const webhookUrl = 'https://hook.us2.make.com/9e3cokwmwww6kbxu27awfncy4hvfnja6';
-          
+        const n8nWebhookUrl = 'https://devtone.app.n8n.cloud/webhook-test/42fe2df8-50cc-499e-b1c7-0ffdac9f3454';
+        
+        // Send to Make.com webhook
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
           headers: {
@@ -120,8 +122,21 @@ const Contact = () => {
           },
           body: JSON.stringify(webhookData)
         });
-        
-        console.log('Webhook response status:', webhookResponse.status);
+        console.log('Make.com webhook response status:', webhookResponse.status);
+
+        // Send to N8N webhook
+        try {
+          const n8nResponse = await fetch(n8nWebhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(webhookData)
+          });
+          console.log('N8N webhook response status:', n8nResponse.status);
+        } catch (n8nError) {
+          console.error('Error sending to N8N webhook:', n8nError);
+        }
       } catch (webhookError) {
         console.error('Error sending to webhooks:', webhookError);
         // Continue even if webhook fails
