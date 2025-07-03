@@ -78,9 +78,9 @@ export async function submitContactForm(data: ContactFormData): Promise<ContactR
         if (result.success || result.message) {
           console.log(`✅ Contact form submitted successfully via ${endpoint.url}`);
           return {
-            success: true,
             message: result.message || 'Message sent successfully',
-            ...result
+            ...result,
+            success: true
           };
         }
       } catch (altError) {

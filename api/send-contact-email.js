@@ -51,14 +51,32 @@ const getEmailTemplate = (firstName) => {
   `;
 };
 
-// Function to send confirmation email
-async function sendContactConfirmationEmail(userData) {
+module.exports = async (req, res) => {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
-    const firstName = userData.name.split(' ')[0];
+    const { name, email } = req.body;
+    
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Name and email are required' });
+    }
+
+    const firstName = name.split(' ')[0];
     
     const mailOptions = {
       from: '"Devtone Agency" <matheus.silva@devtone.agency>',
-      to: userData.email,
+      to: email,
       subject: 'Thank You for Contacting Devtone Agency',
       html: getEmailTemplate(firstName),
       replyTo: 'matheus.silva@devtone.agency'
@@ -66,11 +84,16 @@ async function sendContactConfirmationEmail(userData) {
 
     const info = await transporter.sendMail(mailOptions);
     console.log('Contact confirmation email sent:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    
+    return res.status(200).json({ 
+      success: true, 
+      messageId: info.messageId 
+    });
   } catch (error) {
     console.error('Error sending contact confirmation email:', error);
-    return { success: false, error: error.message };
+    return res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
   }
-}
-
-module.exports = { sendContactConfirmationEmail };
+};
