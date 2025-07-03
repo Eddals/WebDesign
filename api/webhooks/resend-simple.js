@@ -1,33 +1,124 @@
-<!--
-  Organized HTML Email Template
-  Use {{name}} as a placeholder for the recipient's name.
-  Replace {{name}} with the actual name in your backend/email service.
--->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: #ffffff;">
 <head>
-  <meta charset="utf-8">
-  <title>Email newsletter profissional colorido para agência de viagens</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Check out this Email Newsletter designed by Matheus.">
-  <link href="https://static.canva.com/web/a0684b0780c739e9.vendor.ltr.css" rel="stylesheet" crossorigin="anonymous">
-  <link href="https://static.canva.com/web/9b4c158daff91554.ltr.css" rel="stylesheet" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <title>Thank You - Devtone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    @font-face { font-display: swap; font-family: Canva Sans; font-style: normal; font-weight: 400 700; src: url(https://static.canva.com/web/images/a9b8e7902ec1ab885d382156f33738e5.woff2) format("woff2"), url(https://static.canva.com/web/images/013277426f0d555d96c7a75503df5754.woff) format("woff"); }
-    /* ... (other font-face and style rules) ... */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #000000;
+    }
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0;
+    }
+    .logo {
+      text-align: left;
+      padding: 30px 30px 10px 30px;
+    }
+    .logo img {
+      max-height: 40px;
+    }
+    .header {
+      background-color: #A100F2;
+      color: #ffffff;
+      text-align: left;
+      padding: 40px 30px 80px 30px;
+      border-radius: 10px 10px 0 0;
+      position: relative;
+    }
+    .header h1 {
+      font-size: 36px;
+      margin: 0;
+    }
+    .header p {
+      font-size: 15px;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+    .monkey {
+      position: absolute;
+      bottom: -60px;
+      right: 20px;
+      max-height: 200px;
+    }
+    .main {
+      padding: 60px 30px 30px 30px;
+      background-color: #ffffff;
+    }
+    .main p {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .features {
+      display: flex;
+      justify-content: space-around;
+      background-color: #A100F2;
+      color: #ffffff;
+      padding: 30px;
+      border-radius: 0 0 10px 10px;
+    }
+    .feature {
+      text-align: center;
+      max-width: 250px;
+    }
+    .feature h3 {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+    .feature p {
+      font-size: 14px;
+      margin: 5px 0 0;
+    }
   </style>
 </head>
 <body>
-  <div style="max-width:600px;margin:auto;padding:24px;background:#fff;border-radius:8px;font-family:'Canva Sans',Arial,sans-serif;">
-    <h1 style="color:#9b00ec;text-align:center;">Thank you for contacting us!</h1>
-    <h2 style="color:#1f1e1f;font-size:24px;font-weight:bold;">Hello, {{name}}</h2>
-    <p style="font-size:17px;color:#1f1e1f;">While we review your message, you can help us move things forward by filling out a quick project form. This will give us a better understanding of your goals, timeline, and expectations.</p>
-    <p style="font-size:17px;color:#1f1e1f;">Have a question, request, or project in mind? We’re here to help. Fill out the form below and a member of our team will get back to you within 24–48 hours. Whether you're looking for more information about our services, need a custom quote, or just want to say hello, we’d love to hear from you!</p>
-    <h3 style="color:#9b00ec;">Get a Free Estimate</h3>
-    <p style="font-size:14px;color:#1f1e1f;">Request a quick, no-obligation quote tailored to your needs.</p>
-    <h3 style="color:#9b00ec;">Competitive</h3>
-    <p style="font-size:14px;color:#1f1e1f;">Offering high-quality services at prices that beat the competition.</p>
-    <footer style="margin-top:32px;text-align:center;color:#aaa;font-size:12px;">Email newsletter profissional colorido para agência de viagens &copy; Matheus</footer>
+
+  <div class="container">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <img src="https://media.canva.com/v2/image-resize/format:PNG/height:800/quality:100/uri:ifs%3A%2F%2FM%2Fd8d712c0-f812-4d80-815e-03d9ce32d526/watermark:F/width:640?csig=AAAAAAAAAAAAAAAAAAAAAEcAKu5gqOWot0FVoqiUIlFR3ymApz5Z6VJ0bFUlbWBu&exp=1751527473&osig=AAAAAAAAAAAAAAAAAAAAALYoQmDsW5zXhwGx3Z0b-DEGiCqxdcntZYDYax_LZtsw&signer=media-rpc&x-canva-quality=screen" alt="Devtone Logo">
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>Thank you for contacting us!</h1>
+      <p>
+        Have a question, request, or project in mind? We’re here to help. Fill out the form below and a member of our team will get back to you within 24–48 hours.<br><br>
+        Whether you're looking for more information about our services, need a custom quote, or just want to say hello — we'd love to hear from you!
+      </p>
+      <img src="https://media.canva.com/v2/image-resize/format:PNG/height:800/quality:100/uri:ifs%3A%2F%2FM%2F2347d414-af89-42c1-ba43-dc7381753983/watermark:F/width:533?csig=AAAAAAAAAAAAAAAAAAAAAAq3nq5tPeD8JOuDIabIbNt2n5DxaykJoMmAW31gnJYn&exp=1751527476&osig=AAAAAAAAAAAAAAAAAAAAANCoy15y_q4AkVf09Vktq2cI6LVHHylElIHhD5GYttMi&signer=media-rpc&x-canva-quality=screen" alt="Monkey Character" class="monkey">
+    </div>
+
+    <!-- BODY -->
+    <div class="main">
+      <p><strong>Hello,</strong></p>
+      <p>
+        While we review your message, you can help us move things forward by filling out a quick project form.
+        This will give us a better understanding of your goals, timeline, and expectations.
+      </p>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="features">
+      <div class="feature">
+        <img src="YOUR_ESTIMATE_ICON_URL_HERE" alt="Estimate Icon" width="40">
+        <h3>Get a Free Estimate</h3>
+        <p>Request a quick, no-obligation quote tailored to your needs.</p>
+      </div>
+      <div class="feature">
+        <img src="YOUR_COMPETITIVE_ICON_URL_HERE" alt="Competitive Icon" width="40">
+        <h3>Competitive</h3>
+        <p>Offering high-quality services at prices that beat the competition.</p>
+      </div>
+    </div>
   </div>
+
 </body>
 </html>
