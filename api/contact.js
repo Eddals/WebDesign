@@ -1,8 +1,4 @@
-import { Resend } from 'resend';
-import { getContactClientTemplate, getContactAdminTemplate } from './lib/email-templates.js';
-
-// Initialize Resend with the API key
-const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
+import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -66,46 +62,66 @@ export default async function handler(req, res) {
     };
 
     try {
+      // Configure nodemailer SMTP transport
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.ionos.com',
+        port: 587,
+        secure: false, // TLS
+        auth: {
+          user: 'matheus.silva@devtone.agency',
+          pass: 'Alebaba1!'
+        }
+      });
+
+      // Admin notification email
+      const adminMailOptions = {
+        from: 'DevTone Contact System <matheus.silva@devtone.agency>',
+        to: 'sweepeasellc@gmail.com',
+        replyTo: formData.email,
+        subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,
+        html: `
+          <h2>New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${contactData.name}</p>
+          <p><strong>Email:</strong> ${contactData.email}</p>
+          <p><strong>Phone:</strong> ${contactData.phone}</p>
+          <p><strong>Company:</strong> ${contactData.company}</p>
+          <p><strong>Preferred Contact:</strong> ${contactData.preferredContact}</p>
+          <p><strong>Submitted At:</strong> ${contactData.submittedAt}</p>
+          <p><strong>IP Address:</strong> ${contactData.ipAddress}</p>
+          <p><strong>Subject:</strong> ${contactData.subject}</p>
+          <p><strong>Message:</strong><br>${contactData.message}</p>
+        `
+      };
+
+      // Extract first name for client email
+      const firstName = (contactData.name || '').split(' ')[0] || 'there';
+      // Client confirmation email
+      const clientMailOptions = {
+        from: 'Devtone Agency <matheus.silva@devtone.agency>',
+        to: contactData.email,
+        subject: '✨ We Received Your Message - DevTone Agency',
+        html: `
+          <p>Hi ${firstName},</p>
+          <p>Thanks for contacting <b>Devtone</b> — I truly appreciate you reaching out.</p>
+          <p>This is just a quick note to let you know we’ve received your message, and we’ll get back to you as soon as possible. During our normal business hours (<b>[business_hours]</b>), we usually reply within a couple of hours. If it’s evening or the weekend, it may take just a little longer — but I promise you’re on our radar.</p>
+          <p>If your question is about one of our services or a specific idea you have in mind, feel free to share more details by replying to this email. The more we know, the better we can help.</p>
+          <p>In the meantime, feel free to check out our <a href="https://devtone.agency/faq">FAQ</a> for common questions, also <a href="https://devtone.agency/estimate">project's creations</a>.</p>
+        `
+      };
+
       // Send both emails in parallel
-      const [adminEmailResult, clientEmailResult] = await Promise.all([
-        // Admin email to sweepeasellc@gmail.com
-        resend.emails.send({
-          from: 'DevTone Contact System <noreply@devtone.agency>',
-          to: process.env.ADMIN_EMAIL || 'sweepeasellc@gmail.com',
-          replyTo: formData.email,
-          subject: `📬 New Contact Form: ${contactData.name} - ${formData.subject}`,
-          html: getContactAdminTemplate(contactData),
-        }),
-        // Customer confirmation email
-        resend.emails.send({
-          from: 'DevTone Agency <noreply@devtone.agency>',
-          to: formData.email,
-          subject: '✨ We Received Your Message - DevTone Agency',
-          html: getContactClientTemplate(contactData),
-        })
+      await Promise.all([
+        transporter.sendMail(adminMailOptions),
+        transporter.sendMail(clientMailOptions)
       ]);
 
-      console.log('✅ Emails sent successfully');
-      console.log('Admin email ID:', adminEmailResult.data?.id);
-      console.log('Client email ID:', clientEmailResult.data?.id);
-      
       return res.status(200).json({ 
         success: true, 
         message: 'Your message has been sent successfully! We\'ll get back to you soon.',
-        emailSent: true,
-        details: {
-          adminEmailId: adminEmailResult.data?.id,
-          clientEmailId: clientEmailResult.data?.id
-        }
+        emailSent: true
       });
     } catch (emailError) {
-      console.error('❌ Error sending emails with Resend:', emailError);
-      
-      // Log the specific error for debugging
-      if (emailError.response) {
-        console.error('Resend API response:', emailError.response);
-      }
-      
+      console.error('❌ Error sending emails with SMTP:', emailError);
       // Still return success if email fails but form was received
       return res.status(200).json({ 
         success: true, 
