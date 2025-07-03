@@ -16,6 +16,7 @@ import {
 import SEO from '@/components/SEO'
 import GoogleMapsWidget from '@/components/GoogleMapsWidget'
 import { submitContactForm } from '@/lib/contact-service'
+import { sendContactConfirmationEmail } from '../api/send-contact-email'
 
 const Contact = () => {
   // Form state
@@ -162,6 +163,18 @@ const Contact = () => {
       // Check if the result was successful
       if (!result.success) {
         throw new Error(result.error || 'Failed to send message');
+      }
+      
+      // Send confirmation email using IONOS SMTP
+      try {
+        const emailResult = await sendContactConfirmationEmail({
+          name: formData.name,
+          email: formData.email
+        });
+        console.log('📧 IONOS SMTP email result:', emailResult);
+      } catch (emailError) {
+        console.error('Error sending IONOS confirmation email:', emailError);
+        // Continue even if email fails - we already have the form submission
       }
       
       // Show warning if message was stored locally
