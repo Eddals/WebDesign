@@ -66,7 +66,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { name, email } = req.body;
+    const { name, email, subject, message } = req.body;
     
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
@@ -74,7 +74,8 @@ module.exports = async (req, res) => {
 
     const firstName = name.split(' ')[0];
     
-    const mailOptions = {
+    // Send confirmation email to user
+    const userMailOptions = {
       from: '"Devtone Agency" <matheus.silva@devtone.agency>',
       to: email,
       subject: 'Thank You for Contacting Devtone Agency',
@@ -82,12 +83,12 @@ module.exports = async (req, res) => {
       replyTo: 'matheus.silva@devtone.agency'
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Contact confirmation email sent:', info.messageId);
+    const userInfo = await transporter.sendMail(userMailOptions);
+    console.log('Contact confirmation email sent:', userInfo.messageId);
     
     return res.status(200).json({ 
       success: true, 
-      messageId: info.messageId 
+      messageId: userInfo.messageId 
     });
   } catch (error) {
     console.error('Error sending contact confirmation email:', error);

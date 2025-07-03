@@ -1,7 +1,4 @@
-import { Resend } from 'resend';
-import nodemailer from 'nodemailer';
-
-const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
+const nodemailer = require('nodemailer');
 
 // Create SMTP transporter with IONOS credentials
 const transporter = nodemailer.createTransport({
@@ -54,7 +51,7 @@ const getEmailTemplate = (firstName) => {
   `;
 };
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -73,31 +70,15 @@ export default async function handler(req, res) {
     
     console.log('📧 Contact form received:', { full_name, email, subject });
     
-    // Send admin notification
-    const adminEmail = await resend.emails.send({
-      from: 'DevTone Contact <noreply@devtone.agency>',
-      to: 'sweepeasellc@gmail.com',
-      replyTo: email,
-      subject: `New Contact: ${full_name} - ${subject}`,
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${full_name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-        <p><strong>Company:</strong> ${company || 'Not provided'}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Preferred Contact:</strong> ${preferredContact}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
-      `
-    });
+    if (!full_name || !email) {
+      return res.status(400).json({ error: 'Name and email are required' });
+    }
+
+    const firstName = full_name.split(' ')[0];
     
-    // Send customer confirmation via IONOS SMTP
-    let customerEmailId = null;
+    // Send confirmation email to user
     try {
-      const firstName = full_name.split(' ')[0];
-      
-      const mailOptions = {
+      const userMailOptions = {
         from: '"Devtone Agency" <matheus.silva@devtone.agency>',
         to: email,
         subject: 'Thank You for Contacting Devtone Agency',
@@ -105,39 +86,47 @@ export default async function handler(req, res) {
         replyTo: 'matheus.silva@devtone.agency'
       };
 
-      const info = await transporter.sendMail(mailOptions);
-      console.log('IONOS SMTP email sent:', info.messageId);
-      customerEmailId = info.messageId;
+      const userInfo = await transporter.sendMail(userMailOptions);
+      console.log('User confirmation email sent:', userInfo.messageId);
     } catch (emailError) {
-      console.error('Error sending via IONOS SMTP:', emailError);
-      
-      // Fallback to Resend if IONOS fails
-      const customerEmail = await resend.emails.send({
-        from: 'DevTone Agency <noreply@devtone.agency>',
-        to: email,
-        subject: 'We received your message - DevTone Agency',
+      console.error('Error sending user confirmation email:', emailError);
+    }
+    
+    // Send notification to admin
+    try {
+      const adminMailOptions = {
+        from: '"Devtone Website" <matheus.silva@devtone.agency>',
+        to: 'matheus.silva@devtone.agency',
+        subject: `New Contact Form: ${full_name} - ${subject || 'No Subject'}`,
         html: `
-          <h2>Thank you for contacting us!</h2>
-          <p>Hi ${full_name},</p>
-          <p>We've received your message and will get back to you within 24 hours.</p>
-          <p>Best regards,<br>DevTone Team</p>
-        `
-      });
-      customerEmailId = customerEmail.data?.id;
+          <h2>New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${full_name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
+          <p><strong>Company:</strong> ${company || 'Not provided'}</p>
+          <p><strong>Subject:</strong> ${subject || 'Not provided'}</p>
+          <p><strong>Preferred Contact:</strong> ${preferredContact || 'Not specified'}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message || 'No message content'}</p>
+        `,
+        replyTo: email
+      };
+
+      const adminInfo = await transporter.sendMail(adminMailOptions);
+      console.log('Admin notification email sent:', adminInfo.messageId);
+    } catch (adminEmailError) {
+      console.error('Error sending admin notification email:', adminEmailError);
     }
     
     return res.status(200).json({ 
       success: true, 
-      message: 'Message sent successfully!',
-      adminId: adminEmail.data?.id,
-      customerId: customerEmailId
+      message: 'Your message has been sent successfully!'
     });
-    
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error processing contact form:', error);
     return res.status(500).json({ 
       success: false, 
       error: error.message 
     });
   }
-}
+};
