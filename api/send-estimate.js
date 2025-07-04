@@ -1,6 +1,10 @@
 // Vercel Serverless Function for Estimate Submission
 // This handles the /api/send-estimate endpoint
 
+import { Resend } from 'resend';
+
+const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
+
 export default async function handler(req, res) {
   // Enable CORS for your domain
   const allowedOrigins = [
@@ -37,8 +41,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('Received estimate request:', req.body);
-
     // Validate required fields
     const requiredFields = ['name', 'email', 'projectType', 'budget', 'timeline'];
     const missingFields = requiredFields.filter(field => !req.body[field]);
@@ -74,44 +76,21 @@ export default async function handler(req, res) {
       features: req.body.features || []
     };
 
+    // Build plain text summary
+    const firstName = formData.name.split(' ')[0] || formData.name;
+    const featuresText = Array.isArray(formData.features) && formData.features.length > 0
+      ? `• Features: ${formData.features.join(', ')}`
+      : '';
+    const summaryText = `Subject: We’ve received your quote request\n\nHi ${firstName},\n\nThank you for requesting a quote with Devtone — we’re excited to learn more about your project and explore how we can bring it to life.\n\nHere’s a quick summary of what you submitted:\n\n* * *\n\n📌 Project Summary:\n• Project Type: ${formData.projectType}\n• Goal: ${formData.description || 'Not specified'}\n• Timeline: ${formData.timeline}\n• Estimated Budget: ${formData.budget}\n${featuresText ? featuresText + '\n' : ''}\n* * *\n\nOur team is reviewing your request and will reach out shortly with a personalized proposal. We usually respond within 2 business hours.\n\nIn the meantime, feel free to explore our website to learn more about our services and past projects: devtone.agency\n\nIf you’d like to share more details or make changes, just reply to this email.\n\nLooking forward to connecting with you.\n\nWarm regards,\nMatheus Silva\nFounder & Owner – Devtone Agency`;
+
     // Send confirmation email to client using Resend
     let emailSuccess = false;
     try {
-      const { Resend } = await import('resend');
-      const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
-      const firstName = formData.name.split(' ')[0] || formData.name;
-      const featuresList = Array.isArray(formData.features) && formData.features.length > 0
-        ? `<li><b>Features:</b> ${formData.features.join(', ')}</li>`
-        : '';
-      const summaryHtml = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <p>Hi ${firstName},</p>
-          <p>Thank you for requesting a quote with <b>Devtone</b> — we’re excited to learn more about your project and explore how we can bring it to life.</p>
-          <p>Here’s a quick summary of what you submitted:</p>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
-          <div style="background: #f9f9f9; padding: 16px; border-radius: 6px;">
-            <b>📌 Project Summary:</b><br>
-            <ul style="list-style: disc; padding-left: 20px;">
-              <li><b>Project Type:</b> ${formData.projectType}</li>
-              <li><b>Goal:</b> ${formData.description || 'Not specified'}</li>
-              <li><b>Timeline:</b> ${formData.timeline}</li>
-              <li><b>Estimated Budget:</b> ${formData.budget}</li>
-              ${featuresList}
-            </ul>
-          </div>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
-          <p>Our team is reviewing your request and will reach out shortly with a personalized proposal. We usually respond within 2 business hours.</p>
-          <p>In the meantime, feel free to explore our website to learn more about our services and past projects: <a href="https://devtone.agency">devtone.agency</a></p>
-          <p>If you’d like to share more details or make changes, just reply to this email.</p>
-          <p>Looking forward to connecting with you.</p>
-          <p>Warm regards,<br><b>Matheus Silva</b><br>Founder & Owner – Devtone Agency</p>
-        </div>
-      `;
       await resend.emails.send({
         from: 'Devtone Agency <matheus.silva@devtone.agency>',
         to: formData.email,
         subject: 'We’ve received your quote request',
-        html: summaryHtml,
+        text: summaryText,
         reply_to: 'matheus.silva@devtone.agency'
       });
       emailSuccess = true;
