@@ -30,23 +30,28 @@ const TestHubSpot: React.FC = () => {
     try {
       console.log('Enviando dados para o HubSpot:', formData);
       
-      const apiUrl = window.location.origin + '/api/hubspot';
-      console.log('URL da API:', apiUrl);
+      // Enviar diretamente para o webhook do HubSpot
+      const webhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/JHi6t1H';
+      console.log('Enviando para webhook:', webhookUrl);
       
-      const response = await fetch(apiUrl, {
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
 
       console.log('Status da resposta:', response.status);
       
-      const data = await response.json();
-      console.log('Resposta da API:', data);
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = { status: response.status, message: response.statusText };
+      }
       
+      console.log('Resposta do webhook:', data);
       setResponse(data);
     } catch (err) {
       console.error('Erro ao enviar dados:', err);
@@ -58,7 +63,10 @@ const TestHubSpot: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Teste da API do HubSpot</h1>
+      <h1 className="text-2xl font-bold mb-6">Teste do Webhook do HubSpot</h1>
+      <div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 rounded-md">
+        <p className="text-yellow-800">Este formulário envia dados diretamente para o webhook do HubSpot: <code>243199316/JHi6t1H</code></p>
+      </div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -140,7 +148,7 @@ const TestHubSpot: React.FC = () => {
           disabled={isSubmitting}
           className={`px-4 py-2 bg-blue-500 text-white rounded-md ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-600'}`}
         >
-          {isSubmitting ? 'Enviando...' : 'Enviar para o HubSpot'}
+          {isSubmitting ? 'Enviando...' : 'Enviar Evento de Teste para o Webhook'}
         </button>
       </form>
       
