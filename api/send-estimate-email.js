@@ -75,11 +75,11 @@ export default async function handler(req, res) {
     // Send to the webhook for email delivery
     let webhookSuccess = false;
     try {
-      const webhookResponse = await fetch('https://devtone.agency/api/webhooks/resend', {
+      const webhookResponse = await fetch('https://devtone.agency/api/webhooks/send-estimate-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Signature': 'whsec_RyzP9Rwug0NGyl6d5YMArUDm4OyMfkT+'
+          'X-Signature': 'whsec_3eOvuzUj7IZ50uqe2IQAFKn0+591D27E'
         },
         body: JSON.stringify(formData)
       });
