@@ -480,7 +480,7 @@ const Estimate = () => {
 
       if (result.success) {
         try {
-          await fetch("/api/hubspot", {
+          await fetch("https://devtone.agency/api/hubspot", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
