@@ -1,10 +1,6 @@
 // Vercel Serverless Function for Estimate Submission
 // This handles the /api/send-estimate endpoint
 
-import { Resend } from 'resend';
-
-const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
-
 export default async function handler(req, res) {
   // Enable CORS for your domain
   const allowedOrigins = [
@@ -76,35 +72,34 @@ export default async function handler(req, res) {
       features: req.body.features || []
     };
 
-    // Build plain text summary
-    const firstName = formData.name.split(' ')[0] || formData.name;
-    const featuresText = Array.isArray(formData.features) && formData.features.length > 0
-      ? `• Features: ${formData.features.join(', ')}`
-      : '';
-    const summaryText = `Subject: We’ve received your quote request\n\nHi ${firstName},\n\nThank you for requesting a quote with Devtone — we’re excited to learn more about your project and explore how we can bring it to life.\n\nHere’s a quick summary of what you submitted:\n\n* * *\n\n📌 Project Summary:\n• Project Type: ${formData.projectType}\n• Goal: ${formData.description || 'Not specified'}\n• Timeline: ${formData.timeline}\n• Estimated Budget: ${formData.budget}\n${featuresText ? featuresText + '\n' : ''}\n* * *\n\nOur team is reviewing your request and will reach out shortly with a personalized proposal. We usually respond within 2 business hours.\n\nIn the meantime, feel free to explore our website to learn more about our services and past projects: devtone.agency\n\nIf you’d like to share more details or make changes, just reply to this email.\n\nLooking forward to connecting with you.\n\nWarm regards,\nMatheus Silva\nFounder & Owner – Devtone Agency`;
-
-    // Send confirmation email to client using Resend
-    let emailSuccess = false;
+    // Send to the webhook for email delivery
+    let webhookSuccess = false;
     try {
-      await resend.emails.send({
-        from: 'Devtone Agency <matheus.silva@devtone.agency>',
-        to: formData.email,
-        subject: 'We’ve received your quote request',
-        text: summaryText,
-        reply_to: 'matheus.silva@devtone.agency'
+      const webhookResponse = await fetch('https://devtone.agency/api/webhooks/resend-simple', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Signature': 'whsec_ZmHJmv6XL380DfV3kVvdTH2Tk/x44f5n'
+        },
+        body: JSON.stringify(formData)
       });
-      emailSuccess = true;
-    } catch (emailError) {
-      console.error('Estimate confirmation email error:', emailError);
+      webhookSuccess = webhookResponse.ok;
+    } catch (webhookError) {
+      console.error('Error sending to webhook:', webhookError);
     }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Your estimate request has been received. We will contact you soon.',
-      emailsSent: {
-        email: emailSuccess
-      }
-    });
+    if (webhookSuccess) {
+      return res.status(200).json({
+        success: true,
+        message: 'Your estimate request has been received. We will contact you soon.',
+        webhook: true
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to process estimate request. Please try again or contact us directly.'
+      });
+    }
   } catch (error) {
     console.error('Error processing estimate:', error);
     return res.status(500).json({
