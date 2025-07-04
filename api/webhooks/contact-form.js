@@ -77,32 +77,20 @@ export default async function handler(req, res) {
     console.log('✅ Email para administrador enviado:', adminResult);
     
     // Enviar email de confirmação para o cliente
+    const firstName = (contactData.name || '').split(' ')[0] || 'there';
     const clientResult = await resend.emails.send({
       from: 'DevTone Agency <team@devtone.agency>',
       to: email,
-      subject: '✨ Thank You for Contacting DevTone Agency',
+      subject: '✨ We Received Your Message - DevTone Agency',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #4a6cf7;">Thank You for Contacting Us!</h1>
-          <p>Hello ${contactData.name},</p>
-          <p>We've received your message and will get back to you within 24 hours.</p>
-          <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p><strong>Your message:</strong></p>
-            <p>${contactData.message.replace(/\n/g, '<br>')}</p>
-          </div>
-          <p>Next steps:</p>
-          <ol>
-            <li>Our team will review your message within 2-4 business hours</li>
-            <li>You'll receive a personalized response within 24 hours</li>
-            <li>If needed, we'll schedule a call to discuss your requirements in detail</li>
-          </ol>
-          <p>Best regards,<br>The DevTone Team</p>
-          <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-          <p style="color: #666; font-size: 12px;">
-            DevTone Agency<br>
-            Email: team@devtone.agency<br>
-            Website: <a href="https://devtone.agency">devtone.agency</a>
-          </p>
+          <p>Hi ${firstName},</p>
+          <p>Thanks for contacting <b>Devtone</b>  I truly appreciate you reaching out.</p>
+          <p>This is just a quick note to let you know we’ve received your message, and we’ll get back to you as soon as possible. We usually reply within a couple of hours. If it’s evening or the weekend, it may take just a little longer  but I promise you’re on our radar.</p>
+          <p>If your question is about one of our services or a specific idea you have in mind, feel free to share more details by replying to this email. The more we know, the better we can help.</p>
+          <p>In the meantime, feel free to check out our website for quick insights, common questions, and project tips.</p>
+          <p>Looking forward to connecting with you soon.</p>
+          <p>Warm regards,</p>
         </div>
       `,
     });
