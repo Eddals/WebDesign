@@ -492,9 +492,9 @@ const Estimate = () => {
               industry: formData.industry
             })
           });
-          // Envio para o novo webhook HubSpot Automation
-          console.log('Enviando dados para o webhook do HubSpot');
-          const hubspotResponse = await fetch("https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/JHi6t1H", {
+          // Envio para o novo webhook HubSpot Automation através da API do Vercel
+          console.log('Enviando dados para o webhook do HubSpot via API do Vercel');
+          const hubspotResponse = await fetch("/api/hubspot-webhook", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -503,10 +503,11 @@ const Estimate = () => {
               phone: formData.phone,
               company: formData.company,
               country: formData.country,
-              industry: formData.industry
+              industry: formData.industry,
+              webhookUrl: "https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/JHi6t1H"
             })
           });
-          console.log('Status da resposta do webhook HubSpot:', hubspotResponse.status);
+          console.log('Status da resposta da API:', hubspotResponse.status);
         } catch (e) {
           console.error("HubSpot error", e);
         }
