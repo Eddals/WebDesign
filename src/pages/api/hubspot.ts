@@ -5,6 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  console.log("Dados recebidos:", req.body);
   const { name, email, phone, company, country, industry } = req.body;
 
   try {
