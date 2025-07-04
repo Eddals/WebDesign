@@ -479,6 +479,22 @@ const Estimate = () => {
       });
 
       if (result.success) {
+        try {
+          await fetch("/api/hubspot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              company: formData.company,
+              country: formData.country,
+              industry: formData.industry
+            })
+          });
+        } catch (e) {
+          console.error("HubSpot error", e);
+        }
         setIsSuccess(true);
       } else {
         throw new Error(result.error || 'Failed to send estimate');
