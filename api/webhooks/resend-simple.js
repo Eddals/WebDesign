@@ -14,7 +14,7 @@ const getEmailTemplate = (name) => {
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
     .content { padding: 20px; border: 1px solid #ddd; border-radius: 5px; background: #fff; }
     .footer { margin-top: 20px; font-size: 12px; color: #666; }
-    a { color: #a855f7; text-decoration: none; }
+    a { color:rgb(132, 0, 255); text-decoration: none; }
     a:hover { text-decoration: underline; }
   </style>
 </head>
@@ -29,7 +29,7 @@ const getEmailTemplate = (name) => {
     <p>Warm regards,<br><b>Matheus Silva</b><br>Founder & Owner, Devtone Agency</p>
   </div>
   <div class="footer">
-    <p>© 2024 Devtone Agency. All rights reserved.</p>
+    <p>© 2025 Devtone Agency. All rights reserved.</p>
   </div>
 </body>
 </html>
