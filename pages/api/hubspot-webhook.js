@@ -1,6 +1,11 @@
 // pages/api/hubspot-webhook.js
 import fetch from 'node-fetch';
 
+// Solução para o erro "fetch is not a function" no Vercel
+if (!globalThis.fetch) {
+  globalThis.fetch = fetch;
+}
+
 export default async function handler(req, res) {
   // Apenas aceitar requisições POST
   if (req.method !== 'POST') {
