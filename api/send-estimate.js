@@ -74,48 +74,8 @@ export default async function handler(req, res) {
       features: req.body.features || []
     };
 
-    let webhookSuccess = false;
-    let emailSuccess = false;
-
-    // Send to ActivePieces webhook
-    try {
-      const webhookPayload = {
-        nome: formData.name,
-        email: formData.email,
-        telefone: formData.phone,
-        empresa: formData.company,
-        pais: formData.country,
-        industria: formData.industry,
-        tipo_projeto: formData.projectType,
-        orcamento: formData.budget,
-        prazo: formData.timeline,
-        mensagem: formData.description,
-        recursos: Array.isArray(formData.features) ? formData.features.join(', ') : formData.features,
-        timestamp: new Date().toISOString(),
-        fonte: 'devtone-vercel-api',
-        ip: req.headers['x-forwarded-for'] || req.connection?.remoteAddress,
-        navegador: req.headers['user-agent']
-      };
-
-      const webhookResponse = await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(webhookPayload),
-      });
-
-      if (webhookResponse.ok) {
-        console.log('Successfully sent to ActivePieces webhook');
-        webhookSuccess = true;
-      } else {
-        console.warn('ActivePieces webhook returned:', webhookResponse.status);
-      }
-    } catch (webhookError) {
-      console.error('ActivePieces webhook error:', webhookError);
-    }
-
     // Send confirmation email to client using Resend
+    let emailSuccess = false;
     try {
       const { Resend } = await import('resend');
       const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
@@ -159,23 +119,13 @@ export default async function handler(req, res) {
       console.error('Estimate confirmation email error:', emailError);
     }
 
-    // Return success if webhook was sent
-    if (webhookSuccess) {
-      return res.status(200).json({
-        success: true,
-        message: 'Your estimate request has been received. We will contact you soon.',
-        emailsSent: {
-          webhook: true,
-          email: emailSuccess
-        }
-      });
-    } else {
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to process estimate request. Please try again or contact us directly.'
-      });
-    }
-
+    return res.status(200).json({
+      success: true,
+      message: 'Your estimate request has been received. We will contact you soon.',
+      emailsSent: {
+        email: emailSuccess
+      }
+    });
   } catch (error) {
     console.error('Error processing estimate:', error);
     return res.status(500).json({
