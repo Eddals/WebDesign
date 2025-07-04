@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const TestHubSpot: React.FC = () => {
+const HubSpotCORSFix: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,6 +12,21 @@ const TestHubSpot: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [response, setResponse] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [proxyUrl, setProxyUrl] = useState<string>('');
+
+  useEffect(() => {
+    // Determine if we're in development or production
+    const isLocalhost = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1';
+    
+    // Set the appropriate proxy URL
+    if (isLocalhost) {
+      setProxyUrl('http://localhost:3001/api/hubspot-webhook');
+    } else {
+      // For production, use a relative path or your API URL
+      setProxyUrl('/api/hubspot-webhook');
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,26 +45,52 @@ const TestHubSpot: React.FC = () => {
     try {
       console.log('Enviando dados para o HubSpot:', formData);
       
-      // Enviar para nossa API que encaminhará para o webhook do HubSpot
+      // URL do webhook do HubSpot
       const webhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/gR881hP';
-      console.log('Enviando para API que encaminhará para o webhook:', webhookUrl);
       
-      // Tentando enviar diretamente para o webhook do HubSpot
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      console.log('Status da resposta:', response.status);
+      // Método 1: Envio direto (provavelmente bloqueado por CORS)
+      try {
+        console.log('Tentando envio direto para:', webhookUrl);
+        const directResponse = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData),
+          mode: 'no-cors' // Tentativa de contornar CORS
+        });
+        console.log('Resposta do envio direto:', directResponse);
+      } catch (directError) {
+        console.warn('Erro no envio direto (esperado devido a CORS):', directError);
+      }
       
-      const data = await response.json();
-      console.log('Resposta da API:', data);
+      // Método 2: Envio através do proxy (recomendado)
+      if (proxyUrl) {
+        console.log('Enviando através do proxy:', proxyUrl);
+        const proxyResponse = await fetch(proxyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ...formData,
+            webhookUrl: webhookUrl
+          })
+        });
+        
+        if (proxyResponse.ok) {
+          const data = await proxyResponse.json();
+          console.log('Resposta do proxy:', data);
+          setResponse(data);
+        } else {
+          const errorData = await proxyResponse.json().catch(() => ({}));
+          console.error('Erro na resposta do proxy:', proxyResponse.status, errorData);
+          setError(`Erro ${proxyResponse.status}: ${errorData.error || 'Falha no envio através do proxy'}`);
+        }
+      } else {
+        setError('URL do proxy não configurada. Verifique a configuração do ambiente.');
+      }
       
-      setResponse(data);
     } catch (err) {
       console.error('Erro ao enviar dados:', err);
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
@@ -60,9 +101,14 @@ const TestHubSpot: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Teste do Webhook do HubSpot</h1>
-      <div className="mb-6 p-4 bg-green-100 border border-green-300 rounded-md">
-        <p className="text-green-800">Este formulário envia dados para o webhook do HubSpot <code>243199316/gR881hP</code> através da nossa API</p>
+      <h1 className="text-2xl font-bold mb-6">Teste do Webhook do HubSpot (Solução CORS)</h1>
+      <div className="mb-6 p-4 bg-blue-100 border border-blue-300 rounded-md">
+        <p className="text-blue-800">Este formulário tenta enviar dados para o webhook do HubSpot <code>243199316/gR881hP</code> usando múltiplas abordagens para contornar problemas de CORS</p>
+        {proxyUrl ? (
+          <p className="mt-2 text-blue-800">Usando proxy: <code>{proxyUrl}</code></p>
+        ) : (
+          <p className="mt-2 text-red-600">Proxy não configurado! Configure o servidor proxy antes de usar.</p>
+        )}
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -168,4 +214,4 @@ const TestHubSpot: React.FC = () => {
   );
 };
 
-export default TestHubSpot;
+export default HubSpotCORSFix;

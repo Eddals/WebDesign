@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const TestHubSpot: React.FC = () => {
+const DirectHubSpot: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -30,39 +30,50 @@ const TestHubSpot: React.FC = () => {
     try {
       console.log('Enviando dados para o HubSpot:', formData);
       
-      // Enviar para nossa API que encaminhará para o webhook do HubSpot
+      // URL do webhook do HubSpot
       const webhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/gR881hP';
-      console.log('Enviando para API que encaminhará para o webhook:', webhookUrl);
       
-      // Tentando enviar diretamente para o webhook do HubSpot
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      console.log('Status da resposta:', response.status);
+      // Usando XMLHttpRequest em vez de fetch para evitar problemas de CORS
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', webhookUrl, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
       
-      const data = await response.json();
-      console.log('Resposta da API:', data);
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          console.log('Sucesso:', xhr.responseText);
+          try {
+            const data = JSON.parse(xhr.responseText);
+            setResponse(data);
+          } catch (e) {
+            setResponse({ message: 'Enviado com sucesso, mas sem resposta JSON' });
+          }
+        } else {
+          console.error('Erro:', xhr.status, xhr.statusText);
+          setError(`Erro ${xhr.status}: ${xhr.statusText}`);
+        }
+        setIsSubmitting(false);
+      };
       
-      setResponse(data);
+      xhr.onerror = function() {
+        console.error('Erro de rede ao enviar dados');
+        setError('Erro de rede ao enviar dados. Verifique o console para mais detalhes.');
+        setIsSubmitting(false);
+      };
+      
+      xhr.send(JSON.stringify(formData));
+      
     } catch (err) {
       console.error('Erro ao enviar dados:', err);
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
-    } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Teste do Webhook do HubSpot</h1>
-      <div className="mb-6 p-4 bg-green-100 border border-green-300 rounded-md">
-        <p className="text-green-800">Este formulário envia dados para o webhook do HubSpot <code>243199316/gR881hP</code> através da nossa API</p>
+      <h1 className="text-2xl font-bold mb-6">Teste Direto do Webhook do HubSpot</h1>
+      <div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 rounded-md">
+        <p className="text-yellow-800">Este formulário tenta enviar dados <strong>diretamente</strong> para o webhook do HubSpot <code>243199316/gR881hP</code> usando XMLHttpRequest</p>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -168,4 +179,4 @@ const TestHubSpot: React.FC = () => {
   );
 };
 
-export default TestHubSpot;
+export default DirectHubSpot;
