@@ -70,11 +70,18 @@ const EstimateForm: React.FC = () => {
       const hubspotData = {
         name: formData.full_name,
         email: formData.email,
-        phone: formData.phone,
+        phone: formData.phone || '',
         company: formData.property_type || '', // Using property_type as company if available
         country: formData.location || '',
         industry: formData.service_type || '' // Using service_type as industry
       };
+      
+      // Garantir que todos os campos estão definidos, mesmo que vazios
+      Object.keys(hubspotData).forEach(key => {
+        if (hubspotData[key] === undefined || hubspotData[key] === null) {
+          hubspotData[key] = '';
+        }
+      });
 
       // Additional data for ActivePieces webhook
       const webhookData = {
@@ -94,22 +101,41 @@ const EstimateForm: React.FC = () => {
 
       // Send to HubSpot API
       try {
-        console.log('Sending data to HubSpot...');
-        const hubspotResponse = await fetch('/api/hubspot', {
+        console.log('Sending data to HubSpot...', hubspotData);
+        
+        // Definir a URL completa para a API do HubSpot
+        const apiUrl = window.location.origin + '/api/hubspot';
+        console.log('HubSpot API URL:', apiUrl);
+        
+        const hubspotResponse = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
           body: JSON.stringify(hubspotData)
         });
 
+        console.log('HubSpot API status:', hubspotResponse.status);
+        
+        // Tentar obter a resposta como JSON
+        let errorData;
+        try {
+          errorData = await hubspotResponse.json();
+        } catch (jsonError) {
+          console.error('Erro ao processar resposta JSON:', jsonError);
+          errorData = { error: 'Erro ao processar resposta' };
+        }
+        
         if (!hubspotResponse.ok) {
-          const errorData = await hubspotResponse.json();
-          console.error('HubSpot API error:', errorData);
+          console.error('HubSpot API error:', {
+            status: hubspotResponse.status,
+            statusText: hubspotResponse.statusText,
+            data: errorData
+          });
           // Continue even if HubSpot API fails
         } else {
-          const hubspotResult = await hubspotResponse.json();
-          console.log('HubSpot API response:', hubspotResult);
+          console.log('HubSpot API response:', errorData);
         }
       } catch (hubspotError) {
         console.error('Error sending to HubSpot API:', hubspotError);
