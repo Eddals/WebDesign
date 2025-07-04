@@ -30,26 +30,35 @@ const TestHubSpot: React.FC = () => {
     try {
       console.log('Enviando dados para o HubSpot:', formData);
       
-      // Enviar para nossa API que encaminhará para o webhook do HubSpot
-      const webhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/gR881hP';
-      console.log('Enviando para API que encaminhará para o webhook:', webhookUrl);
+      // Usar o servidor proxy em vez de chamar o HubSpot diretamente
+      // Em produção, use sua URL real
+      const proxyUrl = 'https://seu-servidor-proxy.com/webhook';
+      // Para desenvolvimento local, use:
+      // const proxyUrl = 'http://localhost:3001/webhook';
       
-      // Tentando enviar diretamente para o webhook do HubSpot
-      const response = await fetch(webhookUrl, {
+      const response = await fetch(proxyUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
 
       console.log('Status da resposta:', response.status);
       
-      const data = await response.json();
-      console.log('Resposta da API:', data);
-      
-      setResponse(data);
+      if (response.ok) {
+        try {
+          const data = await response.json();
+          console.log('Resposta da API:', data);
+          setResponse(data);
+        } catch (e) {
+          setResponse({ success: true, message: 'Dados enviados com sucesso' });
+        }
+      } else {
+        const errorText = await response.text();
+        console.error('Erro:', response.status, errorText);
+        setError(`Erro ${response.status}: ${errorText || response.statusText}`);
+      }
     } catch (err) {
       console.error('Erro ao enviar dados:', err);
       setError(err instanceof Error ? err.message : 'Erro desconhecido');

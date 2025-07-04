@@ -1,69 +1,39 @@
-// api/hubspot-webhook.js
+// Simple Express server to proxy requests to HubSpot
+const express = require('express');
+const cors = require('cors');
 const fetch = require('node-fetch');
+const app = express();
 
-exports.handler = async (event) => {
-  // Verificar se é uma requisição POST
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method Not Allowed' }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    };
-  }
+// Enable CORS for your domain
+app.use(cors({
+  origin: 'https://devtone.agency'
+}));
 
+app.use(express.json());
+
+// Proxy endpoint
+app.post('/webhook', async (req, res) => {
   try {
-    // Obter os dados do corpo da requisição
-    const data = JSON.parse(event.body);
-    const { webhookUrl, ...contactData } = data;
-
-    // Verificar se a URL do webhook foi fornecida
-    if (!webhookUrl) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Webhook URL is required' }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      };
-    }
-
-    // Enviar os dados para o webhook do HubSpot
+    const webhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/JHi6t1H';
+    
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(contactData)
+      body: JSON.stringify(req.body)
     });
-
-    // Verificar a resposta do webhook
-    if (!response.ok) {
-      throw new Error(`HubSpot webhook responded with status: ${response.status}`);
-    }
-
-    // Retornar sucesso
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    };
-  } catch (error) {
-    console.error('Error sending data to HubSpot webhook:', error);
     
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to send data to HubSpot webhook' }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    };
+    const data = await response.text();
+    
+    res.status(response.status).send(data);
+  } catch (error) {
+    console.error('Error proxying to HubSpot:', error);
+    res.status(500).json({ error: 'Failed to send data to HubSpot' });
   }
-};
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Proxy server running on port ${PORT}`);
+});
