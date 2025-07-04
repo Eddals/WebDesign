@@ -480,20 +480,7 @@ const Estimate = () => {
 
       if (result.success) {
         try {
-          await fetch("https://devtone.agency/api/hubspot", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: formData.name,
-              email: formData.email,
-              phone: formData.phone,
-              company: formData.company,
-              country: formData.country,
-              industry: formData.industry
-            })
-          });
-          // Envio para o novo webhook HubSpot Automation através da API do Vercel
-          console.log('Enviando dados para o webhook do HubSpot via API do Vercel');
+          // Envio para o webhook do HubSpot apenas via proxy backend
           const hubspotResponse = await fetch("/api/hubspot-webhook", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -503,8 +490,7 @@ const Estimate = () => {
               phone: formData.phone,
               company: formData.company,
               country: formData.country,
-              industry: formData.industry,
-              webhookUrl: "https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/JHi6t1H"
+              industry: formData.industry
             })
           });
           console.log('Status da resposta da API:', hubspotResponse.status);
