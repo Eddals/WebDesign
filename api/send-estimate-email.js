@@ -83,6 +83,10 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify(formData)
       });
+      if (!webhookResponse.ok) {
+        const errorText = await webhookResponse.text();
+        console.error('Webhook error response:', errorText);
+      }
       webhookSuccess = webhookResponse.ok;
     } catch (webhookError) {
       console.error('Error sending to webhook:', webhookError);
