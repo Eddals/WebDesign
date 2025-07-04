@@ -66,6 +66,16 @@ const EstimateForm: React.FC = () => {
         features: [] // Not collected in this form
       };
 
+      // Format data for HubSpot API
+      const hubspotData = {
+        name: formData.full_name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.property_type || '', // Using property_type as company if available
+        country: formData.location || '',
+        industry: formData.service_type || '' // Using service_type as industry
+      };
+
       // Additional data for ActivePieces webhook
       const webhookData = {
         nome: formData.full_name,
@@ -81,6 +91,30 @@ const EstimateForm: React.FC = () => {
         data_envio: new Date().toISOString(),
         origem: 'formulario-estimate'
       };
+
+      // Send to HubSpot API
+      try {
+        console.log('Sending data to HubSpot...');
+        const hubspotResponse = await fetch('/api/hubspot', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(hubspotData)
+        });
+
+        if (!hubspotResponse.ok) {
+          const errorData = await hubspotResponse.json();
+          console.error('HubSpot API error:', errorData);
+          // Continue even if HubSpot API fails
+        } else {
+          const hubspotResult = await hubspotResponse.json();
+          console.log('HubSpot API response:', hubspotResult);
+        }
+      } catch (hubspotError) {
+        console.error('Error sending to HubSpot API:', hubspotError);
+        // Continue even if HubSpot API fails
+      }
 
       // Send to estimate API (which will handle email notifications)
       try {
