@@ -1,20 +1,8 @@
-const nodemailer = require('nodemailer');
+import { Resend } from 'resend';
 
-// Create SMTP transporter with IONOS credentials
-const transporter = nodemailer.createTransport({
-  host: 'smtp.ionos.com',
-  port: 587,
-  secure: false, // TLS
-  auth: {
-    user: 'matheus.silva@devtone.agency',
-    pass: 'Alebaba1!'
-  }
-});
+const resend = new Resend('re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR');
 
-// Email template with placeholders
 const getEmailTemplate = (firstName) => {
-  const businessHours = 'Monday to Friday, 12pm to 6pm EST';
-  
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -37,11 +25,12 @@ const getEmailTemplate = (firstName) => {
   </div>
   <div class="content">
     <p>Hi ${firstName},</p>
-    <p>Thanks for contacting Devtone — I truly appreciate you reaching out.</p>
-    <p>This is just a quick note to let you know we've received your message, and we'll get back to you as soon as possible. During our normal business hours (${businessHours}), we usually reply within a couple of hours. If it's evening or the weekend, it may take just a little longer — but I promise you're on our radar.</p>
+    <p>Thanks for contacting <b>Devtone</b> — I truly appreciate you reaching out.</p>
+    <p>This is just a quick note to let you know we've received your message, and we'll get back to you as soon as possible. We usually reply within a couple of hours. If it's evening or the weekend, it may take just a little longer — but I promise you're on our radar.</p>
     <p>If your question is about one of our services or a specific idea you have in mind, feel free to share more details by replying to this email. The more we know, the better we can help.</p>
-    <p>In the meantime, feel free to check out our <a href="https://devtone.agency/faq">FAQ page</a> for common questions, or our <a href="https://devtone.agency/estimate">estimate page</a> for project creation.</p>
-    <p>Best regards,<br>Matheus Silva<br>Devtone Agency</p>
+    <p>In the meantime, feel free to check out our website for quick insights, common questions, and project tips.</p>
+    <p>Looking forward to connecting with you soon.</p>
+    <p>Warm regards,</p>
   </div>
   <div class="footer">
     <p>© 2024 Devtone Agency. All rights reserved.</p>
@@ -51,8 +40,7 @@ const getEmailTemplate = (firstName) => {
   `;
 };
 
-module.exports = async (req, res) => {
-  // Enable CORS
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -67,52 +55,36 @@ module.exports = async (req, res) => {
 
   try {
     const { name, email, subject, message } = req.body;
-    
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
     }
+    const firstName = name.split(' ')[0] || 'there';
 
-    const firstName = name.split(' ')[0];
-    
     // Send confirmation email to user
-    try {
-      const userMailOptions = {
-        from: '"Devtone Agency" <matheus.silva@devtone.agency>',
-        to: email,
-        subject: 'Thank You for Contacting Devtone Agency',
-        html: getEmailTemplate(firstName),
-        replyTo: 'matheus.silva@devtone.agency'
-      };
+    const userMail = await resend.emails.send({
+      from: 'Devtone Agency <matheus.silva@devtone.agency>',
+      to: email,
+      subject: 'Thank You for Contacting Devtone Agency',
+      html: getEmailTemplate(firstName),
+      reply_to: 'matheus.silva@devtone.agency'
+    });
 
-      const userInfo = await transporter.sendMail(userMailOptions);
-      console.log('User confirmation email sent:', userInfo.messageId);
-    } catch (emailError) {
-      console.error('Error sending user confirmation email:', emailError);
-    }
-    
     // Send notification to admin
-    try {
-      const adminMailOptions = {
-        from: '"Devtone Website" <matheus.silva@devtone.agency>',
-        to: 'matheus.silva@devtone.agency',
-        subject: `New Contact Form: ${name} - ${subject || 'No Subject'}`,
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Subject:</strong> ${subject || 'Not provided'}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message || 'No message content'}</p>
-        `,
-        replyTo: email
-      };
+    const adminMail = await resend.emails.send({
+      from: 'Devtone Website <matheus.silva@devtone.agency>',
+      to: 'matheus.silva@devtone.agency',
+      subject: `New Contact Form: ${name} - ${subject || 'No Subject'}`,
+      html: `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject || 'Not provided'}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message || 'No message content'}</p>
+      `,
+      reply_to: email
+    });
 
-      const adminInfo = await transporter.sendMail(adminMailOptions);
-      console.log('Admin notification email sent:', adminInfo.messageId);
-    } catch (adminEmailError) {
-      console.error('Error sending admin notification email:', adminEmailError);
-    }
-    
     return res.status(200).json({ 
       success: true, 
       message: 'Your message has been sent successfully!'
@@ -124,4 +96,4 @@ module.exports = async (req, res) => {
       error: error.message 
     });
   }
-};
+}
