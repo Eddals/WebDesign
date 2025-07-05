@@ -1,0 +1,20 @@
+# Ignore node_modules
+node_modules
+
+# Ignore development files
+.git
+.github
+.vscode
+
+# Ignore test files
+**/*.test.js
+**/*.spec.js
+
+# Ignore documentation
+*.md
+LICENSE
+
+# Ignore configuration files that aren't needed in production
+.eslintrc
+.prettierrc
+tsconfig.json
