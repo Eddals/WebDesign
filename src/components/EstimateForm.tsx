@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText, CheckCircle, Send, MapPin } from 'lucide-react';
+import { sendEstimateConfirmationEmail } from '../lib/brevo-email-service';
 
 interface EstimateFormData {
   full_name: string;
@@ -352,6 +353,30 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
 
+      // Send confirmation email using Brevo
+      try {
+        console.log('Sending confirmation email via Brevo...');
+        const brevoResponse = await sendEstimateConfirmationEmail({
+          name: formData.full_name,
+          email: formData.email,
+          phone: formData.phone,
+          service_type: formData.service_type,
+          project_description: formData.project_description,
+          estimated_budget: formData.estimated_budget,
+          preferred_timeline: formData.preferred_timeline
+        });
+        
+        console.log('Brevo email response:', brevoResponse);
+        
+        if (!brevoResponse.success) {
+          console.error('Failed to send Brevo confirmation email:', brevoResponse.error);
+          // Continue even if Brevo email fails
+        }
+      } catch (brevoError) {
+        console.error('Error sending Brevo confirmation email:', brevoError);
+        // Continue even if Brevo email fails
+      }
+      
       // Show success message
       setSubmitStatus({
         type: 'success',
