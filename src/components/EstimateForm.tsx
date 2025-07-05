@@ -354,10 +354,10 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
 
-      // Send confirmation email using fallback service (since Brevo API is having issues)
+      // Send confirmation email using Brevo (now with direct endpoint)
       try {
-        console.log('Sending confirmation email via fallback service...');
-        const fallbackResponse = await sendEstimateConfirmationEmailFallback({
+        console.log('Sending confirmation email via Brevo...');
+        const brevoResponse = await sendEstimateConfirmationEmail({
           name: formData.full_name,
           email: formData.email,
           phone: formData.phone,
@@ -367,15 +367,15 @@ const EstimateForm: React.FC = () => {
           preferred_timeline: formData.preferred_timeline
         });
         
-        console.log('Fallback email response:', fallbackResponse);
+        console.log('Brevo email response:', brevoResponse);
         
-        if (!fallbackResponse.success) {
-          console.error('Failed to send fallback confirmation email:', fallbackResponse.error);
-          // Continue even if fallback email fails
+        if (!brevoResponse.success) {
+          console.error('Failed to send Brevo confirmation email:', brevoResponse.error);
+          // Continue even if Brevo email fails
         }
-      } catch (fallbackError) {
-        console.error('Error sending fallback confirmation email:', fallbackError);
-        // Continue even if fallback email fails
+      } catch (brevoError) {
+        console.error('Error sending Brevo confirmation email:', brevoError);
+        // Continue even if Brevo email fails
       }
       
       // Show success message
