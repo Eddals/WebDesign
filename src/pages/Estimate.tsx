@@ -446,20 +446,27 @@ const Estimate = () => {
         
         console.log('Sending data to webhook:', webhookData);
         
-        // Send to our proxy API endpoint that will forward to n8n
-        const webhookResponse = await fetch('/api/n8n-webhook-proxy', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData)
-        });
-        
-        console.log('Webhook response status:', webhookResponse.status);
-      } catch (webhookError) {
-        console.error('Error sending to webhook:', webhookError);
-        // Continue even if webhook fails
-      }
+        // Dentro do bloco try que envia para o webhook do n8n
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+          // Atualize a URL do webhook aqui
+          const response = await fetch('https://devtone.app.n8n.cloud/webhook-test/https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(webhookData),
+            signal: controller.signal
+          });
+
+          clearTimeout(timeoutId);
+          console.log('N8N webhook response status:', response.status);
+        } catch (webhookError) {
+          console.error('Error sending to N8N webhook:', webhookError);
+          // Continue even if webhook fails
+        }
       
       // Use the estimate API service
       const result = await submitEstimate({
