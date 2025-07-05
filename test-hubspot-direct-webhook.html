@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de Envio Direto para o Webhook do HubSpot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005a9e;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      white-space: pre-wrap;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,0.3);
+      border-radius: 50%;
+      border-top-color: #0078d4;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Teste de Envio Direto para o Webhook do HubSpot</h1>
+  <p>Use este formulário para testar o envio direto para o webhook do HubSpot. Preencha os campos e clique em "Enviar Teste" para submeter os dados.</p>
+  
+  <div class="form-group">
+    <label for="full_name">Nome Completo:</label>
+    <input type="text" id="full_name" value="Usuário de Teste">
+  </div>
+  
+  <div class="form-group">
+    <label for="email">Email:</label>
+    <input type="email" id="email" value="teste@example.com">
+  </div>
+  
+  <div class="form-group">
+    <label for="phone">Telefone:</label>
+    <input type="text" id="phone" value="+1234567890">
+  </div>
+  
+  <div class="form-group">
+    <label for="service_type">Tipo de Serviço:</label>
+    <select id="service_type">
+      <option value="Web Development">Desenvolvimento Web</option>
+      <option value="Mobile App">Aplicativo Móvel</option>
+      <option value="E-commerce">E-commerce</option>
+      <option value="SEO">SEO</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="property_type">Tipo de Propriedade:</label>
+    <select id="property_type">
+      <option value="Commercial">Comercial</option>
+      <option value="Residential">Residencial</option>
+      <option value="Industrial">Industrial</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="location">Localização:</label>
+    <input type="text" id="location" value="São Paulo, Brasil">
+  </div>
+  
+  <div class="form-group">
+    <label for="estimated_budget">Orçamento Estimado:</label>
+    <select id="estimated_budget">
+      <option value="$1,000 - $5,000">$1,000 - $5,000</option>
+      <option value="$5,000 - $10,000">$5,000 - $10,000</option>
+      <option value="$10,000 - $20,000">$10,000 - $20,000</option>
+      <option value="$20,000+">$20,000+</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="preferred_timeline">Prazo Preferido:</label>
+    <select id="preferred_timeline">
+      <option value="1-2 weeks">1-2 semanas</option>
+      <option value="2-4 weeks">2-4 semanas</option>
+      <option value="1-2 months">1-2 meses</option>
+      <option value="2+ months">2+ meses</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="property_size">Tamanho da Propriedade:</label>
+    <input type="text" id="property_size" value="100m²">
+  </div>
+  
+  <div class="form-group">
+    <label for="project_description">Descrição do Projeto:</label>
+    <textarea id="project_description" rows="4">Esta é uma descrição de teste para o projeto.</textarea>
+  </div>
+  
+  <div class="form-group">
+    <label for="method">Método de Envio:</label>
+    <select id="method">
+      <option value="direct">Direto para o Webhook do HubSpot</option>
+      <option value="proxy">Via Proxy Webhook</option>
+      <option value="api">Via API do HubSpot</option>
+    </select>
+  </div>
+  
+  <button id="sendButton" onclick="sendTest()">Enviar Teste</button>
+  
+  <div id="result" class="result" style="display: none;"></div>
+  
+  <script>
+    async function sendTest() {
+      const resultDiv = document.getElementById('result');
+      const sendButton = document.getElementById('sendButton');
+      const method = document.getElementById('method').value;
+      
+      // Mostrar estado de carregamento
+      sendButton.innerHTML = '<span class="loading"></span>Enviando...';
+      sendButton.disabled = true;
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = 'Enviando requisição...';
+      
+      try {
+        // Preparar dados do formulário
+        const formData = {
+          full_name: document.getElementById('full_name').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          service_type: document.getElementById('service_type').value,
+          property_type: document.getElementById('property_type').value,
+          location: document.getElementById('location').value,
+          estimated_budget: document.getElementById('estimated_budget').value,
+          preferred_timeline: document.getElementById('preferred_timeline').value,
+          property_size: document.getElementById('property_size').value,
+          project_description: document.getElementById('project_description').value
+        };
+        
+        let endpoint;
+        let requestBody;
+        
+        // Determinar o endpoint e o formato dos dados com base no método selecionado
+        if (method === 'direct') {
+          endpoint = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/TVURhgi';
+          requestBody = {
+            submittedAt: Date.now(),
+            fields: [
+              { name: "firstname", value: formData.full_name.split(' ')[0] || '' },
+              { name: "lastname", value: formData.full_name.split(' ').slice(1).join(' ') || '' },
+              { name: "email", value: formData.email },
+              { name: "phone", value: formData.phone || '' },
+              { name: "company", value: formData.property_type || '' },
+              { name: "country", value: formData.location || '' },
+              { name: "industry", value: formData.service_type || '' },
+              { name: "budget", value: formData.estimated_budget || '' },
+              { name: "timeline", value: formData.preferred_timeline || '' },
+              { name: "message", value: formData.project_description || '' },
+              { name: "property_size", value: formData.property_size || '' },
+              { name: "source", value: "teste_direto" }
+            ],
+            context: {
+              pageUri: "teste-direto",
+              pageName: "Teste Direto"
+            }
+          };
+        } else if (method === 'proxy') {
+          endpoint = '/api/webhook-proxy?target=hubspot';
+          requestBody = {
+            firstname: formData.full_name.split(' ')[0] || '',
+            lastname: formData.full_name.split(' ').slice(1).join(' ') || '',
+            email: formData.email,
+            phone: formData.phone || '',
+            company: formData.property_type || '',
+            country: formData.location || '',
+            industry: formData.service_type || '',
+            budget: formData.estimated_budget || '',
+            timeline: formData.preferred_timeline || '',
+            message: formData.project_description || '',
+            property_size: formData.property_size || '',
+            source: 'teste_proxy',
+            form_submission_date: new Date().toISOString()
+          };
+        } else {
+          endpoint = '/api/hubspot';
+          requestBody = {
+            name: formData.full_name,
+            email: formData.email,
+            phone: formData.phone || '',
+            company: formData.property_type || '',
+            country: formData.location || '',
+            industry: formData.service_type || ''
+          };
+        }
+        
+        console.log(`Enviando dados para: ${endpoint}`);
+        console.log('Dados da requisição:', requestBody);
+        
+        // Enviar a requisição
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        });
+        
+        console.log('Status da resposta:', response.status);
+        
+        // Tentar analisar a resposta como JSON
+        let responseData;
+        try {
+          const text = await response.text();
+          console.log('Texto da resposta:', text);
+          
+          try {
+            responseData = JSON.parse(text);
+          } catch (parseError) {
+            responseData = { text };
+          }
+        } catch (error) {
+          responseData = { error: 'Falha ao obter texto da resposta' };
+        }
+        
+        // Exibir o resultado
+        resultDiv.innerHTML = `
+          <strong>Status:</strong> ${response.status} ${response.ok ? '✅' : '❌'}<br>
+          <strong>Resposta:</strong><br>
+          ${JSON.stringify(responseData, null, 2)}
+        `;
+      } catch (error) {
+        console.error('Erro:', error);
+        resultDiv.innerHTML = `
+          <strong>Erro:</strong> ❌<br>
+          ${error.message || 'Erro desconhecido'}
+        `;
+      } finally {
+        // Resetar estado do botão
+        sendButton.innerHTML = 'Enviar Teste';
+        sendButton.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

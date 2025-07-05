@@ -1,4 +1,6 @@
 // Proxy for webhooks to avoid CORS issues
+import fetch from 'node-fetch';
+
 export default async function handler(req, res) {
   // Set CORS headers to allow requests from any origin
   res.setHeader('Access-Control-Allow-Origin', '*');

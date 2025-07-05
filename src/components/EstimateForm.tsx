@@ -167,102 +167,120 @@ const EstimateForm: React.FC = () => {
       }
       
       // Send to N8N webhook
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-        
-        const response = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData),
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        console.log('N8N webhook response status:', response.status);
-      } catch (webhookError) {
-        console.error('Error sending to N8N webhook:', webhookError);
-        // Continue even if webhook fails
-      }
-      
-      // Send to HubSpot via our improved webhook proxy
+      // PRIORIDADE 1: Enviar diretamente para o webhook do HubSpot
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
         
-        console.log('Sending data to HubSpot via webhook proxy...');
+        console.log('Enviando dados diretamente para o webhook do HubSpot...');
         
-        // Use our webhook proxy with target=hubspot parameter
-        const response = await fetch('/api/webhook-proxy?target=hubspot', {
+        // Formatar os dados para o webhook do HubSpot
+        const hubspotWebhookData = {
+          submittedAt: Date.now(),
+          fields: [
+            { name: "firstname", value: formData.full_name.split(' ')[0] || '' },
+            { name: "lastname", value: formData.full_name.split(' ').slice(1).join(' ') || '' },
+            { name: "email", value: formData.email },
+            { name: "phone", value: formData.phone || '' },
+            { name: "company", value: formData.property_type || '' },
+            { name: "country", value: formData.location || '' },
+            { name: "industry", value: formData.service_type || '' },
+            { name: "budget", value: formData.estimated_budget || '' },
+            { name: "timeline", value: formData.preferred_timeline || '' },
+            { name: "message", value: formData.project_description || '' },
+            { name: "property_size", value: formData.property_size || '' },
+            { name: "source", value: "estimate_form" }
+          ],
+          context: {
+            pageUri: "estimate-form",
+            pageName: "Estimate Request Form"
+          }
+        };
+        
+        // Enviar diretamente para o webhook do HubSpot
+        const response = await fetch('https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/TVURhgi', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            // Send all form data fields
-            firstname: formData.full_name.split(' ')[0] || '',
-            lastname: formData.full_name.split(' ').slice(1).join(' ') || '',
-            email: formData.email,
-            phone: formData.phone || '',
-            company: formData.property_type || '',
-            country: formData.location || '',
-            industry: formData.service_type || '',
-            budget: formData.estimated_budget || '',
-            timeline: formData.preferred_timeline || '',
-            message: formData.project_description || '',
-            property_size: formData.property_size || '',
-            source: 'estimate_form',
-            form_submission_date: new Date().toISOString()
-          }),
+          body: JSON.stringify(hubspotWebhookData),
           signal: controller.signal
         });
         
         clearTimeout(timeoutId);
-        console.log('HubSpot webhook proxy response status:', response.status);
+        console.log('HubSpot webhook direct response status:', response.status);
         
-        // Try to get response data
-        let responseData;
-        try {
-          const text = await response.text();
-          console.log('Response text:', text);
-          if (text) {
-            try {
-              responseData = JSON.parse(text);
-              console.log('HubSpot webhook response:', responseData);
-            } catch (parseError) {
-              console.log('Response is not JSON, but request may have succeeded');
-            }
-          }
-        } catch (textError) {
-          console.error('Error getting response text:', textError);
+        // Verificar se a requisição foi bem-sucedida
+        if (response.ok) {
+          console.log('✅ Dados enviados com sucesso para o webhook do HubSpot!');
+        } else {
+          console.error('❌ Falha ao enviar dados diretamente para o webhook do HubSpot');
+          // Se falhar, tentar o proxy como backup
+          await sendToHubSpotViaProxy();
         }
-        
-        if (!response.ok) {
-          console.error('HubSpot webhook proxy error:', response.statusText);
-          
-          // If proxy fails, try the API endpoint directly as backup
-          console.log('Trying backup method...');
-          await sendToHubSpotBackup();
-        }
-      } catch (webhookError) {
-        console.error('Error sending to HubSpot webhook proxy:', webhookError);
-        
-        // If proxy fails with an exception, try the API endpoint directly
-        console.log('Trying backup method after exception...');
-        await sendToHubSpotBackup();
+      } catch (directWebhookError) {
+        console.error('Erro ao enviar diretamente para o webhook do HubSpot:', directWebhookError);
+        // Se falhar com exceção, tentar o proxy como backup
+        await sendToHubSpotViaProxy();
       }
       
-      // Helper function for backup HubSpot submission
-      async function sendToHubSpotBackup() {
+      // BACKUP 1: Enviar via proxy webhook
+      async function sendToHubSpotViaProxy() {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+          
+          console.log('Tentando enviar via proxy webhook...');
+          
+          // Usar nosso proxy webhook com o parâmetro target=hubspot
+          const response = await fetch('/api/webhook-proxy?target=hubspot', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              // Enviar todos os campos do formulário
+              firstname: formData.full_name.split(' ')[0] || '',
+              lastname: formData.full_name.split(' ').slice(1).join(' ') || '',
+              email: formData.email,
+              phone: formData.phone || '',
+              company: formData.property_type || '',
+              country: formData.location || '',
+              industry: formData.service_type || '',
+              budget: formData.estimated_budget || '',
+              timeline: formData.preferred_timeline || '',
+              message: formData.project_description || '',
+              property_size: formData.property_size || '',
+              source: 'estimate_form',
+              form_submission_date: new Date().toISOString()
+            }),
+            signal: controller.signal
+          });
+          
+          clearTimeout(timeoutId);
+          console.log('HubSpot webhook proxy response status:', response.status);
+          
+          if (!response.ok) {
+            console.error('HubSpot webhook proxy error:', response.statusText);
+            // Se o proxy falhar, tentar a API direta como último recurso
+            await sendToHubSpotAPI();
+          }
+        } catch (proxyError) {
+          console.error('Erro ao enviar via proxy webhook:', proxyError);
+          // Se o proxy falhar com exceção, tentar a API direta
+          await sendToHubSpotAPI();
+        }
+      }
+      
+      // BACKUP 2: Enviar via API do HubSpot
+      async function sendToHubSpotAPI() {
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 10000);
           
-          console.log('Sending data to HubSpot via API endpoint (backup)...');
+          console.log('Tentando enviar via API do HubSpot (último recurso)...');
           
-          // Use the HubSpot API endpoint directly
+          // Usar a API do HubSpot diretamente
           const response = await fetch('/api/hubspot', {
             method: 'POST',
             headers: {
@@ -280,14 +298,37 @@ const EstimateForm: React.FC = () => {
           });
           
           clearTimeout(timeoutId);
-          console.log('HubSpot API backup response status:', response.status);
+          console.log('HubSpot API response status:', response.status);
           
           if (!response.ok) {
-            console.error('HubSpot API backup error:', response.statusText);
+            console.error('HubSpot API error:', response.statusText);
           }
-        } catch (backupError) {
-          console.error('Error sending to HubSpot API backup:', backupError);
+        } catch (apiError) {
+          console.error('Erro ao enviar via API do HubSpot:', apiError);
         }
+      }
+      
+      // Enviar para o N8N webhook como backup adicional
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        console.log('Enviando para o N8N webhook (backup adicional)...');
+        
+        const response = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('N8N webhook response status:', response.status);
+      } catch (n8nError) {
+        console.error('Erro ao enviar para o N8N webhook:', n8nError);
+        // Continuar mesmo se o webhook falhar
       }
       
       // Also send to ActivePieces webhook (keeping as backup)
