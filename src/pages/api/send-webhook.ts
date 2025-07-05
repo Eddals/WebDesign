@@ -17,8 +17,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const data = await hubspotRes.json().catch(() => ({}));
-    res.status(hubspotRes.status).json(data);
+    if (hubspotRes.ok) {
+      res.status(200).json({ success: true, message: 'Webhook enviado com sucesso', hubspot: data });
+    } else {
+      res.status(hubspotRes.status).json({ success: false, message: 'Erro ao enviar para o HubSpot', hubspot: data });
+    }
   } catch (error: any) {
-    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    res.status(500).json({ success: false, message: 'Erro interno no servidor', error: error.message });
   }
 }
