@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText, CheckCircle, Send, MapPin } from 'lucide-react';
 import { sendEstimateConfirmationEmail } from '../lib/brevo-email-service';
 import { sendEstimateConfirmationEmailFallback } from '../lib/email-service-fallback';
+import { sendEstimateConfirmationEmailDirect } from '../lib/brevo-email-direct';
 
 interface EstimateFormData {
   full_name: string;
@@ -354,10 +355,10 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
 
-      // Send confirmation email using Brevo (now with direct endpoint)
+      // Send confirmation email using Brevo directly (bypassing Vercel API issues)
       try {
-        console.log('Sending confirmation email via Brevo...');
-        const brevoResponse = await sendEstimateConfirmationEmail({
+        console.log('Sending confirmation email via Brevo directly...');
+        const brevoResponse = await sendEstimateConfirmationEmailDirect({
           name: formData.full_name,
           email: formData.email,
           phone: formData.phone,
@@ -367,14 +368,14 @@ const EstimateForm: React.FC = () => {
           preferred_timeline: formData.preferred_timeline
         });
         
-        console.log('Brevo email response:', brevoResponse);
+        console.log('Brevo direct email response:', brevoResponse);
         
         if (!brevoResponse.success) {
-          console.error('Failed to send Brevo confirmation email:', brevoResponse.error);
+          console.error('Failed to send Brevo direct confirmation email:', brevoResponse.error);
           // Continue even if Brevo email fails
         }
       } catch (brevoError) {
-        console.error('Error sending Brevo confirmation email:', brevoError);
+        console.error('Error sending Brevo direct confirmation email:', brevoError);
         // Continue even if Brevo email fails
       }
       
