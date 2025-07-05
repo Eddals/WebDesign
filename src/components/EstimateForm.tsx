@@ -208,6 +208,38 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
       
+      // Send to HubSpot direct webhook
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const hubspotWebhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/J4TNnqL';
+        console.log('Sending data to HubSpot direct webhook...');
+        
+        const response = await fetch(hubspotWebhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...webhookData,
+            source: 'estimate_form',
+            timestamp: new Date().toISOString()
+          }),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('HubSpot direct webhook response status:', response.status);
+        
+        if (!response.ok) {
+          console.error('HubSpot direct webhook error:', response.statusText);
+        }
+      } catch (webhookError) {
+        console.error('Error sending to HubSpot direct webhook:', webhookError);
+        // Continue even if webhook fails
+      }
+      
       // Also send to ActivePieces webhook (keeping as backup)
       try {
         const controller = new AbortController();
