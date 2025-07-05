@@ -61,7 +61,11 @@ export default async function handler(req, res) {
     // 1. Authentication setup
     const defaultClient = SibApiV3Sdk.ApiClient.instance;
     const apiKey = defaultClient.authentications['api-key'];
-    apiKey.apiKey = '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';
+    
+    // Use environment variable if available, otherwise use the hardcoded key
+    // In production, you should always use environment variables
+    const apiKeyValue = process.env.BREVO_API_KEY || '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';
+    apiKey.apiKey = apiKeyValue;
 
     // 2. Create API instance for transactional emails
     const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();

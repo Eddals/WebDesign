@@ -1,5 +1,3 @@
-import SibApiV3Sdk from 'sib-api-v3-sdk';
-
 interface BrevoEmailParams {
   name: string;
   email: string;
@@ -13,42 +11,32 @@ interface BrevoEmailParams {
 }
 
 /**
- * Send an email using Brevo (formerly Sendinblue) API
- * This uses a visual template with ID 2 and passes custom parameters
+ * Send an email using Brevo (formerly Sendinblue) API via server-side API
+ * This uses the server-side endpoint to avoid exposing API keys in client-side code
  */
 export const sendBrevoEmail = async (params: BrevoEmailParams) => {
   try {
-    // 1. Authentication setup
-    const defaultClient = SibApiV3Sdk.ApiClient.instance;
-    const apiKey = defaultClient.authentications['api-key'];
-    apiKey.apiKey = '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';
-
-    // 2. Create API instance for transactional emails
-    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-
-    // 3. Prepare the email with template ID and parameters
-    const sendSmtpEmail = {
-      to: [
-        {
-          email: params.email,
-          name: params.name
-        }
-      ],
-      templateId: 2, // ID of your template in Brevo
-      params: {
-        FIRSTNAME: params.name.split(' ')[0], // First name extraction
-        message: params.message
+    // Use the server-side API endpoint instead of direct Brevo API access
+    const response = await fetch('/api/send-brevo-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      sender: {
-        name: 'Devtone Agency',
-        email: 'team@devtone.agency'
-      }
-    };
+      body: JSON.stringify(params),
+    });
 
-    // 4. Send the email
-    const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log('Brevo email sent successfully:', response);
-    return { success: true, message: 'Email sent successfully', data: response };
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Brevo email API error:', errorData);
+      return { 
+        success: false, 
+        error: errorData.error || `Server returned ${response.status}` 
+      };
+    }
+
+    const data = await response.json();
+    console.log('Brevo email sent successfully:', data);
+    return { success: true, message: 'Email sent successfully', data };
   } catch (error) {
     console.error('Error sending Brevo email:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
