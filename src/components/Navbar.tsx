@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Menu, X, Home, User, Phone, Pen, Calculator, ChevronDown, Globe, Laptop, ShoppingBag, RefreshCw, Search, Smartphone, Star } from "lucide-react"
+import { Menu, X, Home, User, Phone, Pen, ChevronDown, Globe, Laptop, ShoppingBag, RefreshCw, Search, Smartphone, Star } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const serviceItems = [
@@ -24,7 +24,6 @@ const navItems = [
     dropdownItems: serviceItems
   },
   { href: "/about", label: "About Us", icon: <User size={20} /> },
-  { href: "/estimate", label: "Get Estimate", icon: <Calculator size={20} /> },
   { href: "/faq", label: "FAQ", icon: <Pen size={20} /> },
   { href: "/contact", label: "Contact", icon: <Phone size={20} /> },
 ]
