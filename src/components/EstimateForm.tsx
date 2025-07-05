@@ -1,36 +1,77 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText, CheckCircle, Send, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, 
+  FileText, CheckCircle, Send, MapPin, Globe, Laptop, ShoppingBag, 
+  RefreshCw, Search, Smartphone, Star, Calculator, ChevronDown,
+  CreditCard, Zap, Shield, Palette, Settings, Clock, Globe2
+} from 'lucide-react';
 import { sendEstimateConfirmationEmail } from '../lib/brevo-email-service';
 import { sendEstimateConfirmationEmailFallback } from '../lib/email-service-fallback';
 import { sendEstimateConfirmationEmailDirect } from '../lib/brevo-email-direct';
 import { sendEstimateConfirmationWeb3Forms } from '../lib/web3forms-email';
 
 interface EstimateFormData {
-  full_name: string;
+  // Contact Information
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
-  service_type: string;
-  project_description: string;
-  estimated_budget: string;
-  preferred_timeline: string;
-  property_type: string;
-  property_size: string;
-  location: string;
+  companyName: string;
+  industry: string;
+  country: string;
+  
+  // Project Details
+  projectTypes: string[];
+  coreFeatures: string[];
+  ecommerceFeatures: string[];
+  designFeatures: string[];
+  integrations: string[];
+  maintenanceAddons: string[];
+  
+  // Timeline & Budget
+  timeline: string;
+  budget: string;
+  
+  // Additional Info
+  additionalRequirements: string;
+}
+
+interface FeatureCategory {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  features: Feature[];
+  minBudget?: number;
+}
+
+interface Feature {
+  id: string;
+  label: string;
+  description: string;
+  basePrice: number;
+  minBudget: number;
+  icon?: React.ReactNode;
 }
 
 const EstimateForm: React.FC = () => {
   const [formData, setFormData] = useState<EstimateFormData>({
-    full_name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
-    service_type: '',
-    project_description: '',
-    estimated_budget: '',
-    preferred_timeline: '',
-    property_type: '',
-    property_size: '',
-    location: ''
+    companyName: '',
+    industry: '',
+    country: '',
+    projectTypes: [],
+    coreFeatures: [],
+    ecommerceFeatures: [],
+    designFeatures: [],
+    integrations: [],
+    maintenanceAddons: [],
+    timeline: '',
+    budget: '',
+    additionalRequirements: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +81,157 @@ const EstimateForm: React.FC = () => {
     message: string;
   }>({ type: null, message: '' });
 
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedBudget, setSelectedBudget] = useState<number>(0);
+
+  // Budget ranges for filtering
+  const budgetRanges = [
+    { label: 'Under $1,000', value: 1000 },
+    { label: '$1,000 – $3,000', value: 3000 },
+    { label: '$3,000 – $5,000', value: 5000 },
+    { label: '$5,000 – $10,000', value: 10000 },
+    { label: '$10,000 – $25,000', value: 25000 },
+    { label: '$25,000 – $50,000', value: 50000 },
+    { label: '$50,000+', value: 100000 }
+  ];
+
+  // Project types
+  const projectTypes = [
+    { id: 'landing-page', label: 'Landing Page', icon: <Laptop size={16} /> },
+    { id: 'business-website', label: 'Business Website (Corporate)', icon: <Building size={16} /> },
+    { id: 'portfolio-website', label: 'Portfolio Website', icon: <Star size={16} /> },
+    { id: 'blog-news', label: 'Blog or News Site', icon: <FileText size={16} /> },
+    { id: 'ecommerce', label: 'E-commerce (WooCommerce)', icon: <ShoppingBag size={16} /> },
+    { id: 'booking-website', label: 'Booking Website (Appointments, Services)', icon: <Calendar size={16} /> },
+    { id: 'membership-website', label: 'Membership Website', icon: <User size={16} /> },
+    { id: 'learning-platform', label: 'Learning Platform (LMS)', icon: <Globe2 size={16} /> },
+    { id: 'web-app', label: 'Web App (Custom features)', icon: <Settings size={16} /> },
+    { id: 'website-redesign', label: 'Website Redesign', icon: <RefreshCw size={16} /> },
+    { id: 'one-page-scroll', label: 'One-Page Scroll Website', icon: <Globe size={16} /> },
+    { id: 'custom-website', label: 'Custom Website', icon: <Star size={16} /> }
+  ];
+
+  // Feature categories with budget requirements
+  const featureCategories: FeatureCategory[] = [
+    {
+      id: 'core',
+      title: 'Core Features',
+      icon: <Settings size={20} />,
+      features: [
+        { id: 'cms-integration', label: 'CMS Integration (WordPress)', description: 'Content management system setup', basePrice: 500, minBudget: 1000 },
+        { id: 'admin-dashboard', label: 'Admin Dashboard / Panel', description: 'Custom admin interface', basePrice: 800, minBudget: 2000 },
+        { id: 'contact-forms', label: 'Contact Forms', description: 'Custom contact form setup', basePrice: 200, minBudget: 500 },
+        { id: 'newsletter-signup', label: 'Newsletter Signup', description: 'Email marketing integration', basePrice: 150, minBudget: 500 },
+        { id: 'blog-setup', label: 'Blog Setup', description: 'Blog functionality and design', basePrice: 400, minBudget: 1000 },
+        { id: 'custom-post-types', label: 'Custom Post Types', description: 'Custom content types (projects, team, testimonials)', basePrice: 600, minBudget: 2000 },
+        { id: 'search-functionality', label: 'Search Functionality', description: 'Advanced search features', basePrice: 300, minBudget: 1000 },
+        { id: 'seo-optimization', label: 'SEO Optimization (Basic/Advanced)', description: 'Search engine optimization', basePrice: 400, minBudget: 1000 },
+        { id: 'analytics-setup', label: 'Analytics Setup', description: 'Google Analytics / Site Kit integration', basePrice: 200, minBudget: 500 },
+        { id: 'chat-integration', label: 'Chat Integration', description: 'WhatsApp, Messenger, HubSpot chat', basePrice: 300, minBudget: 1000 },
+        { id: 'booking-system', label: 'Booking / Appointment System', description: 'Online booking functionality', basePrice: 800, minBudget: 3000 },
+        { id: 'multi-language', label: 'Multi-language (i18n)', description: 'Internationalization support', basePrice: 1000, minBudget: 5000 },
+        { id: 'ada-compliance', label: 'ADA / Accessibility Compliance', description: 'Accessibility standards compliance', basePrice: 600, minBudget: 3000 },
+        { id: 'mobile-optimization', label: 'Mobile Optimization', description: 'Mobile-first responsive design', basePrice: 400, minBudget: 1000 },
+        { id: 'speed-optimization', label: 'Speed Optimization', description: 'Performance optimization', basePrice: 500, minBudget: 2000 }
+      ]
+    },
+    {
+      id: 'ecommerce',
+      title: 'E-commerce Features',
+      icon: <ShoppingBag size={20} />,
+      minBudget: 3000,
+      features: [
+        { id: 'woocommerce-store', label: 'WooCommerce Store', description: 'Complete e-commerce setup', basePrice: 1500, minBudget: 3000 },
+        { id: 'stripe-integration', label: 'Stripe Payment Integration', description: 'Secure payment processing', basePrice: 400, minBudget: 3000 },
+        { id: 'paypal-integration', label: 'PayPal Payment Integration', description: 'PayPal payment gateway', basePrice: 300, minBudget: 3000 },
+        { id: 'buy-now-pay-later', label: 'Buy Now, Pay Later', description: 'Klarna, Affirm integration', basePrice: 600, minBudget: 5000 },
+        { id: 'woocommerce-subscriptions', label: 'WooCommerce Subscriptions', description: 'Recurring billing system', basePrice: 800, minBudget: 5000 },
+        { id: 'cartflows', label: 'CartFlows', description: 'Funnel optimization', basePrice: 500, minBudget: 5000 },
+        { id: 'custom-checkout', label: 'Custom Checkout Experience', description: 'Personalized checkout flow', basePrice: 1000, minBudget: 10000 },
+        { id: 'product-filters', label: 'Product Filters & Search', description: 'Advanced product filtering', basePrice: 400, minBudget: 3000 },
+        { id: 'customer-accounts', label: 'Customer Accounts', description: 'User account management', basePrice: 600, minBudget: 3000 },
+        { id: 'coupon-system', label: 'Coupon System / Discount Engine', description: 'Discount and promotion system', basePrice: 400, minBudget: 3000 },
+        { id: 'inventory-management', label: 'Inventory Management', description: 'Stock management system', basePrice: 800, minBudget: 5000 },
+        { id: 'multi-vendor', label: 'Multi-vendor Marketplace', description: 'Marketplace functionality', basePrice: 2000, minBudget: 25000 }
+      ]
+    },
+    {
+      id: 'design',
+      title: 'Design & UX',
+      icon: <Palette size={20} />,
+      features: [
+        { id: 'custom-ui-ux', label: 'Custom UI/UX Design', description: 'Custom design system', basePrice: 2000, minBudget: 5000 },
+        { id: 'wireframing', label: 'Wireframing & Prototyping', description: 'Design mockups and prototypes', basePrice: 800, minBudget: 3000 },
+        { id: 'logo-design', label: 'Logo Design', description: 'Custom logo creation', basePrice: 300, minBudget: 1000 },
+        { id: 'brand-identity', label: 'Brand Identity Kit', description: 'Complete brand guidelines', basePrice: 600, minBudget: 3000 },
+        { id: 'dark-mode', label: 'Dark Mode Design', description: 'Dark theme implementation', basePrice: 400, minBudget: 2000 },
+        { id: 'accessibility-ux', label: 'Accessibility & UX Best Practices', description: 'UX optimization', basePrice: 500, minBudget: 2000 },
+        { id: 'animations', label: 'Animations (Framer Motion / Lottie)', description: 'Custom animations', basePrice: 600, minBudget: 3000 },
+        { id: 'mobile-first', label: 'Mobile-First Design', description: 'Mobile-optimized design', basePrice: 400, minBudget: 2000 },
+        { id: 'custom-icons', label: 'Custom Icons & Graphics', description: 'Custom icon set', basePrice: 300, minBudget: 2000 }
+      ]
+    },
+    {
+      id: 'integrations',
+      title: 'Integrations',
+      icon: <Zap size={20} />,
+      features: [
+        { id: 'stripe', label: 'Stripe', description: 'Payment processing', basePrice: 300, minBudget: 1000 },
+        { id: 'paypal', label: 'PayPal', description: 'Payment gateway', basePrice: 200, minBudget: 1000 },
+        { id: 'google-analytics', label: 'Google Analytics', description: 'Analytics tracking', basePrice: 150, minBudget: 500 },
+        { id: 'hubspot-crm', label: 'HubSpot CRM', description: 'CRM integration', basePrice: 400, minBudget: 3000 },
+        { id: 'mailchimp', label: 'Mailchimp / Brevo / Klaviyo', description: 'Email marketing', basePrice: 250, minBudget: 1000 },
+        { id: 'whatsapp-business', label: 'WhatsApp Business', description: 'WhatsApp integration', basePrice: 200, minBudget: 1000 },
+        { id: 'zapier-automations', label: 'Zapier / n8n automations', description: 'Workflow automation', basePrice: 500, minBudget: 3000 },
+        { id: 'social-feeds', label: 'Social Media Feeds', description: 'Social media integration', basePrice: 300, minBudget: 1000 },
+        { id: 'calendly', label: 'Calendly / Scheduling tools', description: 'Scheduling integration', basePrice: 250, minBudget: 1000 }
+      ]
+    },
+    {
+      id: 'maintenance',
+      title: 'Maintenance & Add-ons',
+      icon: <Shield size={20} />,
+      features: [
+        { id: 'website-care', label: 'Website Care Plan', description: 'Updates, Security, Backups', basePrice: 100, minBudget: 500 },
+        { id: 'hosting-setup', label: 'Hosting Setup', description: 'VPS / Managed WP / Cloud', basePrice: 200, minBudget: 1000 },
+        { id: 'domain-setup', label: 'Domain Registration / Setup', description: 'Domain configuration', basePrice: 50, minBudget: 500 },
+        { id: 'ssl-certificate', label: 'SSL Certificate (HTTPS)', description: 'Security certificate', basePrice: 100, minBudget: 500 },
+        { id: 'backup-system', label: 'Backup System', description: 'Updraft / BlogVault', basePrice: 150, minBudget: 1000 },
+        { id: 'security-plugins', label: 'Security Plugins', description: 'Wordfence / iThemes', basePrice: 100, minBudget: 1000 },
+        { id: 'training-session', label: 'Website Training Session', description: 'Admin training', basePrice: 200, minBudget: 1000 },
+        { id: 'white-label', label: 'Admin Area Customization', description: 'White label admin panel', basePrice: 400, minBudget: 5000 }
+      ]
+    }
+  ];
+
+  const timelineOptions = [
+    { value: 'asap', label: 'ASAP (Urgent)' },
+    { value: '1-2-weeks', label: '1–2 Weeks' },
+    { value: '2-4-weeks', label: '2–4 Weeks' },
+    { value: '1-2-months', label: '1–2 Months' },
+    { value: 'flexible', label: 'No Rush / Flexible' }
+  ];
+
+  const industries = [
+    'Technology', 'Healthcare', 'Finance', 'Education', 'Retail', 'Real Estate',
+    'Manufacturing', 'Consulting', 'Marketing', 'Legal', 'Non-profit', 'Entertainment',
+    'Food & Beverage', 'Travel & Tourism', 'Fashion', 'Automotive', 'Other'
+  ];
+
+  const countries = [
+    'United States', 'Canada', 'United Kingdom', 'Australia', 'Germany', 'France',
+    'Brazil', 'Mexico', 'India', 'China', 'Japan', 'South Korea', 'Singapore',
+    'Netherlands', 'Sweden', 'Norway', 'Denmark', 'Switzerland', 'Other'
+  ];
+
+  // Update selected budget when form data changes
+  useEffect(() => {
+    if (formData.budget) {
+      const budgetRange = budgetRanges.find(range => range.label === formData.budget);
+      setSelectedBudget(budgetRange?.value || 0);
+    }
+  }, [formData.budget]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -48,106 +240,119 @@ const EstimateForm: React.FC = () => {
     }));
   };
 
+  const handleCheckboxChange = (category: string, featureId: string) => {
+    setFormData(prev => {
+      const currentFeatures = prev[category as keyof EstimateFormData] as string[];
+      const updatedFeatures = currentFeatures.includes(featureId)
+        ? currentFeatures.filter(id => id !== featureId)
+        : [...currentFeatures, featureId];
+      
+      return {
+        ...prev,
+        [category]: updatedFeatures
+      };
+    });
+  };
+
+  const handleProjectTypeChange = (projectTypeId: string) => {
+    setFormData(prev => {
+      const updatedTypes = prev.projectTypes.includes(projectTypeId)
+        ? prev.projectTypes.filter(id => id !== projectTypeId)
+        : [...prev.projectTypes, projectTypeId];
+      
+      return {
+        ...prev,
+        projectTypes: updatedTypes
+      };
+    });
+  };
+
+  const isFeatureAvailable = (feature: Feature) => {
+    return selectedBudget >= feature.minBudget;
+  };
+
+  const getAvailableFeatures = (category: FeatureCategory) => {
+    return category.features.filter(isFeatureAvailable);
+  };
+
+  const calculateEstimatedCost = () => {
+    let total = 0;
+    
+    // Calculate costs for each category
+    featureCategories.forEach(category => {
+      category.features.forEach(feature => {
+        if (formData[category.id + 'Features' as keyof EstimateFormData]?.includes(feature.id)) {
+          total += feature.basePrice;
+        }
+      });
+    });
+
+    // Add base project cost based on project types
+    if (formData.projectTypes.includes('landing-page')) total += 800;
+    if (formData.projectTypes.includes('business-website')) total += 2000;
+    if (formData.projectTypes.includes('portfolio-website')) total += 1500;
+    if (formData.projectTypes.includes('blog-news')) total += 1200;
+    if (formData.projectTypes.includes('ecommerce')) total += 3000;
+    if (formData.projectTypes.includes('booking-website')) total += 2500;
+    if (formData.projectTypes.includes('membership-website')) total += 4000;
+    if (formData.projectTypes.includes('learning-platform')) total += 8000;
+    if (formData.projectTypes.includes('web-app')) total += 15000;
+    if (formData.projectTypes.includes('website-redesign')) total += 3000;
+    if (formData.projectTypes.includes('one-page-scroll')) total += 1000;
+    if (formData.projectTypes.includes('custom-website')) total += 5000;
+
+    return total;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      console.log('Submitting form data...');
+      const estimatedCost = calculateEstimatedCost();
       
-      // Format data for the estimate API
       const estimateData = {
-        name: formData.full_name,
+        name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         phone: formData.phone,
-        company: '', // Not collected in this form
-        country: formData.location, // Using location as country
-        industry: '', // Not collected in this form
-        projectType: formData.service_type,
-        budget: formData.estimated_budget,
-        timeline: formData.preferred_timeline,
-        description: formData.project_description,
-        features: [] // Not collected in this form
-      };
-
-      // Format data for HubSpot API
-      const hubspotData = {
-        name: formData.full_name,
-        email: formData.email,
-        phone: formData.phone || '',
-        company: formData.property_type || '', // Using property_type as company if available
-        country: formData.location || '',
-        industry: formData.service_type || '' // Using service_type as industry
-      };
-      
-      // Garantir que todos os campos estão definidos, mesmo que vazios
-      Object.keys(hubspotData).forEach(key => {
-        if (hubspotData[key] === undefined || hubspotData[key] === null) {
-          hubspotData[key] = '';
-        }
-      });
-
-      // Additional data for ActivePieces webhook
-      const webhookData = {
-        nome: formData.full_name,
-        email: formData.email,
-        telefone: formData.phone,
-        tipo_servico: formData.service_type,
-        descricao_projeto: formData.project_description,
-        orcamento: formData.estimated_budget,
-        prazo: formData.preferred_timeline,
-        tipo_propriedade: formData.property_type,
-        tamanho_propriedade: formData.property_size,
-        localizacao: formData.location,
-        data_envio: new Date().toISOString(),
-        origem: 'formulario-estimate'
+        company: formData.companyName,
+        country: formData.country,
+        industry: formData.industry,
+        projectType: formData.projectTypes.join(', '),
+        budget: formData.budget,
+        timeline: formData.timeline,
+        description: formData.additionalRequirements,
+        features: {
+          core: formData.coreFeatures,
+          ecommerce: formData.ecommerceFeatures,
+          design: formData.designFeatures,
+          integrations: formData.integrations,
+          maintenance: formData.maintenanceAddons
+        },
+        estimatedCost: estimatedCost
       };
 
       // Send to HubSpot API
       try {
-        console.log('Sending data to HubSpot...', hubspotData);
-        
-        // Definir a URL completa para a API do HubSpot
         const apiUrl = window.location.origin + '/api/hubspot';
-        console.log('HubSpot API URL:', apiUrl);
-        
         const hubspotResponse = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          body: JSON.stringify(hubspotData)
+          body: JSON.stringify(estimateData)
         });
 
-        console.log('HubSpot API status:', hubspotResponse.status);
-        
-        // Tentar obter a resposta como JSON
-        let errorData;
-        try {
-          errorData = await hubspotResponse.json();
-        } catch (jsonError) {
-          console.error('Erro ao processar resposta JSON:', jsonError);
-          errorData = { error: 'Erro ao processar resposta' };
-        }
-        
         if (!hubspotResponse.ok) {
-          console.error('HubSpot API error:', {
-            status: hubspotResponse.status,
-            statusText: hubspotResponse.statusText,
-            data: errorData
-          });
-          // Continue even if HubSpot API fails
-        } else {
-          console.log('HubSpot API response:', errorData);
+          console.error('HubSpot API error:', hubspotResponse.status);
         }
       } catch (hubspotError) {
         console.error('Error sending to HubSpot API:', hubspotError);
-        // Continue even if HubSpot API fails
       }
 
-      // Send to estimate API (which will handle email notifications)
+      // Send to estimate API
       try {
         const apiUrl = import.meta.env.VITE_ESTIMATE_API_URL || 'http://localhost:3002';
         const response = await fetch(`${apiUrl}/api/estimate`, {
@@ -167,547 +372,524 @@ const EstimateForm: React.FC = () => {
         console.log('Estimate API response:', result);
       } catch (apiError) {
         console.error('Error sending to estimate API:', apiError);
-        // Continue even if API fails - we'll still try ActivePieces
-      }
-      
-      // Send to N8N webhook
-      // PRIORIDADE 1: Enviar diretamente para o webhook do HubSpot
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-        
-        console.log('Enviando dados diretamente para o webhook do HubSpot...');
-        
-        // Formatar os dados para o webhook do HubSpot
-        const hubspotWebhookData = {
-          submittedAt: Date.now(),
-          fields: [
-            { name: "firstname", value: formData.full_name.split(' ')[0] || '' },
-            { name: "lastname", value: formData.full_name.split(' ').slice(1).join(' ') || '' },
-            { name: "email", value: formData.email },
-            { name: "phone", value: formData.phone || '' },
-            { name: "company", value: formData.property_type || '' },
-            { name: "country", value: formData.location || '' },
-            { name: "industry", value: formData.service_type || '' },
-            { name: "budget", value: formData.estimated_budget || '' },
-            { name: "timeline", value: formData.preferred_timeline || '' },
-            { name: "message", value: formData.project_description || '' },
-            { name: "property_size", value: formData.property_size || '' },
-            { name: "source", value: "estimate_form" }
-          ],
-          context: {
-            pageUri: "estimate-form",
-            pageName: "Estimate Request Form"
-          }
-        };
-        
-        // Enviar diretamente para o webhook do HubSpot
-        const response = await fetch('https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/TVURhgi', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(hubspotWebhookData),
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        console.log('HubSpot webhook direct response status:', response.status);
-        
-        // Verificar se a requisição foi bem-sucedida
-        if (response.ok) {
-          console.log('✅ Dados enviados com sucesso para o webhook do HubSpot!');
-        } else {
-          console.error('❌ Falha ao enviar dados diretamente para o webhook do HubSpot');
-          // Se falhar, tentar o proxy como backup
-          await sendToHubSpotViaProxy();
-        }
-      } catch (directWebhookError) {
-        console.error('Erro ao enviar diretamente para o webhook do HubSpot:', directWebhookError);
-        // Se falhar com exceção, tentar o proxy como backup
-        await sendToHubSpotViaProxy();
-      }
-      
-      // BACKUP 1: Enviar via proxy webhook
-      async function sendToHubSpotViaProxy() {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-          
-          console.log('Tentando enviar via proxy webhook...');
-          
-          // Usar nosso proxy webhook com o parâmetro target=hubspot
-          const response = await fetch('/api/webhook-proxy?target=hubspot', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              // Enviar todos os campos do formulário
-              firstname: formData.full_name.split(' ')[0] || '',
-              lastname: formData.full_name.split(' ').slice(1).join(' ') || '',
-              email: formData.email,
-              phone: formData.phone || '',
-              company: formData.property_type || '',
-              country: formData.location || '',
-              industry: formData.service_type || '',
-              budget: formData.estimated_budget || '',
-              timeline: formData.preferred_timeline || '',
-              message: formData.project_description || '',
-              property_size: formData.property_size || '',
-              source: 'estimate_form',
-              form_submission_date: new Date().toISOString()
-            }),
-            signal: controller.signal
-          });
-          
-          clearTimeout(timeoutId);
-          console.log('HubSpot webhook proxy response status:', response.status);
-          
-          if (!response.ok) {
-            console.error('HubSpot webhook proxy error:', response.statusText);
-            // Se o proxy falhar, tentar a API direta como último recurso
-            await sendToHubSpotAPI();
-          }
-        } catch (proxyError) {
-          console.error('Erro ao enviar via proxy webhook:', proxyError);
-          // Se o proxy falhar com exceção, tentar a API direta
-          await sendToHubSpotAPI();
-        }
-      }
-      
-      // BACKUP 2: Enviar via API do HubSpot
-      async function sendToHubSpotAPI() {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 10000);
-          
-          console.log('Tentando enviar via API do HubSpot (último recurso)...');
-          
-          // Usar a API do HubSpot diretamente
-          const response = await fetch('/api/hubspot', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              name: formData.full_name,
-              email: formData.email,
-              phone: formData.phone || '',
-              company: formData.property_type || '',
-              country: formData.location || '',
-              industry: formData.service_type || ''
-            }),
-            signal: controller.signal
-          });
-          
-          clearTimeout(timeoutId);
-          console.log('HubSpot API response status:', response.status);
-          
-          if (!response.ok) {
-            console.error('HubSpot API error:', response.statusText);
-          }
-        } catch (apiError) {
-          console.error('Erro ao enviar via API do HubSpot:', apiError);
-        }
-      }
-      
-      // Enviar para o N8N webhook como backup adicional
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-        
-        console.log('Enviando para o N8N webhook (backup adicional)...');
-        
-        const response = await fetch('https://eae.app.n8n.cloud/webhook/12083862-0339-4d6e-9168-288d61e7cd52', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData),
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        console.log('N8N webhook response status:', response.status);
-      } catch (n8nError) {
-        console.error('Erro ao enviar para o N8N webhook:', n8nError);
-        // Continuar mesmo se o webhook falhar
-      }
-      
-      // Also send to ActivePieces webhook (keeping as backup)
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-        
-        const response = await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData),
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        console.log('ActivePieces webhook response status:', response.status);
-      } catch (webhookError) {
-        console.error('Error sending to ActivePieces:', webhookError);
-        // Continue even if webhook fails
       }
 
-      // Send confirmation email using Web3Forms (100% reliable solution)
-      try {
-        console.log('Sending confirmation email via Web3Forms...');
-        const web3formsResponse = await sendEstimateConfirmationWeb3Forms({
-          name: formData.full_name,
-          email: formData.email,
-          phone: formData.phone,
-          service_type: formData.service_type,
-          project_description: formData.project_description,
-          estimated_budget: formData.estimated_budget,
-          preferred_timeline: formData.preferred_timeline
-        });
-        
-        console.log('Web3Forms email response:', web3formsResponse);
-        
-        if (!web3formsResponse.success) {
-          console.error('Failed to send Web3Forms confirmation email:', web3formsResponse.error);
-          // Continue even if Web3Forms email fails
-        }
-      } catch (web3formsError) {
-        console.error('Error sending Web3Forms confirmation email:', web3formsError);
-        // Continue even if Web3Forms email fails
-      }
-      
-      // Show success message
-      setSubmitStatus({
-        type: 'success',
-        message: 'Your estimate request has been submitted successfully! We will contact you soon.'
-      });
-      
-      // Set form as submitted
       setIsSubmitted(true);
-      
-      // Reset form after successful submission
-      setFormData({
-        full_name: '',
-        email: '',
-        phone: '',
-        service_type: '',
-        project_description: '',
-        estimated_budget: '',
-        preferred_timeline: '',
-        property_type: '',
-        property_size: '',
-        location: ''
-      });
-
+      setSubmitStatus({ type: 'success', message: 'Your estimate request has been submitted successfully! We\'ll get back to you within 24 hours.' });
     } catch (error) {
       console.error('Error submitting form:', error);
-      
-      // Handle specific error types
-      if (error instanceof Error && error.name === 'AbortError') {
-        setSubmitStatus({
-          type: 'error',
-          message: 'Request timed out. Please try again later.'
-        });
-      } else {
-        setSubmitStatus({
-          type: 'error',
-          message: error instanceof Error 
-            ? error.message 
-            : 'An error occurred while submitting the form. Please try again.'
-        });
-      }
+      setSubmitStatus({ type: 'error', message: 'There was an error submitting your request. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 6));
+  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+
+  if (isSubmitted) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center py-12"
+      >
+        <div className="bg-green-500/20 border border-green-500/50 rounded-2xl p-8">
+          <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-white mb-4">Estimate Request Submitted!</h3>
+          <p className="text-white/80 mb-6">{submitStatus.message}</p>
+          <div className="bg-white/5 rounded-xl p-6 mb-6">
+            <h4 className="text-lg font-semibold text-white mb-3">Estimated Cost Range</h4>
+            <p className="text-2xl font-bold text-green-400">
+              ${calculateEstimatedCost().toLocaleString()} - ${(calculateEstimatedCost() * 1.3).toLocaleString()}
+            </p>
+            <p className="text-sm text-white/60 mt-2">*Final pricing will be confirmed after detailed review</p>
+          </div>
+          <button
+            onClick={() => {
+              setIsSubmitted(false);
+              setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                companyName: '',
+                industry: '',
+                country: '',
+                projectTypes: [],
+                coreFeatures: [],
+                ecommerceFeatures: [],
+                designFeatures: [],
+                integrations: [],
+                maintenanceAddons: [],
+                timeline: '',
+                budget: '',
+                additionalRequirements: ''
+              });
+              setCurrentStep(1);
+            }}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full transition-colors"
+          >
+            Submit Another Request
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
-      {isSubmitted ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-12"
-        >
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-400" />
-          </div>
-          <h3 className="text-2xl font-bold text-white mb-2">Estimate Request Sent!</h3>
-          <p className="text-white mb-6">
-            Thank you for your request. We&apos;ll prepare a detailed estimate and get back to you within 24-48 hours.
-          </p>
-          
-          <div className="max-w-md mx-auto bg-green-50 border-l-4 border-green-400 p-4 text-green-800 rounded text-left">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
+      {/* Progress Bar */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          {[1, 2, 3, 4, 5, 6].map((step) => (
+            <div key={step} className="flex items-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                step <= currentStep 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-white/10 text-white/50'
+              }`}>
+                {step}
               </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium">
-                  Confirmation Sent
-                </p>
-                <p className="text-xs mt-1">
-                  We&apos;ve sent a confirmation email to your address and our team has been notified of your request.
-                </p>
-              </div>
+              {step < 6 && (
+                <div className={`w-12 h-1 mx-2 ${
+                  step < currentStep ? 'bg-purple-600' : 'bg-white/10'
+                }`} />
+              )}
             </div>
-          </div>
-        </motion.div>
-      ) : (
-        <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          onSubmit={handleSubmit}
-          className="space-y-6"
-        >
-          {/* Name and Email Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Full Name *
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  type="text"
-                  id="full_name"
-                  name="full_name"
-                  required
-                  value={formData.full_name}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                  placeholder="Your full name"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Email Address *
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                  placeholder="your.email@example.com"
-                />
-              </div>
-            </div>
-          </div>
+          ))}
+        </div>
+        <div className="text-center text-white/60 text-sm">
+          Step {currentStep} of 6
+        </div>
+      </div>
 
-          {/* Phone and Service Type Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Phone Number
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                  placeholder="+1 (555) 123-4567"
-                />
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <AnimatePresence mode="wait">
+          {/* Step 1: Contact Information */}
+          {currentStep === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8"
+            >
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <User className="w-6 h-6 text-purple-400" />
+                Contact Information
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-white/80 mb-2">First Name *</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    placeholder="Enter your first name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white/80 mb-2">Last Name *</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    placeholder="Enter your last name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white/80 mb-2">Email Address *</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    placeholder="Enter your email address"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white/80 mb-2">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white/80 mb-2">Company Name</label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    placeholder="Enter your company name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white/80 mb-2">Industry</label>
+                  <select
+                    name="industry"
+                    value={formData.industry}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="">Select your industry</option>
+                    {industries.map(industry => (
+                      <option key={industry} value={industry}>{industry}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-white/80 mb-2">Country</label>
+                  <select
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="">Select your country</option>
+                    {countries.map(country => (
+                      <option key={country} value={country}>{country}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Service Type *
-              </label>
-              <div className="relative">
-                <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <select
-                  id="service_type"
-                  name="service_type"
-                  required
-                  value={formData.service_type}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
-                >
-                  <option value="" className="bg-gray-800">Select a service</option>
-                  <option value="Technical SEO" className="bg-gray-800">Technical SEO</option>
-                  <option value="On-Page SEO" className="bg-gray-800">On-Page SEO</option>
-                  <option value="Off-Page SEO" className="bg-gray-800">Off-Page SEO</option>
-                  <option value="Local SEO" className="bg-gray-800">Local SEO</option>
-                  <option value="Content Strategy" className="bg-gray-800">Content Strategy</option>
-                  <option value="SEO Audit" className="bg-gray-800">SEO Audit</option>
-                  <option value="Web Development" className="bg-gray-800">Web Development</option>
-                  <option value="Web Design" className="bg-gray-800">Web Design</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Budget and Timeline Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Estimated Budget
-              </label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  type="text"
-                  id="estimated_budget"
-                  name="estimated_budget"
-                  value={formData.estimated_budget}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                  placeholder="Enter your budget"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Preferred Timeline
-              </label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <select
-                  id="preferred_timeline"
-                  name="preferred_timeline"
-                  value={formData.preferred_timeline}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
-                >
-                  <option value="" className="bg-gray-800">Select a timeline</option>
-                  <option value="ASAP" className="bg-gray-800">As soon as possible</option>
-                  <option value="1-2 weeks" className="bg-gray-800">1-2 weeks</option>
-                  <option value="1 month" className="bg-gray-800">1 month</option>
-                  <option value="2-3 months" className="bg-gray-800">2-3 months</option>
-                  <option value="Flexible" className="bg-gray-800">Flexible</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Property Type and Size Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Property Type
-              </label>
-              <div className="relative">
-                <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <select
-                  id="property_type"
-                  name="property_type"
-                  value={formData.property_type}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
-                >
-                  <option value="" className="bg-gray-800">Select property type</option>
-                  <option value="Residential" className="bg-gray-800">Residential</option>
-                  <option value="Commercial" className="bg-gray-800">Commercial</option>
-                  <option value="Industrial" className="bg-gray-800">Industrial</option>
-                  <option value="Land" className="bg-gray-800">Land</option>
-                  <option value="Other" className="bg-gray-800">Other</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Property Size
-              </label>
-              <div className="relative">
-                <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  type="text"
-                  id="property_size"
-                  name="property_size"
-                  value={formData.property_size}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                  placeholder="e.g., 1500 sq ft"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Location */}
-          <div>
-            <label className="block text-white text-sm font-medium mb-2">
-              Location
-            </label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="City, State, Country"
-              />
-            </div>
-          </div>
-
-          {/* Project Description */}
-          <div>
-            <label className="block text-white text-sm font-medium mb-2">
-              Project Description
-            </label>
-            <textarea
-              id="project_description"
-              name="project_description"
-              value={formData.project_description}
-              onChange={handleChange}
-              rows={6}
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors resize-none"
-              placeholder="Please describe your project in detail, including your goals, requirements, and any specific features you need..."
-            />
-          </div>
-
-          {submitStatus.type && (
-            <div className={`p-4 rounded-lg ${submitStatus.type === 'success' ? 'bg-green-500/20 text-green-200' : 'bg-red-500/20 text-red-200'}`}>
-              {submitStatus.message}
-            </div>
+            </motion.div>
           )}
 
-          {/* Submit Button */}
-          <motion.button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-4 rounded-full font-semibold text-white transition-all duration-300 ${
-              isSubmitting
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+          {/* Step 2: Project Type */}
+          {currentStep === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8"
+            >
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <Globe className="w-6 h-6 text-purple-400" />
+                Project Type
+              </h3>
+              <p className="text-white/60 mb-6">Choose one or more project types that best describe your needs:</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {projectTypes.map((projectType) => (
+                  <label
+                    key={projectType.id}
+                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                      formData.projectTypes.includes(projectType.id)
+                        ? 'border-purple-500 bg-purple-500/20'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.projectTypes.includes(projectType.id)}
+                      onChange={() => handleProjectTypeChange(projectType.id)}
+                      className="sr-only"
+                    />
+                    <div className="text-purple-400">
+                      {projectType.icon}
+                    </div>
+                    <span className="text-white font-medium">{projectType.label}</span>
+                  </label>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 3: Budget Range */}
+          {currentStep === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8"
+            >
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <DollarSign className="w-6 h-6 text-purple-400" />
+                Budget Range
+              </h3>
+              <p className="text-white/60 mb-6">Select your budget range to see available features:</p>
+              
+              <div className="space-y-4">
+                {budgetRanges.map((range) => (
+                  <label
+                    key={range.value}
+                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                      formData.budget === range.label
+                        ? 'border-purple-500 bg-purple-500/20'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="budget"
+                      value={range.label}
+                      checked={formData.budget === range.label}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className="w-4 h-4 rounded-full border-2 border-white/30 flex items-center justify-center">
+                      {formData.budget === range.label && (
+                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                      )}
+                    </div>
+                    <span className="text-white font-medium">{range.label}</span>
+                  </label>
+                ))}
+              </div>
+              
+              {selectedBudget > 0 && (
+                <div className="mt-6 p-4 bg-purple-500/20 border border-purple-500/50 rounded-lg">
+                  <p className="text-white/80 text-sm">
+                    Based on your budget, you'll have access to features requiring up to ${selectedBudget.toLocaleString()} in budget.
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Step 4: Features */}
+          {currentStep === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              {featureCategories.map((category) => {
+                const availableFeatures = getAvailableFeatures(category);
+                const isCategoryAvailable = selectedBudget >= (category.minBudget || 0);
+                
+                if (!isCategoryAvailable) return null;
+                
+                return (
+                  <div key={category.id} className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8">
+                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                      {category.icon}
+                      {category.title}
+                    </h3>
+                    
+                    {category.minBudget && selectedBudget < category.minBudget && (
+                      <div className="mb-4 p-3 bg-yellow-500/20 border border-yellow-500/50 rounded-lg">
+                        <p className="text-yellow-400 text-sm">
+                          This category requires a minimum budget of ${category.minBudget.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {availableFeatures.map((feature) => (
+                        <label
+                          key={feature.id}
+                          className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                            formData[category.id + 'Features' as keyof EstimateFormData]?.includes(feature.id)
+                              ? 'border-purple-500 bg-purple-500/20'
+                              : 'border-white/10 bg-white/5 hover:border-white/20'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData[category.id + 'Features' as keyof EstimateFormData]?.includes(feature.id)}
+                            onChange={() => handleCheckboxChange(category.id + 'Features', feature.id)}
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-white font-medium">{feature.label}</span>
+                              <span className="text-purple-400 text-sm font-semibold">
+                                ${feature.basePrice.toLocaleString()}
+                              </span>
+                            </div>
+                            <p className="text-white/60 text-sm">{feature.description}</p>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </motion.div>
+          )}
+
+          {/* Step 5: Timeline */}
+          {currentStep === 5 && (
+            <motion.div
+              key="step5"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8"
+            >
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <Clock className="w-6 h-6 text-purple-400" />
+                Timeline
+              </h3>
+              <p className="text-white/60 mb-6">When do you need your project completed?</p>
+              
+              <div className="space-y-4">
+                {timelineOptions.map((option) => (
+                  <label
+                    key={option.value}
+                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                      formData.timeline === option.value
+                        ? 'border-purple-500 bg-purple-500/20'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="timeline"
+                      value={option.value}
+                      checked={formData.timeline === option.value}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className="w-4 h-4 rounded-full border-2 border-white/30 flex items-center justify-center">
+                      {formData.timeline === option.value && (
+                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                      )}
+                    </div>
+                    <span className="text-white font-medium">{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 6: Additional Requirements */}
+          {currentStep === 6 && (
+            <motion.div
+              key="step6"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8"
+            >
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <FileText className="w-6 h-6 text-purple-400" />
+                Additional Requirements
+              </h3>
+              <p className="text-white/60 mb-6">Tell us more about your project requirements, goals, and any specific features you need:</p>
+              
+              <textarea
+                name="additionalRequirements"
+                value={formData.additionalRequirements}
+                onChange={handleChange}
+                rows={6}
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500 resize-none"
+                placeholder="Describe your project requirements, target audience, specific features, design preferences, or any other details that will help us provide a more accurate estimate..."
+              />
+              
+              {/* Cost Summary */}
+              <div className="mt-6 p-6 bg-purple-500/20 border border-purple-500/50 rounded-lg">
+                <h4 className="text-lg font-semibold text-white mb-3">Estimated Cost Summary</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-white/80">
+                    <span>Selected Features:</span>
+                    <span>${calculateEstimatedCost().toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-white/60 text-sm">
+                    <span>Estimated Range:</span>
+                    <span>${calculateEstimatedCost().toLocaleString()} - ${(calculateEstimatedCost() * 1.3).toLocaleString()}</span>
+                  </div>
+                  <div className="border-t border-white/20 pt-2 mt-2">
+                    <div className="flex justify-between text-white font-semibold">
+                      <span>Total Estimated Cost:</span>
+                      <span className="text-purple-400">${calculateEstimatedCost().toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between items-center pt-6">
+          <button
+            type="button"
+            onClick={prevStep}
+            disabled={currentStep === 1}
+            className={`px-6 py-3 rounded-full transition-colors ${
+              currentStep === 1
+                ? 'bg-white/10 text-white/30 cursor-not-allowed'
+                : 'bg-white/10 text-white hover:bg-white/20'
             }`}
-            whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-            whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
           >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Sending Request...
-              </div>
+            Previous
+          </button>
+          
+          <div className="flex gap-4">
+            {currentStep < 6 ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full transition-colors flex items-center gap-2"
+              >
+                Next
+                <ArrowRight size={16} />
+              </button>
             ) : (
-              <div className="flex items-center justify-center gap-2">
-                <Send className="w-4 h-4" />
-                Request Estimate
-                <ArrowRight className="w-4 h-4" />
-              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    Submit Estimate Request
+                  </>
+                )}
+              </button>
             )}
-          </motion.button>
-        </motion.form>
-      )}
+          </div>
+        </div>
+
+        {/* Error/Success Message */}
+        {submitStatus.type && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`p-4 rounded-lg ${
+              submitStatus.type === 'success'
+                ? 'bg-green-500/20 border border-green-500/50 text-green-400'
+                : 'bg-red-500/20 border border-red-500/50 text-red-400'
+            }`}
+          >
+            {submitStatus.message}
+          </motion.div>
+        )}
+      </form>
     </div>
   );
 };
