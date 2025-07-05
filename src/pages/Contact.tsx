@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import {
@@ -51,26 +50,17 @@ const Contact = () => {
       icon: <Mail className="w-8 h-8" />,
       title: 'Email Support',
       description: 'Send us an email anytime',
-      details: 'support@devtone.agency',
-      link: 'mailto:support@devtone.agency',
+      details: 'team@devtone.agency',
+      link: 'mailto:team@devtone.agency',
       color: 'from-purple-400 to-purple-600',
       response: 'Response within 24 hours'
-    },
-    {
-      icon: <Phone className="w-8 h-8" />,
-      title: 'Phone Support',
-      description: 'Mon-Fri from 12am to 6pm EST',
-      details: '+1 (718) 419-3863',
-      link: 'tel: +17184193863',
-      color: 'from-purple-500 to-purple-700',
-      response: 'Available during business hours only'
     },
     {
       icon: <Mail className="w-8 h-8" />,
       title: 'Email Us',
       description: 'Send us an email anytime',
-      details: 'info@devtone.agency',
-      link: 'mailto:info@devtone.agency',
+      details: 'team@devtone.agency',
+      link: 'mailto:team@devtone.agency',
       color: 'from-purple-600 to-purple-800',
       response: 'Response within 24 hours'
     },
