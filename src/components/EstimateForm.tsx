@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText, CheckCircle, Send } from 'lucide-react';
+import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText, CheckCircle, Send, MapPin } from 'lucide-react';
 
 interface EstimateFormData {
   full_name: string;
@@ -30,6 +30,7 @@ const EstimateForm: React.FC = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
@@ -234,6 +235,9 @@ const EstimateForm: React.FC = () => {
         message: 'Your estimate request has been submitted successfully! We will contact you soon.'
       });
       
+      // Set form as submitted
+      setIsSubmitted(true);
+      
       // Reset form after successful submission
       setFormData({
         full_name: '',
@@ -271,86 +275,242 @@ const EstimateForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <motion.form
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        onSubmit={handleSubmit}
-        className="space-y-6"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="full_name" className="block text-sm font-medium text-white mb-2">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              id="full_name"
-              name="full_name"
-              required
-              value={formData.full_name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter your full name"
-            />
+    <div className="max-w-4xl mx-auto">
+      {isSubmitted ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center py-12"
+        >
+          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-8 h-8 text-green-400" />
+          </div>
+          <h3 className="text-2xl font-bold text-white mb-2">Estimate Request Sent!</h3>
+          <p className="text-white mb-6">
+            Thank you for your request. We&apos;ll prepare a detailed estimate and get back to you within 24-48 hours.
+          </p>
+          
+          <div className="max-w-md mx-auto bg-green-50 border-l-4 border-green-400 p-4 text-green-800 rounded text-left">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium">
+                  Confirmation Sent
+                </p>
+                <p className="text-xs mt-1">
+                  We&apos;ve sent a confirmation email to your address and our team has been notified of your request.
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : (
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          onSubmit={handleSubmit}
+          className="space-y-6"
+        >
+          {/* Name and Email Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Full Name *
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <input
+                  type="text"
+                  id="full_name"
+                  name="full_name"
+                  required
+                  value={formData.full_name}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="Your full name"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Email Address *
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="your.email@example.com"
+                />
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
-              Email *
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter your email"
-            />
+          {/* Phone and Service Type Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Phone Number
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="+1 (555) 123-4567"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Service Type *
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <select
+                  id="service_type"
+                  name="service_type"
+                  required
+                  value={formData.service_type}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
+                >
+                  <option value="" className="bg-gray-800">Select a service</option>
+                  <option value="Technical SEO" className="bg-gray-800">Technical SEO</option>
+                  <option value="On-Page SEO" className="bg-gray-800">On-Page SEO</option>
+                  <option value="Off-Page SEO" className="bg-gray-800">Off-Page SEO</option>
+                  <option value="Local SEO" className="bg-gray-800">Local SEO</option>
+                  <option value="Content Strategy" className="bg-gray-800">Content Strategy</option>
+                  <option value="SEO Audit" className="bg-gray-800">SEO Audit</option>
+                  <option value="Web Development" className="bg-gray-800">Web Development</option>
+                  <option value="Web Design" className="bg-gray-800">Web Design</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
-              Phone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter your phone number"
-            />
+          {/* Budget and Timeline Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Estimated Budget
+              </label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <input
+                  type="text"
+                  id="estimated_budget"
+                  name="estimated_budget"
+                  value={formData.estimated_budget}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="Enter your budget"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Preferred Timeline
+              </label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <select
+                  id="preferred_timeline"
+                  name="preferred_timeline"
+                  value={formData.preferred_timeline}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
+                >
+                  <option value="" className="bg-gray-800">Select a timeline</option>
+                  <option value="ASAP" className="bg-gray-800">As soon as possible</option>
+                  <option value="1-2 weeks" className="bg-gray-800">1-2 weeks</option>
+                  <option value="1 month" className="bg-gray-800">1 month</option>
+                  <option value="2-3 months" className="bg-gray-800">2-3 months</option>
+                  <option value="Flexible" className="bg-gray-800">Flexible</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="service_type" className="block text-sm font-medium text-white mb-2">
-              Service Type *
-            </label>
-            <select
-              id="service_type"
-              name="service_type"
-              required
-              value={formData.service_type}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-            >
-              <option value="">Select a service</option>
-              <option value="Technical SEO">Technical SEO</option>
-              <option value="On-Page SEO">On-Page SEO</option>
-              <option value="Off-Page SEO">Off-Page SEO</option>
-              <option value="Local SEO">Local SEO</option>
-              <option value="Content Strategy">Content Strategy</option>
-              <option value="SEO Audit">SEO Audit</option>
-            </select>
+          {/* Property Type and Size Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Property Type
+              </label>
+              <div className="relative">
+                <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <select
+                  id="property_type"
+                  name="property_type"
+                  value={formData.property_type}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none"
+                >
+                  <option value="" className="bg-gray-800">Select property type</option>
+                  <option value="Residential" className="bg-gray-800">Residential</option>
+                  <option value="Commercial" className="bg-gray-800">Commercial</option>
+                  <option value="Industrial" className="bg-gray-800">Industrial</option>
+                  <option value="Land" className="bg-gray-800">Land</option>
+                  <option value="Other" className="bg-gray-800">Other</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Property Size
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <input
+                  type="text"
+                  id="property_size"
+                  name="property_size"
+                  value={formData.property_size}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="e.g., 1500 sq ft"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="md:col-span-2">
-            <label htmlFor="project_description" className="block text-sm font-medium text-white mb-2">
+          {/* Location */}
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Location
+            </label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+              <input
+                type="text"
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                placeholder="City, State, Country"
+              />
+            </div>
+          </div>
+
+          {/* Project Description */}
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
               Project Description
             </label>
             <textarea
@@ -358,153 +518,47 @@ const EstimateForm: React.FC = () => {
               name="project_description"
               value={formData.project_description}
               onChange={handleChange}
-              rows={4}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Describe your project and goals"
+              rows={6}
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+              placeholder="Please describe your project in detail, including your goals, requirements, and any specific features you need..."
             />
           </div>
 
-          <div>
-            <label htmlFor="estimated_budget" className="block text-sm font-medium text-white mb-2">
-              Estimated Budget
-            </label>
-            <input
-              type="text"
-              id="estimated_budget"
-              name="estimated_budget"
-              value={formData.estimated_budget}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter your budget"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="preferred_timeline" className="block text-sm font-medium text-white mb-2">
-              Preferred Timeline
-            </label>
-            <select
-              id="preferred_timeline"
-              name="preferred_timeline"
-              value={formData.preferred_timeline}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-            >
-              <option value="">Select timeline</option>
-              <option value="ASAP">ASAP</option>
-              <option value="1-3 months">1-3 months</option>
-              <option value="3-6 months">3-6 months</option>
-              <option value="6+ months">6+ months</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="property_type" className="block text-sm font-medium text-white mb-2">
-              Property Type
-            </label>
-            <input
-              type="text"
-              id="property_type"
-              name="property_type"
-              value={formData.property_type}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter property type"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="property_size" className="block text-sm font-medium text-white mb-2">
-              Property Size
-            </label>
-            <input
-              type="text"
-              id="property_size"
-              name="property_size"
-              value={formData.property_size}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter property size"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="location" className="block text-sm font-medium text-white mb-2">
-              Location
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Enter location"
-            />
-          </div>
-        </div>
-
-        {submitStatus.type && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-lg ${
-              submitStatus.type === 'success' ? 'bg-green-500/20 border border-green-500/30' : 'bg-red-500/20 border border-red-500/30'
-            }`}
-          >
-            <div className="flex items-start gap-3">
-              {submitStatus.type === 'success' ? (
-                <svg className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              )}
-              <div>
-                <p className={submitStatus.type === 'success' ? 'text-green-400 font-medium' : 'text-red-400 font-medium'}>
-                  {submitStatus.type === 'success' ? 'Success!' : 'Error'}
-                </p>
-                <p className={submitStatus.type === 'success' ? 'text-green-300' : 'text-red-300'}>
-                  {submitStatus.message}
-                </p>
-                {submitStatus.type === 'success' && (
-                  <p className="text-green-300 mt-2">
-                    We'll review your request and get back to you shortly.
-                  </p>
-                )}
-              </div>
+          {submitStatus.type && (
+            <div className={`p-4 rounded-lg ${submitStatus.type === 'success' ? 'bg-green-500/20 text-green-200' : 'bg-red-500/20 text-red-200'}`}>
+              {submitStatus.message}
             </div>
-          </motion.div>
-        )}
-
-        <motion.button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 ${
-            isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-          }`}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          {isSubmitting ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Submitting...
-            </>
-          ) : (
-            <>
-              Get Your Estimate <ArrowRight className="w-5 h-5" />
-            </>
           )}
-        </motion.button>
-      </motion.form>
+
+          {/* Submit Button */}
+          <motion.button
+            type="submit"
+            disabled={isSubmitting}
+            className={`w-full py-4 rounded-full font-semibold text-white transition-all duration-300 ${
+              isSubmitting
+                ? 'bg-gray-600 cursor-not-allowed'
+                : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+            }`}
+            whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+            whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+          >
+            {isSubmitting ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Sending Request...
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2">
+                <Send className="w-4 h-4" />
+                Request Estimate
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            )}
+          </motion.button>
+        </motion.form>
+      )}
     </div>
   );
 };
 
-export default EstimateForm; 
+export default EstimateForm;
