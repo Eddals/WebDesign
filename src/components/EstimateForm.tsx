@@ -489,7 +489,7 @@ const EstimateForm: React.FC = () => {
                     value={formData.firstName}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                     placeholder="Enter your first name"
                   />
                 </div>
@@ -502,7 +502,7 @@ const EstimateForm: React.FC = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                     placeholder="Enter your last name"
                   />
                 </div>
@@ -515,7 +515,7 @@ const EstimateForm: React.FC = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -527,7 +527,7 @@ const EstimateForm: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -539,7 +539,7 @@ const EstimateForm: React.FC = () => {
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                     placeholder="Enter your company name"
                   />
                 </div>
@@ -550,7 +550,7 @@ const EstimateForm: React.FC = () => {
                     name="industry"
                     value={formData.industry}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                   >
                     <option value="">Select your industry</option>
                     {industries.map(industry => (
@@ -565,7 +565,7 @@ const EstimateForm: React.FC = () => {
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                   >
                     <option value="">Select your country</option>
                     {countries.map(country => (
@@ -800,7 +800,7 @@ const EstimateForm: React.FC = () => {
                 value={formData.additionalRequirements}
                 onChange={handleChange}
                 rows={6}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500 resize-none"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500 resize-none"
                 placeholder="Describe your project requirements, target audience, specific features, design preferences, or any other details that will help us provide a more accurate estimate..."
               />
               
