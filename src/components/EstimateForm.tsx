@@ -491,9 +491,9 @@ const EstimateForm: React.FC = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="">Select your industry</option>
+                    <option value="" className="bg-gray-800 text-white">Select your industry</option>
                     {industries.map(industry => (
-                      <option key={industry} value={industry}>{industry}</option>
+                      <option key={industry} value={industry} className="bg-gray-800 text-white">{industry}</option>
                     ))}
                   </select>
                 </div>
@@ -506,9 +506,9 @@ const EstimateForm: React.FC = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="">Select your country</option>
+                    <option value="" className="bg-gray-800 text-white">Select your country</option>
                     {countries.map(country => (
-                      <option key={country} value={country}>{country}</option>
+                      <option key={country} value={country} className="bg-gray-800 text-white">{country}</option>
                     ))}
                   </select>
                 </div>

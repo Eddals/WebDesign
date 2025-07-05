@@ -204,39 +204,6 @@ const Estimate = () => {
               <EstimateForm />
             </div>
           </motion.div>
-
-          {/* FAQ Section */}
-          <motion.div
-            className="max-w-3xl mx-auto mt-20"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-3xl font-bold text-white mb-8 text-center">Frequently Asked Questions</h2>
-            
-            <div className="space-y-6">
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-2">How long does it take to receive an estimate?</h3>
-                <p className="text-white/80">We typically provide estimates within 1-2 business days, depending on the complexity of your project.</p>
-              </div>
-              
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-2">Is the estimate binding?</h3>
-                <p className="text-white/80">Our estimates provide a detailed breakdown of expected costs, but the final price may vary based on project scope changes or unforeseen requirements.</p>
-              </div>
-              
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-2">What information should I include in my request?</h3>
-                <p className="text-white/80">The more details you provide about your project goals, timeline, and specific requirements, the more accurate our estimate will be.</p>
-              </div>
-              
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-2">Do you offer payment plans?</h3>
-                <p className="text-white/80">Yes, we offer flexible payment plans for larger projects. We&apos;ll discuss payment options when we provide your estimate.</p>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </>
