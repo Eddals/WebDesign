@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/send-brevo-email.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/send-brevo-email-simple.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/test-endpoint.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+} 

@@ -19,7 +19,8 @@ export const sendBrevoEmail = async (params: BrevoEmailParams) => {
     console.log('📤 Sending Brevo email with params:', params);
     
     // Use the server-side API endpoint instead of direct Brevo API access
-    const response = await fetch('/api/send-brevo-email', {
+    // Temporarily using the simple endpoint until Vercel deployment is fixed
+    const response = await fetch('/api/send-brevo-email-simple', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,135 +1,127 @@
 #!/usr/bin/env node
 
-// Test script to verify Vercel deployment is working correctly
+/**
+ * Quick test script for Vercel deployment
+ * Run with: node scripts/test-vercel-deployment.js
+ */
 
-const testVercelDeployment = async () => {
-  console.log('Testing Vercel Deployment for DevTone Agency\n');
-  console.log('=' .repeat(60) + '\n');
+const fetch = require('node-fetch');
 
-  // Test domains
-  const domains = [
-    'https://devtone.agency',
-    'https://www.devtone.agency'
-  ];
+const BASE_URL = 'https://devtone.agency';
 
-  // Test data
-  const testData = {
-    name: 'Vercel Test User',
-    email: 'test@example.com',
-    phone: '(555) 123-4567',
-    company: 'Test Company',
-    country: 'United States',
-    industry: 'Technology',
-    projectType: 'landing',
-    budget: '$500 - $1,500',
-    timeline: '1 Month',
-    description: 'This is a test from Vercel deployment script',
-    features: ['contact_form', 'seo']
-  };
-
-  for (const domain of domains) {
-    console.log(`Testing ${domain}...\n`);
-
-    try {
-      // Test if the site is accessible
-      console.log('1. Checking if site is accessible...');
-      const siteResponse = await fetch(domain);
-      if (siteResponse.ok) {
-        console.log('✅ Site is accessible\n');
-      } else {
-        console.log(`❌ Site returned status: ${siteResponse.status}\n`);
+async function testEndpoint(endpoint, method = 'GET', data = null) {
+  console.log(`\n🧪 Testing: ${method} ${endpoint}`);
+  
+  try {
+    const options = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
       }
+    };
 
-      // Test the API endpoint
-      console.log('2. Testing /api/send-estimate endpoint...');
-      const apiUrl = `${domain}/api/send-estimate`;
-      
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Origin': domain
-          },
-          body: JSON.stringify(testData)
-        });
-
-        console.log(`Response status: ${response.status}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Response:', JSON.stringify(data, null, 2));
-          console.log('✅ API endpoint is working!\n');
-        } else {
-          let errorMessage = `Status ${response.status}`;
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-          } catch {
-            try {
-              const errorText = await response.text();
-              if (errorText) errorMessage = errorText;
-            } catch {}
-          }
-          console.log(`❌ API error: ${errorMessage}\n`);
-        }
-      } catch (error) {
-        console.log(`❌ API request failed: ${error.message}\n`);
-      }
-
-      // Test ActivePieces webhook directly
-      console.log('3. Testing ActivePieces webhook...');
-      try {
-        const webhookData = {
-          nome: testData.name,
-          email: testData.email,
-          telefone: testData.phone,
-          empresa: testData.company,
-          pais: testData.country,
-          industria: testData.industry,
-          tipo_projeto: testData.projectType,
-          orcamento: testData.budget,
-          prazo: testData.timeline,
-          mensagem: testData.description,
-          recursos: testData.features.join(', '),
-          timestamp: new Date().toISOString(),
-          fonte: 'vercel-deployment-test'
-        };
-
-        const webhookResponse = await fetch('https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData),
-        });
-
-        if (webhookResponse.ok) {
-          console.log('✅ ActivePieces webhook is working!\n');
-        } else {
-          console.log(`❌ ActivePieces webhook returned status: ${webhookResponse.status}\n`);
-        }
-      } catch (error) {
-        console.log(`❌ ActivePieces webhook failed: ${error.message}\n`);
-      }
-
-    } catch (error) {
-      console.log(`❌ Error testing ${domain}: ${error.message}\n`);
+    if (data && method === 'POST') {
+      options.body = JSON.stringify(data);
     }
 
-    console.log('-'.repeat(60) + '\n');
+    const response = await fetch(`${BASE_URL}${endpoint}`, options);
+    
+    console.log(`📥 Status: ${response.status} ${response.statusText}`);
+    
+    const responseText = await response.text();
+    console.log(`📥 Response: ${responseText}`);
+
+    if (response.ok) {
+      console.log(`✅ SUCCESS: ${endpoint}`);
+      return { success: true, data: responseText };
+    } else {
+      console.log(`❌ FAILED: ${endpoint} - ${response.status}`);
+      return { success: false, error: responseText, status: response.status };
+    }
+  } catch (error) {
+    console.error(`❌ ERROR: ${endpoint} -`, error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+async function runVercelTests() {
+  console.log('🚀 Testing Vercel Deployment');
+  console.log(`🌐 Base URL: ${BASE_URL}`);
+  
+  const tests = [
+    {
+      endpoint: '/api/vercel-test',
+      method: 'GET',
+      description: 'Vercel test endpoint (GET)'
+    },
+    {
+      endpoint: '/api/vercel-test',
+      method: 'POST',
+      data: { test: 'data' },
+      description: 'Vercel test endpoint (POST)'
+    },
+    {
+      endpoint: '/api/health',
+      method: 'GET',
+      description: 'Health check endpoint'
+    },
+    {
+      endpoint: '/api/send-brevo-email-simple',
+      method: 'POST',
+      data: {
+        name: 'Test User',
+        email: 'test@example.com',
+        message: 'Test message for Vercel deployment'
+      },
+      description: 'Brevo email simple endpoint'
+    }
+  ];
+
+  const results = [];
+
+  for (const test of tests) {
+    const result = await testEndpoint(test.endpoint, test.method, test.data);
+    results.push({ ...test, result });
   }
 
-  console.log('Deployment Test Summary:');
-  console.log('1. ActivePieces webhook is the primary method (no email setup needed)');
-  console.log('2. Vercel API route is available for email notifications (requires setup)');
-  console.log('3. Form will work even if API is not configured\n');
+  // Summary
+  console.log('\n📊 VERCEL DEPLOYMENT TEST SUMMARY');
+  console.log('='.repeat(60));
   
-  console.log('To enable email notifications:');
-  console.log('1. Set environment variables in Vercel dashboard');
-  console.log('2. Choose an email service (SendGrid, Resend, or SMTP)');
-  console.log('3. Update /api/send-estimate.js with your email service code');
-};
+  results.forEach((test, index) => {
+    const status = test.result.success ? '✅ PASS' : '❌ FAIL';
+    console.log(`${index + 1}. ${status} - ${test.method} ${test.endpoint}`);
+    if (!test.result.success) {
+      console.log(`   Error: ${test.result.error}`);
+    }
+  });
 
-// Run the test
-testVercelDeployment();
+  const passedTests = results.filter(r => r.result.success).length;
+  const totalTests = results.length;
+  
+  console.log('\n' + '='.repeat(60));
+  console.log(`📈 Results: ${passedTests}/${totalTests} tests passed`);
+  
+  if (passedTests === totalTests) {
+    console.log('🎉 All Vercel tests passed! Deployment is working correctly.');
+  } else {
+    console.log('⚠️  Some tests failed. Check the Vercel configuration.');
+  }
+
+  return results;
+}
+
+// Run tests if this file is executed directly
+if (require.main === module) {
+  runVercelTests()
+    .then(results => {
+      const allPassed = results.every(r => r.result.success);
+      process.exit(allPassed ? 0 : 1);
+    })
+    .catch(error => {
+      console.error('❌ Test runner error:', error);
+      process.exit(1);
+    });
+}
+
+module.exports = { runVercelTests, testEndpoint };
