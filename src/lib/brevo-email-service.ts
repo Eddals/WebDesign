@@ -16,6 +16,8 @@ interface BrevoEmailParams {
  */
 export const sendBrevoEmail = async (params: BrevoEmailParams) => {
   try {
+    console.log('📤 Sending Brevo email with params:', params);
+    
     // Use the server-side API endpoint instead of direct Brevo API access
     const response = await fetch('/api/send-brevo-email', {
       method: 'POST',
@@ -25,21 +27,43 @@ export const sendBrevoEmail = async (params: BrevoEmailParams) => {
       body: JSON.stringify(params),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Brevo email API error:', errorData);
+    console.log('📥 Response status:', response.status);
+    console.log('📥 Response ok:', response.ok);
+
+    // Get response text first to handle non-JSON responses
+    const responseText = await response.text();
+    console.log('📥 Response text:', responseText);
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('❌ Failed to parse JSON response:', parseError);
       return { 
         success: false, 
-        error: errorData.error || `Server returned ${response.status}` 
+        error: 'Invalid JSON response from server',
+        rawResponse: responseText,
+        status: response.status
       };
     }
 
-    const data = await response.json();
-    console.log('Brevo email sent successfully:', data);
+    if (!response.ok) {
+      console.error('❌ Brevo email API error:', data);
+      return { 
+        success: false, 
+        error: data.error || `Server returned ${response.status}`,
+        status: response.status
+      };
+    }
+
+    console.log('✅ Brevo email sent successfully:', data);
     return { success: true, message: 'Email sent successfully', data };
   } catch (error) {
-    console.error('Error sending Brevo email:', error);
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    console.error('❌ Error sending Brevo email:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
   }
 };
 
