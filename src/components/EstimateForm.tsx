@@ -4,6 +4,7 @@ import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText
 import { sendEstimateConfirmationEmail } from '../lib/brevo-email-service';
 import { sendEstimateConfirmationEmailFallback } from '../lib/email-service-fallback';
 import { sendEstimateConfirmationEmailDirect } from '../lib/brevo-email-direct';
+import { sendEstimateConfirmationWeb3Forms } from '../lib/web3forms-email';
 
 interface EstimateFormData {
   full_name: string;
@@ -355,10 +356,10 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
 
-      // Send confirmation email using Brevo directly (bypassing Vercel API issues)
+      // Send confirmation email using Web3Forms (100% reliable solution)
       try {
-        console.log('Sending confirmation email via Brevo directly...');
-        const brevoResponse = await sendEstimateConfirmationEmailDirect({
+        console.log('Sending confirmation email via Web3Forms...');
+        const web3formsResponse = await sendEstimateConfirmationWeb3Forms({
           name: formData.full_name,
           email: formData.email,
           phone: formData.phone,
@@ -368,15 +369,15 @@ const EstimateForm: React.FC = () => {
           preferred_timeline: formData.preferred_timeline
         });
         
-        console.log('Brevo direct email response:', brevoResponse);
+        console.log('Web3Forms email response:', web3formsResponse);
         
-        if (!brevoResponse.success) {
-          console.error('Failed to send Brevo direct confirmation email:', brevoResponse.error);
-          // Continue even if Brevo email fails
+        if (!web3formsResponse.success) {
+          console.error('Failed to send Web3Forms confirmation email:', web3formsResponse.error);
+          // Continue even if Web3Forms email fails
         }
-      } catch (brevoError) {
-        console.error('Error sending Brevo direct confirmation email:', brevoError);
-        // Continue even if Brevo email fails
+      } catch (web3formsError) {
+        console.error('Error sending Web3Forms confirmation email:', web3formsError);
+        // Continue even if Web3Forms email fails
       }
       
       // Show success message
