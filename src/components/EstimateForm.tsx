@@ -208,13 +208,50 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
       
-      // Send to HubSpot direct webhook
+      // Send to HubSpot via backend API endpoint
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
         
-        const hubspotWebhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/J4TNnqL';
-        console.log('Sending data to HubSpot direct webhook...');
+        console.log('Sending data to HubSpot webhook via backend API...');
+        
+        // Use our backend API endpoint to handle the HubSpot webhook
+        const response = await fetch('/api/hubspot-estimate-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('HubSpot webhook API response status:', response.status);
+        
+        // Try to get response data
+        let responseData;
+        try {
+          responseData = await response.json();
+          console.log('HubSpot webhook API response:', responseData);
+        } catch (jsonError) {
+          console.error('Error parsing HubSpot webhook response:', jsonError);
+        }
+        
+        if (!response.ok) {
+          console.error('HubSpot webhook API error:', response.statusText);
+        }
+      } catch (webhookError) {
+        console.error('Error sending to HubSpot webhook API:', webhookError);
+        // Continue even if webhook fails
+      }
+      
+      // Also try direct webhook as fallback
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const hubspotWebhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/TVURhgi';
+        console.log('Sending data to HubSpot direct webhook (fallback)...');
         
         const response = await fetch(hubspotWebhookUrl, {
           method: 'POST',
@@ -222,9 +259,22 @@ const EstimateForm: React.FC = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            ...webhookData,
-            source: 'estimate_form',
-            timestamp: new Date().toISOString()
+            // Formato específico para o HubSpot
+            properties: {
+              firstname: formData.full_name.split(' ')[0] || '',
+              lastname: formData.full_name.split(' ').slice(1).join(' ') || '',
+              email: formData.email,
+              phone: formData.phone || '',
+              company: formData.property_type || '',
+              country: formData.location || '',
+              industry: formData.service_type || '',
+              budget: formData.estimated_budget || '',
+              timeline: formData.preferred_timeline || '',
+              message: formData.project_description || '',
+              property_size: formData.property_size || '',
+              source: 'estimate_form',
+              form_submission_date: new Date().toISOString()
+            }
           }),
           signal: controller.signal
         });
