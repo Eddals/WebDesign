@@ -31,7 +31,7 @@ const Estimate = () => {
     {
       icon: <FileText className="w-8 h-8" />,
       title: 'Scope Definition',
-      description: 'Clearly define what's included in your project to avoid scope creep.',
+      description: 'Clearly define what\'s included in your project to avoid scope creep.',
       color: 'from-purple-600 to-purple-800'
     },
     {
@@ -153,7 +153,7 @@ const Estimate = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                Fill out the form below to receive a detailed estimate for your project. We'll analyze your requirements and provide a comprehensive breakdown.
+                Fill out the form below to receive a detailed estimate for your project. We&apos;ll analyze your requirements and provide a comprehensive breakdown.
               </motion.p>
             </motion.div>
           </div>
@@ -233,7 +233,7 @@ const Estimate = () => {
               
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-white mb-2">Do you offer payment plans?</h3>
-                <p className="text-white/80">Yes, we offer flexible payment plans for larger projects. We'll discuss payment options when we provide your estimate.</p>
+                <p className="text-white/80">Yes, we offer flexible payment plans for larger projects. We&apos;ll discuss payment options when we provide your estimate.</p>
               </div>
             </div>
           </motion.div>
