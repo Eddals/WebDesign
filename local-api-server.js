@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -11,8 +12,23 @@ const app = express();
 const port = 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+
+// Log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// Handle OPTIONS requests for all routes
+app.options('*', (req, res) => {
+  res.status(200).end();
+});
 
 // Inicializar o Resend
 const resend = new Resend(process.env.RESEND_API_KEY || 're_P4uBXUcH_7B4rc1geoyhz4H1P5njdJLst');
@@ -20,6 +36,243 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_P4uBXUcH_7B4rc1geoyh
 // Endpoint de teste
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API local funcionando!', timestamp: new Date().toISOString() });
+});
+
+// HubSpot API endpoint
+app.post('/api/hubspot', async (req, res) => {
+  console.log('📊 Recebida requisição para HubSpot API:', req.body);
+  
+  const HUBSPOT_TOKEN = 'pat-na2-0e94e7a3-5904-4247-ba2c-68dcf7c50c08';
+  const { name, email, phone, company, country, industry } = req.body;
+
+  // Create a contact in HubSpot
+  try {
+    console.log('Sending data to HubSpot CRM API...');
+    
+    const hubspotRes = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${HUBSPOT_TOKEN}`
+      },
+      body: JSON.stringify({
+        properties: {
+          firstname: name?.split(' ')[0] || '',
+          lastname: name?.split(' ').slice(1).join(' ') || '',
+          email,
+          phone: phone || '',
+          company: company || '',
+          country: country || '',
+          industry: industry || '',
+          source: 'website_form'
+        }
+      })
+    });
+    
+    console.log('HubSpot API status:', hubspotRes.status);
+    
+    let data;
+    try {
+      data = await hubspotRes.json();
+      console.log('HubSpot API response:', data);
+    } catch (jsonError) {
+      console.error('Error parsing HubSpot response:', jsonError);
+      data = { error: 'Failed to parse response' };
+    }
+    
+    if (!hubspotRes.ok) {
+      return res.status(400).json({ 
+        error: data.message || 'HubSpot error',
+        details: data
+      });
+    }
+    
+    return res.status(200).json({ success: true, data });
+  } catch (err) {
+    console.error('Error sending to HubSpot:', err);
+    return res.status(500).json({ 
+      error: 'Internal server error', 
+      details: err.message 
+    });
+  }
+});
+
+// HubSpot Estimate Webhook endpoint
+app.post('/api/hubspot-estimate-webhook', async (req, res) => {
+  console.log('📊 Recebida requisição para HubSpot Estimate Webhook:', req.body);
+  
+  try {
+    const formData = req.body;
+    
+    // Format data for HubSpot - using the format from HubSpot's documentation
+    const hubspotData = {
+      // This is the format HubSpot expects for webhook triggers
+      submittedAt: Date.now(),
+      fields: [
+        {
+          name: "firstname",
+          value: formData.full_name?.split(' ')[0] || ''
+        },
+        {
+          name: "lastname",
+          value: formData.full_name?.split(' ').slice(1).join(' ') || ''
+        },
+        {
+          name: "email",
+          value: formData.email
+        },
+        {
+          name: "phone",
+          value: formData.phone || ''
+        },
+        {
+          name: "company",
+          value: formData.property_type || ''
+        },
+        {
+          name: "country",
+          value: formData.location || ''
+        },
+        {
+          name: "industry",
+          value: formData.service_type || ''
+        },
+        {
+          name: "budget",
+          value: formData.estimated_budget || ''
+        },
+        {
+          name: "timeline",
+          value: formData.preferred_timeline || ''
+        },
+        {
+          name: "message",
+          value: formData.project_description || ''
+        },
+        {
+          name: "property_size",
+          value: formData.property_size || ''
+        },
+        {
+          name: "source",
+          value: "estimate_form"
+        }
+      ],
+      context: {
+        pageUri: "estimate-form",
+        pageName: "Estimate Request Form"
+      }
+    };
+    
+    // HubSpot webhook URL - use the URL provided by HubSpot
+    const hubspotWebhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/TVURhgi';
+    
+    console.log('Sending data to HubSpot webhook...');
+    
+    // Send data to HubSpot
+    const response = await fetch(hubspotWebhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(hubspotData),
+    });
+    
+    console.log('HubSpot webhook response status:', response.status);
+    
+    // Try to get response data
+    let responseData;
+    try {
+      const text = await response.text();
+      console.log('Response text:', text);
+      responseData = text ? JSON.parse(text) : { message: 'Empty response' };
+    } catch (error) {
+      console.log('Error parsing response:', error.message);
+      responseData = { message: 'No JSON response or invalid JSON' };
+    }
+    
+    // Return response to client
+    return res.status(response.ok ? 200 : 400).json({
+      success: response.ok,
+      status: response.status,
+      data: responseData
+    });
+    
+  } catch (error) {
+    console.error('Error sending to HubSpot webhook:', error);
+    return res.status(500).json({ 
+      error: 'Failed to send data to HubSpot webhook',
+      message: error.message 
+    });
+  }
+});
+
+// Webhook proxy endpoint
+app.post('/api/webhook-proxy', async (req, res) => {
+  console.log('📊 Recebida requisição para Webhook Proxy:', req.query);
+  
+  try {
+    // Get the target from query params or use default
+    const target = req.query.target || 'n8n';
+    console.log(`Proxying webhook request to ${target}`);
+    
+    let targetUrl;
+    let requestBody = req.body;
+    
+    // Determine the target URL based on the target parameter
+    if (target === 'hubspot') {
+      targetUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/TVURhgi';
+      
+      // Format data for HubSpot webhook
+      requestBody = {
+        submittedAt: Date.now(),
+        fields: Object.entries(req.body).map(([name, value]) => ({
+          name,
+          value: value || ''
+        })),
+        context: {
+          pageUri: "estimate-form",
+          pageName: "Estimate Request Form"
+        }
+      };
+    } else {
+      // Default to N8N
+      targetUrl = 'https://eae.app.n8n.cloud/webhook/a6db0e86-ac57-49bc-ac5b-aed7c1ddd0e3';
+    }
+    
+    console.log(`Forwarding to: ${targetUrl}`);
+    console.log('Request body:', JSON.stringify(requestBody));
+    
+    // Forward the request to the target URL
+    const response = await fetch(targetUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    console.log(`Response status: ${response.status}`);
+    
+    // Try to get the response text
+    let responseText;
+    try {
+      responseText = await response.text();
+      console.log('Response text:', responseText);
+    } catch (textError) {
+      console.error('Error getting response text:', textError);
+      responseText = 'Error getting response text';
+    }
+    
+    // Return the response from the target
+    return res.status(response.status).send(responseText || '');
+  } catch (error) {
+    console.error('Webhook proxy error:', error);
+    return res.status(500).json({ 
+      error: 'Failed to forward request',
+      message: error.message
+    });
+  }
 });
 
 // Endpoint de email simples
@@ -124,4 +377,10 @@ app.listen(port, () => {
   console.log(`🚀 Servidor local rodando em http://localhost:${port}`);
   console.log(`📧 Resend API Key: ${process.env.RESEND_API_KEY ? 'Configurada' : 'Não configurada'}`);
   console.log(`📮 Admin Email: ${process.env.ADMIN_EMAIL || 'sweepeasellc@gmail.com'}`);
+  console.log(`🔌 API Endpoints disponíveis:`);
+  console.log(`   - GET  /api/test`);
+  console.log(`   - POST /api/simple-email`);
+  console.log(`   - POST /api/hubspot`);
+  console.log(`   - POST /api/hubspot-estimate-webhook`);
+  console.log(`   - POST /api/webhook-proxy?target=hubspot`);
 });

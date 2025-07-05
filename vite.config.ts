@@ -46,9 +46,9 @@ export default defineConfig({
       // For local development, you can run local-api-server.js and change target to http://localhost:3001
       // For production API testing, use https://devtone.agency
       '/api': {
-        target: process.env.VITE_API_URL || 'https://devtone.agency',
+        target: 'http://localhost:3001',
         changeOrigin: true,
-        secure: true,
+        secure: false,
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {
             console.log('proxy error', err);
