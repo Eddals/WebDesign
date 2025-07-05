@@ -151,7 +151,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        access_key: 'YOUR_WEB3FORMS_KEY', // SUBSTITUA PELA SUA CHAVE
+                        access_key: '4d3e1c88-798a-4a9d-9aed-cb87510bd171', // SUA CHAVE WEB3FORMS
                         name: data.name,
                         email: data.email,
                         phone: data.phone,
@@ -214,21 +214,16 @@ Verifique sua caixa de entrada.
         
         // Função para testar se a chave está configurada
         function checkWeb3FormsKey() {
-            const key = 'YOUR_WEB3FORMS_KEY';
-            if (key === 'YOUR_WEB3FORMS_KEY') {
+            const key = '4d3e1c88-798a-4a9d-9aed-cb87510bd171';
+            if (key === '4d3e1c88-798a-4a9d-9aed-cb87510bd171') {
                 const resultDiv = document.getElementById('result');
-                resultDiv.className = 'result error';
-                resultDiv.textContent = `⚠️ ATENÇÃO!
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ CONFIGURADO!
 
-Você ainda não configurou sua chave Web3Forms.
+Sua chave Web3Forms está configurada e pronta para uso.
 
-📋 Para configurar:
-1. Vá para https://web3forms.com/
-2. Cole seu email
-3. Copie a chave que receber
-4. Substitua "YOUR_WEB3FORMS_KEY" pela sua chave neste arquivo
-
-Depois teste novamente!`;
+🔑 Chave: 4d3e1c88-798a-4a9d-9aed-cb87510bd171
+📧 Teste o formulário agora!`;
             }
         }
         

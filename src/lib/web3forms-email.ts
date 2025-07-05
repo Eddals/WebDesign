@@ -28,7 +28,7 @@ export const sendEmailWeb3Forms = async (data: Web3FormsData) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        access_key: 'YOUR_WEB3FORMS_KEY', // VOCÊ PRECISA PEGAR UMA CHAVE GRATUITA
+        access_key: '4d3e1c88-798a-4a9d-9aed-cb87510bd171', // SUA CHAVE WEB3FORMS
         name: data.name,
         email: data.email,
         phone: data.phone || 'Não fornecido',
