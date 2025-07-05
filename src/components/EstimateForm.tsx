@@ -535,11 +535,12 @@ const EstimateForm: React.FC = () => {
                 {projectTypes.map((projectType) => (
                   <label
                     key={projectType.id}
-                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                    className={`flex items-center gap-3 p-4 rounded-full border cursor-pointer transition-all shadow-lg ${
                       formData.projectTypes.includes(projectType.id)
-                        ? 'border-purple-500 bg-purple-500/20'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                        ? 'border-purple-500 bg-gradient-to-r from-purple-400 to-pink-400/30 scale-105'
+                        : 'border-white/10 bg-white/10 hover:border-white/20'
                     }`}
+                    style={{ minHeight: '64px' }}
                   >
                     <input
                       type="checkbox"
@@ -547,7 +548,7 @@ const EstimateForm: React.FC = () => {
                       onChange={() => handleProjectTypeChange(projectType.id)}
                       className="sr-only"
                     />
-                    <div className="text-purple-400">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-500/20 text-purple-400">
                       {projectType.icon}
                     </div>
                     <span className="text-white font-medium">{projectType.label}</span>
@@ -576,11 +577,12 @@ const EstimateForm: React.FC = () => {
                 {budgetRanges.map((range) => (
                   <label
                     key={range.value}
-                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                    className={`flex items-center gap-3 p-4 rounded-full border cursor-pointer transition-all shadow-lg ${
                       formData.budget === range.label
-                        ? 'border-purple-500 bg-purple-500/20'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                        ? 'border-purple-500 bg-gradient-to-r from-purple-400 to-pink-400/30 scale-105'
+                        : 'border-white/10 bg-white/10 hover:border-white/20'
                     }`}
+                    style={{ minHeight: '64px' }}
                   >
                     <input
                       type="radio"
@@ -590,9 +592,9 @@ const EstimateForm: React.FC = () => {
                       onChange={handleChange}
                       className="sr-only"
                     />
-                    <div className="w-4 h-4 rounded-full border-2 border-white/30 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full border-2 border-white/30 flex items-center justify-center bg-purple-500/10">
                       {formData.budget === range.label && (
-                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
                       )}
                     </div>
                     <span className="text-white font-medium">{range.label}</span>
@@ -644,11 +646,12 @@ const EstimateForm: React.FC = () => {
                       {availableFeatures.map((feature) => (
                         <label
                           key={feature.id}
-                          className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                          className={`flex items-start gap-3 p-4 rounded-full border cursor-pointer transition-all shadow-lg ${
                             formData[category.id + 'Features' as keyof EstimateFormData]?.includes(feature.id)
-                              ? 'border-purple-500 bg-purple-500/20'
-                              : 'border-white/10 bg-white/5 hover:border-white/20'
+                              ? 'border-purple-500 bg-gradient-to-r from-purple-400 to-pink-400/30 scale-105'
+                              : 'border-white/10 bg-white/10 hover:border-white/20'
                           }`}
+                          style={{ minHeight: '64px' }}
                         >
                           <input
                             type="checkbox"
@@ -656,6 +659,9 @@ const EstimateForm: React.FC = () => {
                             onChange={() => handleCheckboxChange(category.id + 'Features', feature.id)}
                             className="mt-1"
                           />
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-500/20 text-purple-400 mr-2">
+                            {feature.icon || <CheckCircle size={20} />}
+                          </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-white font-medium">{feature.label}</span>
@@ -693,11 +699,12 @@ const EstimateForm: React.FC = () => {
                 {timelineOptions.map((option) => (
                   <label
                     key={option.value}
-                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                    className={`flex items-center gap-3 p-4 rounded-full border cursor-pointer transition-all shadow-lg ${
                       formData.timeline === option.value
-                        ? 'border-purple-500 bg-purple-500/20'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                        ? 'border-purple-500 bg-gradient-to-r from-purple-400 to-pink-400/30 scale-105'
+                        : 'border-white/10 bg-white/10 hover:border-white/20'
                     }`}
+                    style={{ minHeight: '64px' }}
                   >
                     <input
                       type="radio"
@@ -707,9 +714,9 @@ const EstimateForm: React.FC = () => {
                       onChange={handleChange}
                       className="sr-only"
                     />
-                    <div className="w-4 h-4 rounded-full border-2 border-white/30 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full border-2 border-white/30 flex items-center justify-center bg-purple-500/10">
                       {formData.timeline === option.value && (
-                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
                       )}
                     </div>
                     <span className="text-white font-medium">{option.label}</span>
