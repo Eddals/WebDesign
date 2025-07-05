@@ -380,36 +380,36 @@ const Home = () => {
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <motion.div 
               className="absolute top-[15%] left-[10%] text-purple-400/30"
-              animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ y: [0, -15], rotate: [0, 5] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
             >
               <Code size={32} />
             </motion.div>
             <motion.div 
               className="absolute top-[25%] right-[15%] text-purple-400/30"
-              animate={{ y: [0, -20, 0], rotate: [0, -5, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              animate={{ y: [0, -20], rotate: [0, -5] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1, repeatType: "reverse" }}
             >
               <Laptop size={40} />
             </motion.div>
             <motion.div 
               className="absolute bottom-[30%] left-[20%] text-purple-400/30"
-              animate={{ y: [0, -10, 0], rotate: [0, 10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              animate={{ y: [0, -10], rotate: [0, 10] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5, repeatType: "reverse" }}
             >
               <Globe size={28} />
             </motion.div>
             <motion.div 
               className="absolute bottom-[20%] right-[25%] text-purple-400/30"
-              animate={{ y: [0, -12, 0], rotate: [0, -8, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+              animate={{ y: [0, -12], rotate: [0, -8] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5, repeatType: "reverse" }}
             >
               <Smartphone size={24} />
             </motion.div>
             <motion.div 
               className="absolute top-[40%] left-[25%] text-purple-400/30"
-              animate={{ y: [0, -15, 0], rotate: [0, 15, 0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.7 }}
+              animate={{ y: [0, -15], rotate: [0, 15] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.7, repeatType: "reverse" }}
             >
               <Palette size={30} />
             </motion.div>
@@ -578,20 +578,20 @@ const Home = () => {
           >
             <motion.p 
               className="text-white/50 text-sm mb-2"
-              animate={{ y: [0, 5, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              animate={{ y: [0, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
             >
               Scroll to explore
             </motion.p>
             <motion.div 
               className="w-6 h-10 border-2 border-purple-500/30 rounded-full flex justify-center p-1"
-              animate={{ y: [0, 5, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              animate={{ y: [0, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
             >
               <motion.div 
                 className="w-1.5 h-1.5 bg-purple-500 rounded-full"
-                animate={{ y: [0, 12, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                animate={{ y: [0, 12] }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
               />
             </motion.div>
           </motion.div>
@@ -833,23 +833,23 @@ const Home = () => {
             {/* Floating particles */}
             <motion.div 
               className="absolute top-[20%] left-[15%] w-2 h-2 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -30, 0], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ y: [0, -30], opacity: [0.3, 0.6] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
             ></motion.div>
             <motion.div 
               className="absolute top-[30%] right-[25%] w-3 h-3 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -40, 0], opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              animate={{ y: [0, -40], opacity: [0.3, 0.7] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1, repeatType: "reverse" }}
             ></motion.div>
             <motion.div 
               className="absolute bottom-[40%] left-[30%] w-2 h-2 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -25, 0], opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              animate={{ y: [0, -25], opacity: [0.3, 0.5] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5, repeatType: "reverse" }}
             ></motion.div>
             <motion.div 
               className="absolute bottom-[25%] right-[20%] w-2 h-2 bg-purple-400/30 rounded-full"
-              animate={{ y: [0, -35, 0], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+              animate={{ y: [0, -35], opacity: [0.3, 0.6] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5, repeatType: "reverse" }}
             ></motion.div>
           </div>
           
