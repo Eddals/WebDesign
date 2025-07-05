@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Calculator, Clock, DollarSign, FileText } from "lucide-react";
-import SEO from '@/components/SEO';
-import EstimateForm from '@/components/EstimateForm';
+import SEO from '../components/SEO';
+import EstimateForm from '../components/EstimateForm';
 
 const Estimate = () => {
   // Animation references and effects
