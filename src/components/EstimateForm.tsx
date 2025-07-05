@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText, CheckCircle, Send, MapPin } from 'lucide-react';
 import { sendEstimateConfirmationEmail } from '../lib/brevo-email-service';
+import { sendEstimateConfirmationEmailFallback } from '../lib/email-service-fallback';
 
 interface EstimateFormData {
   full_name: string;
@@ -353,10 +354,10 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
 
-      // Send confirmation email using Brevo
+      // Send confirmation email using fallback service (since Brevo API is having issues)
       try {
-        console.log('Sending confirmation email via Brevo...');
-        const brevoResponse = await sendEstimateConfirmationEmail({
+        console.log('Sending confirmation email via fallback service...');
+        const fallbackResponse = await sendEstimateConfirmationEmailFallback({
           name: formData.full_name,
           email: formData.email,
           phone: formData.phone,
@@ -366,15 +367,15 @@ const EstimateForm: React.FC = () => {
           preferred_timeline: formData.preferred_timeline
         });
         
-        console.log('Brevo email response:', brevoResponse);
+        console.log('Fallback email response:', fallbackResponse);
         
-        if (!brevoResponse.success) {
-          console.error('Failed to send Brevo confirmation email:', brevoResponse.error);
-          // Continue even if Brevo email fails
+        if (!fallbackResponse.success) {
+          console.error('Failed to send fallback confirmation email:', fallbackResponse.error);
+          // Continue even if fallback email fails
         }
-      } catch (brevoError) {
-        console.error('Error sending Brevo confirmation email:', brevoError);
-        // Continue even if Brevo email fails
+      } catch (fallbackError) {
+        console.error('Error sending fallback confirmation email:', fallbackError);
+        // Continue even if fallback email fails
       }
       
       // Show success message

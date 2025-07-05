@@ -5,7 +5,14 @@
  * Run with: node scripts/test-vercel-deployment.js
  */
 
-const fetch = require('node-fetch');
+// Use node-fetch if available, otherwise use global fetch
+let fetch;
+try {
+  fetch = require('node-fetch');
+} catch (error) {
+  // In Node.js 18+, fetch is available globally
+  fetch = global.fetch;
+}
 
 const BASE_URL = 'https://devtone.agency';
 
