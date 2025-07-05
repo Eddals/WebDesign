@@ -186,12 +186,12 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
       
-      // Send to new HubSpot webhook via n8n
+      // Send to new HubSpot webhook via n8n (using our proxy to avoid CORS)
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
         
-        const response = await fetch('https://devtone.app.n8n.cloud/webhook-test/https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ', {
+        const response = await fetch('/api/n8n-webhook-proxy', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

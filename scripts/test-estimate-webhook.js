@@ -1,7 +1,10 @@
 // Test script for the Estimate form webhook
 // Run with: node scripts/test-estimate-webhook.js
 
-const webhookUrl = 'https://devtone.app.n8n.cloud/webhook-test/https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ';
+// Use the proxy endpoint URL when testing from the browser
+const webhookUrl = '/api/n8n-webhook-proxy';
+// For direct testing with Node.js, use the full URL
+// const webhookUrl = 'https://devtone.app.n8n.cloud/webhook-test/https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ';
 
 async function testWebhook() {
   console.log('🧪 Testing Estimate form webhook...');

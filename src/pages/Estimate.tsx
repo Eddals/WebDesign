@@ -446,10 +446,8 @@ const Estimate = () => {
         
         console.log('Sending data to webhook:', webhookData);
         
-        // Send to the new webhook URL
-        const webhookUrl = 'https://devtone.app.n8n.cloud/webhook-test/https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ';
-          
-        const webhookResponse = await fetch(webhookUrl, {
+        // Send to our proxy API endpoint that will forward to n8n
+        const webhookResponse = await fetch('/api/n8n-webhook-proxy', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
