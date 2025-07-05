@@ -310,70 +310,9 @@ const EstimateForm: React.FC = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const estimatedCost = calculateEstimatedCost();
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const estimateData = {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.companyName,
-        country: formData.country,
-        industry: formData.industry,
-        projectType: formData.projectTypes.join(', '),
-        budget: formData.budget,
-        timeline: formData.timeline,
-        description: formData.additionalRequirements,
-        features: {
-          core: formData.coreFeatures,
-          ecommerce: formData.ecommerceFeatures,
-          design: formData.designFeatures,
-          integrations: formData.integrations,
-          maintenance: formData.maintenanceAddons
-        },
-        estimatedCost: estimatedCost
-      };
-
-      // Send to HubSpot API
-      try {
-        const apiUrl = window.location.origin + '/api/hubspot';
-        const hubspotResponse = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(estimateData)
-        });
-
-        if (!hubspotResponse.ok) {
-          console.error('HubSpot API error:', hubspotResponse.status);
-        }
-      } catch (hubspotError) {
-        console.error('Error sending to HubSpot API:', hubspotError);
-      }
-
-      // Send to estimate API
-      try {
-        const apiUrl = import.meta.env.VITE_ESTIMATE_API_URL || 'http://localhost:3002';
-        const response = await fetch(`${apiUrl}/api/estimate`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(estimateData)
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to submit estimate');
-        }
-
-        const result = await response.json();
-        console.log('Estimate API response:', result);
-      } catch (apiError) {
-        console.error('Error sending to estimate API:', apiError);
-      }
-
       setIsSubmitted(true);
       setSubmitStatus({ type: 'success', message: 'Your estimate request has been submitted successfully! We\'ll get back to you within 24 hours.' });
     } catch (error) {
