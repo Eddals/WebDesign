@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test HubSpot Webhook</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005a9e;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      white-space: pre-wrap;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,0.3);
+      border-radius: 50%;
+      border-top-color: #0078d4;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Test HubSpot Webhook Integration</h1>
+  <p>Use this form to test the HubSpot webhook integration. Fill in the fields and click "Send Test" to submit the data.</p>
+  
+  <div class="form-group">
+    <label for="full_name">Full Name:</label>
+    <input type="text" id="full_name" value="Test User">
+  </div>
+  
+  <div class="form-group">
+    <label for="email">Email:</label>
+    <input type="email" id="email" value="test@example.com">
+  </div>
+  
+  <div class="form-group">
+    <label for="phone">Phone:</label>
+    <input type="text" id="phone" value="+1234567890">
+  </div>
+  
+  <div class="form-group">
+    <label for="service_type">Service Type:</label>
+    <input type="text" id="service_type" value="Web Development">
+  </div>
+  
+  <div class="form-group">
+    <label for="property_type">Property Type:</label>
+    <input type="text" id="property_type" value="Commercial">
+  </div>
+  
+  <div class="form-group">
+    <label for="location">Location:</label>
+    <input type="text" id="location" value="New York, USA">
+  </div>
+  
+  <div class="form-group">
+    <label for="project_description">Project Description:</label>
+    <textarea id="project_description" rows="4">This is a test project description.</textarea>
+  </div>
+  
+  <div class="form-group">
+    <label for="endpoint">Endpoint to Test:</label>
+    <select id="endpoint">
+      <option value="/api/webhook-proxy?target=hubspot">Webhook Proxy (Recommended)</option>
+      <option value="/api/hubspot-estimate-webhook">Direct API Endpoint</option>
+      <option value="/api/hubspot">HubSpot Contact API</option>
+    </select>
+  </div>
+  
+  <button id="sendButton" onclick="sendTest()">Send Test</button>
+  
+  <div id="result" class="result" style="display: none;"></div>
+  
+  <script>
+    async function sendTest() {
+      const resultDiv = document.getElementById('result');
+      const sendButton = document.getElementById('sendButton');
+      const endpoint = document.getElementById('endpoint').value;
+      
+      // Show loading state
+      sendButton.innerHTML = '<span class="loading"></span>Sending...';
+      sendButton.disabled = true;
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = 'Sending request...';
+      
+      try {
+        // Prepare form data
+        const formData = {
+          full_name: document.getElementById('full_name').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          service_type: document.getElementById('service_type').value,
+          project_description: document.getElementById('project_description').value,
+          property_type: document.getElementById('property_type').value,
+          location: document.getElementById('location').value,
+          estimated_budget: '$5000',
+          preferred_timeline: '1-2 weeks',
+          property_size: '1000 sq ft'
+        };
+        
+        console.log('Sending data to:', endpoint);
+        console.log('Request data:', formData);
+        
+        // Send the request
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        console.log('Response status:', response.status);
+        
+        // Try to parse response as JSON
+        let responseData;
+        try {
+          const text = await response.text();
+          console.log('Response text:', text);
+          
+          try {
+            responseData = JSON.parse(text);
+          } catch (parseError) {
+            responseData = { text };
+          }
+        } catch (error) {
+          responseData = { error: 'Failed to get response text' };
+        }
+        
+        // Display the result
+        resultDiv.innerHTML = `
+          <strong>Status:</strong> ${response.status} ${response.ok ? '✅' : '❌'}<br>
+          <strong>Response:</strong><br>
+          ${JSON.stringify(responseData, null, 2)}
+        `;
+      } catch (error) {
+        console.error('Error:', error);
+        resultDiv.innerHTML = `
+          <strong>Error:</strong> ❌<br>
+          ${error.message || 'Unknown error'}
+        `;
+      } finally {
+        // Reset button state
+        sendButton.innerHTML = 'Send Test';
+        sendButton.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
