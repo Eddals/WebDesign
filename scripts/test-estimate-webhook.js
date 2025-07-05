@@ -1,7 +1,7 @@
 // Test script for the Estimate form webhook
 // Run with: node scripts/test-estimate-webhook.js
 
-const webhookUrl = 'https://cloud.activepieces.com/api/v1/webhooks/Eo8FG9ZTw1kVqILR0GxRg';
+const webhookUrl = 'https://devtone.app.n8n.cloud/webhook-test/https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ';
 
 async function testWebhook() {
   console.log('🧪 Testing Estimate form webhook...');

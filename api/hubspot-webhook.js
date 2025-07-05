@@ -14,7 +14,7 @@ app.use(express.json());
 // Proxy endpoint
 app.post('/webhook', async (req, res) => {
   try {
-    const webhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/JHi6t1H';
+    const webhookUrl = 'https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ';
     
     const response = await fetch(webhookUrl, {
       method: 'POST',

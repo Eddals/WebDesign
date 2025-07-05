@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Forward the request body to HubSpot webhook endpoint
-    const hubspotRes = await fetch('https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/JHi6t1H', {
+    const hubspotRes = await fetch('https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Envia os dados recebidos para o webhook do HubSpot
-    const hubspotRes = await fetch('https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/d2CLZAZ', {
+    const hubspotRes = await fetch('https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
