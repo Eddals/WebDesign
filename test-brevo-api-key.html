@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Brevo API Key</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .info {
+            background: #e2e3e5;
+            border: 1px solid #d6d8db;
+            color: #383d41;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Test Brevo API Key</h1>
+        <p>Teste se sua API key do Brevo está ativada e funcionando.</p>
+        
+        <div class="form-group">
+            <label for="apiKey">API Key do Brevo:</label>
+            <input type="text" id="apiKey" value="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" placeholder="Cole sua API key aqui">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email de Teste:</label>
+            <input type="email" id="email" value="teste@exemplo.com" placeholder="Email para receber o teste">
+        </div>
+        
+        <div class="form-group">
+            <label for="templateId">Template ID:</label>
+            <input type="number" id="templateId" value="2" placeholder="ID do template">
+        </div>
+        
+        <button onclick="testApiKey()">🧪 Testar API Key</button>
+        <button onclick="checkTemplates()">📋 Verificar Templates</button>
+        <button onclick="checkAccount()">👤 Verificar Conta</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testApiKey() {
+            const resultDiv = document.getElementById('result');
+            const apiKey = document.getElementById('apiKey').value;
+            const email = document.getElementById('email').value;
+            const templateId = parseInt(document.getElementById('templateId').value);
+            
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '🔄 Testando API key...';
+            
+            try {
+                console.log('🧪 Testando API key do Brevo...');
+                console.log('📧 Email:', email);
+                console.log('📋 Template ID:', templateId);
+                
+                const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api-key': apiKey
+                    },
+                    body: JSON.stringify({
+                        to: [{email: email, name: 'Teste'}],
+                        templateId: templateId,
+                        params: {
+                            FIRSTNAME: 'Teste',
+                            message: 'Este é um email de teste para verificar se a API key está funcionando.'
+                        },
+                        sender: {
+                            name: 'Devtone Agency',
+                            email: 'team@devtone.agency'
+                        }
+                    })
+                });
+                
+                console.log('📥 Response status:', response.status);
+                console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+                
+                const responseText = await response.text();
+                console.log('📥 Response text:', responseText);
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ SUCESSO! API key está funcionando!
+
+📧 Email enviado para: ${email}
+📋 Template ID: ${templateId}
+📄 Response: ${responseText}
+
+🎉 Sua API key está ativada e funcionando corretamente!`;
+                } else {
+                    let errorMessage = responseText;
+                    try {
+                        const errorData = JSON.parse(responseText);
+                        errorMessage = errorData.message || errorData.error || responseText;
+                    } catch (e) {
+                        // Keep original response text
+                    }
+                    
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ ERRO! API key não está funcionando.
+
+🚨 Status: ${response.status} ${response.statusText}
+🚨 Erro: ${errorMessage}
+
+💡 Possíveis soluções:
+1. Ative a API key no dashboard do Brevo
+2. Verifique se tem permissões SMTP API
+3. Confirme se o template ID ${templateId} existe
+4. Verifique se o domínio está autorizado`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERRO! Falha na requisição.
+
+🚨 Error: ${error.message}
+
+💡 Verifique:
+1. Conexão com internet
+2. API key válida
+3. CORS não está bloqueando`;
+                console.error('Erro na requisição:', error);
+            }
+        }
+        
+        async function checkTemplates() {
+            const resultDiv = document.getElementById('result');
+            const apiKey = document.getElementById('apiKey').value;
+            
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '🔄 Verificando templates...';
+            
+            try {
+                const response = await fetch('https://api.brevo.com/v3/senders', {
+                    headers: {
+                        'api-key': apiKey
+                    }
+                });
+                
+                const responseText = await response.text();
+                console.log('Templates response:', responseText);
+                
+                if (response.ok) {
+                    resultDiv.className = 'result info';
+                    resultDiv.textContent = `📋 Templates encontrados:
+
+${responseText}
+
+💡 Use o ID correto no campo Template ID acima.`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Erro ao verificar templates:
+
+${responseText}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Erro: ${error.message}`;
+            }
+        }
+        
+        async function checkAccount() {
+            const resultDiv = document.getElementById('result');
+            const apiKey = document.getElementById('apiKey').value;
+            
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '🔄 Verificando conta...';
+            
+            try {
+                const response = await fetch('https://api.brevo.com/v3/account', {
+                    headers: {
+                        'api-key': apiKey
+                    }
+                });
+                
+                const responseText = await response.text();
+                console.log('Account response:', responseText);
+                
+                if (response.ok) {
+                    const accountData = JSON.parse(responseText);
+                    resultDiv.className = 'result info';
+                    resultDiv.textContent = `👤 Informações da Conta:
+
+📧 Email: ${accountData.email || 'N/A'}
+🏢 Empresa: ${accountData.companyName || 'N/A'}
+📊 Plano: ${accountData.plan || 'N/A'}
+📈 Status: ${accountData.status || 'N/A'}
+
+💡 Verifique se sua conta está ativa e tem permissões para SMTP API.`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Erro ao verificar conta:
+
+${responseText}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Erro: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html> 

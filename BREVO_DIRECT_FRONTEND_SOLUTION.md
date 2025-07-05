@@ -34,7 +34,7 @@ Arquivo HTML standalone para testar o serviço direto:
 
 1. **Frontend → Brevo API**: O frontend chama diretamente `https://api.brevo.com/v3/smtp/email`
 2. **Sem Vercel**: Bypassa completamente os problemas de deployment do Vercel
-3. **API Key**: Usa a chave `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`
+3. **API Key**: Usa a chave `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` ✅ **ATIVA**
 4. **Template ID**: Usa o template ID `2`
 5. **Fallback**: ActivePieces webhook continua funcionando como backup
 

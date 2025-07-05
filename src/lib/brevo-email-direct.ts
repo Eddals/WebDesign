@@ -19,7 +19,7 @@ export const sendBrevoEmailDirect = async (params: BrevoEmailParams) => {
     console.log('📋 Params:', params);
     
     // Your Brevo API key
-    const apiKey = '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';
+    const apiKey = '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';
     
     // Prepare the email data for Brevo API
     const emailData = {
