@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, User, Mail, Phone, Building, Calendar, DollarSign, FileText, CheckCircle, Send } from 'lucide-react';
 
 interface EstimateFormData {
   full_name: string;
