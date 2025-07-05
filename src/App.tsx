@@ -18,7 +18,7 @@ const Seo = lazy(() => import('./pages/SEO'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Pricing = lazy(() => import('./pages/Pricing'));
-// const Estimate = lazy(() => import('./pages/Estimate'));
+const Estimate = lazy(() => import('./pages/Estimate'));
 const Success = lazy(() => import('./pages/Success'));
 const Cancel = lazy(() => import('./pages/Cancel'));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -90,7 +90,7 @@ export default function App() {
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/pricing" element={<Pricing />} />
-                        {/* <Route path="/estimate" element={<Estimate />} /> */}
+                        <Route path="/estimate" element={<Estimate />} />
                         <Route path="/success" element={<Success />} />
                         <Route path="/cancel" element={<Cancel />} />
                         <Route path="/faq" element={<FAQ />} />
