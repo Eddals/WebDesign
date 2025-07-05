@@ -186,6 +186,27 @@ const EstimateForm: React.FC = () => {
         // Continue even if webhook fails
       }
       
+      // Send to new HubSpot webhook via n8n
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const response = await fetch('https://devtone.app.n8n.cloud/webhook-test/https://api-na2.hubapi.com/automation/v4/webhook-triggers/243199316/cq2QrNJ', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookData),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('HubSpot n8n webhook response status:', response.status);
+      } catch (webhookError) {
+        console.error('Error sending to HubSpot n8n webhook:', webhookError);
+        // Continue even if webhook fails
+      }
+      
       // Also send to ActivePieces webhook (keeping as backup)
       try {
         const controller = new AbortController();
