@@ -526,8 +526,8 @@ const Home = () => {
                       <div className="relative flex items-center justify-center">
                         <span className="text-white/90 mr-4">Get Free Estimate</span>
                         <motion.div
-                          animate={{ y: [0, -4, 0] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          animate={{ y: [0, -4] }}
+                          transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
                         >
                           <Sparkles className="w-5 h-5 text-purple-200/90" />
                         </motion.div>
@@ -556,8 +556,8 @@ const Home = () => {
                       <div className="relative flex items-center justify-center">
                         <span className="text-white/90 mr-4">Contact Us</span>
                         <motion.div
-                          animate={{ rotate: [0, 10, 0] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          animate={{ rotate: [0, 10] }}
+                          transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
                         >
                           <Mail className="w-5 h-5 text-purple-200/90" />
                         </motion.div>
