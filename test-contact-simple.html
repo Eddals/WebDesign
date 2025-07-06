@@ -3,161 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste Contato Brevo</title>
+    <title>Test Contact Form - DevTone</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            background: #030718;
-            color: white;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         label {
             display: block;
             margin-bottom: 5px;
-            color: #a855f7;
+            font-weight: bold;
         }
         input, textarea, select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #333;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            background: #1a1a1a;
-            color: white;
+            font-size: 16px;
         }
         button {
-            background: #a855f7;
+            background: #007bff;
             color: white;
-            padding: 12px 24px;
+            padding: 12px 30px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
         }
         button:hover {
-            background: #9333ea;
+            background: #0056b3;
         }
         .result {
             margin-top: 20px;
             padding: 15px;
             border-radius: 5px;
-            white-space: pre-wrap;
+            display: none;
         }
         .success {
-            background: #065f46;
-            border: 1px solid #10b981;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
         .error {
-            background: #7f1d1d;
-            border: 1px solid #ef4444;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
     </style>
 </head>
 <body>
-    <h1>🧪 Teste Formulário de Contato - Brevo</h1>
-    <p>Teste direto do endpoint <code>/api/contact-brevo</code> com Template ID #5</p>
-
-    <form id="contactForm">
-        <div class="form-group">
-            <label for="name">Nome *</label>
-            <input type="text" id="name" name="name" value="João Silva" required>
-        </div>
-
-        <div class="form-group">
-            <label for="email">Email *</label>
-            <input type="email" id="email" name="email" value="joao.silva@exemplo.com" required>
-        </div>
-
-        <div class="form-group">
-            <label for="phone">Telefone</label>
-            <input type="tel" id="phone" name="phone" value="+55 (11) 99999-9999">
-        </div>
-
-        <div class="form-group">
-            <label for="company">Empresa</label>
-            <input type="text" id="company" name="company" value="Empresa Teste Ltda">
-        </div>
-
-        <div class="form-group">
-            <label for="subject">Assunto *</label>
-            <select id="subject" name="subject" required>
-                <option value="general-inquiry">Consulta Geral</option>
-                <option value="technical-support">Suporte Técnico</option>
-                <option value="billing-question">Dúvida sobre Cobrança</option>
-                <option value="website-issue">Problema no Website</option>
-                <option value="feedback">Feedback</option>
-                <option value="partnership">Oportunidade de Parceria</option>
-                <option value="other">Outro</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="message">Mensagem *</label>
-            <textarea id="message" name="message" rows="5" required>Olá! Gostaria de saber mais sobre os serviços de desenvolvimento web da DevTone Agency. Podem me enviar informações sobre preços e prazos? Estou interessado em criar um site profissional para minha empresa.</textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="preferredContact">Contato Preferido</label>
-            <select id="preferredContact" name="preferredContact">
-                <option value="email">Email</option>
-                <option value="phone">Telefone</option>
-            </select>
-        </div>
-
-        <button type="submit">📧 Enviar Mensagem</button>
-    </form>
-
-    <div id="result"></div>
+    <div class="container">
+        <h1>🧪 Test Contact Form</h1>
+        <p>Testando o endpoint <code>/api/contact-brevo</code></p>
+        
+        <form id="contactForm">
+            <div class="form-group">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" name="name" value="Teste" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="test@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Telefone:</label>
+                <input type="tel" id="phone" name="phone" value="123456789">
+            </div>
+            
+            <div class="form-group">
+                <label for="company">Empresa:</label>
+                <input type="text" id="company" name="company" value="Test Company">
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Assunto:</label>
+                <select id="subject" name="subject" required>
+                    <option value="general-inquiry">Consulta Geral</option>
+                    <option value="project-quote">Orçamento de Projeto</option>
+                    <option value="billing-question">Dúvida sobre Faturamento</option>
+                    <option value="partnership">Parceria</option>
+                    <option value="other">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Mensagem:</label>
+                <textarea id="message" name="message" rows="4" required>Mensagem de teste</textarea>
+            </div>
+            
+            <button type="submit">Enviar Teste</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+    </div>
 
     <script>
-        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '🔄 Enviando...';
-            resultDiv.className = 'result';
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result loading';
+            resultDiv.innerHTML = '⏳ Enviando...';
             
-            const formData = new FormData(e.target);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                company: formData.get('company'),
-                subject: formData.get('subject'),
-                message: formData.get('message'),
-                preferredContact: formData.get('preferredContact')
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                company: document.getElementById('company').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
             };
-
-            console.log('📧 Enviando dados:', data);
-
+            
             try {
-                const response = await fetch('http://localhost:3001/api/contact-brevo', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
+                console.log('📧 Enviando dados:', formData);
                 
-                console.log('📊 Resposta:', result);
-
-                if (result.success) {
-                    resultDiv.innerHTML = `✅ Sucesso!\n\nMensagem: ${result.message}\n\n📧 Email enviado via Brevo com Template ID #5\n📧 Confirmação enviada para: ${data.email}\n📧 Notificação enviada para: team@devtone.agency`;
+                const response = await fetch('/api/contact-brevo', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                console.log('📊 Status da resposta:', response.status);
+                
+                const result = await response.json();
+                console.log('📧 Resposta:', result);
+                
+                if (response.ok) {
                     resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        ✅ <strong>Sucesso!</strong><br>
+                        Status: ${response.status}<br>
+                        Mensagem: ${result.message}<br>
+                        Dados enviados: ${JSON.stringify(formData, null, 2)}
+                    `;
                 } else {
-                    resultDiv.innerHTML = `❌ Erro!\n\nErro: ${result.error}\n\nStatus: ${response.status}`;
                     resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        ❌ <strong>Erro!</strong><br>
+                        Status: ${response.status}<br>
+                        Erro: ${result.error || 'Erro desconhecido'}<br>
+                        Dados tentados: ${JSON.stringify(formData, null, 2)}
+                    `;
                 }
+                
             } catch (error) {
                 console.error('❌ Erro:', error);
-                resultDiv.innerHTML = `❌ Erro de conexão!\n\nErro: ${error.message}\n\nVerifique se o servidor está rodando:\nnode local-api-server.js`;
                 resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    ❌ <strong>Erro de Rede!</strong><br>
+                    Erro: ${error.message}<br>
+                    Dados tentados: ${JSON.stringify(formData, null, 2)}
+                `;
             }
         });
     </script>
