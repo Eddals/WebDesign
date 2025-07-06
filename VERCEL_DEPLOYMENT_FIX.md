@@ -25,6 +25,19 @@ O erro 405 está acontecendo no Vercel porque os endpoints da API não estão se
       "src": "api/**/*.js",
       "use": "@vercel/node"
     }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }
 ```
@@ -185,3 +198,131 @@ Após as correções:
 
 **Status**: ✅ **CONFIGURAÇÃO VERCEL CORRIGIDA**
 **Próximo passo**: Fazer deploy e testar os endpoints 
+
+# Correção do Erro de Runtime no Vercel
+
+## 🚨 Erro Identificado
+```
+Error: Function Runtimes must have a valid version, for example `now-php@1.0.0`.
+```
+
+## 🔧 Correções Aplicadas
+
+### 1. vercel.json Corrigido
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
+```
+
+### 2. Removido node-fetch
+- Substituído por fetch nativo (disponível no Node.js 18+)
+- Removido import `node-fetch` dos endpoints
+
+### 3. package.json Atualizado
+```json
+{
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+```
+
+### 4. .vercelignore Criado
+- Exclui arquivos desnecessários do deploy
+- Otimiza o build
+
+## 🚀 Deploy
+
+### 1. Commit das Correções
+```bash
+git add .
+git commit -m "Fix Vercel runtime error and remove node-fetch dependency"
+git push origin main
+```
+
+### 2. Verificar no Vercel
+1. Acesse o painel do Vercel
+2. Vá para o projeto
+3. Verifique se o deploy foi bem-sucedido
+4. Confirme que não há erros de build
+
+### 3. Testar Endpoints
+1. **Health Check**: `https://devtone.agency/api/health`
+2. **Contact**: `https://devtone.agency/api/contact-brevo`
+3. **Estimate**: `https://devtone.agency/api/estimate-brevo`
+
+## 🔍 Verificações
+
+### Build Logs
+- ✅ Sem erros de runtime
+- ✅ APIs sendo buildadas corretamente
+- ✅ Vite build funcionando
+
+### Function Logs
+- ✅ Endpoints respondendo
+- ✅ CORS funcionando
+- ✅ Brevo API conectando
+
+### Site Funcionando
+- ✅ Formulários enviando
+- ✅ Emails chegando
+- ✅ Sem erros 405
+
+## 📋 Checklist Final
+
+- [ ] vercel.json com builds corretos
+- [ ] node-fetch removido
+- [ ] package.json com engines
+- [ ] .vercelignore configurado
+- [ ] Deploy sem erros
+- [ ] Health check funcionando
+- [ ] Formulários funcionando
+- [ ] Emails sendo enviados
+
+## 🛠️ Se Ainda Houver Problemas
+
+### 1. Verificar Versão do Node.js
+No Vercel, confirme que está usando Node.js 18+
+
+### 2. Limpar Cache
+```bash
+# No Vercel, vá em Settings > General > Clear Build Cache
+```
+
+### 3. Rebuild Manual
+No Vercel, force um novo deploy
+
+### 4. Verificar Dependências
+Confirme que todas as dependências estão em `dependencies` e não em `devDependencies`
+
+---
+
+**Status**: 🔧 Corrigindo erro de runtime
+**Última atualização**: $(date) 
