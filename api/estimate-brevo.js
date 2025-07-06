@@ -1,10 +1,11 @@
 import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  // Enable CORS
+  // Enable CORS for all origins
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Max-Age', '86400');
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
@@ -17,7 +18,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ 
       success: false,
       error: 'Method not allowed',
-      allowedMethods: ['POST']
+      allowedMethods: ['POST'],
+      receivedMethod: req.method
     });
   }
 
@@ -159,9 +161,22 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Estimate submission error:', error);
-    return res.status(500).json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to submit estimate request' 
-    });
+    
+    // Ensure we always return a valid JSON response
+    try {
+      return res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to submit estimate request',
+        timestamp: new Date().toISOString()
+      });
+    } catch (jsonError) {
+      // Fallback if JSON serialization fails
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(500).end(JSON.stringify({
+        success: false,
+        error: 'Internal server error',
+        timestamp: new Date().toISOString()
+      }));
+    }
   }
 } 
