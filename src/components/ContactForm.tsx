@@ -3,20 +3,23 @@ import { motion } from 'framer-motion';
 import { Send } from 'lucide-react';
 
 interface ContactFormData {
-  full_name: string;
+  name: string;
   email: string;
   phone: string;
   subject: string;
   message: string;
+  company?: string;
+  preferredContact?: string;
 }
 
 const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState<ContactFormData>({
-    full_name: '',
+    name: '',
     email: '',
     phone: '',
     subject: '',
-    message: ''
+    message: '',
+    preferredContact: 'email'
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +51,7 @@ const ContactForm: React.FC = () => {
       // Send to Make.com webhook
       try {
         const webhookData = {
-          nome: formData.full_name,
+          nome: formData.name,
           email: formData.email,
           telefone: formData.phone,
           assunto: formData.subject,
@@ -85,7 +88,25 @@ const ContactForm: React.FC = () => {
         body: JSON.stringify(formData)
       });
 
-      const result = await response.json();
+      console.log('API response status:', response.status);
+      
+      // Check if the response is ok before trying to parse JSON
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Error submitting contact form:', errorText);
+        throw new Error(`Server responded with ${response.status}: ${errorText || 'No error details'}`);
+      }
+      
+      // Try to parse the JSON response
+      let result;
+      try {
+        const text = await response.text();
+        console.log('Response text:', text);
+        result = text ? JSON.parse(text) : { success: false, message: 'Empty response' };
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', parseError);
+        throw new Error('Invalid response from server');
+      }
 
       if (result.success) {
         setSubmitStatus({
@@ -95,11 +116,12 @@ const ContactForm: React.FC = () => {
         
         // Clear form on success
         setFormData({
-          full_name: '',
+          name: '',
           email: '',
           phone: '',
           subject: '',
-          message: ''
+          message: '',
+          preferredContact: 'email'
         });
         
         // Log success for analytics
@@ -113,13 +135,23 @@ const ContactForm: React.FC = () => {
         throw new Error(result.message || result.error || 'Failed to send message');
       }
     } catch (error) {
-      console.error('Error submitting contact form:', error);
+      console.error('❌ Error submitting contact form:', error);
+      console.log('Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        formData: formData
+      });
       
       // Handle network errors
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
         setSubmitStatus({
           type: 'error',
           message: 'Network error. Please check your connection and try again.'
+        });
+      } else if (error instanceof Error && error.message.includes('405')) {
+        setSubmitStatus({
+          type: 'error',
+          message: 'The server rejected this request. Please try again later or contact us directly.'
         });
       } else {
         setSubmitStatus({
@@ -129,6 +161,7 @@ const ContactForm: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      console.log('🏁 Contact submission completed');
     }
   };
 
@@ -143,15 +176,15 @@ const ContactForm: React.FC = () => {
       >
         <div className="space-y-6">
           <div>
-            <label htmlFor="full_name" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
               Full Name *
             </label>
             <input
               type="text"
-              id="full_name"
-              name="full_name"
+              id="name"
+              name="name"
               required
-              value={formData.full_name}
+              value={formData.name}
               onChange={handleChange}
               className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
               placeholder="Enter your full name"
