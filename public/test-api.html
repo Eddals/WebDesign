@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4a5568;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #2d3748;
+    }
+    pre {
+      background-color: #f7fafc;
+      padding: 15px;
+      border-radius: 4px;
+      overflow: auto;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>API Test Page</h1>
+  
+  <div>
+    <h2>Test Endpoints</h2>
+    <button onclick="testEndpoint('/api/test')">Test API</button>
+    <button onclick="testEndpoint('/api/contact-brevo')">Test Contact API (GET)</button>
+    <button onclick="testContactPost()">Test Contact API (POST)</button>
+  </div>
+  
+  <div>
+    <h2>Results</h2>
+    <pre id="results">Click a button to test an endpoint...</pre>
+  </div>
+
+  <script>
+    const resultsElement = document.getElementById('results');
+    
+    async function testEndpoint(endpoint) {
+      resultsElement.innerHTML = `Testing ${endpoint}...`;
+      resultsElement.className = '';
+      
+      try {
+        const response = await fetch(endpoint);
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          resultsElement.innerHTML = `Status: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`;
+          resultsElement.className = response.ok ? 'success' : 'error';
+        } else {
+          const text = await response.text();
+          resultsElement.innerHTML = `Status: ${response.status}\n\nResponse:\n${text}`;
+          resultsElement.className = response.ok ? 'success' : 'error';
+        }
+      } catch (error) {
+        resultsElement.innerHTML = `Error: ${error.message}`;
+        resultsElement.className = 'error';
+      }
+    }
+    
+    async function testContactPost() {
+      resultsElement.innerHTML = 'Testing /api/contact-brevo with POST...';
+      resultsElement.className = '';
+      
+      const testData = {
+        name: 'Test User',
+        email: 'test@example.com',
+        phone: '123-456-7890',
+        company: 'Test Company',
+        subject: 'API Test',
+        message: 'This is a test message from the API test page.'
+      };
+      
+      try {
+        const response = await fetch('/api/contact-brevo', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(testData)
+        });
+        
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          resultsElement.innerHTML = `Status: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}\n\nRequest Data:\n${JSON.stringify(testData, null, 2)}`;
+          resultsElement.className = response.ok ? 'success' : 'error';
+        } else {
+          const text = await response.text();
+          resultsElement.innerHTML = `Status: ${response.status}\n\nResponse:\n${text}\n\nRequest Data:\n${JSON.stringify(testData, null, 2)}`;
+          resultsElement.className = response.ok ? 'success' : 'error';
+        }
+      } catch (error) {
+        resultsElement.innerHTML = `Error: ${error.message}\n\nRequest Data:\n${JSON.stringify(testData, null, 2)}`;
+        resultsElement.className = 'error';
+      }
+    }
+  </script>
+</body>
+</html>
