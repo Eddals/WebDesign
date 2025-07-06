@@ -2,28 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "WebDesign/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     },
     {
-      "src": "WebDesign/api/**/*.js",
-      "use": "@vercel/node"
+      "src": "package.json",
+      "use": "@vercel/static-build"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "WebDesign/api/$1.js"
+      "dest": "api/$1.js"
     },
     {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "WebDesign/index.html"
+      "dest": "/index.html"
     }
   ]
 }
