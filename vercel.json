@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/contact-brevo.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
-} 
