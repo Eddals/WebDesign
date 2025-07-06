@@ -18,7 +18,7 @@ export default function DevtoneDashboard() {
   // Only redirect after component has mounted and the state has been updated
   useEffect(() => {
     if (shouldRedirect) {
-      window.location.href = 'http://localhost:3001';
+      window.location.href = 'https://devtone.agency/devtone-dashboard';
     }
   }, [shouldRedirect]);
 
@@ -37,7 +37,7 @@ export default function DevtoneDashboard() {
             <div className="w-20 h-1 bg-purple-600 mx-auto"></div>
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400 mx-auto"></div>
             <p className="text-white/60 text-sm">
-              If you are not redirected automatically, <a href="http://localhost:3001" className="text-purple-400 hover:text-purple-300">click here</a>.
+              If you are not redirected automatically, <a href="/devtone-dashboard" className="text-purple-400 hover:text-purple-300">click here</a>.
             </p>
             <div className="mt-4 p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg">
               <p className="text-blue-200 text-xs">

@@ -36,10 +36,8 @@ const Pricing = () => {
   // Security check
   React.useEffect(() => {
     // Check if we're on HTTPS in production
-    if (typeof window !== 'undefined') {
-      const isSecureConnection = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
-      setIsSecure(isSecureConnection);
-    }
+    const isSecureConnection = window.location.protocol === 'https:';
+    setIsSecure(isSecureConnection);
   }, []);
 
   // Handle package selection
