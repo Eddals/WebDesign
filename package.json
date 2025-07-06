@@ -2,7 +2,7 @@
   "name": "devtone-website",
   "version": "1.0.0",
   "description": "DevTone - Professional Web Development Agency",
-  "main": "index.js",
+  "main": "src/main.js",
   "engines": {
     "node": ">=18.0.0"
   },
