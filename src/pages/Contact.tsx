@@ -150,7 +150,15 @@ const Contact = () => {
         body: JSON.stringify(emailData)
       });
 
-      const result = await brevoResponse.json();
+      let result;
+      try {
+        result = await brevoResponse.json();
+      } catch (err) {
+        console.error('❌ Resposta não foi JSON válido:', err);
+        console.error('Status:', brevoResponse.status);
+        console.error('Status Text:', brevoResponse.statusText);
+        throw new Error(`API retornou resposta inválida: ${brevoResponse.status} ${brevoResponse.statusText}`);
+      }
       
       console.log('📧 Contact form response:', result);
       
