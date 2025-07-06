@@ -1,48 +1,41 @@
-// Using native fetch (available in Node.js 18+)
-
+// Contact form endpoint for Brevo
 export default async function handler(req, res) {
-  // Enable CORS for all origins
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.setHeader('Access-Control-Max-Age', '86400');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight requests
+  // Handle preflight
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
-  // Only allow POST requests
+  // Only allow POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
+    return res.status(405).json({
       success: false,
       error: 'Method not allowed',
-      allowedMethods: ['POST'],
-      receivedMethod: req.method
+      method: req.method
     });
   }
 
-  console.log('📧 Recebida requisição para Brevo Contact:', req.body);
-  
   try {
     const data = req.body;
     
     // Validate required fields
     if (!data.name || !data.email || !data.subject || !data.message) {
-      console.log('Missing required fields');
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
+      });
     }
 
-    console.log('Validation passed, sending email...');
+    // Brevo configuration
+    const BREVO_API_KEY = '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';
+    const TEAM_EMAIL = 'team@devtone.agency';
 
-    const BREVO_CONFIG = {
-      API_KEY: process.env.BREVO_API_KEY || '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',
-      API_URL: 'https://api.brevo.com/v3/smtp/email',
-      TEAM_EMAIL: process.env.TEAM_EMAIL || 'team@devtone.agency'
-    };
-
-    // Send email to team using Brevo template ID #5
+    // Email data for team
     const emailData = {
       sender: {
         name: 'DevTone Agency',
@@ -50,7 +43,7 @@ export default async function handler(req, res) {
       },
       to: [
         {
-          email: BREVO_CONFIG.TEAM_EMAIL,
+          email: TEAM_EMAIL,
           name: 'DevTone Team'
         }
       ],
@@ -68,37 +61,22 @@ export default async function handler(req, res) {
       }
     };
 
-    console.log('Sending email data:', emailData);
-
-    // Send email via Brevo API
-    console.log('Sending request to Brevo API:', BREVO_CONFIG.API_URL);
-    console.log('Using API Key:', BREVO_CONFIG.API_KEY.substring(0, 10) + '...');
-    
-    const brevoResponse = await fetch(BREVO_CONFIG.API_URL, {
+    // Send email to team
+    const teamResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': BREVO_CONFIG.API_KEY,
-        'Accept': 'application/json'
+        'api-key': BREVO_API_KEY
       },
       body: JSON.stringify(emailData)
     });
 
-    console.log('Brevo response status:', brevoResponse.status);
-    console.log('Brevo response headers:', Object.fromEntries(brevoResponse.headers.entries()));
-
-    if (!brevoResponse.ok) {
-      const errorData = await brevoResponse.text();
-      console.error('Brevo API error:', errorData);
-      console.error('Response status:', brevoResponse.status);
-      console.error('Response headers:', Object.fromEntries(brevoResponse.headers.entries()));
-      throw new Error(`Brevo API error: ${brevoResponse.status} - ${errorData}`);
+    if (!teamResponse.ok) {
+      throw new Error(`Team email failed: ${teamResponse.status}`);
     }
 
-    console.log('Team email sent successfully');
-
-    // Send confirmation email to the client using Brevo template ID #5
-    const confirmationEmailData = {
+    // Send confirmation to client
+    const clientEmailData = {
       sender: {
         name: 'DevTone Agency',
         email: 'team@devtone.agency'
@@ -109,7 +87,7 @@ export default async function handler(req, res) {
           name: data.name
         }
       ],
-      templateId: 5, // Using template ID 5 for client confirmation
+      templateId: 5,
       params: {
         NAME: data.name,
         EMAIL: data.email,
@@ -123,52 +101,30 @@ export default async function handler(req, res) {
       }
     };
 
-    console.log('Sending confirmation email...');
-
-    // Send confirmation email
-    const confirmationResponse = await fetch(BREVO_CONFIG.API_URL, {
+    const clientResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': BREVO_CONFIG.API_KEY
+        'api-key': BREVO_API_KEY
       },
-      body: JSON.stringify(confirmationEmailData)
+      body: JSON.stringify(clientEmailData)
     });
 
-    console.log('Confirmation response status:', confirmationResponse.status);
-
-    if (!confirmationResponse.ok) {
-      const errorData = await confirmationResponse.text();
-      console.error('Confirmation email failed:', errorData);
-      // Don't fail the whole request if confirmation email fails
-    } else {
-      console.log('Confirmation email sent successfully');
+    // Don't fail if client email fails
+    if (!clientResponse.ok) {
+      console.log('Client confirmation email failed');
     }
 
-    console.log('Sending success response');
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Contact form submitted successfully' 
+    return res.status(200).json({
+      success: true,
+      message: 'Contact form submitted successfully'
     });
 
   } catch (error) {
-    console.error('Contact submission error:', error);
-    
-    // Ensure we always return a valid JSON response
-    try {
-      return res.status(500).json({ 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to submit contact form',
-        timestamp: new Date().toISOString()
-      });
-    } catch (jsonError) {
-      // Fallback if JSON serialization fails
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(500).end(JSON.stringify({
-        success: false,
-        error: 'Internal server error',
-        timestamp: new Date().toISOString()
-      }));
-    }
+    console.error('Contact error:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to submit contact form'
+    });
   }
 } 
