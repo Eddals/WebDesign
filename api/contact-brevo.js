@@ -14,20 +14,25 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': process.env.BREVO_API_KEY,
+        'api-key': process.env.BREVO_API_KEY, // Certifique-se que isso está no painel da Vercel
       },
       body: JSON.stringify({
+        templateId: 5, // <- seu template
         sender: {
           name: 'DevTone Website',
           email: 'team@devtone.agency',
         },
         to: [
           {
-            email: 'team@devtone.agency',
-            name: 'DevTone Team',
+            email: email, // vai para o cliente
+            name: name,
           },
         ],
-        templateId: 2, // 👈 Apenas o ID do template
+        params: {
+          contact: {
+            FIRSTNAME: name, // <- usado no template como {{ contact.FIRSTNAME }}
+          },
+        },
       }),
     });
 
