@@ -16,14 +16,26 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { name, email, phone, company, industry, projectType, budget, timeline, description, features, retainer } = req.body;
+  const {
+    name,
+    email,
+    phone,
+    company,
+    industry,
+    projectType,
+    budget,
+    timeline,
+    description,
+    features,
+    retainer
+  } = req.body;
 
   try {
     const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': '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',
+        'api-key': process.env.BREVO_API_KEY,
       },
       body: JSON.stringify({
         sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
@@ -69,7 +81,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': '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',
+        'api-key': process.env.BREVO_API_KEY,
       },
       body: JSON.stringify({
         sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
@@ -109,4 +121,4 @@ export default async function handler(req, res) {
     console.error('Estimate submission error:', err);
     res.status(500).json({ error: err.message });
   }
-} 
+}
