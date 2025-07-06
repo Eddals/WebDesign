@@ -3,9 +3,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { name, email, message } = req.body;
+  const { name, email } = req.body;
 
-  if (!name || !email || !message) {
+  if (!name || !email) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
@@ -14,38 +14,33 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': process.env.BREVO_API_KEY, // Certifique-se que isso está no painel da Vercel
+        'api-key': process.env.BREVO_API_KEY,
       },
       body: JSON.stringify({
-        templateId: 5, // <- seu template
         sender: {
           name: 'DevTone Website',
           email: 'team@devtone.agency',
         },
         to: [
           {
-            email: email, // vai para o cliente
+            email: email,
             name: name,
           },
         ],
-        params: {
-          contact: {
-            FIRSTNAME: name, // <- usado no template como {{ contact.FIRSTNAME }}
-          },
-        },
+        templateId: 5, // 👈 Altere aqui para o ID do seu template de contato
       }),
     });
 
     const result = await response.json();
-    console.log('📩 Brevo Response:', result);
+    console.log('📩 Brevo Contact Response:', result);
 
     if (!response.ok) {
-      return res.status(500).json({ error: 'Failed to send email via Brevo' });
+      return res.status(500).json({ error: 'Failed to send contact email via Brevo' });
     }
 
-    return res.status(200).json({ success: true, message: 'Email sent successfully' });
+    return res.status(200).json({ success: true, message: 'Contact email sent successfully' });
   } catch (err) {
-    console.error('❌ Brevo error:', err);
+    console.error('❌ Brevo contact error:', err);
     return res.status(500).json({ error: 'Server error' });
   }
 }
