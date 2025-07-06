@@ -15,8 +15,8 @@ const ServicesGraphic = () => {
       <motion.div 
         className="relative z-10 w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center shadow-2xl"
         animate={{ 
-          rotate: [0, 5, -5, 0],
-          scale: [1, 1.05, 1]
+          rotate: [0, 5],
+          scale: [1, 1.05]
         }}
         transition={{ 
           duration: 4,
@@ -25,7 +25,7 @@ const ServicesGraphic = () => {
         }}
       >
         <motion.div
-          animate={{ rotate: [0, -10, 10, 0] }}
+          animate={{ rotate: [0, -10] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         >
           <Settings className="text-white" size={36} />
@@ -156,10 +156,10 @@ const ServicesGraphic = () => {
           key={`particle-${index}`}
           className="absolute w-3 h-3 bg-purple-400 rounded-full opacity-40"
           animate={{
-            y: [0, -30, 0],
-            x: [0, Math.sin(index) * 15, 0],
-            opacity: [0.2, 0.6, 0.2],
-            scale: [0.8, 1.2, 0.8],
+            y: [0, -30],
+            x: [0, Math.sin(index) * 15],
+            opacity: [0.2, 0.6],
+            scale: [0.8, 1.2],
           }}
           transition={{
             duration: 4 + index * 0.3,

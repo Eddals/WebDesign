@@ -40,9 +40,7 @@ const ContactForm: React.FC = () => {
 
     try {
       // Use the full URL for the API endpoint
-      const apiUrl = window.location.hostname === 'localhost' 
-        ? 'https://devtone.agency/api/contact'
-        : '/api/contact';
+      const apiUrl = '/api/contact-brevo';
       
       console.log('Submitting contact form to:', apiUrl);
       console.log('Form data:', formData);

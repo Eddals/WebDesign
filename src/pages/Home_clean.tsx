@@ -202,14 +202,14 @@ const Home = () => {
           {/* Floating elements */}
           <motion.div 
             className="absolute top-1/4 left-10 text-purple-400/30"
-            animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
+            animate={{ y: [0, -20], rotate: [0, 10] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
             <Code size={40} />
           </motion.div>
           <motion.div 
             className="absolute bottom-1/4 right-10 text-purple-400/30"
-            animate={{ y: [0, -15, 0], rotate: [0, -10, 0] }}
+            animate={{ y: [0, -15], rotate: [0, -10] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           >
             <Rocket size={35} />

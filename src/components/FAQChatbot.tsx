@@ -256,17 +256,17 @@ const FAQChatbot = () => {
                             <div className="flex space-x-1 mr-2">
                               <motion.div
                                 className="w-2 h-2 bg-purple-400 rounded-full"
-                                animate={{ scale: [1, 1.2, 1] }}
+                                animate={{ scale: [1, 1.2] }}
                                 transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
                               />
                               <motion.div
                                 className="w-2 h-2 bg-purple-400 rounded-full"
-                                animate={{ scale: [1, 1.2, 1] }}
+                                animate={{ scale: [1, 1.2] }}
                                 transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
                               />
                               <motion.div
                                 className="w-2 h-2 bg-purple-400 rounded-full"
-                                animate={{ scale: [1, 1.2, 1] }}
+                                animate={{ scale: [1, 1.2] }}
                                 transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
                               />
                             </div>

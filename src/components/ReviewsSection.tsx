@@ -34,8 +34,8 @@ const ReviewsSection = () => {
       <motion.div 
         className="absolute -top-20 -right-20 w-96 h-96 bg-purple-600 rounded-full opacity-20 blur-[100px]"
         animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.2, 0.3, 0.2]
+          scale: [1, 1.2],
+          opacity: [0.2, 0.3]
         }}
         transition={{ 
           duration: 8, 
@@ -46,8 +46,8 @@ const ReviewsSection = () => {
       <motion.div 
         className="absolute bottom-0 -left-20 w-80 h-80 bg-indigo-500 rounded-full opacity-20 blur-[100px]"
         animate={{ 
-          scale: [1.2, 1, 1.2],
-          opacity: [0.25, 0.35, 0.25]
+          scale: [1.2, 1],
+          opacity: [0.25, 0.35]
         }}
         transition={{ 
           duration: 10, 
@@ -145,7 +145,7 @@ const ReviewsSection = () => {
             <motion.div 
               className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl blur-lg opacity-25 group-hover:opacity-50"
               animate={{ 
-                opacity: [0.25, 0.4, 0.25],
+                opacity: [0.25, 0.4],
               }}
               transition={{ 
                 duration: 3, 

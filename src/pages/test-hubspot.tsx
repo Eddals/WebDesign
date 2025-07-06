@@ -32,7 +32,7 @@ const TestHubSpot: React.FC = () => {
       
       // Usar o servidor proxy em vez de chamar o HubSpot diretamente
       // Em produção, use sua URL real
-      const proxyUrl = 'https://seu-servidor-proxy.com/webhook';
+      const proxyUrl = '/api/hubspot-webhook';
       // Para desenvolvimento local, use:
       // const proxyUrl = 'http://localhost:3001/webhook';
       

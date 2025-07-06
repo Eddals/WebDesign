@@ -12,6 +12,7 @@ import {
   BarChart
 } from 'lucide-react';
 import SEO from '../components/SEO';
+import BrevoChatWidget from '../components/BrevoChatWidget';
 
 const serviceItems = [
   {
@@ -171,6 +172,9 @@ export default function Services() {
             </div>
           </motion.div>
         </div>
+
+        {/* Brevo Chat Widget */}
+        <BrevoChatWidget />
       </div>
     </>
   );

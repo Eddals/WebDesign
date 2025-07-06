@@ -281,7 +281,7 @@ const EstimateForm: React.FC = () => {
     // Calculate costs for each category
     featureCategories.forEach(category => {
       category.features.forEach(feature => {
-        if (formData[category.id + 'Features' as keyof EstimateFormData]?.includes(feature.id)) {
+        if (((formData[category.id + 'Features' as keyof EstimateFormData] ?? []) as string[]).includes(feature.id)) {
           total += feature.basePrice;
         }
       });
@@ -646,30 +646,27 @@ const EstimateForm: React.FC = () => {
                       {availableFeatures.map((feature) => (
                         <label
                           key={feature.id}
-                          className={`flex items-start gap-3 p-4 rounded-full border cursor-pointer transition-all shadow-lg ${
-                            formData[category.id + 'Features' as keyof EstimateFormData]?.includes(feature.id)
-                              ? 'border-purple-500 bg-gradient-to-r from-purple-400 to-pink-400/30 scale-105'
-                              : 'border-white/10 bg-white/10 hover:border-white/20'
+                          className={`group flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all shadow-lg ${
+                            ((formData[category.id + 'Features' as keyof EstimateFormData] ?? []) as string[]).includes(feature.id)
+                              ? 'border-purple-500 bg-gradient-to-r from-purple-600 to-pink-500/30 scale-105 shadow-purple-500/20'
+                              : 'border-white/10 bg-white/10 hover:border-purple-500/20'
                           }`}
                           style={{ minHeight: '64px' }}
                         >
                           <input
                             type="checkbox"
-                            checked={formData[category.id + 'Features' as keyof EstimateFormData]?.includes(feature.id)}
+                            checked={((formData[category.id + 'Features' as keyof EstimateFormData] ?? []) as string[]).includes(feature.id)}
                             onChange={() => handleCheckboxChange(category.id + 'Features', feature.id)}
-                            className="mt-1"
+                            className="accent-purple-500 w-5 h-5 mr-2"
                           />
-                          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-500/20 text-purple-400 mr-2">
-                            {feature.icon || <CheckCircle size={20} />}
-                          </div>
                           <div className="flex-1">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-white font-medium">{feature.label}</span>
-                              <span className="text-purple-400 text-sm font-semibold">
-                                ${feature.basePrice.toLocaleString()}
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1">
+                              <span className="font-semibold text-white text-base">
+                                {feature.label}
+                                <span className="ml-2 text-purple-300 font-bold">${feature.basePrice.toLocaleString()}</span>
                               </span>
                             </div>
-                            <p className="text-white/60 text-sm">{feature.description}</p>
+                            <span className="block text-white/70 text-xs sm:text-sm">{feature.description}</span>
                           </div>
                         </label>
                       ))}

@@ -28,7 +28,24 @@ interface ContactResponse {
 export async function submitContactForm(data: ContactFormData): Promise<ContactResponse> {
   console.log('📧 Submitting contact form...', data);
 
-  // Try primary endpoint first
+  // Try Brevo endpoint first
+  try {
+    const apiUrl = '/api/contact-brevo';
+      
+    const result = await apiRequest<ContactResponse>(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+
+    if (result.success) {
+      console.log('✅ Contact form submitted successfully via Brevo endpoint');
+      return result;
+    }
+  } catch (brevoError) {
+    console.warn('⚠️ Brevo endpoint failed:', brevoError);
+  }
+  
+  // Try primary endpoint as fallback
   try {
     const result = await apiRequest<ContactResponse>('/api/webhooks/resend-simple', {
       method: 'POST',
@@ -41,51 +58,51 @@ export async function submitContactForm(data: ContactFormData): Promise<ContactR
     }
   } catch (primaryError) {
     console.warn('⚠️ Primary endpoint failed:', primaryError);
+  }
     
-    // Try alternative endpoints with different data formats
-    const alternativeEndpoints = [
-      { 
-        url: '/api/send-contact',
-        transform: (d: ContactFormData) => ({
-          full_name: d.name,
-          email: d.email,
-          phone: d.phone,
-          company: d.company,
-          subject: d.subject,
-          message: d.message,
-          preferredContact: 'email'
-        })
-      },
-      {
-        url: '/api/webhooks/contact-form',
-        transform: (d: ContactFormData) => d
-      },
-      {
-        url: '/api/send-contact-email',
-        transform: (d: ContactFormData) => d
-      }
-    ];
+  // Try alternative endpoints with different data formats
+  const alternativeEndpoints = [
+    { 
+      url: '/api/send-contact',
+      transform: (d: ContactFormData) => ({
+        full_name: d.name,
+        email: d.email,
+        phone: d.phone,
+        company: d.company,
+        subject: d.subject,
+        message: d.message,
+        preferredContact: 'email'
+      })
+    },
+    {
+      url: '/api/webhooks/contact-form',
+      transform: (d: ContactFormData) => d
+    },
+    {
+      url: '/api/send-contact-email',
+      transform: (d: ContactFormData) => d
+    }
+  ];
 
-    for (const endpoint of alternativeEndpoints) {
-      try {
-        console.log(`🔄 Trying alternative endpoint: ${endpoint.url}`);
-        const transformedData = endpoint.transform(data);
-        const result = await apiRequest<ContactResponse>(endpoint.url, {
-          method: 'POST',
-          body: JSON.stringify(transformedData)
-        });
+  for (const endpoint of alternativeEndpoints) {
+    try {
+      console.log(`🔄 Trying alternative endpoint: ${endpoint.url}`);
+      const transformedData = endpoint.transform(data);
+      const result = await apiRequest<ContactResponse>(endpoint.url, {
+        method: 'POST',
+        body: JSON.stringify(transformedData)
+      });
 
-        if (result.success || result.message) {
-          console.log(`✅ Contact form submitted successfully via ${endpoint.url}`);
-          return {
-            message: result.message || 'Message sent successfully',
-            ...result,
-            success: true
-          };
-        }
-      } catch (altError) {
-        console.warn(`⚠️ Alternative endpoint ${endpoint.url} failed:`, altError);
+      if (result.success || result.message) {
+        console.log(`✅ Contact form submitted successfully via ${endpoint.url}`);
+        return {
+          message: result.message || 'Message sent successfully',
+          ...result,
+          success: true
+        };
       }
+    } catch (altError) {
+      console.warn(`⚠️ Alternative endpoint ${endpoint.url} failed:`, altError);
     }
   }
 

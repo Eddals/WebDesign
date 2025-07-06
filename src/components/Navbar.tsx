@@ -89,7 +89,7 @@ export default function Navbar() {
               whileHover={{ scale: 1.1, rotate: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
               animate={{
-                y: [0, -2, 0],
+                y: [0, -2],
               }}
             >
               <motion.img
@@ -101,7 +101,7 @@ export default function Navbar() {
                   opacity: 1,
                   scale: 1,
                   rotate: 0,
-                  y: [0, -2, 0]
+                  y: [0, -2]
                 }}
                 transition={{
                   duration: 0.5,
@@ -117,7 +117,7 @@ export default function Navbar() {
                 initial={{ opacity: 0 }}
                 whileHover={{ opacity: 1 }}
                 animate={{
-                  scale: [1, 1.1, 1],
+                  scale: [1, 1.1],
                 }}
                 transition={{
                   duration: 0.3,

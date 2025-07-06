@@ -19,8 +19,8 @@ const Cancel = () => {
           <motion.div 
             className="absolute top-20 left-20 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl"
             animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.6, 0.3]
+              scale: [1, 1.2],
+              opacity: [0.3, 0.6]
             }}
             transition={{ 
               duration: 4,
@@ -31,8 +31,8 @@ const Cancel = () => {
           <motion.div 
             className="absolute bottom-20 right-20 w-40 h-40 bg-red-500/10 rounded-full blur-2xl"
             animate={{ 
-              scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.5, 0.2]
+              scale: [1.2, 1],
+              opacity: [0.2, 0.5]
             }}
             transition={{ 
               duration: 5,
@@ -62,7 +62,7 @@ const Cancel = () => {
                 </div>
                 <motion.div
                   className="absolute inset-0 w-24 h-24 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mx-auto"
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                  animate={{ scale: [1, 1.2], opacity: [0.5, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
               </motion.div>

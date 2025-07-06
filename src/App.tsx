@@ -9,7 +9,6 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import InteractiveChat from './components/InteractiveChat';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));
@@ -104,7 +103,6 @@ export default function App() {
                       </Routes>
                     </Suspense>
                     <Footer />
-                    <InteractiveChat />
                   </div>
                 } />
               </Routes>

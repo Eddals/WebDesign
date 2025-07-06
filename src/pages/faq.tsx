@@ -54,21 +54,12 @@ const FAQ = () => {
   const contactMethods = [
     {
       icon: <Mail className="w-8 h-8" />,
-      title: 'Email Support',
+      title: 'Email Us',
       description: 'Send us an email anytime',
       details: 'team@devtone.agency',
       link: 'mailto:team@devtone.agency',
-      color: 'from-purple-400 to-purple-600',
+      color: 'from-purple-600 to-purple-800',
       response: 'Response within 24 hours'
-    },
-    {
-      icon: <Phone className="w-8 h-8" />,
-      title: 'Phone Support',
-      description: 'Mon-Fri from 12am to 6pm EST',
-      details: 'Available during business hours',
-      link: '#',
-      color: 'from-purple-500 to-purple-700',
-      response: 'Available during business hours only'
     },
     {
       icon: <Calendar className="w-8 h-8" />,
@@ -417,7 +408,7 @@ const FAQ = () => {
         <div className="container mx-auto px-4 pb-24">
           {/* Contact Methods */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20 justify-center max-w-xl mx-auto"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -431,24 +422,27 @@ const FAQ = () => {
                 whileHover={{ y: -5 }}
               >
                 <div className={`absolute -inset-1 bg-gradient-to-r ${method.color} rounded-2xl blur-lg opacity-25 group-hover:opacity-75 transition duration-500`}></div>
-                <div className="relative backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-6 text-center h-full">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${method.color} bg-opacity-20 flex items-center justify-center`}>
-                    {method.icon}
+                <div className="relative backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-3 text-center h-full">
+                  <div className={`w-10 h-10 mx-auto mb-2 rounded-full bg-gradient-to-r ${method.color} bg-opacity-20 flex items-center justify-center`}>
+                    {/* Smaller icon */}
+                    {method.title === 'Schedule Call' ? <Calendar className="w-5 h-5" /> : method.title === 'Phone Support' ? <Phone className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">{method.title}</h3>
-                  <p className="text-white mb-3 text-sm">{method.description}</p>
-                  <div className="text-purple-400 font-semibold mb-2">{method.details}</div>
-                  <div className="text-xs text-white">{method.response}</div>
-
-                  <motion.a
-                    href={method.link}
-                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Connect
-                    <ArrowRight className="w-3 h-3" />
-                  </motion.a>
+                  <h3 className="text-base font-bold text-white mb-1">{method.title}</h3>
+                  <p className="text-white mb-1 text-xs">{method.description}</p>
+                  <div className="text-purple-400 font-semibold mb-1 text-xs">{method.details}</div>
+                  <div className="text-xs text-white mb-1">{method.response}</div>
+                  <div className="mt-2">
+                    <span className="block font-bold text-white text-sm mb-1">Connect</span>
+                    <motion.a
+                      href={method.link}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs font-medium text-white transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {method.title === 'Schedule Call' ? 'Schedule Call' : method.title === 'Phone Support' ? 'Call Us' : 'Email Us'}
+                      <ArrowRight className="w-3 h-3" />
+                    </motion.a>
+                  </div>
                 </div>
               </motion.div>
             ))}

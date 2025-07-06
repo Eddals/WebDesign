@@ -15,6 +15,7 @@ import {
 import SEO from '@/components/SEO'
 import GoogleMapsWidget from '@/components/GoogleMapsWidget'
 import { submitContactForm } from '@/lib/contact-service'
+import BrevoChatWidget from '@/components/BrevoChatWidget'
 
 const Contact = () => {
   // Form state
@@ -44,35 +45,28 @@ const Contact = () => {
   // Componente de alerta para o formulário de contato
   // ContactAlert removido conforme solicitado
 
-  // Creative contact methods section
+  // Only show the two requested contact methods
   const contactMethods = [
-    {
-      icon: <Mail className="w-8 h-8" />,
-      title: 'Email Support',
-      description: 'Send us an email anytime',
-      details: 'team@devtone.agency',
-      link: 'mailto:team@devtone.agency',
-      color: 'from-purple-400 to-purple-600',
-      response: 'Response within 24 hours'
-    },
-    {
-      icon: <Mail className="w-8 h-8" />,
-      title: 'Email Us',
-      description: 'Send us an email anytime',
-      details: 'team@devtone.agency',
-      link: 'mailto:team@devtone.agency',
-      color: 'from-purple-600 to-purple-800',
-      response: 'Response within 24 hours'
-    },
-    {
-      icon: <Calendar className="w-8 h-8" />,
-      title: 'Schedule Call',
-      description: 'Book a support call',
-      details: 'Free consultation',
-      link: 'https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ090688oDQPcvG5Wxi-vZugSIP1LGHQrZxgk5fB5rM46mgFZP1fVoq8xT70bguxDkjBy09qswqj',
-      color: 'from-purple-500 to-purple-700',
-      response: 'Available slots this week'
-    }
+  {
+  icon: <Mail className="w-8 h-8" />, 
+  title: 'Email Us',
+  description: 'Send us an email anytime',
+  details: 'team@devtone.agency',
+  link: 'mailto:team@devtone.agency',
+  color: 'from-purple-600 to-purple-800',
+  response: 'Response within 24 hours',
+  connect: true
+  },
+  {
+  icon: <Calendar className="w-8 h-8" />,
+  title: 'Schedule Call',
+  description: 'Book a support call',
+  details: 'Free consultation',
+  link: 'https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ090688oDQPcvG5Wxi-vZugSIP1LGHQrZxgk5fB5rM46mgFZP1fVoq8xT70bguxDkjBy09qswqj',
+  color: 'from-purple-500 to-purple-700',
+  response: 'Available slots this week',
+  connect: true
+  }
   ]
 
   // Handle form submission
@@ -132,20 +126,31 @@ const Contact = () => {
         // Continue even if webhook fails
       }
       
-      // Prepare data for Resend webhook
+      // Prepare data for Brevo API
       const emailData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone || '',
         company: formData.company || '',
         subject: formData.subject,
-        message: formData.message
+        message: formData.message,
+        preferredContact: formData.preferredContact
       };
 
       console.log('📧 Sending contact form with data:', emailData);
 
-      // Use the contact service with fallback handling
-      const result = await submitContactForm(emailData);
+      // Send to Brevo API endpoint
+      const apiUrl = '/api/contact-brevo';
+        
+      const brevoResponse = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData)
+      });
+
+      const result = await brevoResponse.json();
       
       console.log('📧 Contact form response:', result);
       
@@ -154,17 +159,11 @@ const Contact = () => {
         throw new Error(result.error || 'Failed to send message');
       }
       
-      // SMTP email is handled server-side in the API endpoint
-      console.log('✅ Form submitted successfully, confirmation email will be sent by the server')
+      // Brevo email is handled server-side in the API endpoint
+      console.log('✅ Form submitted successfully, confirmation email will be sent by Brevo')
       
-      // Show warning if message was stored locally
-      if (result.error === 'API temporarily unavailable') {
-        alert('Note: Your message has been saved and will be sent automatically when the connection is restored. You can also email us directly at team@devtone.agency');
-      }
-      
-      console.log('✅ Email sent successfully via Resend!');
-      console.log('📧 Confirmation email ID:', result.confirmationId);
-      console.log('📧 Team notification ID:', result.notificationId);
+      console.log('✅ Email sent successfully via Brevo!');
+      console.log('📧 Template ID #5 used for both team and client emails');
       
       setIsSubmitted(true);
 
@@ -341,7 +340,7 @@ const Contact = () => {
         <div className="container mx-auto px-4 pb-24">
           {/* Contact Methods */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20 justify-center max-w-xl mx-auto"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -355,24 +354,27 @@ const Contact = () => {
                 whileHover={{ y: -5 }}
               >
                 <div className={`absolute -inset-1 bg-gradient-to-r ${method.color} rounded-2xl blur-lg opacity-25 group-hover:opacity-75 transition duration-500`}></div>
-                <div className="relative backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-6 text-center h-full">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${method.color} bg-opacity-20 flex items-center justify-center`}>
-                    {method.icon}
+                <div className="relative backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-3 text-center h-full">
+                  <div className={`w-10 h-10 mx-auto mb-2 rounded-full bg-gradient-to-r ${method.color} bg-opacity-20 flex items-center justify-center`}>
+                    {/* Smaller icon */}
+                    {method.title === 'Schedule Call' ? <Calendar className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">{method.title}</h3>
-                  <p className="text-white mb-3 text-sm">{method.description}</p>
-                  <div className="text-purple-400 font-semibold mb-2">{method.details}</div>
-                  <div className="text-xs text-white">{method.response}</div>
-
-                  <motion.a
-                    href={method.link}
-                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium text-white transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Connect
-                    <ArrowRight className="w-3 h-3" />
-                  </motion.a>
+                  <h3 className="text-base font-bold text-white mb-1">{method.title}</h3>
+                  <p className="text-white mb-1 text-xs">{method.description}</p>
+                  <div className="text-purple-400 font-semibold mb-1 text-xs">{method.details}</div>
+                  <div className="text-xs text-white mb-1">{method.response}</div>
+                  <div className="mt-2">
+                    <span className="block font-bold text-white text-sm mb-1">Connect</span>
+                    <motion.a
+                      href={method.link}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs font-medium text-white transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {method.title === 'Schedule Call' ? 'Schedule Call' : 'Email Us'}
+                      <ArrowRight className="w-3 h-3" />
+                    </motion.a>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -686,6 +688,9 @@ const Contact = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Brevo Chat Widget */}
+        <BrevoChatWidget />
       </div>
     </>
   );

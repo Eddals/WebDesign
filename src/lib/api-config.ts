@@ -4,7 +4,7 @@
  */
 
 // Determine if we're in development mode
-const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost';
+const isDevelopment = import.meta.env.DEV;
 
 // Base API URL configuration
 export const API_BASE_URL = isDevelopment 

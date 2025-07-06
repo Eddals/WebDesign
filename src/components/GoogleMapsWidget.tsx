@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { MapPin, Navigation, Star, ExternalLink, Info, Map, Compass } from "lucide-react";
+import { easeOut, easeInOut } from "framer-motion";
 
 interface GoogleMapsWidgetProps {
   mapUrl: string;
@@ -63,7 +64,7 @@ const GoogleMapsWidget = ({
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut",
+        ease: easeOut,
         staggerChildren: 0.2
       }
     }
@@ -80,12 +81,12 @@ const GoogleMapsWidget = ({
 
   const pulseVariants = {
     pulse: {
-      scale: [1, 1.05, 1],
-      opacity: [0.7, 1, 0.7],
+      scale: [1, 1.05],
+      opacity: [0.7, 1],
       transition: {
         duration: 2,
         repeat: Infinity,
-        ease: "easeInOut"
+        ease: easeInOut
       }
     }
   };

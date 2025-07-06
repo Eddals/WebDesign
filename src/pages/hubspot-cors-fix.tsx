@@ -16,16 +16,17 @@ const HubSpotCORSFix: React.FC = () => {
 
   useEffect(() => {
     // Determine if we're in development or production
-    const isLocalhost = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1';
+    // const isLocalhost = window.location.hostname === 'localhost' || 
+    //                     window.location.hostname === '127.0.0.1';
     
     // Set the appropriate proxy URL
-    if (isLocalhost) {
-      setProxyUrl('http://localhost:3001/api/hubspot-webhook');
-    } else {
-      // For production, use a relative path or your API URL
-      setProxyUrl('/api/hubspot-webhook');
-    }
+    // if (isLocalhost) {
+    //   setProxyUrl('http://localhost:3001/api/hubspot-webhook');
+    // } else {
+    //   // For production, use a relative path or your API URL
+    //   setProxyUrl('/api/hubspot-webhook');
+    // }
+    setProxyUrl('/api/hubspot-webhook');
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

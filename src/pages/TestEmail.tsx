@@ -11,11 +11,7 @@ const TestEmail = () => {
     setResult(null);
 
     try {
-      // Determinar a URL da API com base no ambiente
-      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const apiUrl = isDevelopment 
-        ? '/api/test-email'  // Em desenvolvimento, usa o proxy configurado no vite.config.ts
-        : 'https://devtone.agency/api/test-email'; // Em produção, usa a URL absoluta
+      const apiUrl = '/api/test-email';
       
       console.log('📡 Enviando teste para:', apiUrl);
       
@@ -49,32 +45,15 @@ const TestEmail = () => {
     setResult(null);
 
     try {
-      // Dados de teste para o formulário de contato
-      const testData = {
-        full_name: 'Usuário de Teste',
-        email: 'sweepeasellc@gmail.com',
-        phone: '9295591729',
-        company: 'DevTone Test',
-        subject: 'Teste do Formulário de Contato',
-        message: 'Esta é uma mensagem de teste para verificar se o formulário de contato está funcionando corretamente.',
-        preferredContact: 'email'
-      };
-
-      // Determinar a URL da API com base no ambiente
-      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const apiUrl = isDevelopment 
-        ? '/api/send-contact-email'  // Em desenvolvimento, usa o proxy configurado no vite.config.ts
-        : 'https://devtone.agency/api/send-contact-email'; // Em produção, usa a URL absoluta
+      const apiUrl = '/api/send-contact-email';
       
       console.log('📡 Enviando teste para:', apiUrl);
-      console.log('📧 Dados:', testData);
       
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(testData),
       });
       
       console.log('📡 Status:', response.status);

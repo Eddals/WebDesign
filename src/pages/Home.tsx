@@ -14,6 +14,8 @@ import SEO from '@/components/SEO'
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Quote, PackageType } from '../types/quotes';
 import { PostgrestError } from '@supabase/supabase-js';
+import BrevoChatWidget from '@/components/BrevoChatWidget';
+import NewsletterPopup from '@/components/NewsletterPopup';
 
 // Enhanced custom CSS for animations
 const customStyles = `
@@ -334,6 +336,7 @@ const Home = () => {
         keywords={['web development', 'responsive design', 'custom websites', 'e-commerce solutions', 'SEO services', 'web design agency', 'DevTone', 'business websites', 'branding agency', 'performance optimization', 'mobile-friendly websites']}
         ogUrl="https://devtone.agency"
       />
+      <NewsletterPopup />
       <div className="min-h-screen bg-[#030718]">
         {/* Add the custom styles */}
         <style >{customStyles}</style>
@@ -804,8 +807,8 @@ const Home = () => {
           <motion.div 
             className="absolute top-1/4 left-10 w-64 h-64 bg-purple-600/10 rounded-full filter blur-[80px]"
             animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1]
+              scale: [1, 1.2],
+              opacity: [0.1, 0.2]
             }}
             transition={{ 
               duration: 8, 
@@ -817,8 +820,8 @@ const Home = () => {
           <motion.div 
             className="absolute bottom-1/4 right-10 w-80 h-80 bg-indigo-500/10 rounded-full filter blur-[100px]"
             animate={{ 
-              scale: [1.2, 1, 1.2],
-              opacity: [0.15, 0.25, 0.15]
+              scale: [1.2, 1],
+              opacity: [0.15, 0.25]
             }}
             transition={{ 
               duration: 10, 
@@ -915,7 +918,7 @@ const Home = () => {
                   <motion.div 
                     className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl blur-lg opacity-25 group-hover:opacity-75"
                     animate={{ 
-                      opacity: [0.25, 0.5, 0.25],
+                      opacity: [0.25, 0.5],
                     }}
                     transition={{ 
                       duration: 3, 
@@ -1166,13 +1169,40 @@ const Home = () => {
           <motion.div 
             className="absolute top-1/3 right-10 w-64 h-64 bg-purple-600/10 rounded-full filter blur-[80px]"
             animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1]
+              scale: [1, 1.2],
+              opacity: [0.1, 0.2]
             }}
             transition={{ 
               duration: 8, 
               repeat: Infinity,
               ease: "easeInOut" 
+            }}
+          ></motion.div>
+          
+          <motion.div 
+            className="absolute top-1/3 left-10 w-80 h-80 bg-purple-600/10 rounded-full filter blur-[100px]"
+            animate={{ 
+              scale: [1, 1.2],
+              opacity: [0.1, 0.2]
+            }}
+            transition={{ 
+              duration: 10, 
+              repeat: Infinity,
+              ease: "easeInOut" 
+            }}
+          ></motion.div>
+          
+          <motion.div 
+            className="absolute bottom-1/3 right-10 w-96 h-96 bg-indigo-500/10 rounded-full filter blur-[120px]"
+            animate={{ 
+              scale: [1.2, 1],
+              opacity: [0.15, 0.25]
+            }}
+            transition={{ 
+              duration: 12, 
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
             }}
           ></motion.div>
           
@@ -1512,7 +1542,7 @@ const Home = () => {
                     className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r ${feature.color} mb-4 relative z-10 cursor-pointer`}
                     whileHover={{
                       scale: 1.15,
-                      rotate: [0, -10, 10, -5, 5, 0],
+                      rotate: [0, -10],
                       boxShadow: "0 10px 30px rgba(168, 85, 247, 0.4)"
                     }}
                     whileTap={{ scale: 0.95 }}
@@ -1523,7 +1553,7 @@ const Home = () => {
                       rotate: { duration: 0.6 }
                     }}
                     animate={{
-                      y: [0, -5, 0],
+                      y: [0, -5],
                     }}
                     style={{
                       animationDelay: `${index * 0.2}s`
@@ -1579,8 +1609,8 @@ const Home = () => {
           <motion.div 
             className="absolute bottom-1/3 right-10 w-96 h-96 bg-indigo-500/10 rounded-full filter blur-[120px]"
             animate={{ 
-              scale: [1.2, 1, 1.2],
-              opacity: [0.15, 0.25, 0.15]
+              scale: [1.2, 1],
+              opacity: [0.15, 0.25]
             }}
             transition={{ 
               duration: 12, 
@@ -1902,7 +1932,7 @@ const Home = () => {
                     className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-r ${metric.color} mb-4 relative z-10 cursor-pointer`}
                     whileHover={{
                       scale: 1.2,
-                      rotate: [0, 15, -15, 0],
+                      rotate: [0, 15],
                       boxShadow: "0 15px 40px rgba(168, 85, 247, 0.5)"
                     }}
                     whileTap={{ scale: 0.9 }}
@@ -1913,7 +1943,7 @@ const Home = () => {
                       rotate: { duration: 0.8 }
                     }}
                     animate={{
-                      y: [0, -8, 0],
+                      y: [0, -8],
                       rotateY: [0, 360]
                     }}
                     style={{
@@ -2186,6 +2216,9 @@ const Home = () => {
             </motion.div>
           </div>
         </section>
+
+        {/* Brevo Chat Widget */}
+        <BrevoChatWidget />
       </div>
     </>
   )

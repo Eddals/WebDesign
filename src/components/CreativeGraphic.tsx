@@ -11,7 +11,7 @@ const CreativeGraphic = () => {
         className="relative z-10 w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center shadow-2xl"
         animate={{ 
           rotate: 360,
-          scale: [1, 1.1, 1]
+          scale: [1, 1.1]
         }}
         transition={{ 
           rotate: { duration: 20, repeat: Infinity, ease: "linear" },
@@ -107,9 +107,9 @@ const CreativeGraphic = () => {
           key={`particle-${index}`}
           className="absolute w-2 h-2 bg-purple-400 rounded-full opacity-60"
           animate={{
-            y: [0, -20, 0],
-            x: [0, Math.sin(index) * 10, 0],
-            opacity: [0.3, 0.8, 0.3],
+            y: [0, -20],
+            x: [0, Math.sin(index) * 10],
+            opacity: [0.3, 0.8],
           }}
           transition={{
             duration: 3 + index * 0.5,
