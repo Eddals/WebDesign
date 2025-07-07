@@ -458,7 +458,7 @@ const FAQ = () => {
               viewport={{ once: true }}
               className="lg:col-span-1"
             >
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 sticky top-24">
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 sticky top-24 faq-rgb-border">
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">FAQ Categories</h2>
                   <p className="text-white">
@@ -525,7 +525,7 @@ const FAQ = () => {
               viewport={{ once: true }}
               className="lg:col-span-2"
             >
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 faq-rgb-border">
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">
                     {activeCategory === 'all' 
