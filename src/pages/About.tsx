@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { motion } from "framer-motion"
 import SEO from '@/components/SEO'
+import TypewriterEffect from '@/components/TypewriterEffect'
 
 const About = () => {
   // Animated counting effect for stats
@@ -150,7 +151,12 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Your Digital <span className="text-purple-400">Success Partner</span>
+              Your Digital{' '}
+              <TypewriterEffect
+                words={['Success Partner', 'Growth Engine', 'Innovation Hub', 'Dream Team']}
+                className="text-purple-400"
+                cursorClassName="text-purple-400"
+              />
             </motion.h1>
 
             <motion.p

@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 "use client"
 
 import { useState, useEffect, useRef, ReactNode } from 'react';
@@ -16,6 +17,22 @@ interface FAQItem {
   question: string;
   answer: ReactNode;
 }
+
+// GuaranteeItem component moved outside FAQ and faqItems
+const GuaranteeItem = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <li className="flex items-start gap-2" role="listitem">
+    <Shield className="w-4 h-4 text-purple-400 flex-shrink-0 mt-1" />
+    <div>
+      <strong className="text-purple-400">{title}</strong> {children}
+    </div>
+  </li>
+);
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -78,29 +95,36 @@ const FAQ = () => {
       category: 'pricing',
       question: "Do you offer a money-back guarantee?",
       answer: (
-        <>
+        <section>
           Yes, we offer a comprehensive money-back guarantee:
-          <ul className="mt-4 space-y-2">
-            <li className="flex items-start gap-2">
-              <Shield className="text-purple-400 flex-shrink-0 mt-1" size={16} />
-              <div>
-                <strong className="text-purple-400">100% Money-Back Guarantee</strong> within the first
-                48 hours if you're not satisfied with our initial design concepts.
-              </div>
-            </li>
-            <li className="flex items-start gap-2">
-              <Shield className="text-purple-400 flex-shrink-0 mt-1" size={16} />
-              <div>
-                <strong className="text-purple-400">Partial Refund</strong> if we can't deliver on the agreed-upon
-                requirements after multiple revision attempts.
-              </div>
-            </li>
+          <ul className="mt-4 space-y-2" role="list">
+            <GuaranteeItem title="100% Money-Back Guarantee">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(
+                    "within the first 48 hours if you're not satisfied with our initial design concepts."
+                  ),
+                }}
+              />
+            </GuaranteeItem>
+            <GuaranteeItem title="Partial Refund">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(
+                    "if we can't deliver on the agreed-upon requirements after multiple revision attempts."
+                  ),
+                }}
+              />
+            </GuaranteeItem>
           </ul>
           <p className="mt-4">
-            Our goal is your complete satisfaction. If at any point you feel we're not meeting your
-            expectations, please let us know, and we'll work to make it right.
+            {
+              DOMPurify.sanitize(
+                "Our goal is your complete satisfaction. If at any point you feel we're not meeting your expectations, please let us know, and we'll work to make it right."
+              )
+            }
           </p>
-        </>
+        </section>
       ),
     },
     {

@@ -340,6 +340,32 @@ const Estimate = () => {
 
     try {
       
+      // Send to devtone.agency webhook
+      try {
+        await fetch('https://devtone.agency/api/estimate-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            company: formData.company,
+            industry: formData.industry,
+            projectType: formData.projectType,
+            budget: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
+            timeline: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
+            description: formData.description,
+            features: formData.features,
+            retainer: formData.retainer
+          })
+        });
+      } catch (err) {
+        // Ignore webhook errors, do not block main flow
+        console.error('Failed to send to devtone.agency webhook:', err);
+      }
+
       // Send to Brevo API endpoint
       const apiUrl = '/api/estimate-brevo';
         

@@ -62,7 +62,7 @@ const Contact = () => {
   title: 'Schedule Call',
   description: 'Book a support call',
   details: 'Free consultation',
-  link: 'https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ090688oDQPcvG5Wxi-vZugSIP1LGHQrZxgk5fB5rM46mgFZP1fVoq8xT70bguxDkjBy09qswqj',
+  link: 'https://meet.brevo.com/devtone-agency/30-minute-meeting',
   color: 'from-purple-500 to-purple-700',
   response: 'Available slots this week',
   connect: true
