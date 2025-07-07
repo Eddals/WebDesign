@@ -15,7 +15,6 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Quote, PackageType } from '../types/quotes';
 import { PostgrestError } from '@supabase/supabase-js';
 import BrevoChatWidget from '@/components/BrevoChatWidget';
-import NewsletterPopup from '@/components/NewsletterPopup';
 
 // Enhanced custom CSS for animations
 const customStyles = `
@@ -336,7 +335,6 @@ const Home = () => {
         keywords={['web development', 'responsive design', 'custom websites', 'e-commerce solutions', 'SEO services', 'web design agency', 'DevTone', 'business websites', 'branding agency', 'performance optimization', 'mobile-friendly websites']}
         ogUrl="https://devtone.agency"
       />
-      <NewsletterPopup />
       <div className="min-h-screen bg-[#030718]">
         {/* Add the custom styles */}
         <style >{customStyles}</style>
