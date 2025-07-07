@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Estimate API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #555;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .test-data {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Estimate API Endpoint</h1>
+        
+        <div class="test-section">
+            <h3>Test 1: Basic Estimate Submission</h3>
+            <p>This will test the complete estimate form submission with all required fields.</p>
+            
+            <div class="test-data">
+                <strong>Test Data:</strong>
+                Name: Test User
+                Email: team@devtone.agency
+                Phone: (555) 123-4567
+                Company: Test Company
+                Industry: Technology
+                Project Type: Landing Page
+                Budget: $500 - $1,500
+                Timeline: 1 Month
+                Features: Contact Form, SEO
+                Retainer: No monthly retainer
+            </div>
+            
+            <button onclick="testEstimateSubmission()" id="testBtn1">Test Estimate Submission</button>
+            <div id="result1" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 2: API Health Check</h3>
+            <p>This will test if the API endpoint is accessible and responding.</p>
+            
+            <button onclick="testApiHealth()" id="testBtn2">Test API Health</button>
+            <div id="result2" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 3: CORS Test</h3>
+            <p>This will test if CORS is properly configured.</p>
+            
+            <button onclick="testCORS()" id="testBtn3">Test CORS</button>
+            <div id="result3" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : '';
+
+        async function testEstimateSubmission() {
+            const btn = document.getElementById('testBtn1');
+            const result = document.getElementById('result1');
+            
+            btn.disabled = true;
+            btn.textContent = 'Testing...';
+            result.style.display = 'none';
+            
+            const testData = {
+                name: 'Test User',
+                email: 'team@devtone.agency',
+                phone: '(555) 123-4567',
+                company: 'Test Company',
+                industry: 'Technology',
+                projectType: 'Landing Page',
+                budget: '$500 - $1,500',
+                timeline: '1 Month',
+                description: 'This is a test submission to verify the estimate API is working correctly.',
+                features: ['Contact Form', 'SEO'],
+                retainer: 'No monthly retainer'
+            };
+
+            try {
+                console.log('📤 Testing estimate submission...');
+                console.log('📋 Data:', testData);
+                
+                const response = await fetch(`${API_BASE}/api/estimate-brevo`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                console.log('📥 Response status:', response.status);
+                console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
+                let resultData;
+                try {
+                    resultData = await response.json();
+                } catch (jsonError) {
+                    const textResponse = await response.text();
+                    resultData = { error: 'Invalid JSON response', rawResponse: textResponse };
+                }
+
+                console.log('📥 Response data:', resultData);
+
+                if (response.ok && resultData.success) {
+                    result.className = 'result success';
+                    result.innerHTML = `✅ SUCCESS: Estimate submitted successfully!
+
+📧 Message: ${resultData.message}
+📧 Message ID: ${resultData.messageId || 'N/A'}
+
+📬 Check your inbox at team@devtone.agency
+📂 Also check spam folder if not in inbox
+
+Response: ${JSON.stringify(resultData, null, 2)}`;
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `❌ FAILED: Estimate submission failed
+
+Status: ${response.status}
+Error: ${resultData.error || 'Unknown error'}
+Details: ${resultData.details || 'No details provided'}
+
+Response: ${JSON.stringify(resultData, null, 2)}`;
+                }
+            } catch (error) {
+                console.error('❌ ERROR:', error);
+                result.className = 'result error';
+                result.innerHTML = `❌ ERROR: Network or other error
+
+Error: ${error.message}
+
+This might indicate:
+- The API endpoint doesn't exist
+- There's a CORS issue
+- The server is not responding
+- Network connectivity issues`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Test Estimate Submission';
+                result.style.display = 'block';
+            }
+        }
+
+        async function testApiHealth() {
+            const btn = document.getElementById('testBtn2');
+            const result = document.getElementById('result2');
+            
+            btn.disabled = true;
+            btn.textContent = 'Testing...';
+            result.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/estimate-brevo`, {
+                    method: 'OPTIONS'
+                });
+
+                result.className = 'result info';
+                result.innerHTML = `📊 API Health Check Results:
+
+Status: ${response.status}
+CORS Headers: ${response.headers.get('Access-Control-Allow-Origin') || 'Not set'}
+Methods: ${response.headers.get('Access-Control-Allow-Methods') || 'Not set'}
+
+✅ API endpoint is accessible
+✅ CORS preflight is working`;
+
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `❌ API Health Check Failed:
+
+Error: ${error.message}
+
+The API endpoint might not be accessible.`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Test API Health';
+                result.style.display = 'block';
+            }
+        }
+
+        async function testCORS() {
+            const btn = document.getElementById('testBtn3');
+            const result = document.getElementById('result3');
+            
+            btn.disabled = true;
+            btn.textContent = 'Testing...';
+            result.style.display = 'none';
+
+            try {
+                // Test preflight request
+                const preflightResponse = await fetch(`${API_BASE}/api/estimate-brevo`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': preflightResponse.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': preflightResponse.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': preflightResponse.headers.get('Access-Control-Allow-Headers')
+                };
+
+                result.className = 'result info';
+                result.innerHTML = `🌐 CORS Test Results:
+
+Preflight Status: ${preflightResponse.status}
+Origin: ${window.location.origin}
+
+CORS Headers:
+${JSON.stringify(corsHeaders, null, 2)}
+
+${preflightResponse.ok ? '✅ CORS is properly configured' : '❌ CORS configuration issues detected'}`;
+
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `❌ CORS Test Failed:
+
+Error: ${error.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Test CORS';
+                result.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html> 
