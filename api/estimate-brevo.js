@@ -1,12 +1,11 @@
-// pages/api/estimate-brevo.ts
 export default async function handler(req, res) {
-  // ✅ CORS
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).json({ success: true, message: 'CORS preflight success' });
+    return res.status(200).end(); // Preflight
   }
 
   if (req.method !== 'POST') {
@@ -25,20 +24,12 @@ export default async function handler(req, res) {
       timeline,
       description,
       features,
-      retainer
+      retainer,
     } = req.body;
 
-    // ✅ Validação básica
+    // Validação básica
     if (!name || !email || !phone || !company || !industry || !projectType || !budget || !timeline) {
-      return res.status(400).json({
-        error: 'Missing required fields',
-        required: ['name', 'email', 'phone', 'company', 'industry', 'projectType', 'budget', 'timeline']
-      });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const apiKey = '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';
@@ -53,55 +44,56 @@ export default async function handler(req, res) {
       budget,
       timeline,
       description: description || 'Not provided',
-      features: features?.join(', ') || 'No features selected',
+      features: features?.length ? features.join(', ') : 'No features selected',
       retainer: retainer || 'Not specified',
-      submittedAt: new Date().toLocaleString()
+      submittedAt: new Date().toLocaleString(),
     };
 
-    // ✅ 1. Enviar e-mail para a equipe
+    // 1. Email para a equipe (templateId 2)
     const teamEmail = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': apiKey,
       },
       body: JSON.stringify({
         sender: { name: 'DevTone Website', email: 'team@devtone.agency' },
         to: [{ email: 'team@devtone.agency', name: 'DevTone Team' }],
         templateId: 2,
-        params: sharedParams
-      })
+        params: sharedParams,
+      }),
     });
 
     if (!teamEmail.ok) {
-      const errorText = await teamEmail.text();
-      console.error('❌ Failed to send team email:', errorText);
-      return res.status(500).json({ error: 'Failed to send team email' });
+      const msg = await teamEmail.text();
+      console.error('❌ Team email failed:', msg);
+      return res.status(500).json({ error: 'Failed to send team email', details: msg });
     }
 
-    const emailResult = await teamEmail.json();
-
-    // ✅ 2. Enviar confirmação ao cliente
+    // 2. Email para o cliente (templateId 8)
     await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': apiKey,
       },
       body: JSON.stringify({
         sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
         to: [{ email, name }],
         templateId: 8,
-        params: { ...sharedParams, source: 'Estimate Form - Client Confirmation' }
-      })
+        params: {
+          ...sharedParams,
+          source: 'Estimate Form - Client Confirmation',
+        },
+      }),
     });
 
-    // ✅ 3. Criar ou atualizar contato no Brevo
+    // 3. Criar contato no Brevo (lista ID 7)
     await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': apiKey,
       },
       body: JSON.stringify({
         email,
@@ -115,22 +107,17 @@ export default async function handler(req, res) {
           TIMELINE: timeline,
           FEATURES: features?.join(', ') || '',
           RETAINER: retainer || '',
-          DESCRIPTION: description || ''
+          DESCRIPTION: description || '',
         },
         listIds: [7],
-        updateEnabled: true
-      })
+        updateEnabled: true,
+      }),
     });
 
-    // ✅ Retorno final
-    return res.status(200).json({
-      success: true,
-      message: 'Estimate sent and contact synced successfully',
-      messageId: emailResult.messageId
-    });
+    return res.status(200).json({ success: true, message: 'Everything sent and saved successfully' });
 
   } catch (err) {
     console.error('❌ Server error:', err);
-    return res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    return res.status(500).json({ error: 'Internal server error', message: err.message });
   }
 }
