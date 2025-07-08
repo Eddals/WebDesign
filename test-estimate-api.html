@@ -125,6 +125,14 @@
             <button onclick="testCORS()" id="testBtn3">Test CORS</button>
             <div id="result3" class="result" style="display: none;"></div>
         </div>
+
+        <div class="test-section">
+            <h3>Test 4: Webhook Endpoint Test</h3>
+            <p>This will test the estimate webhook endpoint.</p>
+            
+            <button onclick="testWebhook()" id="testBtn4">Test Webhook</button>
+            <div id="result4" class="result" style="display: none;"></div>
+        </div>
     </div>
 
     <script>
@@ -300,6 +308,90 @@ Error: ${error.message}`;
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Test CORS';
+                result.style.display = 'block';
+            }
+        }
+
+        async function testWebhook() {
+            const btn = document.getElementById('testBtn4');
+            const result = document.getElementById('result4');
+            
+            btn.disabled = true;
+            btn.textContent = 'Testing...';
+            result.style.display = 'none';
+            
+            const testData = {
+                name: 'Webhook Test User',
+                email: 'webhook-test@example.com',
+                phone: '(555) 987-6543',
+                company: 'Webhook Test Company',
+                industry: 'Testing',
+                projectType: 'Business Website',
+                budget: '$1,500 - $5,000',
+                timeline: '2-3 Months',
+                description: 'This is a test submission to verify the webhook endpoint is working correctly.',
+                features: ['Contact Form', 'SEO', 'Blog System'],
+                retainer: 'Basic Maintenance'
+            };
+
+            try {
+                console.log('📤 Testing webhook endpoint...');
+                console.log('📋 Data:', testData);
+                
+                const response = await fetch(`${API_BASE}/api/estimate-webhook`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                console.log('📥 Response status:', response.status);
+                console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
+                let resultData;
+                try {
+                    resultData = await response.json();
+                } catch (jsonError) {
+                    const textResponse = await response.text();
+                    resultData = { error: 'Invalid JSON response', rawResponse: textResponse };
+                }
+
+                console.log('📥 Response data:', resultData);
+
+                if (response.ok && resultData.success) {
+                    result.className = 'result success';
+                    result.innerHTML = `✅ SUCCESS: Webhook endpoint working!
+
+📧 Message: ${resultData.message}
+📋 Data received: ${JSON.stringify(resultData.data || {}, null, 2)}
+
+Response: ${JSON.stringify(resultData, null, 2)}`;
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `❌ FAILED: Webhook endpoint test failed
+
+Status: ${response.status}
+Error: ${resultData.error || 'Unknown error'}
+Details: ${resultData.details || 'No details provided'}
+
+Response: ${JSON.stringify(resultData, null, 2)}`;
+                }
+            } catch (error) {
+                console.error('❌ ERROR:', error);
+                result.className = 'result error';
+                result.innerHTML = `❌ ERROR: Network or other error
+
+Error: ${error.message}
+
+This might indicate:
+- The webhook endpoint doesn't exist
+- There's a CORS issue
+- The server is not responding
+- Network connectivity issues`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Test Webhook';
                 result.style.display = 'block';
             }
         }

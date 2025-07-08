@@ -1,5 +1,6 @@
 // api/estimate-brevo.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { BREVO_CONFIG, EMAIL_TEMPLATES } from '../src/config/brevo';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Enable CORS for testing (adjust later)
@@ -25,7 +26,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       retainer
     } = req.body;
 
-    const apiKey = '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';
+    // Use the API key from the config file
+    const apiKey = BREVO_CONFIG.API_KEY;
+    const teamEmail = BREVO_CONFIG.TEAM_EMAIL;
 
     const params = {
       name,
@@ -43,15 +46,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     // Email para a equipe
-    const teamRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+    const teamRes = await fetch(BREVO_CONFIG.API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'api-key': apiKey
       },
       body: JSON.stringify({
-        sender: { name: 'DevTone Website', email: 'team@devtone.agency' },
-        to: [{ email: 'team@devtone.agency', name: 'DevTone Team' }],
+        sender: EMAIL_TEMPLATES.ESTIMATE_NOTIFICATION.sender,
+        to: [{ email: teamEmail, name: 'DevTone Team' }],
         templateId: 2,
         params
       })
@@ -63,14 +66,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Email para o cliente
-    await fetch('https://api.brevo.com/v3/smtp/email', {
+    await fetch(BREVO_CONFIG.API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'api-key': apiKey
       },
       body: JSON.stringify({
-        sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
+        sender: EMAIL_TEMPLATES.ESTIMATE_CONFIRMATION.sender,
         to: [{ email, name }],
         templateId: 8,
         params

@@ -389,23 +389,38 @@ const Estimate = () => {
         })
       });
 
-      let result;
-      const contentType = brevoResponse.headers.get('content-type');
-      if (brevoResponse.status === 405) {
-        setError('API endpoint não permite este método (405 Method Not Allowed).');
-        setIsSubmitting(false);
-        return;
-      }
-      if (contentType && contentType.includes('application/json')) {
-        try {
-          result = await brevoResponse.json();
-        } catch (err) {
-          console.error('❌ Resposta não foi JSON válido:', err);
-          throw new Error('API retornou resposta inválida (JSON malformado)');
+      // Check response status
+      if (!brevoResponse.ok) {
+        if (brevoResponse.status === 405) {
+          setError('API endpoint does not allow this method (405 Method Not Allowed).');
+          setIsSubmitting(false);
+          return;
         }
-      } else {
-        const text = await brevoResponse.text();
-        throw new Error(`API retornou resposta inválida: ${brevoResponse.status} ${brevoResponse.statusText} - ${text}`);
+        
+        // Try to get error details from response
+        let errorDetails = '';
+        try {
+          const errorData = await brevoResponse.json();
+          errorDetails = errorData.error || errorData.message || JSON.stringify(errorData);
+        } catch (e) {
+          // If can't parse JSON, get text
+          try {
+            errorDetails = await brevoResponse.text();
+          } catch (textError) {
+            errorDetails = 'Could not extract error details';
+          }
+        }
+        
+        throw new Error(`API error (${brevoResponse.status}): ${errorDetails}`);
+      }
+      
+      // Parse successful response
+      let result;
+      try {
+        result = await brevoResponse.json();
+      } catch (err) {
+        console.error('❌ Response was not valid JSON:', err);
+        throw new Error('API returned invalid response (malformed JSON)');
       }
 
       if (result && result.success) {
@@ -414,8 +429,14 @@ const Estimate = () => {
         throw new Error((result && result.error) || 'Failed to send estimate');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
       console.error('Form submission error:', err);
+      
+      // Log detailed error for debugging
+      if (err instanceof Error && err.stack) {
+        console.debug('Error stack:', err.stack);
+      }
     } finally {
       setIsSubmitting(false);
     }
