@@ -1,13 +1,11 @@
-// pages/api/estimate-brevo.ts
-
 export default async function handler(req, res) {
-  // CORS Headers
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).json({ success: true, message: 'CORS preflight' });
+    return res.status(200).json({ success: true });
   }
 
   if (req.method !== 'POST') {
@@ -43,56 +41,58 @@ export default async function handler(req, res) {
 
     const apiKey = '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';
 
+    const sharedParams = {
+      name,
+      email,
+      phone,
+      company,
+      industry,
+      projectType,
+      budget,
+      timeline,
+      description: description || 'Not provided',
+      features: features?.length ? features.join(', ') : 'No features selected',
+      retainer: retainer || 'Not specified',
+      submittedAt: new Date().toLocaleString()
+    };
+
     // 1. Enviar email para equipe
-    const emailData = {
+    const teamEmailData = {
       sender: { name: 'DevTone Website', email: 'team@devtone.agency' },
       to: [{ email: 'team@devtone.agency', name: 'DevTone Team' }],
       templateId: 2,
-      params: {
-        name,
-        email,
-        phone,
-        company,
-        industry,
-        projectType,
-        budget,
-        timeline,
-        description: description || 'Not provided',
-        features: features?.length ? features.join(', ') : 'No features selected',
-        retainer: retainer || 'Not specified',
-        submittedAt: new Date().toLocaleString(),
-      }
+      params: sharedParams
     };
 
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    const teamResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'api-key': apiKey
       },
-      body: JSON.stringify(emailData)
+      body: JSON.stringify(teamEmailData)
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
+    if (!teamResponse.ok) {
+      const errorText = await teamResponse.text();
       console.error('Email send error:', errorText);
-      return res.status(500).json({ error: 'Failed to send estimate email', details: errorText });
+      return res.status(500).json({ error: 'Failed to send team email', details: errorText });
     }
 
-    const emailResult = await response.json();
+    const emailResult = await teamResponse.json();
 
     // 2. Enviar confirmação ao cliente
     const clientEmailData = {
       sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
       to: [{ email, name }],
-      templateId: 2,
+      templateId: 8, // 🔁 USANDO O TEMPLATE #8 AQUI
       params: {
-        ...emailData.params,
+        ...sharedParams,
         source: 'Estimate Form - Client Confirmation'
       }
     };
 
-    await fetch('https://api.brevo.com/v3/smtp/email', {
+    const clientRes = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -100,6 +100,11 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify(clientEmailData)
     });
+
+    if (!clientRes.ok) {
+      const warn = await clientRes.text();
+      console.warn('⚠️ Client confirmation email failed:', warn);
+    }
 
     // 3. Criar/Atualizar contato
     const contactPayload = {
@@ -139,8 +144,9 @@ export default async function handler(req, res) {
       message: 'Estimate email and contact saved successfully',
       messageId: emailResult.messageId
     });
+
   } catch (err) {
-    console.error('Server error:', err);
+    console.error('❌ Server error:', err);
     return res.status(500).json({ error: 'Internal server error', message: err.message });
   }
 }
