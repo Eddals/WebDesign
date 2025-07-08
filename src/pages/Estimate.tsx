@@ -342,7 +342,7 @@ const Estimate = () => {
       
       // Send to devtone.agency webhook
       try {
-        await fetch('https://devtone.agency/api/estimate-webhook', {
+        await fetch('/api/estimate-webhook', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -363,7 +363,7 @@ const Estimate = () => {
         });
       } catch (err) {
         // Ignore webhook errors, do not block main flow
-        console.error('Failed to send to devtone.agency webhook:', err);
+        console.error('Failed to send to webhook:', err);
       }
 
       // Send to Brevo API endpoint

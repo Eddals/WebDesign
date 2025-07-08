@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/**/*.js",
+      "src": "api/**/*.{js,ts}",
       "use": "@vercel/node"
     },
     {
@@ -12,8 +12,16 @@
   ],
   "routes": [
     {
+      "src": "/api/estimate-webhook",
+      "dest": "/api/estimate-webhook.ts"
+    },
+    {
+      "src": "/api/estimate-brevo",
+      "dest": "/api/estimate-brevo.ts"
+    },
+    {
       "src": "/api/(.*)",
-      "dest": "api/$1.js"
+      "dest": "/api/$1"
     },
     {
       "handle": "filesystem"
