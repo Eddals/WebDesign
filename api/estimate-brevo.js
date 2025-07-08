@@ -4,12 +4,15 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // Preflight check
   if (req.method === 'OPTIONS') {
     return res.status(200).json({ success: true });
   }
 
+  // Only allow POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
   try {
@@ -56,7 +59,7 @@ export default async function handler(req, res) {
       submittedAt: new Date().toLocaleString()
     };
 
-    // 1. Enviar email para equipe
+    // 1. Send email to team
     const teamEmailData = {
       sender: { name: 'DevTone Website', email: 'team@devtone.agency' },
       to: [{ email: 'team@devtone.agency', name: 'DevTone Team' }],
@@ -75,17 +78,17 @@ export default async function handler(req, res) {
 
     if (!teamResponse.ok) {
       const errorText = await teamResponse.text();
-      console.error('Email send error:', errorText);
+      console.error('❌ Failed to send email to team:', errorText);
       return res.status(500).json({ error: 'Failed to send team email', details: errorText });
     }
 
     const emailResult = await teamResponse.json();
 
-    // 2. Enviar confirmação ao cliente
+    // 2. Send confirmation to client
     const clientEmailData = {
       sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
       to: [{ email, name }],
-      templateId: 8, // 🔁 USANDO O TEMPLATE #8 AQUI
+      templateId: 8, // Use client-facing template here
       params: {
         ...sharedParams,
         source: 'Estimate Form - Client Confirmation'
@@ -103,10 +106,10 @@ export default async function handler(req, res) {
 
     if (!clientRes.ok) {
       const warn = await clientRes.text();
-      console.warn('⚠️ Client confirmation email failed:', warn);
+      console.warn('⚠️ Failed to send confirmation email to client:', warn);
     }
 
-    // 3. Criar/Atualizar contato
+    // 3. Create/update Brevo contact
     const contactPayload = {
       email,
       attributes: {
@@ -136,7 +139,7 @@ export default async function handler(req, res) {
 
     if (!contactRes.ok) {
       const contactError = await contactRes.text();
-      console.error('Contact sync error:', contactError);
+      console.error('❌ Failed to sync contact to Brevo:', contactError);
     }
 
     return res.status(200).json({
