@@ -390,19 +390,28 @@ const Estimate = () => {
       });
 
       let result;
-      try {
-        result = await brevoResponse.json();
-      } catch (err) {
-        console.error('❌ Resposta não foi JSON válido:', err);
-        console.error('Status:', brevoResponse.status);
-        console.error('Status Text:', brevoResponse.statusText);
-        throw new Error(`API retornou resposta inválida: ${brevoResponse.status} ${brevoResponse.statusText}`);
+      const contentType = brevoResponse.headers.get('content-type');
+      if (brevoResponse.status === 405) {
+        setError('API endpoint não permite este método (405 Method Not Allowed).');
+        setIsSubmitting(false);
+        return;
+      }
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          result = await brevoResponse.json();
+        } catch (err) {
+          console.error('❌ Resposta não foi JSON válido:', err);
+          throw new Error('API retornou resposta inválida (JSON malformado)');
+        }
+      } else {
+        const text = await brevoResponse.text();
+        throw new Error(`API retornou resposta inválida: ${brevoResponse.status} ${brevoResponse.statusText} - ${text}`);
       }
 
-      if (result.success) {
+      if (result && result.success) {
         setIsSuccess(true);
       } else {
-        throw new Error(result.error || 'Failed to send estimate');
+        throw new Error((result && result.error) || 'Failed to send estimate');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
