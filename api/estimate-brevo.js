@@ -1,6 +1,7 @@
 // pages/api/estimate-brevo.ts
 
 export default async function handler(req, res) {
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -115,7 +116,7 @@ export default async function handler(req, res) {
         RETAINER: retainer || '',
         DESCRIPTION: description || ''
       },
-      listIds: [2],
+      listIds: [7],
       updateEnabled: true
     };
 
