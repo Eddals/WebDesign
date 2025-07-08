@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import SEO from '@/components/SEO'
+import NewsletterPopup from '@/components/NewsletterPopup'
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Quote, PackageType } from '../types/quotes';
 import { PostgrestError } from '@supabase/supabase-js';
@@ -2214,6 +2215,9 @@ const Home = () => {
             </motion.div>
           </div>
         </section>
+
+        {/* Newsletter Popup */}
+        <NewsletterPopup />
 
         {/* Brevo Chat Widget */}
         <BrevoChatWidget />

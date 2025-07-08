@@ -641,7 +641,8 @@ const Contact = () => {
                   address="Digital Headquarters"
                 />
               </div>
-              
+
+                            
               {/* Support Information */}
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
                 <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">How We Can Help</h3>
