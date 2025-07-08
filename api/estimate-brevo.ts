@@ -1,114 +1,40 @@
-// api/estimate-brevo.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { BREVO_CONFIG, EMAIL_TEMPLATES } from '../src/config/brevo';
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Enable CORS for testing (adjust later)
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
   try {
-    const {
-      name,
-      email,
-      phone,
-      company,
-      industry,
-      projectType,
-      budget,
-      timeline,
-      description,
-      features,
-      retainer
-    } = req.body;
+    const body = req.body;
 
-    // Use the API key from the config file
-    const apiKey = BREVO_CONFIG.API_KEY;
-    const teamEmail = BREVO_CONFIG.TEAM_EMAIL;
-
-    const params = {
-      name,
-      email,
-      phone,
-      company,
-      industry,
-      projectType,
-      budget,
-      timeline,
-      description: description || 'Not provided',
-      features: features?.length ? features.join(', ') : 'No features selected',
-      retainer: retainer || 'Not specified',
-      submittedAt: new Date().toLocaleString()
-    };
-
-    // Email para a equipe
-    const teamRes = await fetch(BREVO_CONFIG.API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': apiKey
-      },
-      body: JSON.stringify({
-        sender: EMAIL_TEMPLATES.ESTIMATE_NOTIFICATION.sender,
-        to: [{ email: teamEmail, name: 'DevTone Team' }],
-        templateId: 2,
-        params
-      })
-    });
-
-    if (!teamRes.ok) {
-      const err = await teamRes.text();
-      return res.status(500).json({ error: 'Failed to send team email', details: err });
+    const brevoKey = process.env.BREVO_API_KEY;
+    if (!brevoKey) {
+      return res.status(500).json({ error: 'Missing BREVO_API_KEY' });
     }
 
-    // Email para o cliente
-    await fetch(BREVO_CONFIG.API_URL, {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': brevoKey,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        sender: EMAIL_TEMPLATES.ESTIMATE_CONFIRMATION.sender,
-        to: [{ email, name }],
-        templateId: 8,
-        params
+        sender: { name: 'Devtone', email: 'seu@email.com' },
+        to: [{ email: body.email, name: body.name }],
+        subject: 'Estimate Confirmation',
+        htmlContent: `<p>Olá ${body.name}, recebemos sua solicitação de orçamento!</p>`
       })
     });
 
-    // Criar/Atualizar contato no Brevo
-    await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': apiKey
-      },
-      body: JSON.stringify({
-        email,
-        attributes: {
-          FIRSTNAME: name.split(' ')[0],
-          SMS: phone,
-          COMPANY: company,
-          INDUSTRY: industry,
-          PROJECTTYPE: projectType,
-          BUDGET: budget,
-          TIMELINE: timeline,
-          DESCRIPTION: description || '',
-          FEATURES: features?.join(', ') || '',
-          RETAINER: retainer || ''
-        },
-        listIds: [7],
-        updateEnabled: true
-      })
-    });
+    const data = await response.json();
 
-    return res.status(200).json({ success: true, message: 'Estimate sent successfully' });
+    if (!response.ok) {
+      console.error('Brevo API error:', data);
+      return res.status(response.status).json({ error: data });
+    }
 
+    return res.status(200).json({ success: true });
   } catch (err) {
-    return res.status(500).json({ error: 'Server error', message: err.message });
+    console.error('Brevo handler error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
