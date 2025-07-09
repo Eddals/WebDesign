@@ -1,41 +1,36 @@
-// Vercel serverless function for estimate form
 export default async function handler(req, res) {
-  // Set CORS headers for API routes
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
-  // Handle OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { name, email, phone, company, industry, projectType, budget, timeline, description, features, retainer } = req.body;
 
-  // Validate required fields
   if (!name || !email || !phone || !company || !projectType || !budget || !timeline) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
-    // Format features as a list if present
     const featuresList = features && features.length > 0 
       ? features.join(', ')
       : 'None selected';
 
-    // Send email using Brevo API
+    // Send email to customer
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': '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'
+        'api-key': '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'
       },
       body: JSON.stringify({
         to: [{ email: email, name: name }],
@@ -59,7 +54,6 @@ export default async function handler(req, res) {
       })
     });
 
-    // Handle API response
     if (!response.ok) {
       const errorText = await response.text();
       return res.status(500).json({ 
@@ -74,7 +68,7 @@ export default async function handler(req, res) {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': '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'
+        'api-key': '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'
       },
       body: JSON.stringify({
         to: [{ email: 'team@devtone.agency', name: 'DevTone Team' }],
