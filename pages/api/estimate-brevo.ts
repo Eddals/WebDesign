@@ -39,6 +39,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
+    // Add contact to list #7
+    const contactData = {
+      email: email,
+      attributes: {
+        FIRSTNAME: nome,
+        COMPANY: params.company || 'Not provided',
+        INDUSTRY: params.industry || 'Not provided',
+        PROJECTTYPE: params.projectType || 'Not provided',
+        BUDGET: params.budget || 'Not provided',
+        TIMELINE: params.timeline || 'Not provided',
+        FEATURES: params.features ? params.features.join(', ') : 'Not provided',
     console.log('Email data:', JSON.stringify(emailData, null, 2))
 
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -60,6 +71,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!response.ok) {
       console.error('Brevo API error response:', data)
       throw new Error(data.message || data.error || `HTTP ${response.status}`)
+    }
+
+    // Add contact to list #7
+    try {
+      const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'api-key': process.env.BREVO_API_KEY!,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(contactData)
+      })
+      
+      if (contactResponse.ok) {
+        console.log('Contact added to list #7 successfully')
+      } else {
+        console.error('Failed to add contact to list:', await contactResponse.text())
+      }
+    } catch (contactError) {
+      console.error('Failed to add contact to list:', contactError)
+      // Don't fail the main request if contact addition fails
     }
 
     res.status(200).json({ success: true, data })
