@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Brevo API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-btn {
+            background: #7c3aed;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .test-btn:hover {
+            background: #6d28d9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        .loading {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+        .info {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Debug Brevo API - Estimate Form</h1>
+        <p>Use estes testes para diagnosticar o problema do erro 401.</p>
+        
+        <h3>🧪 Testes de Diagnóstico:</h3>
+        <button class="test-btn" onclick="testEnvVars()">1. 🔍 Check Environment Variables</button>
+        <button class="test-btn" onclick="testBrevoDirectly()">2. 🔑 Test Brevo API Key</button>
+        <button class="test-btn" onclick="testEstimateEndpoint()">3. 📝 Test Estimate Endpoint</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const resultDiv = document.getElementById('result');
+
+        function showResult(message, type = 'loading') {
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = message;
+        }
+
+        async function testEnvVars() {
+            showResult('🔄 Checking environment variables...', 'loading');
+            
+            try {
+                const response = await fetch('/api/test-env', {
+                    method: 'GET'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult(`✅ Environment Variables Check:\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Environment Variables Error:\n\nStatus: ${response.status}\nError: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network error!\n\nError: ${error.message}`, 'error');
+            }
+        }
+
+        async function testBrevoDirectly() {
+            showResult('🔄 Testing Brevo API key directly...', 'loading');
+            
+            try {
+                const response = await fetch('/api/test-brevo-direct', {
+                    method: 'GET'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult(`✅ Brevo API Key Test Successful!\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Brevo API Key Test Failed!\n\nStatus: ${response.status}\nError: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network error!\n\nError: ${error.message}`, 'error');
+            }
+        }
+
+        async function testEstimateEndpoint() {
+            showResult('🔄 Testing estimate endpoint...', 'loading');
+            
+            const testData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                phone: '(555) 123-4567',
+                company: 'Test Company',
+                industry: 'Technology',
+                projectType: 'business',
+                budget: '$1,500 - $5,000',
+                timeline: '1 Month',
+                description: 'This is a test estimate request for debugging.',
+                features: ['contact_form', 'seo'],
+                retainer: 'none'
+            };
+
+            try {
+                const response = await fetch('/api/estimate-brevo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult(`✅ Estimate Endpoint Working!\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Estimate Endpoint Failed!\n\nStatus: ${response.status}\nError: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network error!\n\nError: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run first test
+        window.onload = function() {
+            showResult('👋 Ready to debug! Click the buttons above to run tests.\n\nRecommended order:\n1. Check Environment Variables\n2. Test Brevo API Key\n3. Test Estimate Endpoint', 'info');
+        };
+    </script>
+</body>
+</html>

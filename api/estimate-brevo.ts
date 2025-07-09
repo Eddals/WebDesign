@@ -8,8 +8,18 @@ export default async function handler(req, res) {
 
     // Get API key from environment variables
     const apiKey = process.env.BREVO_API_KEY;
+    console.log('🔑 API Key check:', {
+      hasApiKey: !!apiKey,
+      apiKeyLength: apiKey ? apiKey.length : 0,
+      apiKeyStart: apiKey ? apiKey.substring(0, 10) + '...' : 'Not found'
+    });
+
     if (!apiKey) {
-      return res.status(500).json({ error: 'API key not found' });
+      console.error('❌ No API key found in environment variables');
+      return res.status(500).json({ 
+        error: 'API key not found',
+        availableEnvVars: Object.keys(process.env).filter(key => key.includes('BREVO'))
+      });
     }
 
     // Send confirmation email to client
@@ -113,16 +123,35 @@ export default async function handler(req, res) {
       })
     });
 
+    console.log('📧 Client response status:', clientResponse.status);
+    console.log('📧 Team response status:', teamResponse.status);
+
     const clientData = await clientResponse.json();
     const teamData = await teamResponse.json();
 
+    console.log('📧 Client response data:', clientData);
+    console.log('📧 Team response data:', teamData);
+
     if (!clientResponse.ok) {
-      console.error('Brevo client email error:', clientData);
-      return res.status(clientResponse.status).json({ error: clientData });
+      console.error('❌ Brevo client email error:', {
+        status: clientResponse.status,
+        data: clientData,
+        apiKeyUsed: apiKey.substring(0, 10) + '...'
+      });
+      return res.status(clientResponse.status).json({ 
+        error: clientData,
+        debug: {
+          status: clientResponse.status,
+          apiKeyUsed: apiKey.substring(0, 10) + '...'
+        }
+      });
     }
 
     if (!teamResponse.ok) {
-      console.error('Brevo team email error:', teamData);
+      console.error('⚠️ Brevo team email error (non-blocking):', {
+        status: teamResponse.status,
+        data: teamData
+      });
       // Don't fail if team email fails, client confirmation is more important
     }
 
