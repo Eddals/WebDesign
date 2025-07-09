@@ -1,110 +1,132 @@
-// pages/api/estimate-brevo.ts
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
-  // Enable CORS for testing (adjust later)
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+interface EstimateFormData {
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  setor: string;
+  tipoProj: string;
+  orcamento: string;
+  prazo: string;
+  descricao: string;
+  funcionalidades: string[];
+  retentor: string;
+}
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Aceitar somente requisições POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
   try {
+    // Receber os dados do formulário
     const {
-      name,
+      nome,
       email,
-      phone,
-      company,
-      industry,
-      projectType,
-      budget,
-      timeline,
-      description,
-      features,
-      retainer
-    } = req.body;
+      telefone,
+      empresa,
+      setor,
+      tipoProj,
+      orcamento,
+      prazo,
+      descricao,
+      funcionalidades,
+      retentor
+    }: EstimateFormData = req.body;
 
-    const apiKey = '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';
-
-    const params = {
-      name,
-      email,
-      phone,
-      company,
-      industry,
-      projectType,
-      budget,
-      timeline,
-      description: description || 'Not provided',
-      features: features?.length ? features.join(', ') : 'No features selected',
-      retainer: retainer || 'Not specified',
-      submittedAt: new Date().toLocaleString()
-    };
-
-    // Email para a equipe
-    const teamRes = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': apiKey
-      },
-      body: JSON.stringify({
-        sender: { name: 'DevTone Website', email: 'team@devtone.agency' },
-        to: [{ email: 'team@devtone.agency', name: 'DevTone Team' }],
-        templateId: 2,
-        params
-      })
-    });
-
-    if (!teamRes.ok) {
-      const err = await teamRes.text();
-      return res.status(500).json({ error: 'Failed to send team email', details: err });
+    // Verificar se a chave da API Brevo está configurada
+    const brevoApiKey = process.env.BREVO_API_KEY || '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';
+    
+    if (!brevoApiKey) {
+      console.error('BREVO_API_KEY não está configurada');
+      return res.status(500).json({
+        success: false,
+        error: 'Configuração de email não encontrada'
+      });
     }
 
-    // Email para o cliente
-    await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': apiKey
-      },
-      body: JSON.stringify({
-        sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
-        to: [{ email, name }],
-        templateId: 8,
-        params
-      })
-    });
+    // Preparar o conteúdo do email
+    const emailContent = `
+      <h2>Confirmação de Orçamento Recebido</h2>
+      
+      <p>Olá <strong>${nome}</strong>,</p>
+      
+      <p>Recebemos sua solicitação de orçamento e entraremos em contato em breve!</p>
+      
+      <h3>Detalhes do Projeto:</h3>
+      <ul>
+        <li><strong>Nome:</strong> ${nome}</li>
+        <li><strong>Empresa:</strong> ${empresa}</li>
+        <li><strong>Tipo de Projeto:</strong> ${tipoProj}</li>
+        <li><strong>Descrição:</strong> ${descricao}</li>
+        <li><strong>Orçamento:</strong> ${orcamento}</li>
+        <li><strong>Prazo:</strong> ${prazo}</li>
+        ${funcionalidades && funcionalidades.length > 0 ? 
+          `<li><strong>Funcionalidades:</strong> ${funcionalidades.join(', ')}</li>` : 
+          ''
+        }
+      </ul>
+      
+      <p>Nossa equipe analisará sua solicitação e retornará com uma proposta personalizada.</p>
+      
+      <p>Atenciosamente,<br>
+      Equipe DevTone</p>
+    `;
 
-    // Criar/Atualizar contato no Brevo
-    await fetch('https://api.brevo.com/v3/contacts', {
+    // Enviar email via API Brevo
+    const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey
+        'api-key': brevoApiKey
       },
       body: JSON.stringify({
-        email,
-        attributes: {
-          FIRSTNAME: name.split(' ')[0],
-          SMS: phone,
-          COMPANY: company,
-          INDUSTRY: industry,
-          PROJECTTYPE: projectType,
-          BUDGET: budget,
-          TIMELINE: timeline,
-          DESCRIPTION: description || '',
-          FEATURES: features?.join(', ') || '',
-          RETAINER: retainer || ''
+        sender: {
+          name: 'DevTone Agency',
+          email: 'noreply@devtone.agency'
         },
-        listIds: [7],
-        updateEnabled: true
+        to: [
+          {
+            email: email,
+            name: nome
+          }
+        ],
+        subject: `Confirmação de Orçamento - ${tipoProj}`,
+        htmlContent: emailContent
       })
     });
 
-    return res.status(200).json({ success: true, message: 'Estimate sent successfully' });
+    // Verificar se o email foi enviado com sucesso
+    if (!brevoResponse.ok) {
+      const errorData = await brevoResponse.text();
+      console.error('Erro ao enviar email via Brevo:', errorData);
+      
+      return res.status(500).json({
+        success: false,
+        error: 'Falha ao enviar email de confirmação',
+        details: errorData
+      });
+    }
 
-  } catch (err) {
-    return res.status(500).json({ error: 'Server error', message: err.message });
+    const responseData = await brevoResponse.json();
+    console.log('Email enviado com sucesso via Brevo:', responseData);
+
+    // Retornar sucesso
+    return res.status(200).json({
+      success: true,
+      message: 'Email de confirmação enviado com sucesso',
+      messageId: responseData.messageId
+    });
+
+  } catch (error) {
+    console.error('Erro interno ao processar solicitação:', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: 'Erro interno do servidor',
+      message: error instanceof Error ? error.message : 'Erro desconhecido'
+    });
   }
 }
