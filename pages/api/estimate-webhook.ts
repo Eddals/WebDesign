@@ -1,20 +1,30 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 interface EstimateFormData {
-  nome: string;
+  name: string;
   email: string;
-  telefone: string;
-  empresa: string;
-  setor: string;
-  tipoProj: string;
-  orcamento: string;
-  prazo: string;
-  descricao: string;
-  funcionalidades: string[];
-  retentor: string;
+  phone: string;
+  company: string;
+  industry: string;
+  projectType: string;
+  budget: string;
+  timeline: string;
+  description: string;
+  features: string[];
+  retainer: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   // Aceitar somente requisições POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -23,32 +33,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     // Receber os dados do formulário de orçamento
     const {
-      nome,
+      name,
       email,
-      telefone,
-      empresa,
-      setor,
-      tipoProj,
-      orcamento,
-      prazo,
-      descricao,
-      funcionalidades,
-      retentor
+      phone,
+      company,
+      industry,
+      projectType,
+      budget,
+      timeline,
+      description,
+      features,
+      retainer
     }: EstimateFormData = req.body;
 
     // Exibir os dados no log do console
     console.log('=== DADOS DO FORMULÁRIO DE ORÇAMENTO ===');
-    console.log('Nome:', nome);
+    console.log('Nome:', name);
     console.log('Email:', email);
-    console.log('Telefone:', telefone);
-    console.log('Empresa:', empresa);
-    console.log('Setor:', setor);
-    console.log('Tipo de Projeto:', tipoProj);
-    console.log('Orçamento:', orcamento);
-    console.log('Prazo:', prazo);
-    console.log('Descrição:', descricao);
-    console.log('Funcionalidades:', funcionalidades);
-    console.log('Retentor:', retentor);
+    console.log('Telefone:', phone);
+    console.log('Empresa:', company);
+    console.log('Setor:', industry);
+    console.log('Tipo de Projeto:', projectType);
+    console.log('Orçamento:', budget);
+    console.log('Prazo:', timeline);
+    console.log('Descrição:', description);
+    console.log('Funcionalidades:', features);
+    console.log('Retentor:', retainer);
     console.log('Data/Hora:', new Date().toISOString());
     console.log('========================================');
 

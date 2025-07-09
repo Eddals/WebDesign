@@ -1,43 +1,67 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 interface EstimateFormData {
-  nome: string;
+  name: string;
   email: string;
-  telefone: string;
-  empresa: string;
-  setor: string;
-  tipoProj: string;
-  orcamento: string;
-  prazo: string;
-  descricao: string;
-  funcionalidades: string[];
-  retentor: string;
+  phone: string;
+  company: string;
+  industry: string;
+  projectType: string;
+  budget: string;
+  timeline: string;
+  description: string;
+  features: string[];
+  retainer: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   // Aceitar somente requisições POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
+    // Log dos dados recebidos
+    console.log('📥 Dados recebidos na API:', req.body);
+
     // Receber os dados do formulário
     const {
-      nome,
+      name,
       email,
-      telefone,
-      empresa,
-      setor,
-      tipoProj,
-      orcamento,
-      prazo,
-      descricao,
-      funcionalidades,
-      retentor
+      phone,
+      company,
+      industry,
+      projectType,
+      budget,
+      timeline,
+      description,
+      features,
+      retainer
     }: EstimateFormData = req.body;
+
+    // Verificar se os campos obrigatórios estão presentes
+    if (!name || !email || !projectType) {
+      console.error('❌ Campos obrigatórios faltando:', { name, email, projectType });
+      return res.status(400).json({
+        success: false,
+        error: 'Campos obrigatórios faltando: name, email, projectType'
+      });
+    }
 
     // Verificar se a chave da API Brevo está configurada
     const brevoApiKey = process.env.BREVO_API_KEY || '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';
+    
+    console.log('🔑 Usando API Key:', brevoApiKey ? 'Configurada' : 'Não configurada');
     
     if (!brevoApiKey) {
       console.error('BREVO_API_KEY não está configurada');
@@ -51,20 +75,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const emailContent = `
       <h2>Confirmação de Orçamento Recebido</h2>
       
-      <p>Olá <strong>${nome}</strong>,</p>
+      <p>Olá <strong>${name}</strong>,</p>
       
       <p>Recebemos sua solicitação de orçamento e entraremos em contato em breve!</p>
       
       <h3>Detalhes do Projeto:</h3>
       <ul>
-        <li><strong>Nome:</strong> ${nome}</li>
-        <li><strong>Empresa:</strong> ${empresa}</li>
-        <li><strong>Tipo de Projeto:</strong> ${tipoProj}</li>
-        <li><strong>Descrição:</strong> ${descricao}</li>
-        <li><strong>Orçamento:</strong> ${orcamento}</li>
-        <li><strong>Prazo:</strong> ${prazo}</li>
-        ${funcionalidades && funcionalidades.length > 0 ? 
-          `<li><strong>Funcionalidades:</strong> ${funcionalidades.join(', ')}</li>` : 
+        <li><strong>Nome:</strong> ${name}</li>
+        <li><strong>Empresa:</strong> ${company}</li>
+        <li><strong>Tipo de Projeto:</strong> ${projectType}</li>
+        <li><strong>Descrição:</strong> ${description}</li>
+        <li><strong>Orçamento:</strong> ${budget}</li>
+        <li><strong>Prazo:</strong> ${timeline}</li>
+        ${features && features.length > 0 ? 
+          `<li><strong>Funcionalidades:</strong> ${features.join(', ')}</li>` : 
           ''
         }
       </ul>
@@ -75,6 +99,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Equipe DevTone</p>
     `;
 
+    // Preparar dados para envio
+    const emailData = {
+      sender: {
+        name: 'DevTone Agency',
+        email: 'noreply@devtone.agency'
+      },
+      to: [
+        {
+          email: email,
+          name: name
+        }
+      ],
+      subject: `Confirmação de Orçamento - ${projectType}`,
+      htmlContent: emailContent
+    };
+
+    console.log('📧 Preparando envio de email para:', email);
+    console.log('📋 Dados do email:', JSON.stringify(emailData, null, 2));
+
     // Enviar email via API Brevo
     const brevoResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
@@ -82,21 +125,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'Content-Type': 'application/json',
         'api-key': brevoApiKey
       },
-      body: JSON.stringify({
-        sender: {
-          name: 'DevTone Agency',
-          email: 'noreply@devtone.agency'
-        },
-        to: [
-          {
-            email: email,
-            name: nome
-          }
-        ],
-        subject: `Confirmação de Orçamento - ${tipoProj}`,
-        htmlContent: emailContent
-      })
+      body: JSON.stringify(emailData)
     });
+
+    console.log('📤 Status da resposta Brevo:', brevoResponse.status);
 
     // Verificar se o email foi enviado com sucesso
     if (!brevoResponse.ok) {
@@ -112,6 +144,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const responseData = await brevoResponse.json();
     console.log('Email enviado com sucesso via Brevo:', responseData);
+
+    // Criar/Atualizar contato no Brevo com ID da lista #7
+    try {
+      console.log('👤 Criando/atualizando contato no Brevo...');
+      
+      const contactData = {
+        email: email,
+        attributes: {
+          FIRSTNAME: name.split(' ')[0] || name,
+          LASTNAME: name.split(' ').slice(1).join(' ') || '',
+          SMS: phone || '',
+          COMPANY: company || '',
+          INDUSTRY: industry || '',
+          PROJECTTYPE: projectType || '',
+          BUDGET: budget || '',
+          TIMELINE: timeline || '',
+          DESCRIPTION: description || '',
+          FEATURES: features && features.length > 0 ? features.join(', ') : '',
+          RETAINER: retainer || ''
+        },
+        listIds: [7], // ID da lista para estimate
+        updateEnabled: true
+      };
+
+      console.log('📋 Dados do contato:', JSON.stringify(contactData, null, 2));
+
+      const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': brevoApiKey
+        },
+        body: JSON.stringify(contactData)
+      });
+
+      console.log('👤 Status da criação do contato:', contactResponse.status);
+
+      if (contactResponse.ok) {
+        const contactResult = await contactResponse.json();
+        console.log('✅ Contato criado/atualizado com sucesso:', contactResult);
+      } else {
+        const contactError = await contactResponse.text();
+        console.log('⚠️ Aviso: Falha ao criar contato (não crítico):', contactError);
+      }
+
+    } catch (contactError) {
+      console.log('⚠️ Aviso: Erro ao criar contato (não crítico):', contactError);
+    }
 
     // Retornar sucesso
     return res.status(200).json({

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste API Estimate Brevo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste API Estimate Brevo</h1>
+        <p>Este formulário testa se a API está enviando emails corretamente via Brevo.</p>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="name">Nome Completo:</label>
+                <input type="text" id="name" name="name" value="João Silva" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="joao@teste.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Telefone:</label>
+                <input type="tel" id="phone" name="phone" value="(11) 99999-9999" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="company">Empresa:</label>
+                <input type="text" id="company" name="company" value="Empresa Teste Ltda" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="industry">Setor:</label>
+                <input type="text" id="industry" name="industry" value="Tecnologia" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="projectType">Tipo de Projeto:</label>
+                <select id="projectType" name="projectType" required>
+                    <option value="landing">Landing Page</option>
+                    <option value="business" selected>Business Website</option>
+                    <option value="ecommerce">E-commerce Store</option>
+                    <option value="webapp">Web Application</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="budget">Orçamento:</label>
+                <select id="budget" name="budget" required>
+                    <option value="$500 - $1,500">$500 - $1,500</option>
+                    <option value="$1,500 - $5,000" selected>$1,500 - $5,000</option>
+                    <option value="$5,000 - $15,000">$5,000 - $15,000</option>
+                    <option value="$15,000+">$15,000+</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="timeline">Prazo:</label>
+                <select id="timeline" name="timeline" required>
+                    <option value="1-2 Weeks (Rush)">1-2 Weeks (Rush)</option>
+                    <option value="1 Month" selected>1 Month</option>
+                    <option value="2-3 Months">2-3 Months</option>
+                    <option value="Flexible Timeline">Flexible Timeline</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Descrição do Projeto:</label>
+                <textarea id="description" name="description" rows="4">Preciso de um site profissional para minha empresa com sistema de contato e galeria de produtos.</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="retainer">Retentor Mensal:</label>
+                <select id="retainer" name="retainer">
+                    <option value="none" selected>Nenhum</option>
+                    <option value="basic">Básico - $200/mês</option>
+                    <option value="standard">Padrão - $500/mês</option>
+                    <option value="premium">Premium - $1,000/mês</option>
+                </select>
+            </div>
+            
+            <button type="submit" id="submitBtn">🚀 Testar API Brevo</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Desabilitar botão e mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Enviando...';
+            resultDiv.innerHTML = '<div class="result loading">🔄 Enviando dados para a API...</div>';
+            
+            try {
+                // Coletar dados do formulário
+                const formData = new FormData(this);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    company: formData.get('company'),
+                    industry: formData.get('industry'),
+                    projectType: formData.get('projectType'),
+                    budget: formData.get('budget'),
+                    timeline: formData.get('timeline'),
+                    description: formData.get('description'),
+                    features: ['contact_form', 'seo', 'gallery'], // Features de exemplo
+                    retainer: formData.get('retainer')
+                };
+                
+                console.log('📤 Enviando dados:', data);
+                
+                // Fazer requisição para a API
+                const response = await fetch('/api/estimate-brevo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('📥 Status da resposta:', response.status);
+                
+                // Verificar se a resposta é JSON válida
+                let result;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    throw new Error(`Resposta não é JSON válida: ${text}`);
+                }
+                
+                console.log('📋 Resultado:', result);
+                
+                if (response.ok && result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h3>✅ Sucesso!</h3>
+                            <p><strong>Email enviado com sucesso!</strong></p>
+                            <p>📧 Destinatário: ${data.email}</p>
+                            <p>📝 Projeto: ${data.projectType}</p>
+                            <p>👤 Contato adicionado à lista #7 do Brevo</p>
+                            ${result.messageId ? `<p>🆔 Message ID: ${result.messageId}</p>` : ''}
+                            <p>⏰ Horário: ${new Date().toLocaleString()}</p>
+                            <p><small>💡 Verifique o console do servidor para logs detalhados</small></p>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(result.error || result.message || 'Erro desconhecido');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Erro!</h3>
+                        <p><strong>Falha ao enviar email:</strong></p>
+                        <p>${error.message}</p>
+                        <p>⏰ Horário: ${new Date().toLocaleString()}</p>
+                        <details>
+                            <summary>Detalhes técnicos</summary>
+                            <pre>${error.stack || 'Sem stack trace disponível'}</pre>
+                        </details>
+                    </div>
+                `;
+            } finally {
+                // Reabilitar botão
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Testar API Brevo';
+            }
+        });
+    </script>
+</body>
+</html>
