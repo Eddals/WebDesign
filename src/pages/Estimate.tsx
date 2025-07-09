@@ -536,12 +536,27 @@ const Estimate = () => {
                   </div>
                 </motion.div>
 
-                
-                {/* Important Notes */}
+                {/* Newsletter Signup */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
+                  className="max-w-2xl mx-auto"
+                >
+                  <EmailForm
+                    title="Stay Updated on Your Project"
+                    subtitle="Get development tips, industry insights, and exclusive updates while we work on your proposal"
+                    placeholder="Already have your email? Get our newsletter!"
+                    buttonText="Subscribe to Updates"
+                    successMessage="Great! You'll receive valuable insights while we prepare your proposal."
+                  />
+                </motion.div>
+
+                {/* Important Notes */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
                   className="text-center space-y-4"
                 >
                   <p className="text-white/60 text-sm">
