@@ -6,18 +6,19 @@ export default async function handler(req, res) {
   try {
     const body = req.body;
 
-    // Use the correct Brevo API key
-    const brevoKey = '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';
-    if (!brevoKey) {
-      return res.status(500).json({ error: 'API Key not found in environment' });
+    // Get API key from environment variables
+    const apiKey = process.env.BREVO_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'API key not found' });
     }
 
     // Send confirmation email to client
     const clientResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
-        'api-key': brevoKey,
-        'Content-Type': 'application/json'
+        'accept': 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json'
       },
       body: JSON.stringify({
         sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
@@ -69,8 +70,9 @@ export default async function handler(req, res) {
     const teamResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
-        'api-key': brevoKey,
-        'Content-Type': 'application/json'
+        'accept': 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json'
       },
       body: JSON.stringify({
         sender: { name: 'DevTone Estimate Form', email: 'noreply@devtone.agency' },

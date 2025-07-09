@@ -1,101 +1,83 @@
-# Configuração das Variáveis de Ambiente no Vercel
+# 🚀 Configuração da Variável de Ambiente no Vercel
 
-## Passo a Passo para Configurar a API de Email
+## ✅ Passo a Passo para Configurar BREVO_API_KEY no Vercel
 
-### 1. Acesse o Dashboard do Vercel
+### 1. **Acesse o Dashboard do Vercel**
+- Vá em: https://vercel.com/dashboard
+- Clique no seu projeto **WebDesignS**
 
-1. Vá para [https://vercel.com/dashboard](https://vercel.com/dashboard)
-2. Faça login com sua conta
-3. Selecione o projeto **WebDesign** ou **devtone**
+### 2. **Configure a Variável de Ambiente**
+- Clique na aba **"Settings"**
+- No menu lateral, clique em **"Environment Variables"**
+- Clique em **"Add New"**
 
-### 2. Configure as Variáveis de Ambiente
-
-1. Clique em **Settings** (Configurações) no menu superior
-2. No menu lateral, clique em **Environment Variables**
-3. Adicione as seguintes variáveis:
-
-#### Variável 1: RESEND_API_KEY
-- **Key**: `RESEND_API_KEY`
-- **Value**: `re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR`
-- **Environment**: Marque todas as opções (Production, Preview, Development)
-- Clique em **Save**
-
-#### Variável 2: ADMIN_EMAIL
-- **Key**: `ADMIN_EMAIL`
-- **Value**: `team@devtone.agency` (ou o email que você quer receber as notificações)
-- **Environment**: Marque todas as opções (Production, Preview, Development)
-- Clique em **Save**
-
-### 3. Faça o Deploy
-
-Depois de adicionar as variáveis, você precisa fazer um novo deploy:
-
-```bash
-git add .
-git commit -m "Fix API endpoint for email notifications"
-git push
+### 3. **Adicione a Chave da API**
+```
+Name: BREVO_API_KEY
+Value: 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
+Environment: Production, Preview, Development (selecione todos)
 ```
 
-O Vercel irá automaticamente fazer o deploy com as novas variáveis de ambiente.
+### 4. **Salve e Redeploy**
+- Clique em **"Save"**
+- Vá na aba **"Deployments"**
+- Clique nos 3 pontinhos do último deployment
+- Clique em **"Redeploy"**
 
-### 4. Teste a API
+## 🔧 Código Atualizado
 
-Após o deploy, você pode testar se está funcionando:
+O arquivo `api/estimate-brevo.ts` agora está configurado corretamente:
 
-1. Acesse: https://devtone.agency/estimate
-2. Preencha o formulário
-3. Envie
+```typescript
+// ✅ Busca a chave das variáveis de ambiente
+const apiKey = process.env.BREVO_API_KEY;
+if (!apiKey) {
+  return res.status(500).json({ error: 'API key not found' });
+}
 
-### 5. Verificar os Logs (se houver problemas)
+// ✅ Headers corretos conforme documentação da Brevo
+headers: {
+  'accept': 'application/json',
+  'api-key': apiKey,
+  'content-type': 'application/json'
+}
+```
 
-1. No dashboard do Vercel, clique em **Functions**
-2. Procure por `send-estimate-email`
-3. Clique para ver os logs
-4. Verifique se há erros
+## 🧪 Como Testar
 
-## Troubleshooting
+### Opção 1: Teste Local
+1. Certifique-se que `.env.local` existe na raiz do projeto
+2. Execute `npm run dev`
+3. Teste o formulário de estimate
 
-### Se os emails não estão sendo enviados:
+### Opção 2: Teste em Produção
+1. Após configurar no Vercel e fazer redeploy
+2. Acesse https://devtone.agency/estimate
+3. Preencha e submeta o formulário
 
-1. **Verifique o domínio no Resend**
-   - Acesse [https://resend.com/domains](https://resend.com/domains)
-   - Verifique se o domínio `devtone.agency` está verificado
-   - Se não estiver, adicione os registros DNS necessários
+## 🚨 Troubleshooting
 
-2. **Verifique a chave da API**
-   - Certifique-se de que a chave `re_NYdGRFDW_JWvwsxuMkTR1QSNkjbTE7AVR` está correta
-   - Não deve ter espaços ou aspas ao redor
+### Se ainda der erro 401:
+1. **Verifique se a variável foi salva no Vercel**
+2. **Confirme se fez o redeploy**
+3. **Teste a chave diretamente na API da Brevo**
 
-3. **Verifique os logs do Vercel**
-   - Dashboard → Functions → send-estimate-email → Logs
+### Teste direto da chave:
+```bash
+curl -X GET "https://api.brevo.com/v3/account" \
+  -H "accept: application/json" \
+  -H "api-key: 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"
+```
 
-### Se a API não está sendo chamada:
+## ✅ Checklist Final
 
-1. **Verifique o console do navegador**
-   - Abra o DevTools (F12)
-   - Vá para a aba Console
-   - Veja se há erros de CORS ou 404
+- [ ] Variável `BREVO_API_KEY` configurada no Vercel
+- [ ] Redeploy realizado
+- [ ] Código atualizado para usar `process.env.BREVO_API_KEY`
+- [ ] Headers corretos implementados
+- [ ] Teste do formulário funcionando
 
-2. **Verifique a aba Network**
-   - Veja se a requisição está sendo feita para `/api/send-estimate-email`
-   - Verifique o status da resposta
+---
 
-## Status Atual
-
-- ✅ Código corrigido para usar o endpoint correto
-- ⏳ Aguardando configuração das variáveis no Vercel
-- ✅ ActivePieces webhook funcionando como backup
-- ✅ Templates de email prontos
-
-## Próximos Passos
-
-1. Configure as variáveis de ambiente no Vercel
-2. Faça o push do código corrigido
-3. Teste o formulário
-4. Verifique se os emails estão chegando
-
-## Suporte
-
-Se precisar de ajuda:
-- Email: team@devtone.agency
-- WhatsApp: +1 917-741-3468
+**Status**: 🔧 Configurado para usar variáveis de ambiente do Vercel
+**Próximo**: Configurar no dashboard do Vercel e testar
