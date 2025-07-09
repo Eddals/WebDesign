@@ -1,14 +1,11 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  // Extrair dados do formulário
   const {
     email,
-    nome,
+    firstname,
     company,
     industry,
     projectType,
@@ -16,105 +13,67 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     timeline,
     features,
     retainer
-  } = req.body
+  } = req.body;
 
-  // Validar campos obrigatórios
-  if (!email || !nome) {
-    return res.status(400).json({ error: 'Email and nome are required' })
-  }
+  const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
-  // Verificar se a API key está configurada
-  const apiKey = process.env.BREVO_API_KEY
-  if (!apiKey) {
-    return res.status(500).json({ error: 'BREVO_API_KEY environment variable is not configured' })
-  }
-
-  try {
-    console.log('Iniciando processo de salvamento do contato e envio de e-mail...')
-
-    // Ação 1: Criar ou atualizar contato na Brevo
-    console.log('Salvando contato na Brevo...')
-    const contactData = {
+  // 1. Criar ou atualizar contato
+  const contact = await fetch('https://api.brevo.com/v3/contacts', {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
       email: email,
       attributes: {
-        FIRSTNAME: nome,
-        COMPANY: company || 'Not provided',
-        INDUSTRY: industry || 'Not provided',
-        PROJECTTYPE: projectType || 'Not provided',
-        BUDGET: budget || 'Not provided',
-        TIMELINE: timeline || 'Not provided',
-        FEATURES: features ? features.join(', ') : 'Not provided',
-        RETAINER: retainer || 'Not provided'
+        FIRSTNAME: firstname,
+        COMPANY: company,
+        INDUSTRY: industry,
+        PROJECTTYPE: projectType,
+        BUDGET: budget,
+        TIMELINE: timeline,
+        FEATURES: features,
+        RETAINER: retainer
       },
+      listIds: [7],
       updateEnabled: true
-    }
-
-    const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: {
-        'api-key': apiKey,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(contactData)
     })
+  });
 
-    if (!contactResponse.ok) {
-      const contactError = await contactResponse.json()
-      console.error('Erro ao salvar contato:', contactError)
-      return res.status(500).json({ 
-        error: 'Erro ao salvar contato na Brevo', 
-        details: contactError 
-      })
-    }
+  if (!contact.ok) {
+    const error = await contact.json();
+    return res.status(500).json({ error: 'Erro ao salvar contato', details: error });
+  }
 
-    console.log('Contato salvo/atualizado com sucesso na Brevo')
-
-    // Ação 2: Enviar e-mail usando template #2
-    console.log('Enviando e-mail usando template #2...')
-    const emailData = {
-      to: [{ email: email, name: nome }],
+  // 2. Enviar email com template ID #2
+  const emailSend = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      to: [{ email, name: firstname }],
       templateId: 2,
       params: {
         EMAIL: email,
-        FIRSTNAME: nome,
-        COMPANY: company || 'Not provided',
-        INDUSTRY: industry || 'Not provided',
-        PROJECTTYPE: projectType || 'Not provided',
-        BUDGET: budget || 'Not provided',
-        TIMELINE: timeline || 'Not provided',
-        FEATURES: features ? features.join(', ') : 'Not provided',
-        RETAINER: retainer || 'Not provided'
+        FIRSTNAME: firstname,
+        COMPANY: company,
+        INDUSTRY: industry,
+        PROJECTTYPE: projectType,
+        BUDGET: budget,
+        TIMELINE: timeline,
+        FEATURES: features,
+        RETAINER: retainer
       }
-    }
-
-    const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'api-key': apiKey,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(emailData)
     })
+  });
 
-    if (!emailResponse.ok) {
-      const emailError = await emailResponse.json()
-      console.error('Erro ao enviar e-mail:', emailError)
-      return res.status(500).json({ 
-        error: 'Erro ao enviar e-mail via template #2', 
-        details: emailError 
-      })
-    }
-
-    console.log('E-mail enviado com sucesso usando template #2')
-
-    // Resposta de sucesso
-    return res.status(200).json({ success: true })
-
-  } catch (error: any) {
-    console.error('Erro geral no processo:', error)
-    return res.status(500).json({ 
-      error: 'Erro interno do servidor',
-      details: error.message 
-    })
+  if (!emailSend.ok) {
+    const error = await emailSend.json();
+    return res.status(500).json({ error: 'Erro ao enviar e-mail', details: error });
   }
+
+  return res.status(200).json({ success: true });
 } 
