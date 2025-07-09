@@ -50,6 +50,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         BUDGET: params.budget || 'Not provided',
         TIMELINE: params.timeline || 'Not provided',
         FEATURES: params.features ? params.features.join(', ') : 'Not provided',
+        RETAINER: params.retainer || 'Not provided'
+      },
+      listIds: [7]
+    }
+
     console.log('Email data:', JSON.stringify(emailData, null, 2))
 
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
