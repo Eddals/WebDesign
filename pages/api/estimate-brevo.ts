@@ -9,6 +9,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Email and nome are required' })
   }
 
+  if (!process.env.BREVO_API_KEY) {
+    return res.status(500).json({ error: 'BREVO_API_KEY environment variable is not configured' })
+  }
+
   try {
     console.log('Sending email to:', email, 'with name:', nome)
     
@@ -44,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
-        'api-key': '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',
+        'api-key': process.env.BREVO_API_KEY!,
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
