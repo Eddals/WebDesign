@@ -25,22 +25,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         email: email, 
         name: nome 
       }],
-      subject: `Olá ${nome}, seu orçamento foi recebido!`,
-      htmlContent: `
-        <h1>Olá ${nome}!</h1>
-        <p>Recebemos seu pedido de orçamento com sucesso.</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Telefone:</strong> ${params.phone || 'Não informado'}</p>
-        <p><strong>Empresa:</strong> ${params.company || 'Não informado'}</p>
-        <p><strong>Indústria:</strong> ${params.industry || 'Não informado'}</p>
-        <p><strong>Tipo de Projeto:</strong> ${params.projectType || 'Não informado'}</p>
-        <p><strong>Orçamento:</strong> ${params.budget || 'Não informado'}</p>
-        <p><strong>Prazo:</strong> ${params.timeline || 'Não informado'}</p>
-        <p><strong>Descrição:</strong> ${params.description || 'Não informado'}</p>
-        <br>
-        <p>Nossa equipe entrará em contato em até 24 horas!</p>
-        <p>Atenciosamente,<br>Equipe DevTone</p>
-      `
+      templateId: 2,
+      params: {
+        EMAIL: email,
+        FIRSTNAME: nome,
+        COMPANY: params.company || 'Not provided',
+        INDUSTRY: params.industry || 'Not provided',
+        PROJECTTYPE: params.projectType || 'Not provided',
+        BUDGET: params.budget || 'Not provided',
+        TIMELINE: params.timeline || 'Not provided',
+        FEATURES: params.features ? params.features.join(', ') : 'Not provided',
+        RETAINER: params.retainer || 'Not provided'
+      }
     }
 
     console.log('Email data:', JSON.stringify(emailData, null, 2))
