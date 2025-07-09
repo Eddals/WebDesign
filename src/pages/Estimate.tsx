@@ -25,6 +25,7 @@ import {
   Search
 } from 'lucide-react';
 import SEO from '@/components/SEO';
+import EmailForm from '@/components/EmailForm';
 
 interface FormData {
   // Personal Info
