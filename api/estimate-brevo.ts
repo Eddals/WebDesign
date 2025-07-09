@@ -6,10 +6,10 @@ export default async function handler(req, res) {
   try {
     const body = req.body;
 
-    // Use the Brevo API key directly
-    const brevoKey = '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';
+    // Use the correct Brevo API key
+    const brevoKey = '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';
     if (!brevoKey) {
-      return res.status(500).json({ error: 'Missing BREVO_API_KEY' });
+      return res.status(500).json({ error: 'API Key not found in environment' });
     }
 
     // Send confirmation email to client
