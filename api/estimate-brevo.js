@@ -15,15 +15,19 @@ export default async function handler(req, res) {
       ? features.join(', ')
       : 'None selected';
 
-    // Send email using Brevo API
+    // Log the request for debugging
+    console.log('Sending estimate email to:', email);
+    
+    // Send email using Brevo API - DIRECT APPROACH
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'api-key': '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'
       },
       body: JSON.stringify({
-        to: [{ email, name }],
+        to: [{ email: email, name: name }],
         templateId: 2,
         params: {
           FIRSTNAME: name,
@@ -34,26 +38,32 @@ export default async function handler(req, res) {
           FEATURES: featuresList,
           DESCRIPTION: description || 'No description provided',
           INDUSTRY: industry || 'Not specified',
-          RETAINER: retainer || 'None'
+          RETAINER: retainer || 'None',
+          PHONE: phone
         },
-        sender: {
-          name: 'DevTone Agency',
-          email: 'team@devtone.agency'
+        headers: {
+          'X-Mailin-custom': 'custom_header_1:custom_value_1|custom_header_2:custom_value_2'
         }
       })
     });
 
+    // Log the response for debugging
+    const responseText = await response.text();
+    console.log('Brevo API response:', response.status, responseText);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Brevo API error:', errorData);
-      return res.status(500).json({ error: `Email service error: ${errorData.message || 'Unknown error'}` });
+      return res.status(500).json({ 
+        error: `Email service error: ${response.status}`, 
+        details: responseText 
+      });
     }
 
-    // Also send notification to team
+    // Also send notification to team with a different approach
     try {
       await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
           'api-key': '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'
         },
@@ -81,7 +91,6 @@ export default async function handler(req, res) {
         })
       });
     } catch (notificationError) {
-      // Log but don't fail if team notification fails
       console.error('Team notification error:', notificationError);
     }
 
