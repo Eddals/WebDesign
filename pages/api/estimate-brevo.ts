@@ -73,37 +73,79 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Preparar o conteúdo do email
     const emailContent = `
-      <h2>Confirmação de Orçamento Recebido</h2>
-      
-      <p>Olá <strong>${name}</strong>,</p>
-      
-      <p>Recebemos sua solicitação de orçamento e entraremos em contato em breve!</p>
-      
-      <h3>Detalhes do Projeto:</h3>
-      <ul>
-        <li><strong>Nome:</strong> ${name}</li>
-        <li><strong>Empresa:</strong> ${company}</li>
-        <li><strong>Tipo de Projeto:</strong> ${projectType}</li>
-        <li><strong>Descrição:</strong> ${description}</li>
-        <li><strong>Orçamento:</strong> ${budget}</li>
-        <li><strong>Prazo:</strong> ${timeline}</li>
-        ${features && features.length > 0 ? 
-          `<li><strong>Funcionalidades:</strong> ${features.join(', ')}</li>` : 
-          ''
-        }
-      </ul>
-      
-      <p>Nossa equipe analisará sua solicitação e retornará com uma proposta personalizada.</p>
-      
-      <p>Atenciosamente,<br>
-      Equipe DevTone</p>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Estimate Confirmation</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">DevTone Agency</h1>
+          <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Professional Web Development</p>
+        </div>
+        
+        <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <h2 style="color: #333; margin-top: 0;">Estimate Request Received!</h2>
+          
+          <p>Hello <strong>${name}</strong>,</p>
+          
+          <p>Thank you for your interest in DevTone Agency! We've received your project estimate request and our team will review it carefully.</p>
+          
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #667eea; margin-top: 0;">Project Details:</h3>
+            <ul style="list-style: none; padding: 0;">
+              <li style="margin-bottom: 8px;"><strong>Name:</strong> ${name}</li>
+              <li style="margin-bottom: 8px;"><strong>Company:</strong> ${company || 'Not specified'}</li>
+              <li style="margin-bottom: 8px;"><strong>Industry:</strong> ${industry || 'Not specified'}</li>
+              <li style="margin-bottom: 8px;"><strong>Project Type:</strong> ${projectType}</li>
+              <li style="margin-bottom: 8px;"><strong>Budget Range:</strong> ${budget}</li>
+              <li style="margin-bottom: 8px;"><strong>Timeline:</strong> ${timeline}</li>
+              <li style="margin-bottom: 8px;"><strong>Phone:</strong> ${phone || 'Not provided'}</li>
+              ${description ? `<li style="margin-bottom: 8px;"><strong>Description:</strong> ${description}</li>` : ''}
+              ${features && features.length > 0 ? 
+                `<li style="margin-bottom: 8px;"><strong>Features:</strong> ${features.join(', ')}</li>` : 
+                ''
+              }
+              ${retainer && retainer !== 'none' ? `<li style="margin-bottom: 8px;"><strong>Monthly Retainer:</strong> ${retainer}</li>` : ''}
+            </ul>
+          </div>
+          
+          <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #1976d2; margin-top: 0;">What Happens Next?</h3>
+            <ol style="margin: 0; padding-left: 20px;">
+              <li style="margin-bottom: 8px;">Our team will review your requirements (2-4 hours)</li>
+              <li style="margin-bottom: 8px;">We'll prepare a detailed proposal with pricing (within 24 hours)</li>
+              <li style="margin-bottom: 8px;">Schedule a consultation call to discuss details (within 48 hours)</li>
+              <li style="margin-bottom: 8px;">Finalize the project scope and timeline</li>
+            </ol>
+          </div>
+          
+          <p>We're excited about the possibility of working with you and will be in touch soon!</p>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="margin: 0;"><strong>Best regards,</strong><br>
+            The DevTone Team</p>
+            <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">
+              📧 team@devtone.agency<br>
+              🌐 devtone.agency
+            </p>
+          </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
+          <p>This email was sent because you requested an estimate from DevTone Agency.</p>
+        </div>
+      </body>
+      </html>
     `;
 
     // Preparar dados para envio
     const emailData = {
       sender: {
         name: 'DevTone Agency',
-        email: 'noreply@devtone.agency'
+        email: 'team@devtone.agency'
       },
       to: [
         {
@@ -111,7 +153,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           name: name
         }
       ],
-      subject: `Confirmação de Orçamento - ${projectType}`,
+      subject: `Estimate Confirmation - ${projectType}`,
       htmlContent: emailContent
     };
 
