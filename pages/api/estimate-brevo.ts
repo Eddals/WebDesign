@@ -3,7 +3,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { email, firstname } = req.body;
+  const { 
+    email, 
+    firstname, 
+    company, 
+    industry, 
+    projectType, 
+    budget, 
+    timeline, 
+    features, 
+    retainer 
+  } = req.body;
 
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
@@ -24,7 +34,18 @@ export default async function handler(req, res) {
           name: firstname || 'Client'
         }
       ],
-      templateId: 2
+      templateId: 2,
+      params: {
+        FIRSTNAME: firstname,
+        EMAIL: email,
+        COMPANY: company || 'Not provided',
+        INDUSTRY: industry || 'Not provided',
+        PROJECTTYPE: projectType || 'Not provided',
+        BUDGET: budget || 'Not provided',
+        TIMELINE: timeline || 'Not provided',
+        FEATURES: Array.isArray(features) ? features.join(', ') : features || 'Not provided',
+        RETAINER: retainer || 'Not provided'
+      }
     })
   });
 
