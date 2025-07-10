@@ -30,13 +30,23 @@ const Newsletter = () => {
         body: JSON.stringify(formData)
       })
 
-      if (response.ok) {
+      const responseData = await response.json();
+      
+      if (response.ok && responseData.success) {
         setMessage({ type: 'success', text: 'Thank you for subscribing! Check your email for confirmation.' })
         setFormData({ firstName: '', email: '' })
       } else {
-        throw new Error('Subscription failed')
+        console.error('Newsletter API error:', responseData);
+        
+        // Handle specific error cases
+        if (responseData.error && responseData.error.includes('duplicate')) {
+          setMessage({ type: 'success', text: 'You are already subscribed! We\'ll keep you updated.' })
+        } else {
+          setMessage({ type: 'error', text: responseData.error || 'Something went wrong. Please try again.' })
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error('Newsletter error:', error);
       setMessage({ type: 'error', text: 'Something went wrong. Please try again.' })
     } finally {
       setIsSubmitting(false)

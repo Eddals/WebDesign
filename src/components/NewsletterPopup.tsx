@@ -57,33 +57,35 @@ const NewsletterPopup = () => {
       // Log de depuração para verificar o corpo enviado
       console.log('Payload enviado para Brevo:', payload)
 
-      const response = await fetch('https://api.brevo.com/v3/contacts', {
+      const response = await fetch('/api/send-brevo', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'api-key': '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'
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          email: formData.email,
+          phone: formData.phone
+        })
       })
 
-      if (response.ok) {
+      const responseData = await response.json();
+      
+      if (response.ok && responseData.success) {
         setMessage({ type: 'success', text: 'Thank you for subscribing! Check your email for confirmation.' })
         setFormData({ firstName: '', email: '', phone: '' })
         localStorage.setItem('newsletter_subscribed', 'true')
         setTimeout(() => setIsOpen(false), 3000)
       } else {
-        const errorData = await response.json()
-        console.error('Brevo API error:', errorData)
+        console.error('Newsletter API error:', responseData)
         
         // Handle specific error cases
-        if (errorData.code === 'duplicate_parameter') {
-          setMessage({ type: 'error', text: 'This phone number is already registered. Please use a different one or leave it blank.' })
-        } else if (errorData.message && errorData.message.includes('already exists')) {
+        if (responseData.error && responseData.error.includes('duplicate')) {
           setMessage({ type: 'success', text: 'You are already subscribed! We\'ll keep you updated.' })
           localStorage.setItem('newsletter_subscribed', 'true')
           setTimeout(() => setIsOpen(false), 3000)
         } else {
-          throw new Error('Subscription failed')
+          setMessage({ type: 'error', text: responseData.error || 'Something went wrong. Please try again.' })
         }
       }
     } catch (error) {
