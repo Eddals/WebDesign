@@ -257,65 +257,9 @@ app.post('/api/contact-brevo', async (req, res) => {
 
     const BREVO_API_KEY = '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';
 
-    // Prepare contact data for Brevo
-    const contactData = {
-      email: email,
-      attributes: {
-        FIRSTNAME: name,
-        PHONE: phone || '',
-        COMPANY: company || '',
-        SUBJECT: subject,
-        MESSAGE: message,
-        PREFERRED_CONTACT: preferredContact || 'email'
-      },
-      listIds: [7], // Add to list #7
-      updateEnabled: true
-    };
-
-    console.log('📧 Creating/updating contact in Brevo:', contactData);
-
-    // Create or update contact in Brevo
-    const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'api-key': BREVO_API_KEY
-      },
-      body: JSON.stringify(contactData)
-    });
-
-    if (!contactResponse.ok) {
-      const errorData = await contactResponse.text();
-      console.error('❌ Error creating contact:', contactResponse.status, errorData);
-      throw new Error(`Failed to create contact: ${contactResponse.status} ${errorData}`);
-    }
-
-    const contactResult = await contactResponse.json();
-    console.log('✅ Contact created/updated successfully:', contactResult.id);
-
-    // Add contact to list #7 separately (in case it wasn't added in the first call)
-    try {
-      const addToListResponse = await fetch(`https://api.brevo.com/v3/contacts/lists/7/contacts/add`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'api-key': BREVO_API_KEY
-        },
-        body: JSON.stringify({
-          emails: [email]
-        })
-      });
-
-      if (addToListResponse.ok) {
-        console.log('✅ Contact added to list #7 successfully');
-      } else {
-        console.warn('⚠️ Could not add contact to list #7:', addToListResponse.status);
-      }
-    } catch (listError) {
-      console.warn('⚠️ Error adding contact to list:', listError);
-    }
+    // Note: Contact creation requires additional API permissions
+    // For now, we'll only send the email using template #2
+    console.log('📧 Sending contact email only (contact creation requires additional API permissions)');
 
     // Send email using template #2
     const emailData = {
@@ -359,7 +303,6 @@ app.post('/api/contact-brevo', async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Contact form submitted successfully',
-      contactId: contactResult.id,
       emailId: emailResult.messageId,
       timestamp: new Date().toISOString()
     });
