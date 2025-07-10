@@ -21,19 +21,30 @@ export default async function handler(req, res) {
 
   // Adicionar contato à lista #7 do Brevo
   try {
+    // Extrair primeiro e último nome
+    const nameParts = (firstname || '').split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+    
     const contactData = {
       email,
       attributes: {
-        FIRSTNAME: firstname || '',
+        FIRSTNAME: firstName,
+        LASTNAME: lastName,
         PHONE: phone || '',
         COMPANY: company || '',
         INDUSTRY: industry || '',
         PROJECT_TYPE: projectType || '',
+        PROJECTTYPE: projectType || '',
         BUDGET: budget || '',
         TIMELINE: timeline || '',
-        FEATURES: Array.isArray(features) ? features.join(', ') : features || '',
+        FEATURES: Array.isArray(features) ? features.join(', ') : (features || ''),
         DESCRIPTION: description || '',
         RETAINER: retainer || '',
+        MESSAGE: description || '',
+        SUBJECT: projectType || 'Website Estimate',
+        PREFERRED_CONTACT: 'email',
+        EXT_ID: `estimate_${Date.now()}`,
         SUBMISSION_DATE: new Date().toISOString()
       },
       listIds: [7],
