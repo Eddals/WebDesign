@@ -35,12 +35,15 @@ export default async function handler(
 
     // Obter o corpo da resposta como texto
     const responseText = await response.text();
+    console.log('Brevo API response text:', responseText);
 
     // Tentar analisar como JSON
     let responseData;
     try {
-      responseData = JSON.parse(responseText);
+      responseData = responseText ? JSON.parse(responseText) : {};
+      console.log('Brevo API response parsed:', responseData);
     } catch (e) {
+      console.error('Error parsing Brevo API response:', e);
       // Se não for JSON válido, usar o texto como está
       responseData = { text: responseText };
     }

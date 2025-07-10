@@ -19,7 +19,7 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     
     // Validar campos
@@ -36,72 +36,158 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
     setIsSubmitting(true)
     setMessage(null)
     
-    // Criar um formulário HTML para submissão direta
-    const form = document.createElement('form')
-    form.method = 'POST'
-    form.action = 'https://api.brevo.com/v3/contacts'
-    form.target = '_blank'
-    form.style.display = 'none'
-    
-    // Adicionar campos ao formulário
-    const apiKeyInput = document.createElement('input')
-    apiKeyInput.type = 'hidden'
-    apiKeyInput.name = 'api-key'
-    apiKeyInput.value = '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'
-    form.appendChild(apiKeyInput)
-    
-    const emailInput = document.createElement('input')
-    emailInput.type = 'hidden'
-    emailInput.name = 'email'
-    emailInput.value = email
-    form.appendChild(emailInput)
-    
-    const firstNameInput = document.createElement('input')
-    firstNameInput.type = 'hidden'
-    firstNameInput.name = 'FIRSTNAME'
-    firstNameInput.value = firstName
-    form.appendChild(firstNameInput)
-    
-    if (phone.trim()) {
-      const phoneInput = document.createElement('input')
-      phoneInput.type = 'hidden'
-      phoneInput.name = 'SMS'
-      phoneInput.value = phone
-      form.appendChild(phoneInput)
+    try {
+      // Log de depuração para verificar os dados enviados
+      console.log('Enviando dados para newsletter:', {
+        firstName,
+        email,
+        phone: phone ? phone : 'não fornecido'
+      })
+      
+      // Preparar os dados para envio
+      const brevoApiKey = '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'
+      
+      // Construir o payload para o Brevo
+      const payload = {
+        email,
+        attributes: {
+          FIRSTNAME: firstName
+        },
+        listIds: [2],
+        updateEnabled: true
+      }
+      
+      // Adicionar telefone se fornecido
+      if (phone.trim()) {
+        payload.attributes.SMS = phone.trim()
+      }
+      
+      // Enviar através do proxy para evitar problemas de CORS
+      const response = await fetch('/api/brevo-proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          endpoint: 'contacts',
+          data: payload,
+          apiKey: brevoApiKey
+        })
+      })
+      
+      // Obter a resposta como texto primeiro para depuração
+      const responseText = await response.text();
+      console.log('Resposta do proxy (texto):', responseText);
+      
+      // Tentar analisar como JSON
+      let responseData;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : {};
+        console.log('Resposta do proxy (JSON):', responseData);
+      } catch (e) {
+        console.error('Erro ao analisar resposta como JSON:', e);
+        responseData = { success: false, error: 'Invalid JSON response' };
+      }
+      
+      // Verificar se a resposta é ok
+      if (response.ok && responseData.success) {
+        // Sucesso - o usuário foi inscrito
+        setMessage({ 
+          type: 'success', 
+          text: 'Thank you for subscribing! Check your email for confirmation.' 
+        })
+        
+        // Limpar campos
+        setFirstName('')
+        setEmail('')
+        setPhone('')
+        
+        // Se for popup, salvar no localStorage e fechar
+        if (isPopup) {
+          localStorage.setItem('newsletter_subscribed', 'true')
+          setTimeout(() => onClose && onClose(), 3000)
+        }
+        
+        // Enviar email de confirmação através do proxy
+        try {
+          await fetch('/api/brevo-proxy', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              endpoint: 'smtp/email',
+              apiKey: brevoApiKey,
+              data: {
+                sender: {
+                  name: 'Devtone Agency',
+                  email: 'team@devtone.agency'
+                },
+                to: [
+                  {
+                    email,
+                    name: firstName
+                  }
+                ],
+                subject: 'Welcome to Devtone Newsletter!',
+                htmlContent: `
+                  <html>
+                    <body>
+                      <h1>Welcome to our Newsletter, ${firstName}!</h1>
+                      <p>Thank you for subscribing to the Devtone Agency newsletter.</p>
+                      <p>You'll now receive our latest web development tips, industry insights, and exclusive offers.</p>
+                      ${phone.trim() ? `<p>We've also registered your phone number: ${phone} for important updates.</p>` : ''}
+                      <p>Best regards,<br>The Devtone Team</p>
+                    </body>
+                  </html>
+                `
+              }
+            })
+          })
+        } catch (emailError) {
+          console.error('Error sending confirmation email:', emailError)
+          // Continue with success even if email fails
+        }
+      } else {
+        // Tentar obter detalhes do erro da resposta do proxy
+        let errorMessage = 'Something went wrong. Please try again.'
+        
+        console.error('Newsletter API error:', responseData)
+        
+        // Verificar se temos dados de erro do Brevo
+        if (responseData.data && responseData.data.message) {
+          // Verificar se é um erro de duplicação (email já existe)
+          if (responseData.data.message.includes('already exists')) {
+            setMessage({ 
+              type: 'success', 
+              text: 'You are already subscribed! We\'ll keep you updated.' 
+            })
+            
+            // Se for popup, salvar no localStorage e fechar
+            if (isPopup) {
+              localStorage.setItem('newsletter_subscribed', 'true')
+              setTimeout(() => onClose && onClose(), 3000)
+            }
+            
+            return
+          }
+          
+          errorMessage = responseData.data.message
+        } else if (responseData.error) {
+          errorMessage = responseData.error
+        }
+        
+        setMessage({ type: 'error', text: errorMessage })
+      }
+    } catch (error) {
+      console.error('Newsletter error:', error)
+      setMessage({ 
+        type: 'error', 
+        text: 'Something went wrong. Please try again.' 
+      })
+    } finally {
+      setIsSubmitting(false)
     }
-    
-    const listIdInput = document.createElement('input')
-    listIdInput.type = 'hidden'
-    listIdInput.name = 'listIds'
-    listIdInput.value = '2'
-    form.appendChild(listIdInput)
-    
-    // Adicionar o formulário ao documento e enviar
-    document.body.appendChild(form)
-    
-    // Mostrar mensagem de sucesso
-    setMessage({ 
-      type: 'success', 
-      text: 'Thank you for subscribing! Check your email for confirmation.' 
-    })
-    
-    // Limpar campos
-    setFirstName('')
-    setEmail('')
-    setPhone('')
-    
-    // Se for popup, salvar no localStorage e fechar
-    if (isPopup) {
-      localStorage.setItem('newsletter_subscribed', 'true')
-      setTimeout(() => onClose && onClose(), 3000)
-    }
-    
-    setIsSubmitting(false)
-    
-    // Remover o formulário do documento
-    setTimeout(() => {
-      document.body.removeChild(form)
-    }, 1000)
   }
 
   return (
