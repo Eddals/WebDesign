@@ -1,4 +1,4 @@
-// Contact form endpoint for Brevo
+// /api/contact-brevo.js
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -7,6 +7,7 @@ export default async function handler(req, res) {
   try {
     const { name, email, phone, company, subject, message, preferredContact } = req.body;
 
+    // Validação básica
     if (!name || !email || !subject || !message) {
       return res.status(400).json({
         success: false,
@@ -24,7 +25,7 @@ export default async function handler(req, res) {
 
     // 1. Criar/atualizar contato e adicionar à lista #7
     const contactData = {
-      email: email,
+      email,
       attributes: {
         FIRSTNAME: name,
         PHONE: phone || '',
