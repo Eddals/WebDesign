@@ -3,99 +3,34 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const {
-    email,
-    firstname,
-    company,
-    industry,
-    projectType,
-    budget,
-    timeline,
-    features,
-    retainer
-  } = req.body;
+  const { email, firstname } = req.body;
 
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
-  // 1. Criar ou atualizar contato
-  const contact = await fetch('https://api.brevo.com/v3/contacts', {
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
       'api-key': BREVO_API_KEY,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      email: email,
-      attributes: {
-        FIRSTNAME: firstname,
-        COMPANY: company,
-        INDUSTRY: industry,
-        PROJECTTYPE: projectType,
-        BUDGET: budget,
-        TIMELINE: timeline,
-        FEATURES: Array.isArray(features) ? features.join(', ') : features,
-        RETAINER: retainer
+      sender: {
+        name: 'Devtone Agency',
+        email: 'team@devtone.agency'
       },
-      updateEnabled: true
+      to: [
+        {
+          email,
+          name: firstname || 'Client'
+        }
+      ],
+      templateId: 2
     })
   });
 
-  if (!contact.ok) {
-    const error = await contact.json();
-    return res.status(500).json({ error: 'Erro ao salvar contato', details: error });
-  }
-
-  // 2. Adicionar o contato à lista #7
-  const addToList = await fetch('https://api.brevo.com/v3/contacts/lists/7/contacts/add', {
-    method: 'POST',
-    headers: {
-      'api-key': BREVO_API_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      emails: [email]
-    })
-  });
-
-  if (!addToList.ok) {
-    const error = await addToList.json();
-    return res.status(500).json({ error: 'Erro ao adicionar contato à lista', details: error });
-  }
-
-  // 3. Enviar email com template ID #2
-  const emailData = {
-    sender: {
-      name: 'Devtone Agency',
-      email: 'team@devtone.agency'
-    },
-    to: [{ email, name: firstname }],
-    templateId: 2,
-    params: {
-      EMAIL: email,
-      FIRSTNAME: firstname,
-      COMPANY: company || 'Not provided',
-      INDUSTRY: industry || 'Not provided',
-      PROJECTTYPE: projectType || 'Not provided',
-      BUDGET: budget || 'Not provided',
-      TIMELINE: timeline || 'Not provided',
-      FEATURES: Array.isArray(features) ? features.join(', ') : features || 'Not provided',
-      RETAINER: retainer || 'Not provided'
-    }
-  };
-
-  console.log('Enviando e-mail com dados:', JSON.stringify(emailData, null, 2));
-
-  const emailSend = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: {
-      'api-key': BREVO_API_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(emailData)
-  });
-
-  if (!emailSend.ok) {
-    const error = await emailSend.json();
+  if (!response.ok) {
+    const error = await response.json();
+    console.error('Erro Brevo:', error);
     return res.status(500).json({ error: 'Erro ao enviar e-mail', details: error });
   }
 
