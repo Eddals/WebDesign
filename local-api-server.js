@@ -237,134 +237,139 @@ app.post('/api/estimate-brevo', async (req, res) => {
   }
 });
 
-// Brevo Contact endpoint using template ID #5
+// Brevo Contact endpoint using template ID #2
 app.post('/api/contact-brevo', async (req, res) => {
   console.log('📧 Recebida requisição para Brevo Contact:', req.body);
   
   try {
-    const data = req.body;
+    const { name, email, phone, company, subject, message, preferredContact } = req.body;
     
     // Validate required fields
-    if (!data.name || !data.email || !data.subject || !data.message) {
+    if (!name || !email || !subject || !message) {
       console.log('Missing required fields');
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ 
+        success: false,
+        error: 'Missing required fields: name, email, subject, message' 
+      });
     }
 
-    console.log('Validation passed, sending email...');
+    console.log('Validation passed, processing contact...');
 
-    const BREVO_CONFIG = {
-      API_KEY: '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',
-      API_URL: 'https://api.brevo.com/v3/smtp/email',
-      TEAM_EMAIL: 'team@devtone.agency'
+    const BREVO_API_KEY = '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';
+
+    // Prepare contact data for Brevo
+    const contactData = {
+      email: email,
+      attributes: {
+        FIRSTNAME: name,
+        PHONE: phone || '',
+        COMPANY: company || '',
+        SUBJECT: subject,
+        MESSAGE: message,
+        PREFERRED_CONTACT: preferredContact || 'email'
+      },
+      listIds: [7], // Add to list #7
+      updateEnabled: true
     };
 
-    // Send email to team using Brevo template ID #5
-    const emailData = {
-      sender: {
-        name: 'DevTone Agency - Contact Form',
-        email: 'team@devtone.agency'
+    console.log('📧 Creating/updating contact in Brevo:', contactData);
+
+    // Create or update contact in Brevo
+    const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'api-key': BREVO_API_KEY
       },
-      to: [
-        {
-          email: BREVO_CONFIG.TEAM_EMAIL,
-          name: 'DevTone Team'
-        }
-      ],
-      templateId: 5,
+      body: JSON.stringify(contactData)
+    });
+
+    if (!contactResponse.ok) {
+      const errorData = await contactResponse.text();
+      console.error('❌ Error creating contact:', contactResponse.status, errorData);
+      throw new Error(`Failed to create contact: ${contactResponse.status} ${errorData}`);
+    }
+
+    const contactResult = await contactResponse.json();
+    console.log('✅ Contact created/updated successfully:', contactResult.id);
+
+    // Add contact to list #7 separately (in case it wasn't added in the first call)
+    try {
+      const addToListResponse = await fetch(`https://api.brevo.com/v3/contacts/lists/7/contacts/add`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': BREVO_API_KEY
+        },
+        body: JSON.stringify({
+          emails: [email]
+        })
+      });
+
+      if (addToListResponse.ok) {
+        console.log('✅ Contact added to list #7 successfully');
+      } else {
+        console.warn('⚠️ Could not add contact to list #7:', addToListResponse.status);
+      }
+    } catch (listError) {
+      console.warn('⚠️ Error adding contact to list:', listError);
+    }
+
+    // Send email using template #2
+    const emailData = {
+      to: [{
+        email: email,
+        name: name
+      }],
+      templateId: 2,
       params: {
-        NAME: data.name,
-        EMAIL: data.email,
-        PHONE: data.phone || 'Not provided',
-        COMPANY: data.company || 'Not provided',
-        SUBJECT: data.subject,
-        MESSAGE: data.message,
-        PREFERRED_CONTACT: data.preferredContact || 'email',
-        SUBMISSION_DATE: new Date().toLocaleString(),
-        SOURCE: 'Contact Form'
+        FIRSTNAME: name,
+        EMAIL: email,
+        PHONE: phone || 'Not provided',
+        COMPANY: company || 'Not provided',
+        SUBJECT: subject,
+        MESSAGE: message,
+        PREFERRED_CONTACT: preferredContact || 'email'
       }
     };
 
-    console.log('Sending email data:', emailData);
+    console.log('📧 Sending email with template #2:', emailData);
 
-    // Send email via Brevo API
-    const brevoResponse = await fetch(BREVO_CONFIG.API_URL, {
+    const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': BREVO_CONFIG.API_KEY
+        'api-key': BREVO_API_KEY
       },
       body: JSON.stringify(emailData)
     });
 
-    console.log('Brevo response status:', brevoResponse.status);
-
-    if (!brevoResponse.ok) {
-      const errorData = await brevoResponse.text();
-      console.error('Brevo API error:', errorData);
-      throw new Error(`Brevo API error: ${brevoResponse.status} - ${errorData}`);
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.text();
+      console.error('❌ Error sending email:', emailResponse.status, errorData);
+      throw new Error(`Failed to send email: ${emailResponse.status} ${errorData}`);
     }
 
-    console.log('Team email sent successfully');
+    const emailResult = await emailResponse.json();
+    console.log('✅ Email sent successfully:', emailResult.messageId);
 
-    // Send confirmation email to the client using Brevo template ID #5
-    const confirmationEmailData = {
-      sender: {
-        name: 'DevTone Agency - team@devtone.agency',
-        email: 'team@devtone.agency'
-      },
-      to: [
-        {
-          email: data.email,
-          name: data.name
-        }
-      ],
-      templateId: 5, // Using template ID 5 for client confirmation
-      params: {
-        NAME: data.name,
-        EMAIL: data.email,
-        PHONE: data.phone || 'Not provided',
-        COMPANY: data.company || 'Not provided',
-        SUBJECT: data.subject,
-        MESSAGE: data.message,
-        PREFERRED_CONTACT: data.preferredContact || 'email',
-        SUBMISSION_DATE: new Date().toLocaleString(),
-        SOURCE: 'Contact Form - Client Confirmation'
-      }
-    };
-
-    console.log('Sending confirmation email...');
-
-    // Send confirmation email
-    const confirmationResponse = await fetch(BREVO_CONFIG.API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': BREVO_CONFIG.API_KEY
-      },
-      body: JSON.stringify(confirmationEmailData)
-    });
-
-    console.log('Confirmation response status:', confirmationResponse.status);
-
-    if (!confirmationResponse.ok) {
-      const errorData = await confirmationResponse.text();
-      console.error('Confirmation email failed:', errorData);
-      // Don't fail the whole request if confirmation email fails
-    } else {
-      console.log('Confirmation email sent successfully');
-    }
-
-    console.log('Sending success response');
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Contact form submitted successfully' 
+    return res.status(200).json({
+      success: true,
+      message: 'Contact form submitted successfully',
+      contactId: contactResult.id,
+      emailId: emailResult.messageId,
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error('Contact submission error:', error);
-    return res.status(500).json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to submit contact form' 
+    console.error('❌ Contact submission error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
