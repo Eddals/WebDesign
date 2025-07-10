@@ -20,6 +20,10 @@
       "dest": "/api/estimate-brevo.ts"
     },
     {
+      "src": "/api/newsletter-subscribe",
+      "dest": "/api/newsletter-subscribe.ts"
+    },
+    {
       "src": "/api/contact-brevo",
       "dest": "/api/contact-brevo.js"
     },
