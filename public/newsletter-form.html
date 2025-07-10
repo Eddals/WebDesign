@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, button {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #6b46c1;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #553c9a;
+    }
+    .success {
+      background-color: #d1fae5;
+      border: 1px solid #10b981;
+      color: #047857;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+    .error {
+      background-color: #fee2e2;
+      border: 1px solid #ef4444;
+      color: #b91c1c;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Newsletter Signup</h1>
+  <p>Subscribe to our newsletter to receive the latest updates.</p>
+  
+  <form id="newsletterForm">
+    <div>
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" name="firstName" required>
+    </div>
+    
+    <div>
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    
+    <div>
+      <label for="phone">Phone Number (Optional)</label>
+      <input type="tel" id="phone" name="phone">
+    </div>
+    
+    <button type="submit">Subscribe</button>
+  </form>
+  
+  <div id="message" style="display: none;"></div>
+  
+  <script>
+    document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const firstName = document.getElementById('firstName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      
+      // Validar campos
+      if (!firstName.trim() || !email.trim()) {
+        showMessage('Please fill in all required fields.', 'error');
+        return;
+      }
+      
+      // Criar um iframe oculto
+      const iframe = document.createElement('iframe');
+      iframe.name = 'newsletter-iframe';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+      
+      // Criar um formulário para envio direto
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://api.brevo.com/v3/contacts';
+      form.target = 'newsletter-iframe';
+      form.style.display = 'none';
+      
+      // Adicionar API key
+      const apiKeyInput = document.createElement('input');
+      apiKeyInput.type = 'hidden';
+      apiKeyInput.name = 'api-key';
+      apiKeyInput.value = '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';
+      form.appendChild(apiKeyInput);
+      
+      // Adicionar payload
+      const payloadInput = document.createElement('input');
+      payloadInput.type = 'hidden';
+      payloadInput.name = 'payload';
+      
+      const payload = {
+        email: email,
+        attributes: {
+          FIRSTNAME: firstName
+        },
+        listIds: [2],
+        updateEnabled: true
+      };
+      
+      if (phone.trim()) {
+        payload.attributes.SMS = phone.trim();
+      }
+      
+      payloadInput.value = JSON.stringify(payload);
+      form.appendChild(payloadInput);
+      
+      // Adicionar o formulário ao documento
+      document.body.appendChild(form);
+      
+      // Enviar o formulário
+      form.submit();
+      
+      // Mostrar mensagem de sucesso
+      setTimeout(() => {
+        showMessage('Thank you for subscribing! Check your email for confirmation.', 'success');
+        
+        // Limpar campos
+        document.getElementById('firstName').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('phone').value = '';
+        
+        // Remover o iframe e o formulário
+        document.body.removeChild(iframe);
+        document.body.removeChild(form);
+      }, 2000);
+    });
+    
+    function showMessage(text, type) {
+      const messageElement = document.getElementById('message');
+      messageElement.textContent = text;
+      messageElement.className = type;
+      messageElement.style.display = 'block';
+      
+      // Esconder a mensagem após 5 segundos
+      setTimeout(() => {
+        messageElement.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

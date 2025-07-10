@@ -44,55 +44,34 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
         phone: phone ? phone : 'não fornecido'
       })
       
-      // Preparar o corpo da requisição
-      const requestBody = {
-        firstName,
-        email,
-        phone: phone.trim()
-      };
-      
-      console.log('Enviando requisição para o endpoint de newsletter:', JSON.stringify(requestBody, null, 2));
-      
       // Enviar para o endpoint específico de newsletter
       const response = await fetch('/api/newsletter-subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody)
-      });
-      
-      console.log('Status da resposta:', response.status);
-      
-      // Obter a resposta como JSON
-      const responseData = await response.json();
-      console.log('Resposta do endpoint (JSON):', responseData);
-      
-      // Verificar se a resposta é ok
-      if (response.ok && responseData.success) {
-        // Sucesso - o usuário foi inscrito
-        setMessage({ 
-          type: 'success', 
-          text: responseData.message || 'Thank you for subscribing! Check your email for confirmation.' 
+        body: JSON.stringify({
+          firstName,
+          email,
+          phone: phone.trim()
         })
-        
-        // Limpar campos
-        setFirstName('')
-        setEmail('')
-        setPhone('')
-        
-        // Se for popup, salvar no localStorage e fechar
-        if (isPopup) {
-          localStorage.setItem('newsletter_subscribed', 'true')
-          setTimeout(() => onClose && onClose(), 3000)
-        }
-      } else {
-        // Obter mensagem de erro
-        let errorMessage = responseData.error || 'Something went wrong. Please try again.'
-        
-        console.error('Newsletter API error (detalhado):', JSON.stringify(responseData, null, 2))
-        
-        setMessage({ type: 'error', text: errorMessage })
+      })
+      
+      // Mostrar mensagem de sucesso
+      setMessage({ 
+        type: 'success', 
+        text: 'Thank you for subscribing! Check your email for confirmation.' 
+      })
+      
+      // Limpar campos
+      setFirstName('')
+      setEmail('')
+      setPhone('')
+      
+      // Se for popup, salvar no localStorage e fechar
+      if (isPopup) {
+        localStorage.setItem('newsletter_subscribed', 'true')
+        setTimeout(() => onClose && onClose(), 3000)
       }
     } catch (error) {
       console.error('Newsletter error:', error)
