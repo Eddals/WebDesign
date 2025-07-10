@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle, AlertCircle, X, Phone } from 'lucide-react'
-
-interface NewsletterData {
-  firstName: string
-  email: string
-  phone: string
-}
+import { X } from 'lucide-react'
+import NewsletterDirectForm from './NewsletterDirectForm'
 
 const NewsletterPopup = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [formData, setFormData] = useState<NewsletterData>({ firstName: '', email: '', phone: '' })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
     const hasSubscribed = localStorage.getItem('newsletter_subscribed')
@@ -27,138 +19,6 @@ const NewsletterPopup = () => {
       return () => clearTimeout(timer)
     }
   }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!formData.firstName.trim() || !formData.email.trim()) {
-      setMessage({ type: 'error', text: 'Please fill in all required fields.' })
-      return
-    }
-
-    setIsSubmitting(true)
-    setMessage(null)
-
-    try {
-      // Log de depuração para verificar o corpo enviado
-      console.log('Enviando dados para newsletter:', {
-        firstName: formData.firstName,
-        email: formData.email,
-        phone: formData.phone ? formData.phone : 'não fornecido'
-      });
-
-      // Abordagem direta: enviar para o Brevo diretamente do frontend
-      // Isso evita problemas com o endpoint da API
-      const brevoApiKey = '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';
-      
-      const payload = {
-        email: formData.email,
-        attributes: {
-          FIRSTNAME: formData.firstName
-        },
-        listIds: [2],
-        updateEnabled: true
-      };
-      
-      // Only add SMS if phone is provided
-      if (formData.phone.trim()) {
-        payload.attributes.SMS = formData.phone.trim();
-      }
-
-      // Usar o proxy para evitar problemas de CORS
-      const response = await fetch('/api/brevo-proxy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          endpoint: 'contacts',
-          data: payload,
-          apiKey: brevoApiKey
-        })
-      });
-
-      // Analisar a resposta do proxy
-      const responseData = await response.json();
-      
-      // Verificar se a resposta é ok (status 2xx)
-      if (response.ok && responseData.success) {
-        // Sucesso - o usuário foi inscrito
-        setMessage({ type: 'success', text: 'Thank you for subscribing! Check your email for confirmation.' });
-        setFormData({ firstName: '', email: '', phone: '' });
-        localStorage.setItem('newsletter_subscribed', 'true');
-        setTimeout(() => setIsOpen(false), 3000);
-        
-        // Opcional: enviar email de confirmação
-        try {
-          await fetch('/api/brevo-proxy', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              endpoint: 'smtp/email',
-              apiKey: brevoApiKey,
-              data: {
-                sender: {
-                  name: 'Devtone Agency',
-                  email: 'team@devtone.agency'
-                },
-                to: [
-                  {
-                    email: formData.email,
-                    name: formData.firstName
-                  }
-                ],
-                subject: 'Welcome to Devtone Newsletter!',
-                htmlContent: `
-                  <html>
-                    <body>
-                      <h1>Welcome to our Newsletter, ${formData.firstName}!</h1>
-                      <p>Thank you for subscribing to the Devtone Agency newsletter.</p>
-                      <p>You'll now receive our latest web development tips, industry insights, and exclusive offers.</p>
-                      ${formData.phone ? `<p>We've also registered your phone number: ${formData.phone} for important updates.</p>` : ''}
-                      <p>Best regards,<br>The Devtone Team</p>
-                    </body>
-                  </html>
-                `
-              }
-            })
-          });
-        } catch (emailError) {
-          console.error('Error sending confirmation email:', emailError);
-          // Continue with success even if email fails
-        }
-      } else {
-        // Tentar obter detalhes do erro da resposta do proxy
-        let errorMessage = 'Something went wrong. Please try again.';
-        
-        console.error('Newsletter API error:', responseData);
-        
-        // Verificar se temos dados de erro do Brevo
-        if (responseData.data && responseData.data.message) {
-          // Verificar se é um erro de duplicação (email já existe)
-          if (responseData.data.message.includes('already exists')) {
-            setMessage({ type: 'success', text: 'You are already subscribed! We\'ll keep you updated.' });
-            localStorage.setItem('newsletter_subscribed', 'true');
-            setTimeout(() => setIsOpen(false), 3000);
-            return;
-          }
-          
-          errorMessage = responseData.data.message;
-        } else if (responseData.error) {
-          errorMessage = responseData.error;
-        }
-        
-        setMessage({ type: 'error', text: errorMessage });
-      }
-    } catch (error) {
-      console.error('Newsletter error:', error)
-      setMessage({ type: 'error', text: 'Something went wrong. Please try again.' })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
 
   const closePopup = () => {
     setIsOpen(false)
@@ -208,67 +68,7 @@ const NewsletterPopup = () => {
                     Get exclusive web development tips and special offers delivered to your inbox.
                   </motion.p>
 
-                  <motion.form 
-                    onSubmit={handleSubmit} 
-                    className="space-y-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <div className="flex flex-col gap-3">
-                      <input
-                        type="text"
-                        placeholder="First Name"
-                        value={formData.firstName}
-                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                        required
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email Address"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                        required
-                      />
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                          <Phone className="h-5 w-5 text-white/50" />
-                        </div>
-                        <input
-                          type="tel"
-                          placeholder="Phone Number (Optional)"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 rounded-full font-semibold text-white transition-all duration-300 disabled:opacity-50 shadow-lg shadow-purple-900/20"
-                    >
-                      {isSubmitting ? 'Subscribing...' : 'Subscribe Now'}
-                    </button>
-                  </motion.form>
-
-                  {message && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`mt-4 p-3 rounded-full flex items-center gap-2 ${
-                        message.type === 'success' 
-                          ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                          : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                      }`}
-                    >
-                      {message.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
-                      {message.text}
-                    </motion.div>
-                  )}
+                  <NewsletterDirectForm onClose={closePopup} isPopup={true} />
                 </div>
               </div>
             </div>

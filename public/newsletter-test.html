@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, button {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #6b46c1;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #553c9a;
+    }
+    .success {
+      background-color: #d1fae5;
+      border: 1px solid #10b981;
+      color: #047857;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Newsletter Signup Test</h1>
+  <p>This is a simple test form for the newsletter signup.</p>
+  
+  <form id="newsletterForm">
+    <input type="text" id="firstName" placeholder="First Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="tel" id="phone" placeholder="Phone Number (Optional)">
+    <button type="submit">Subscribe</button>
+  </form>
+  
+  <div id="successMessage" class="success">
+    Thank you for subscribing! Check your email for confirmation.
+  </div>
+  
+  <script>
+    document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const firstName = document.getElementById('firstName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      
+      // Create a hidden form for direct submission
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://api.brevo.com/v3/contacts';
+      form.style.display = 'none';
+      
+      // Add API key header
+      const apiKeyInput = document.createElement('input');
+      apiKeyInput.type = 'hidden';
+      apiKeyInput.name = 'api-key';
+      apiKeyInput.value = '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';
+      form.appendChild(apiKeyInput);
+      
+      // Add data as JSON
+      const dataInput = document.createElement('input');
+      dataInput.type = 'hidden';
+      dataInput.name = 'data';
+      
+      const payload = {
+        email: email,
+        attributes: {
+          FIRSTNAME: firstName
+        },
+        listIds: [2],
+        updateEnabled: true
+      };
+      
+      if (phone) {
+        payload.attributes.SMS = phone;
+      }
+      
+      dataInput.value = JSON.stringify(payload);
+      form.appendChild(dataInput);
+      
+      // Add form to document and submit
+      document.body.appendChild(form);
+      
+      // Show success message
+      document.getElementById('successMessage').style.display = 'block';
+      
+      // Clear form
+      document.getElementById('firstName').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('phone').value = '';
+      
+      // Remove form after submission
+      setTimeout(() => {
+        document.body.removeChild(form);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
