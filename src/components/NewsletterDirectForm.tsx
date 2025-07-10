@@ -44,57 +44,36 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
         phone: phone ? phone : 'não fornecido'
       })
       
-      // Preparar os dados para envio
-      const brevoApiKey = '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'
-      
-      // Construir o payload para o Brevo
-      const payload = {
+      // Preparar o corpo da requisição
+      const requestBody = {
+        firstName,
         email,
-        attributes: {
-          FIRSTNAME: firstName
-        },
-        listIds: [2],
-        updateEnabled: true
-      }
+        phone: phone.trim()
+      };
       
-      // Adicionar telefone se fornecido
-      if (phone.trim()) {
-        payload.attributes.SMS = phone.trim()
-      }
+      console.log('Enviando requisição para o endpoint de newsletter:', JSON.stringify(requestBody, null, 2));
       
-      // Enviar através do proxy para evitar problemas de CORS
-      const response = await fetch('/api/brevo-proxy', {
+      // Enviar para o endpoint específico de newsletter
+      const response = await fetch('/api/newsletter-subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          endpoint: 'contacts',
-          data: payload,
-          apiKey: brevoApiKey
-        })
-      })
+        body: JSON.stringify(requestBody)
+      });
       
-      // Obter a resposta como texto primeiro para depuração
-      const responseText = await response.text();
-      console.log('Resposta do proxy (texto):', responseText);
+      console.log('Status da resposta:', response.status);
       
-      // Tentar analisar como JSON
-      let responseData;
-      try {
-        responseData = responseText ? JSON.parse(responseText) : {};
-        console.log('Resposta do proxy (JSON):', responseData);
-      } catch (e) {
-        console.error('Erro ao analisar resposta como JSON:', e);
-        responseData = { success: false, error: 'Invalid JSON response' };
-      }
+      // Obter a resposta como JSON
+      const responseData = await response.json();
+      console.log('Resposta do endpoint (JSON):', responseData);
       
       // Verificar se a resposta é ok
       if (response.ok && responseData.success) {
         // Sucesso - o usuário foi inscrito
         setMessage({ 
           type: 'success', 
-          text: 'Thank you for subscribing! Check your email for confirmation.' 
+          text: responseData.message || 'Thank you for subscribing! Check your email for confirmation.' 
         })
         
         // Limpar campos
@@ -107,75 +86,11 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
           localStorage.setItem('newsletter_subscribed', 'true')
           setTimeout(() => onClose && onClose(), 3000)
         }
-        
-        // Enviar email de confirmação através do proxy
-        try {
-          await fetch('/api/brevo-proxy', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              endpoint: 'smtp/email',
-              apiKey: brevoApiKey,
-              data: {
-                sender: {
-                  name: 'Devtone Agency',
-                  email: 'team@devtone.agency'
-                },
-                to: [
-                  {
-                    email,
-                    name: firstName
-                  }
-                ],
-                subject: 'Welcome to Devtone Newsletter!',
-                htmlContent: `
-                  <html>
-                    <body>
-                      <h1>Welcome to our Newsletter, ${firstName}!</h1>
-                      <p>Thank you for subscribing to the Devtone Agency newsletter.</p>
-                      <p>You'll now receive our latest web development tips, industry insights, and exclusive offers.</p>
-                      ${phone.trim() ? `<p>We've also registered your phone number: ${phone} for important updates.</p>` : ''}
-                      <p>Best regards,<br>The Devtone Team</p>
-                    </body>
-                  </html>
-                `
-              }
-            })
-          })
-        } catch (emailError) {
-          console.error('Error sending confirmation email:', emailError)
-          // Continue with success even if email fails
-        }
       } else {
-        // Tentar obter detalhes do erro da resposta do proxy
-        let errorMessage = 'Something went wrong. Please try again.'
+        // Obter mensagem de erro
+        let errorMessage = responseData.error || 'Something went wrong. Please try again.'
         
-        console.error('Newsletter API error:', responseData)
-        
-        // Verificar se temos dados de erro do Brevo
-        if (responseData.data && responseData.data.message) {
-          // Verificar se é um erro de duplicação (email já existe)
-          if (responseData.data.message.includes('already exists')) {
-            setMessage({ 
-              type: 'success', 
-              text: 'You are already subscribed! We\'ll keep you updated.' 
-            })
-            
-            // Se for popup, salvar no localStorage e fechar
-            if (isPopup) {
-              localStorage.setItem('newsletter_subscribed', 'true')
-              setTimeout(() => onClose && onClose(), 3000)
-            }
-            
-            return
-          }
-          
-          errorMessage = responseData.data.message
-        } else if (responseData.error) {
-          errorMessage = responseData.error
-        }
+        console.error('Newsletter API error (detalhado):', JSON.stringify(responseData, null, 2))
         
         setMessage({ type: 'error', text: errorMessage })
       }

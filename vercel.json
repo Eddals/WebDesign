@@ -28,6 +28,10 @@
       "dest": "/api/brevo-proxy.ts"
     },
     {
+      "src": "/api/newsletter-subscribe",
+      "dest": "/api/newsletter-subscribe.ts"
+    },
+    {
       "src": "/api/contact-brevo",
       "dest": "/api/contact-brevo.js"
     },

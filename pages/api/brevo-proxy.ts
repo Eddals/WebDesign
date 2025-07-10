@@ -35,6 +35,8 @@ export default async function handler(
 
     // Obter o corpo da resposta como texto
     const responseText = await response.text();
+    console.log('Brevo API response status:', response.status);
+    console.log('Brevo API response headers:', JSON.stringify(Object.fromEntries([...response.headers]), null, 2));
     console.log('Brevo API response text:', responseText);
 
     // Tentar analisar como JSON
