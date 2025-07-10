@@ -20,6 +20,10 @@
       "dest": "/api/estimate-brevo.ts"
     },
     {
+      "src": "/api/contact-brevo",
+      "dest": "/api/contact-brevo.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
