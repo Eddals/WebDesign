@@ -57,7 +57,7 @@ export default async function handler(req, res) {
         MESSAGE: message,
         PREFERRED_CONTACT: preferredContact || 'email'
       },
-      listIds: [7],
+      listIds: [8],
       updateEnabled: true
     };
 
