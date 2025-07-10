@@ -11,7 +11,7 @@ export async function sendBrevoContact(data: { firstName: string; email: string 
       body: JSON.stringify({
         email: data.email,
         attributes: { FIRSTNAME: data.firstName },
-        listIds: [2],
+        listIds: [3],
         updateEnabled: true
       })
     });

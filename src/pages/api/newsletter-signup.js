@@ -1,4 +1,3 @@
-// Contact form endpoint for Brevo
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,13 +20,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { name, email, phone, company, subject, message, preferredContact } = req.body;
+    const { email, attributes } = req.body;
 
     // Validate required fields
-    if (!name || !email || !subject || !message) {
+    if (!email || !attributes || !attributes.FIRSTNAME) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: name, email, subject, message'
+        error: 'Missing required fields: email and firstName'
       });
     }
 
@@ -44,18 +43,13 @@ export default async function handler(req, res) {
     const contactData = {
       email: email,
       attributes: {
-        FIRSTNAME: name,
-        PHONE: phone || '',
-        COMPANY: company || '',
-        SUBJECT: subject,
-        MESSAGE: message,
-        PREFERRED_CONTACT: preferredContact || 'email'
+        FIRSTNAME: attributes.FIRSTNAME
       },
-      listIds: [3], // Add to list #3
+      listIds: [3],
       updateEnabled: true
     };
 
-    console.log('📧 Creating/updating contact in Brevo:', contactData);
+    console.log('📧 Creating/updating newsletter contact in Brevo:', contactData);
 
     // Create or update contact in Brevo
     const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
@@ -70,14 +64,13 @@ export default async function handler(req, res) {
 
     if (!contactResponse.ok) {
       const errorData = await contactResponse.text();
-      console.error('❌ Error creating contact:', contactResponse.status, errorData);
+      console.error('❌ Error creating newsletter contact:', contactResponse.status, errorData);
       throw new Error(`Failed to create contact: ${contactResponse.status} ${errorData}`);
     }
 
     const contactResult = await contactResponse.json();
-    console.log('✅ Contact created/updated successfully:', contactResult.id);
+    console.log('✅ Newsletter contact created/updated successfully:', contactResult.id);
 
-    // Add contact to list #7 separately (in case it wasn't added in the first call)
     try {
       const addToListResponse = await fetch(`https://api.brevo.com/v3/contacts/lists/3/contacts/add`, {
         method: 'POST',
@@ -92,33 +85,27 @@ export default async function handler(req, res) {
       });
 
       if (addToListResponse.ok) {
-        console.log('✅ Contact added to list #3 successfully');
+        console.log('✅ Newsletter contact added to list #3 successfully');
       } else {
-        console.warn('⚠️ Could not add contact to list #3:', addToListResponse.status);
+        console.warn('⚠️ Could not add newsletter contact to list #3:', addToListResponse.status);
       }
     } catch (listError) {
-      console.warn('⚠️ Error adding contact to list:', listError);
+      console.warn('⚠️ Error adding newsletter contact to list:', listError);
     }
 
-    // Send email using template #7
     const emailData = {
       to: [{
         email: email,
-        name: name
+        name: attributes.FIRSTNAME
       }],
       templateId: 7,
       params: {
-        FIRSTNAME: name,
-        EMAIL: email,
-        PHONE: phone || 'Not provided',
-        COMPANY: company || 'Not provided',
-        SUBJECT: subject,
-        MESSAGE: message,
-        PREFERRED_CONTACT: preferredContact || 'email'
+        FIRSTNAME: attributes.FIRSTNAME,
+        EMAIL: email
       }
     };
 
-    console.log('📧 Sending email with template #7:', emailData);
+    console.log('📧 Sending newsletter welcome email with template #7:', emailData);
 
     const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
@@ -132,27 +119,27 @@ export default async function handler(req, res) {
 
     if (!emailResponse.ok) {
       const errorData = await emailResponse.text();
-      console.error('❌ Error sending email:', emailResponse.status, errorData);
+      console.error('❌ Error sending newsletter email:', emailResponse.status, errorData);
       throw new Error(`Failed to send email: ${emailResponse.status} ${errorData}`);
     }
 
     const emailResult = await emailResponse.json();
-    console.log('✅ Email sent successfully:', emailResult.messageId);
+    console.log('✅ Newsletter email sent successfully:', emailResult.messageId);
 
     return res.status(200).json({
       success: true,
-      message: 'Contact form submitted successfully',
+      message: 'Newsletter signup successful',
       contactId: contactResult.id,
       emailId: emailResult.messageId,
       timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error('❌ API Error:', error);
+    console.error('❌ Newsletter API Error:', error);
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
       message: error.message
     });
   }
-}  
+}
