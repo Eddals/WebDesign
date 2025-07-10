@@ -29,7 +29,7 @@ export const sendBrevoEmailDirect = async (params: BrevoEmailParams) => {
           name: params.name
         }
       ],
-      templateId: 2, // Your template ID
+      templateId: 7, // Your template ID
       params: {
         FIRSTNAME: params.name.split(' ')[0], // First name extraction
         message: params.message
@@ -87,7 +87,7 @@ export const sendBrevoEmailDirect = async (params: BrevoEmailParams) => {
       message: 'Email sent successfully via Brevo',
       data: responseData,
       sentTo: params.email,
-      templateId: 2
+      templateId: 7
     };
   } catch (error) {
     console.error('❌ Error sending Brevo email:', error);
@@ -131,4 +131,4 @@ Thank you for choosing Devtone Agency!
     console.error('Error sending estimate confirmation email directly:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
-}; 
+};    

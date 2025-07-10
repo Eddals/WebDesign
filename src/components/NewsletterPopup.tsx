@@ -8,6 +8,35 @@ interface NewsletterData {
   phone: string
 }
 
+const formatPhoneNumber = (value: string): string => {
+  const digits = value.replace(/\D/g, '')
+  
+  let formattedDigits = digits
+  if (!digits.startsWith('1') && digits.length > 0) {
+    formattedDigits = '1' + digits
+  }
+  
+  if (formattedDigits.length <= 1) {
+    return formattedDigits ? '+1' : ''
+  } else if (formattedDigits.length <= 4) {
+    return `+1 ${formattedDigits.slice(1)}`
+  } else if (formattedDigits.length <= 7) {
+    return `+1 ${formattedDigits.slice(1, 4)}-${formattedDigits.slice(4)}`
+  } else {
+    return `+1 ${formattedDigits.slice(1, 4)}-${formattedDigits.slice(4, 7)}-${formattedDigits.slice(7, 11)}`
+  }
+}
+
+const formatPhoneForBrevo = (formattedPhone: string): string => {
+  const digits = formattedPhone.replace(/\D/g, '')
+  if (digits.length >= 11 && digits.startsWith('1')) {
+    return `+${digits}` // Return +15551234567
+  } else if (digits.length >= 10) {
+    return `+1${digits}` // Add +1 prefix, return +15551234567
+  }
+  return formattedPhone
+}
+
 const NewsletterPopup = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [formData, setFormData] = useState<NewsletterData>({ firstName: '', email: '', phone: '' })
@@ -40,18 +69,17 @@ const NewsletterPopup = () => {
     setMessage(null)
 
     try {
-      const payload = {
+      const payload: any = {
         email: formData.email,
         attributes: {
           FIRSTNAME: formData.firstName
         },
-        listIds: [2],
+        listIds: [3],
         updateEnabled: true
       }
       
-      // Only add SMS if phone is provided
       if (formData.phone.trim()) {
-        payload.attributes.SMS = formData.phone.trim()
+        console.log('Phone number entered but not sent to Brevo:', formData.phone)
       }
 
       // Log de depuração para verificar o corpo enviado
@@ -61,7 +89,7 @@ const NewsletterPopup = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': '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'
+          'api-key': import.meta.env.VITE_BREVO_API_KEY
         },
         body: JSON.stringify(payload)
       })
@@ -172,9 +200,12 @@ const NewsletterPopup = () => {
                         </div>
                         <input
                           type="tel"
-                          placeholder="Phone Number (Optional)"
+                          placeholder="+1 000-000-0000"
                           value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          onChange={(e) => {
+                            const formatted = formatPhoneNumber(e.target.value)
+                            setFormData({ ...formData, phone: formatted })
+                          }}
                           className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                         />
                       </div>

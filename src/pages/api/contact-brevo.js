@@ -51,7 +51,7 @@ export default async function handler(req, res) {
         MESSAGE: message,
         PREFERRED_CONTACT: preferredContact || 'email'
       },
-      listIds: [7], // Add to list #7
+      listIds: [3], // Add to list #3
       updateEnabled: true
     };
 
@@ -79,7 +79,7 @@ export default async function handler(req, res) {
 
     // Add contact to list #7 separately (in case it wasn't added in the first call)
     try {
-      const addToListResponse = await fetch(`https://api.brevo.com/v3/contacts/lists/7/contacts/add`, {
+      const addToListResponse = await fetch(`https://api.brevo.com/v3/contacts/lists/3/contacts/add`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -92,21 +92,21 @@ export default async function handler(req, res) {
       });
 
       if (addToListResponse.ok) {
-        console.log('✅ Contact added to list #7 successfully');
+        console.log('✅ Contact added to list #3 successfully');
       } else {
-        console.warn('⚠️ Could not add contact to list #7:', addToListResponse.status);
+        console.warn('⚠️ Could not add contact to list #3:', addToListResponse.status);
       }
     } catch (listError) {
       console.warn('⚠️ Error adding contact to list:', listError);
     }
 
-    // Send email using template #2
+    // Send email using template #7
     const emailData = {
       to: [{
         email: email,
         name: name
       }],
-      templateId: 2,
+      templateId: 7,
       params: {
         FIRSTNAME: name,
         EMAIL: email,
@@ -118,7 +118,7 @@ export default async function handler(req, res) {
       }
     };
 
-    console.log('📧 Sending email with template #2:', emailData);
+    console.log('📧 Sending email with template #7:', emailData);
 
     const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
@@ -155,4 +155,4 @@ export default async function handler(req, res) {
       message: error.message
     });
   }
-} 
+}  
