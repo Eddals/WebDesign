@@ -593,6 +593,131 @@ app.post('/api/simple-email', async (req, res) => {
   }
 });
 
+// Newsletter signup endpoint using Brevo API
+app.post('/api/newsletter-signup', async (req, res) => {
+  console.log('📧 Recebida requisição para Newsletter Signup:', req.body);
+  
+  try {
+    const { email, attributes } = req.body;
+    
+    // Validate required fields
+    if (!email || !attributes || !attributes.FIRSTNAME) {
+      console.log('Missing required fields');
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: email and firstName'
+      });
+    }
+
+    console.log('Validation passed, processing newsletter signup...');
+
+    const BREVO_API_KEY = process.env.BREVO_API_KEY || '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';
+
+    // Prepare contact data for Brevo
+    const contactData = {
+      email: email,
+      attributes: {
+        FIRSTNAME: attributes.FIRSTNAME
+      },
+      listIds: [3],
+      updateEnabled: true
+    };
+
+    console.log('📧 Creating/updating newsletter contact in Brevo:', contactData);
+
+    // Create or update contact in Brevo
+    const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'api-key': BREVO_API_KEY
+      },
+      body: JSON.stringify(contactData)
+    });
+
+    if (!contactResponse.ok) {
+      const errorData = await contactResponse.text();
+      console.error('❌ Error creating newsletter contact:', contactResponse.status, errorData);
+      throw new Error(`Failed to create contact: ${contactResponse.status} ${errorData}`);
+    }
+
+    const contactResult = await contactResponse.json();
+    console.log('✅ Newsletter contact created/updated successfully:', contactResult.id);
+
+    try {
+      const addToListResponse = await fetch(`https://api.brevo.com/v3/contacts/lists/3/contacts/add`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': BREVO_API_KEY
+        },
+        body: JSON.stringify({
+          emails: [email]
+        })
+      });
+
+      if (addToListResponse.ok) {
+        console.log('✅ Newsletter contact added to list #3 successfully');
+      } else {
+        console.warn('⚠️ Could not add newsletter contact to list #3:', addToListResponse.status);
+      }
+    } catch (listError) {
+      console.warn('⚠️ Error adding newsletter contact to list:', listError);
+    }
+
+    const emailData = {
+      to: [{
+        email: email,
+        name: attributes.FIRSTNAME
+      }],
+      templateId: 7,
+      params: {
+        FIRSTNAME: attributes.FIRSTNAME,
+        EMAIL: email
+      }
+    };
+
+    console.log('📧 Sending newsletter welcome email with template #7:', emailData);
+
+    const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'api-key': BREVO_API_KEY
+      },
+      body: JSON.stringify(emailData)
+    });
+
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.text();
+      console.error('❌ Error sending newsletter email:', emailResponse.status, errorData);
+      throw new Error(`Failed to send email: ${emailResponse.status} ${errorData}`);
+    }
+
+    const emailResult = await emailResponse.json();
+    console.log('✅ Newsletter email sent successfully:', emailResult.messageId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Newsletter signup successful',
+      contactId: contactResult.id,
+      emailId: emailResult.messageId,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('❌ Newsletter API Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error.message
+    });
+  }
+});
+
 app.listen(port, () => {
   console.log(`🚀 Servidor local rodando em http://localhost:${port}`);
   console.log(`📧 Resend API Key: ${process.env.RESEND_API_KEY ? 'Configurada' : 'Não configurada'}`);
@@ -603,4 +728,5 @@ app.listen(port, () => {
   console.log(`   - POST /api/hubspot`);
   console.log(`   - POST /api/hubspot-estimate-webhook`);
   console.log(`   - POST /api/webhook-proxy?target=hubspot`);
+  console.log(`   - POST /api/newsletter-signup`);
 });
