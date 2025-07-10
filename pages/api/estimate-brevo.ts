@@ -36,7 +36,6 @@ export default async function handler(req, res) {
         FEATURES: features,
         RETAINER: retainer
       },
-      listIds: [7],
       updateEnabled: true
     })
   });
@@ -46,7 +45,24 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Erro ao salvar contato', details: error });
   }
 
-  // 2. Enviar email com template ID #2
+  // 2. Adicionar o contato à lista #7
+  const addToList = await fetch('https://api.brevo.com/v3/contacts/lists/7/contacts/add', {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      emails: [email]
+    })
+  });
+
+  if (!addToList.ok) {
+    const error = await addToList.json();
+    return res.status(500).json({ error: 'Erro ao adicionar contato à lista', details: error });
+  }
+
+  // 3. Enviar email com template ID #2
   const emailSend = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
