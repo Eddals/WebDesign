@@ -8,6 +8,25 @@ interface NewsletterData {
   phone: string
 }
 
+const formatPhoneNumber = (value: string): string => {
+  const digits = value.replace(/\D/g, '')
+  
+  let formattedDigits = digits
+  if (!digits.startsWith('1') && digits.length > 0) {
+    formattedDigits = '1' + digits
+  }
+  
+  if (formattedDigits.length <= 1) {
+    return formattedDigits ? '+1' : ''
+  } else if (formattedDigits.length <= 4) {
+    return `+1 ${formattedDigits.slice(1)}`
+  } else if (formattedDigits.length <= 7) {
+    return `+1 ${formattedDigits.slice(1, 4)}-${formattedDigits.slice(4)}`
+  } else {
+    return `+1 ${formattedDigits.slice(1, 4)}-${formattedDigits.slice(4, 7)}-${formattedDigits.slice(7, 11)}`
+  }
+}
+
 const NewsletterPopup = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [formData, setFormData] = useState<NewsletterData>({ firstName: '', email: '', phone: '' })
@@ -40,12 +59,12 @@ const NewsletterPopup = () => {
     setMessage(null)
 
     try {
-      const payload = {
+      const payload: any = {
         email: formData.email,
         attributes: {
           FIRSTNAME: formData.firstName
         },
-        listIds: [2],
+        listIds: [3],
         updateEnabled: true
       }
       
@@ -172,9 +191,12 @@ const NewsletterPopup = () => {
                         </div>
                         <input
                           type="tel"
-                          placeholder="Phone Number (Optional)"
+                          placeholder="+1 000-000-0000"
                           value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          onChange={(e) => {
+                            const formatted = formatPhoneNumber(e.target.value)
+                            setFormData({ ...formData, phone: formatted })
+                          }}
                           className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                         />
                       </div>
