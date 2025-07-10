@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         PROJECTTYPE: projectType,
         BUDGET: budget,
         TIMELINE: timeline,
-        FEATURES: features,
+        FEATURES: Array.isArray(features) ? features.join(', ') : features,
         RETAINER: retainer
       },
       updateEnabled: true
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
         PROJECTTYPE: projectType,
         BUDGET: budget,
         TIMELINE: timeline,
-        FEATURES: features,
+        FEATURES: Array.isArray(features) ? features.join(', ') : features,
         RETAINER: retainer
       }
     })
