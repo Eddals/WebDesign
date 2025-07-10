@@ -1,25 +1,50 @@
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  const allowedOrigins = [
+    'https://devtone.agency',
+    'https://www.devtone.agency',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003'
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-
+  
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
     const { firstName, email, phone } = req.body;
 
     if (!firstName || !email) {
-      return res.status(400).json({ error: 'First name and email are required' });
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: firstName, email'
+      });
     }
 
-    const payload = {
-      email: email,
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    if (!BREVO_API_KEY) {
+      return res.status(500).json({
+        success: false,
+        error: 'Server configuration error'
+      });
+    }
+
+    const contactData = {
+      email,
       attributes: {
         FIRSTNAME: firstName,
         ...(phone && phone.trim() && { SMS: phone.trim() })
@@ -28,41 +53,47 @@ export default async function handler(req, res) {
       updateEnabled: true
     };
 
-    const response = await fetch('https://api.brevo.com/v3/contacts', {
+    const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': process.env.BREVO_API_KEY || ''
+        'api-key': BREVO_API_KEY
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(contactData)
     });
 
-    if (response.ok) {
-      return res.status(200).json({ 
-        success: true, 
-        message: 'Thank you for subscribing! Check your email for confirmation.' 
-      });
-    } else {
-      const errorData = await response.json();
-      if (errorData.code === 'duplicate_parameter') {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'This phone number is already registered. Please use a different one or leave it blank.' 
+    if (!contactResponse.ok) {
+      const errorData = await contactResponse.text();
+      if (errorData.includes('duplicate_parameter')) {
+        return res.status(400).json({
+          success: false,
+          error: 'This phone number is already registered. Please use a different one or leave it blank.'
         });
-      } else if (errorData.message && errorData.message.includes('already exists')) {
-        return res.status(200).json({ 
-          success: true, 
-          message: 'You are already subscribed! We\'ll keep you updated.' 
+      } else if (errorData.includes('already exists')) {
+        return res.status(200).json({
+          success: true,
+          message: 'You are already subscribed! We\'ll keep you updated.'
         });
       } else {
-        throw new Error('Subscription failed');
+        return res.status(contactResponse.status).json({
+          success: false,
+          error: 'Failed to subscribe to newsletter',
+          details: errorData
+        });
       }
     }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Thank you for subscribing! Check your email for confirmation.',
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    console.error('Newsletter subscription error:', error);
-    return res.status(500).json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Something went wrong. Please try again.' 
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 }
