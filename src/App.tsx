@@ -9,6 +9,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import BrevoTracker from './components/BrevoTracker';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));
@@ -48,6 +49,7 @@ export default function App() {
           <Router>
             <ScrollToTop />
             <Analytics />
+            <BrevoTracker />
             <Suspense fallback={<LoadingSpinner fullScreen text="Loading..." />}>
               <Routes>
                 {/* Dashboard routes - no navbar/footer */}
