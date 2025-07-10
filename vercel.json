@@ -24,6 +24,10 @@
       "dest": "/api/send-brevo.ts"
     },
     {
+      "src": "/api/brevo-proxy",
+      "dest": "/api/brevo-proxy.ts"
+    },
+    {
       "src": "/api/contact-brevo",
       "dest": "/api/contact-brevo.js"
     },

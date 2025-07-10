@@ -24,41 +24,106 @@ const Newsletter = () => {
     setMessage(null)
 
     try {
-      const response = await fetch('/api/send-brevo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
+      // Log de depuração para verificar o corpo enviado
+      console.log('Enviando dados para newsletter:', {
+        firstName: formData.firstName,
+        email: formData.email
+      });
 
-      let responseData;
-      try {
-        // Tenta analisar a resposta como JSON
-        responseData = await response.json();
-      } catch (jsonError) {
-        // Se falhar ao analisar JSON, registra o erro e usa um objeto vazio
-        console.error('Failed to parse JSON response:', jsonError);
-        responseData = {};
-      }
+      // Abordagem direta: enviar para o Brevo diretamente do frontend
+      // Isso evita problemas com o endpoint da API
+      const brevoApiKey = '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';
       
-      if (response.ok && responseData && responseData.success) {
-        setMessage({ type: 'success', text: 'Thank you for subscribing! Check your email for confirmation.' })
-        setFormData({ firstName: '', email: '' })
+      const payload = {
+        email: formData.email,
+        attributes: {
+          FIRSTNAME: formData.firstName
+        },
+        listIds: [2],
+        updateEnabled: true
+      };
+
+      // Usar o proxy para evitar problemas de CORS
+      const response = await fetch('/api/brevo-proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          endpoint: 'contacts',
+          data: payload,
+          apiKey: brevoApiKey
+        })
+      });
+
+      // Analisar a resposta do proxy
+      const responseData = await response.json();
+      
+      // Verificar se a resposta é ok (status 2xx)
+      if (response.ok && responseData.success) {
+        // Sucesso - o usuário foi inscrito
+        setMessage({ type: 'success', text: 'Thank you for subscribing! Check your email for confirmation.' });
+        setFormData({ firstName: '', email: '' });
+        
+        // Opcional: enviar email de confirmação
+        try {
+          await fetch('/api/brevo-proxy', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              endpoint: 'smtp/email',
+              apiKey: brevoApiKey,
+              data: {
+                sender: {
+                  name: 'Devtone Agency',
+                  email: 'team@devtone.agency'
+                },
+                to: [
+                  {
+                    email: formData.email,
+                    name: formData.firstName
+                  }
+                ],
+                subject: 'Welcome to Devtone Newsletter!',
+                htmlContent: `
+                  <html>
+                    <body>
+                      <h1>Welcome to our Newsletter, ${formData.firstName}!</h1>
+                      <p>Thank you for subscribing to the Devtone Agency newsletter.</p>
+                      <p>You'll now receive our latest web development tips, industry insights, and exclusive offers.</p>
+                      <p>Best regards,<br>The Devtone Team</p>
+                    </body>
+                  </html>
+                `
+              }
+            })
+          });
+        } catch (emailError) {
+          console.error('Error sending confirmation email:', emailError);
+          // Continue with success even if email fails
+        }
       } else {
-        // Se a resposta não for ok, tenta obter o texto da resposta
+        // Tentar obter detalhes do erro da resposta do proxy
         let errorMessage = 'Something went wrong. Please try again.';
         
-        if (responseData && responseData.error) {
-          console.error('Newsletter API error:', responseData);
-          errorMessage = responseData.error;
-          
-          // Handle specific error cases
-          if (errorMessage.includes('duplicate')) {
-            setMessage({ type: 'success', text: 'You are already subscribed! We\'ll keep you updated.' })
+        console.error('Newsletter API error:', responseData);
+        
+        // Verificar se temos dados de erro do Brevo
+        if (responseData.data && responseData.data.message) {
+          // Verificar se é um erro de duplicação (email já existe)
+          if (responseData.data.message.includes('already exists')) {
+            setMessage({ type: 'success', text: 'You are already subscribed! We\'ll keep you updated.' });
             return;
           }
+          
+          errorMessage = responseData.data.message;
+        } else if (responseData.error) {
+          errorMessage = responseData.error;
         }
         
-        setMessage({ type: 'error', text: errorMessage })
+        setMessage({ type: 'error', text: errorMessage });
       }
     } catch (error) {
       console.error('Newsletter error:', error);
