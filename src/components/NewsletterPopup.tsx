@@ -69,24 +69,39 @@ const NewsletterPopup = () => {
         })
       })
 
-      const responseData = await response.json();
+      let responseData;
+      try {
+        // Tenta analisar a resposta como JSON
+        responseData = await response.json();
+      } catch (jsonError) {
+        // Se falhar ao analisar JSON, registra o erro e usa um objeto vazio
+        console.error('Failed to parse JSON response:', jsonError);
+        responseData = {};
+      }
       
-      if (response.ok && responseData.success) {
+      if (response.ok && responseData && responseData.success) {
         setMessage({ type: 'success', text: 'Thank you for subscribing! Check your email for confirmation.' })
         setFormData({ firstName: '', email: '', phone: '' })
         localStorage.setItem('newsletter_subscribed', 'true')
         setTimeout(() => setIsOpen(false), 3000)
       } else {
-        console.error('Newsletter API error:', responseData)
+        // Se a resposta não for ok, tenta obter o texto da resposta
+        let errorMessage = 'Something went wrong. Please try again.';
         
-        // Handle specific error cases
-        if (responseData.error && responseData.error.includes('duplicate')) {
-          setMessage({ type: 'success', text: 'You are already subscribed! We\'ll keep you updated.' })
-          localStorage.setItem('newsletter_subscribed', 'true')
-          setTimeout(() => setIsOpen(false), 3000)
-        } else {
-          setMessage({ type: 'error', text: responseData.error || 'Something went wrong. Please try again.' })
+        if (responseData && responseData.error) {
+          console.error('Newsletter API error:', responseData);
+          errorMessage = responseData.error;
+          
+          // Handle specific error cases
+          if (errorMessage.includes('duplicate')) {
+            setMessage({ type: 'success', text: 'You are already subscribed! We\'ll keep you updated.' })
+            localStorage.setItem('newsletter_subscribed', 'true')
+            setTimeout(() => setIsOpen(false), 3000)
+            return;
+          }
         }
+        
+        setMessage({ type: 'error', text: errorMessage })
       }
     } catch (error) {
       console.error('Newsletter error:', error)

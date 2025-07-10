@@ -23,7 +23,8 @@ export default async function handler(
     });
   }
 
-  const BREVO_API_KEY = process.env.BREVO_API_KEY;
+  // Usar a chave da API do ambiente ou a chave hardcoded como fallback
+  const BREVO_API_KEY = process.env.BREVO_API_KEY || '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';
 
   if (!BREVO_API_KEY) {
     console.error('BREVO_API_KEY is not defined in environment variables');
@@ -32,6 +33,9 @@ export default async function handler(
       error: 'Server configuration error' 
     });
   }
+  
+  // Log para debug
+  console.log('Newsletter API called with:', { firstName, email, phone: phone || 'not provided' });
 
   try {
     // Adicionar contato à lista #2 do Brevo (lista de newsletter)
@@ -56,11 +60,38 @@ export default async function handler(
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Failed to add contact to Brevo newsletter list:', errorText);
+      let errorMessage = 'Failed to subscribe to newsletter';
+      let errorDetails = '';
+      
+      try {
+        // Tenta analisar a resposta como JSON
+        const errorData = await response.json();
+        console.error('Brevo API error response:', errorData);
+        
+        if (errorData && errorData.message) {
+          errorDetails = errorData.message;
+          
+          // Verificar se é um erro de duplicação (email já existe)
+          if (errorDetails.includes('already exists')) {
+            return res.status(200).json({
+              success: true,
+              message: 'You are already subscribed to our newsletter'
+            });
+          }
+        }
+      } catch (e) {
+        // Se não for JSON, tenta obter o texto
+        try {
+          errorDetails = await response.text();
+        } catch (textError) {
+          errorDetails = 'Could not read error details';
+        }
+      }
+      
+      console.error('Failed to add contact to Brevo newsletter list:', errorDetails);
       return res.status(500).json({ 
         success: false, 
-        error: 'Failed to subscribe to newsletter' 
+        error: errorMessage + (errorDetails ? ': ' + errorDetails : '')
       });
     }
 
@@ -107,10 +138,20 @@ export default async function handler(
       message: 'Successfully subscribed to newsletter' 
     });
   } catch (error) {
-    console.error('Newsletter subscription error:', error);
+    // Captura detalhes do erro para melhor diagnóstico
+    let errorMessage = 'An unexpected error occurred';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      console.error('Newsletter subscription error:', error.message);
+      console.error('Error stack:', error.stack);
+    } else {
+      console.error('Newsletter subscription unknown error:', error);
+    }
+    
     return res.status(500).json({ 
       success: false, 
-      error: 'An unexpected error occurred' 
+      error: errorMessage
     });
   }
 }
