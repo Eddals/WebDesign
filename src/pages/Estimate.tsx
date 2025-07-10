@@ -377,7 +377,7 @@ const Estimate = () => {
         },
         body: JSON.stringify({
           email: formData.email,
-          nome: formData.name,
+          firstname: formData.name,
           phone: formData.phone,
           company: formData.company,
           industry: formData.industry,
