@@ -63,27 +63,31 @@ export default async function handler(req, res) {
   }
 
   // 3. Enviar email com template ID #2
+  const emailData = {
+    to: [{ email, name: firstname }],
+    templateId: 2,
+    params: {
+      FIRSTNAME: firstname,
+      EMAIL: email,
+      COMPANY: company || 'Not provided',
+      INDUSTRY: industry || 'Not provided',
+      PROJECTTYPE: projectType || 'Not provided',
+      BUDGET: budget || 'Not provided',
+      TIMELINE: timeline || 'Not provided',
+      FEATURES: Array.isArray(features) ? features.join(', ') : features || 'Not provided',
+      RETAINER: retainer || 'Not provided'
+    }
+  };
+
+  console.log('Enviando e-mail com dados:', JSON.stringify(emailData, null, 2));
+
   const emailSend = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
       'api-key': BREVO_API_KEY,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      to: [{ email, name: firstname }],
-      templateId: 2,
-      params: {
-        EMAIL: email,
-        FIRSTNAME: firstname,
-        COMPANY: company,
-        INDUSTRY: industry,
-        PROJECTTYPE: projectType,
-        BUDGET: budget,
-        TIMELINE: timeline,
-        FEATURES: Array.isArray(features) ? features.join(', ') : features,
-        RETAINER: retainer
-      }
-    })
+    body: JSON.stringify(emailData)
   });
 
   if (!emailSend.ok) {
