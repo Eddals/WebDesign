@@ -12,10 +12,52 @@ export default async function handler(req, res) {
     budget, 
     timeline, 
     features, 
-    retainer 
+    retainer,
+    phone,
+    description
   } = req.body;
 
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
+
+  // Adicionar contato à lista #7 do Brevo
+  try {
+    const contactData = {
+      email,
+      attributes: {
+        FIRSTNAME: firstname || '',
+        PHONE: phone || '',
+        COMPANY: company || '',
+        INDUSTRY: industry || '',
+        PROJECT_TYPE: projectType || '',
+        BUDGET: budget || '',
+        TIMELINE: timeline || '',
+        FEATURES: Array.isArray(features) ? features.join(', ') : features || '',
+        DESCRIPTION: description || '',
+        RETAINER: retainer || '',
+        SUBMISSION_DATE: new Date().toISOString()
+      },
+      listIds: [7],
+      updateEnabled: true
+    };
+
+    const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(contactData)
+    });
+
+    if (!contactResponse.ok) {
+      console.error('Failed to add contact to Brevo list #7:', await contactResponse.text());
+    } else {
+      console.log('Contact successfully added to Brevo list #7');
+    }
+  } catch (contactError) {
+    console.error('Error adding contact to Brevo list:', contactError);
+  }
 
   const response = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
@@ -44,7 +86,9 @@ export default async function handler(req, res) {
         BUDGET: budget || 'Not provided',
         TIMELINE: timeline || 'Not provided',
         FEATURES: Array.isArray(features) ? features.join(', ') : features || 'Not provided',
-        RETAINER: retainer || 'Not provided'
+        RETAINER: retainer || 'Not provided',
+        PHONE: phone || 'Not provided',
+        DESCRIPTION: description || 'Not provided'
       }
     })
   });
