@@ -64,11 +64,15 @@ export default async function handler(req, res) {
 
   // 3. Enviar email com template ID #2
   const emailData = {
+    sender: {
+      name: 'Devtone Agency',
+      email: 'team@devtone.agency'
+    },
     to: [{ email, name: firstname }],
     templateId: 2,
     params: {
-      FIRSTNAME: firstname,
       EMAIL: email,
+      FIRSTNAME: firstname,
       COMPANY: company || 'Not provided',
       INDUSTRY: industry || 'Not provided',
       PROJECTTYPE: projectType || 'Not provided',
