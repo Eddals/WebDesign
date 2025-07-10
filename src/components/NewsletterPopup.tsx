@@ -83,13 +83,12 @@ const NewsletterPopup = () => {
       }
 
       // Log de depuração para verificar o corpo enviado
-      console.log('Payload enviado para Brevo:', payload)
+      console.log('Payload enviado para newsletter API:', payload)
 
-      const response = await fetch('https://api.brevo.com/v3/contacts', {
+      const response = await fetch('/api/newsletter-signup', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'api-key': import.meta.env.VITE_BREVO_API_KEY
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       })
