@@ -171,7 +171,7 @@ const Contact = () => {
       console.log('✅ Form submitted successfully, confirmation email will be sent by Brevo')
       
       console.log('✅ Email sent successfully via Brevo!');
-      console.log('📧 Template ID #2 used for contact confirmation email');
+      console.log('📧 Template ID #13 used for contact confirmation email');
       
       setIsSubmitted(true);
 

@@ -100,13 +100,13 @@ export default async function handler(req, res) {
       console.warn('⚠️ Error adding contact to list:', listError);
     }
 
-    // Send email using template #2
+    // Send email using template #13
     const emailData = {
       to: [{
         email: email,
         name: name
       }],
-      templateId: 2,
+      templateId: 13,
       params: {
         FIRSTNAME: name,
         EMAIL: email,
@@ -118,7 +118,7 @@ export default async function handler(req, res) {
       }
     };
 
-    console.log('📧 Sending email with template #2:', emailData);
+    console.log('📧 Sending email with template #13:', emailData);
 
     const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
