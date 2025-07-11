@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, CheckCircle, AlertCircle, Phone } from 'lucide-react'
+import PhoneInput from './PhoneInput'
 
 interface NewsletterDirectFormProps {
   onClose?: () => void;
@@ -180,40 +181,74 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
               />
             </div>
             
-            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-lg px-4 py-3">
-              <Phone className="w-4 h-4 text-white/50" />
-              <input
-                type="tel"
-                placeholder="Phone Number (Optional)"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-transparent text-white placeholder-white/50 focus:outline-none"
-              />
-            </div>
+            <PhoneInput
+              value={phone}
+              onChange={setPhone}
+              placeholder="Phone Number (Optional)"
+              disabled={isSubmitting}
+            />
             
-            <button
+            {/* Additional space above subscribe button */}
+            <div className="h-6"></div>
+            
+            {/* Extra space for popup */}
+            {isPopup && <div className="h-4"></div>}
+            
+            <motion.button
               type="submit"
               disabled={isSubmitting}
-              className="w-full px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 rounded-lg font-semibold text-white transition-all duration-300 disabled:opacity-50"
+              className="w-full px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 rounded-xl font-semibold text-white transition-all duration-300 disabled:opacity-50 relative overflow-hidden group"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              {isSubmitting ? 'Subscribing...' : 'Subscribe Now'}
-            </button>
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Subscribing...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4" />
+                    Subscribe Now
+                  </>
+                )}
+              </span>
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-purple-700/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.6 }}
+              />
+            </motion.button>
           </form>
+
+          {/* Additional space below subscribe button */}
+          <div className="h-8"></div>
 
           {message && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`mt-4 p-4 rounded-lg flex items-center gap-2 ${
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className={`mt-4 p-4 rounded-xl flex items-center gap-3 border-2 ${
                 message.type === 'success' 
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  ? 'bg-green-500/10 text-green-400 border-green-500/30 shadow-lg shadow-green-500/10' 
+                  : 'bg-red-500/10 text-red-400 border-red-500/30 shadow-lg shadow-red-500/10'
               }`}
             >
-              {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
-              {message.text}
+              <div className={`p-2 rounded-full ${
+                message.type === 'success' 
+                  ? 'bg-green-500/20' 
+                  : 'bg-red-500/20'
+              }`}>
+                {message.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
+              </div>
+              <span className="font-medium">{message.text}</span>
             </motion.div>
           )}
+
+          {/* Additional bottom spacing for popup */}
+          {isPopup && <div className="h-6"></div>}
         </motion.div>
       </div>
     </div>

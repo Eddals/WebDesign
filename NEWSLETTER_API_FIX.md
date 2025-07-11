@@ -66,7 +66,13 @@ Newsletter error: Error: Server returned empty response. The newsletter API endp
 - Added loading states and better error handling
 - Uses `/api/newsletter-brevo` endpoint
 
-### 3. `test-newsletter-api.html` (New)
+### 3. `api/newsletter-brevo.js` & `api/newsletter-brevo.ts`
+- Added confirmation email sending using Brevo template #2
+- Sends welcome email after successful subscription
+- Uses proper email parameters for newsletter context
+- Graceful error handling for email sending
+
+### 4. `test-newsletter-api.html` (New)
 - Created comprehensive test page for debugging
 - Shows detailed error information
 - Helps identify API issues
@@ -77,7 +83,8 @@ Newsletter error: Error: Server returned empty response. The newsletter API endp
 - [ ] Health endpoint `/api/health` returns success
 - [ ] Newsletter test page works without empty response
 - [ ] Newsletter subscription adds contact to Brevo list #2
-- [ ] Confirmation email sent to subscriber
+- [ ] Confirmation email sent to subscriber using Brevo template #2
+- [ ] Email contains proper newsletter welcome message
 
 ## Debug Commands
 
@@ -109,6 +116,8 @@ curl -X POST https://your-domain.vercel.app/api/newsletter-brevo \
   }
 }
 ```
+
+**Note**: A confirmation email will also be sent using Brevo template #2 with a welcome message.
 
 ### Error Response
 ```json

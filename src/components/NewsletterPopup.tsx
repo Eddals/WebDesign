@@ -48,8 +48,24 @@ const NewsletterPopup = () => {
                 <div className="absolute top-1/3 -left-20 w-60 h-60 bg-purple-300 rounded-full blur-3xl"></div>
               </div>
 
-              <div className="relative p-6 md:p-8">
+              <div className="relative p-6 md:p-8 pb-10 md:pb-12">
                 <div className="text-center">
+                  {/* Logo */}
+                  <motion.div
+                    className="flex justify-center mb-4"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <motion.img
+                      src="https://i.imgur.com/qZ9tgbe.png"
+                      alt="DevTone Logo"
+                      className="w-16 h-16 md:w-20 md:h-20 object-contain filter drop-shadow-lg"
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    />
+                  </motion.div>
+
                   <motion.h2 
                     className="text-2xl font-bold mb-2 text-white"
                     initial={{ opacity: 0, y: 10 }}
