@@ -100,8 +100,12 @@ export default async function handler(req, res) {
       console.warn('⚠️ Error adding contact to list:', listError);
     }
 
-    // Send email using template #13
+    // Send email using template #13 with verified sender
     const emailData = {
+      sender: {
+        name: 'DevTone Agency',
+        email: 'team@devtone.agency'
+      },
       to: [{
         email: email,
         name: name
@@ -118,7 +122,7 @@ export default async function handler(req, res) {
       }
     };
 
-    console.log('📧 Sending email with template #13:', emailData);
+    console.log('📧 Sending email with template #13 from team@devtone.agency:', emailData);
 
     const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
@@ -163,6 +167,51 @@ export default async function handler(req, res) {
     } else {
       emailResult = await emailResponse.json();
       console.log('✅ Email sent successfully with template #13:', emailResult.messageId);
+    }
+
+    // Send notification email to admin
+    try {
+      const adminEmailData = {
+        sender: {
+          name: 'DevTone Agency',
+          email: 'team@devtone.agency'
+        },
+        to: [{
+          email: 'team@devtone.agency',
+          name: 'DevTone Team'
+        }],
+        subject: `New Contact Form Submission from ${name}`,
+        htmlContent: `
+          <h2>New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
+          <p><strong>Company:</strong> ${company || 'Not provided'}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong> ${message}</p>
+          <p><strong>Preferred Contact:</strong> ${preferredContact || 'email'}</p>
+          <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+        `
+      };
+
+      const adminResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': BREVO_API_KEY
+        },
+        body: JSON.stringify(adminEmailData)
+      });
+
+      if (adminResponse.ok) {
+        const adminResult = await adminResponse.json();
+        console.log('✅ Admin notification sent:', adminResult.messageId);
+      } else {
+        console.warn('⚠️ Could not send admin notification:', adminResponse.status);
+      }
+    } catch (adminError) {
+      console.warn('⚠️ Error sending admin notification:', adminError);
     }
 
     return res.status(200).json({
