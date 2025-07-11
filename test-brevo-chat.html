@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Brevo Chat Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .debug {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste do Chat Widget Brevo</h1>
+        
+        <div class="info">
+            <h3>Informações:</h3>
+            <p>Esta página testa o chat widget do Brevo. O widget deve aparecer no canto inferior direito da tela.</p>
+            <p><strong>ID da Conversa:</strong> 68695c9f874a50a48c007a4a</p>
+        </div>
+
+        <div class="debug" id="debug-info">
+            <h3>Debug Info:</h3>
+            <p>Carregando informações de debug...</p>
+        </div>
+
+        <p>Se você conseguir ver um ícone de chat no canto inferior direito da tela, o widget está funcionando corretamente.</p>
+        
+        <p>Caso contrário, verifique:</p>
+        <ul>
+            <li>Se o script está sendo carregado corretamente</li>
+            <li>Se não há bloqueadores de anúncios interferindo</li>
+            <li>Se o ID da conversa está correto</li>
+            <li>Se há erros no console do navegador</li>
+        </ul>
+    </div>
+
+    <!-- Brevo Conversations Chat Widget -->
+    <script>
+    (function(d, w, c) {
+        w.BrevoConversationsID = '68695c9f874a50a48c007a4a';
+        w[c] = w[c] || function() {
+            (w[c].q = w[c].q || []).push(arguments);
+        };
+        var s = d.createElement('script');
+        s.async = true;
+        s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+        if (d.head) d.head.appendChild(s);
+    })(document, window, 'BrevoConversations');
+    </script>
+
+    <script>
+        // Debug script para verificar se o widget está carregando
+        setTimeout(function() {
+            const debugDiv = document.getElementById('debug-info');
+            let debugInfo = '<h3>Debug Info:</h3>';
+            
+            debugInfo += '<p><strong>BrevoConversationsID:</strong> ' + (window.BrevoConversationsID || 'Não definido') + '</p>';
+            debugInfo += '<p><strong>BrevoConversations function:</strong> ' + (typeof window.BrevoConversations) + '</p>';
+            
+            const brevoScript = document.querySelector('script[src*="brevo-conversations.js"]');
+            debugInfo += '<p><strong>Script carregado:</strong> ' + (brevoScript ? 'Sim' : 'Não') + '</p>';
+            
+            if (brevoScript) {
+                debugInfo += '<p><strong>URL do script:</strong> ' + brevoScript.src + '</p>';
+            }
+            
+            debugDiv.innerHTML = debugInfo;
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -12,25 +12,21 @@ declare global {
 const BrevoChatWidget = () => {
   useEffect(() => {
     // Check if widget is already loaded
-    if (window.BrevoConversations) {
+    if (window.BrevoConversationsID) {
       return;
     }
 
-    // Load Brevo Conversations widget
-    const script = document.createElement('script');
-    script.innerHTML = `
-      (function(d, w, c) {
-        w.BrevoConversationsID = '68695c9f874a50a48c007a4a';
-        w[c] = w[c] || function() {
-          (w[c].q = w[c].q || []).push(arguments);
-        };
-        var s = d.createElement('script');
-        s.async = true;
-        s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
-        if (d.head) d.head.appendChild(s);
-      })(document, window, 'BrevoConversations');
-    `;
-    document.head.appendChild(script);
+    // Execute the Brevo script exactly as provided
+    (function(d: Document, w: Window, c: string) {
+      w.BrevoConversationsID = '68695c9f874a50a48c007a4a';
+      (w as any)[c] = (w as any)[c] || function() {
+        ((w as any)[c].q = (w as any)[c].q || []).push(arguments);
+      };
+      var s = d.createElement('script');
+      s.async = true;
+      s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+      if (d.head) d.head.appendChild(s);
+    })(document, window, 'BrevoConversations');
 
     // Cleanup function
     return () => {
@@ -44,4 +40,4 @@ const BrevoChatWidget = () => {
   return null; // This component doesn't render anything visible
 };
 
-export default BrevoChatWidget; 
+export default BrevoChatWidget;

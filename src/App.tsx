@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { HelmetProvider } from 'react-helmet-async';
-import { Suspense, lazy, startTransition } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Analytics } from "@vercel/analytics/react";
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -40,8 +40,19 @@ const TestEmail = lazy(() => import('./pages/TestEmail'));
 const ContactFormDemo = lazy(() => import('./pages/ContactFormDemo'));
 const EmailTest = lazy(() => import('./pages/EmailTest'));
 
+const App = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+    script.async = true;
+    document.head.appendChild(script);
 
-export default function App() {
+    (window as any).BrevoConversationsID = '68695c9f874a50a48c007a4a';
+    (window as any).BrevoConversations = (window as any).BrevoConversations || function () {
+      ((window as any).BrevoConversations.q = (window as any).BrevoConversations.q || []).push(arguments);
+    };
+  }, []);
+
   return (
     <ErrorBoundary>
       <HelmetProvider>
@@ -115,3 +126,5 @@ export default function App() {
     </ErrorBoundary>
   );
 };
+
+export default App;
