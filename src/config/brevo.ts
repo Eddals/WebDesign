@@ -12,14 +12,28 @@ export const EMAIL_TEMPLATES = {
     subject: (name: string, company: string) => `New Estimate Request - ${name} from ${company}`,
     sender: {
       name: 'DevTone Estimate Form',
-      email: 'noreply@devtone.agency'
+      email: 'team@devtone.agency'  // Using verified domain
     }
   },
   ESTIMATE_CONFIRMATION: {
     subject: 'Thank you for your estimate request - DevTone Agency',
     sender: {
       name: 'DevTone Agency',
-      email: 'team@devtone.agency'
+      email: 'team@devtone.agency'  // Using verified domain
+    }
+  },
+  CONTACT_NOTIFICATION: {
+    subject: (subject: string) => `New Contact Form Submission: ${subject}`,
+    sender: {
+      name: 'DevTone Website',
+      email: 'team@devtone.agency'  // Using verified domain
+    }
+  },
+  CONTACT_CONFIRMATION: {
+    subject: 'Thank you for contacting DevTone Agency',
+    sender: {
+      name: 'DevTone Agency',
+      email: 'team@devtone.agency'  // Using verified domain
     }
   }
 }; 
