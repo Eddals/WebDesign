@@ -86,6 +86,63 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     console.log('Brevo success response:', responseData);
+    
+    // Send confirmation email using Brevo template #2
+    console.log('Sending confirmation email...');
+    const confirmationEmailData = {
+      sender: {
+        name: 'DevTone Agency',
+        email: 'team@devtone.agency'
+      },
+      to: [
+        {
+          email: email,
+          name: firstName || 'Newsletter Subscriber'
+        }
+      ],
+      templateId: 2, // Using template ID 2 for newsletter confirmation
+      params: {
+        NAME: firstName || 'Newsletter Subscriber',
+        EMAIL: email,
+        PHONE: phone && phone !== 'não fornecido' ? phone : 'Not provided',
+        COMPANY: 'Newsletter Subscription',
+        INDUSTRY: 'Newsletter',
+        PROJECT_TYPE: 'Newsletter Subscription',
+        BUDGET: 'N/A',
+        TIMELINE: 'N/A',
+        RETAINER: 'N/A',
+        FEATURES: 'Newsletter updates, industry insights, exclusive offers',
+        DESCRIPTION: 'Thank you for subscribing to our newsletter! You will now receive our latest web development tips, industry insights, and exclusive offers.',
+        SUBMISSION_DATE: new Date().toLocaleString(),
+        SOURCE: 'Newsletter Subscription - Welcome Email'
+      }
+    };
+
+    try {
+      const confirmationResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': process.env.BREVO_API_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(confirmationEmailData),
+      });
+
+      console.log('Confirmation email response status:', confirmationResponse.status);
+      
+      if (!confirmationResponse.ok) {
+        const errorText = await confirmationResponse.text();
+        console.error('Confirmation email failed:', errorText);
+        // Don't fail the whole request if confirmation email fails
+      } else {
+        console.log('Confirmation email sent successfully');
+      }
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError);
+      // Don't fail the whole request if confirmation email fails
+    }
+    
     console.log('=== Sending success response ===');
     return res.status(200).json({ success: true, data: responseData });
     
