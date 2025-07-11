@@ -83,35 +83,26 @@ export default async function handler(req, res) {
       console.log('Contact added successfully to Brevo list');
     }
 
-    // 2. Send notification email to team@devtone.agency
-    console.log('Sending notification email to team@devtone.agency');
+    // 2. Send notification email to team@devtone.agency using template #13
+    console.log('Sending notification email to team@devtone.agency using template #13');
     const notificationData = {
-      sender: {
-        name: 'DevTone Website',
-        email: 'team@devtone.agency'  // Using verified domain
-      },
       to: [
         {
           email: 'team@devtone.agency',
           name: 'DevTone Team'
         }
       ],
-      subject: `New Contact Form Submission: ${subject}`,
-      htmlContent: `
-        <html>
-          <body>
-            <h2>New Contact Form Submission</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-            <p><strong>Company:</strong> ${company || 'Not provided'}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
-            <p><strong>Message:</strong> ${message}</p>
-            <p><strong>Preferred Contact Method:</strong> ${preferredContact || 'Email'}</p>
-            <p><strong>Submitted at:</strong> ${new Date().toISOString()}</p>
-          </body>
-        </html>
-      `
+      templateId: 13,
+      params: {
+        FIRSTNAME: name,
+        EMAIL: email,
+        PHONE: phone || 'Not provided',
+        COMPANY: company || 'Not provided',
+        SUBJECT: subject,
+        MESSAGE: message,
+        PREFERRED_CONTACT: preferredContact || 'Email',
+        SUBMISSION_DATE: new Date().toISOString()
+      }
     };
 
     const notificationResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -131,32 +122,25 @@ export default async function handler(req, res) {
       console.log('Notification email sent successfully to team@devtone.agency');
     }
 
-    // 3. Send confirmation email to the user
-    console.log('Sending confirmation email to user:', email);
+    // 3. Send confirmation email to the user using template #3
+    console.log('Sending confirmation email to user using template #3:', email);
     const confirmationData = {
-      sender: {
-        name: 'DevTone Agency',
-        email: 'team@devtone.agency'  // Using verified domain
-      },
       to: [
         {
           email: email,
           name: name
         }
       ],
-      subject: 'Thank you for contacting DevTone Agency',
-      htmlContent: `
-        <html>
-          <body>
-            <h2>Thank you for contacting DevTone Agency!</h2>
-            <p>Hello ${name},</p>
-            <p>We have received your message regarding "${subject}" and will get back to you as soon as possible.</p>
-            <p>Here's a copy of your message:</p>
-            <blockquote>${message}</blockquote>
-            <p>Best regards,<br>The DevTone Team</p>
-          </body>
-        </html>
-      `
+      templateId: 3,
+      params: {
+        FIRSTNAME: name,
+        EMAIL: email,
+        PHONE: phone || 'Not provided',
+        COMPANY: company || 'Not provided',
+        SUBJECT: subject,
+        MESSAGE: message,
+        PREFERRED_CONTACT: preferredContact || 'Email'
+      }
     };
 
     const confirmationResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
