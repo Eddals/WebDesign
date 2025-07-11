@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import Head from 'next/head'
+import React, { useState } from 'react'
 
 export default function NewsletterTest() {
   const [firstName, setFirstName] = useState('')
@@ -7,8 +6,9 @@ export default function NewsletterTest() {
   const [phone, setPhone] = useState('')
   const [message, setMessage] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     // Validar campos
@@ -18,57 +18,58 @@ export default function NewsletterTest() {
       return
     }
     
-    // Criar um iframe oculto para evitar problemas de CORS
-    const iframe = document.createElement('iframe')
-    iframe.name = 'newsletter-iframe'
-    iframe.style.display = 'none'
-    document.body.appendChild(iframe)
+    setIsSubmitting(true)
     
-    // Criar um formulário HTML para submissão direta
-    const form = document.createElement('form')
-    form.method = 'POST'
-    form.action = 'https://api.brevo.com/v3/contacts'
-    form.target = 'newsletter-iframe'
-    form.style.display = 'none'
-    
-    // Adicionar campos ao formulário
-    const apiKeyInput = document.createElement('input')
-    apiKeyInput.type = 'hidden'
-    apiKeyInput.name = 'api-key'
-    apiKeyInput.value = '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'
-    form.appendChild(apiKeyInput)
-    
-    // Criar um campo para o payload JSON
-    const payloadInput = document.createElement('input')
-    payloadInput.type = 'hidden'
-    payloadInput.name = 'payload'
-    
-    // Construir o payload para o Brevo
-    const payload = {
-      email,
-      attributes: {
-        FIRSTNAME: firstName
-      },
-      listIds: [2],
-      updateEnabled: true
-    }
-    
-    // Adicionar telefone se fornecido
-    if (phone.trim()) {
-      payload.attributes.SMS = phone.trim()
-    }
-    
-    payloadInput.value = JSON.stringify(payload)
-    form.appendChild(payloadInput)
-    
-    // Adicionar o formulário ao documento
-    document.body.appendChild(form)
-    
-    // Enviar o formulário
-    form.submit()
-    
-    // Mostrar mensagem de sucesso após um breve atraso
-    setTimeout(() => {
+    try {
+      console.log('Sending newsletter subscription:', {
+        firstName,
+        email,
+        phone: phone || 'não fornecido'
+      })
+      
+      const res = await fetch('/api/newsletter-brevo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          firstName,
+          phone: phone || 'não fornecido'
+        })
+      })
+
+      console.log('Newsletter response status:', res.status)
+      console.log('Newsletter response headers:', Object.fromEntries(res.headers.entries()))
+
+      // Check if response has content before trying to parse JSON
+      const responseText = await res.text()
+      console.log('Newsletter response text:', responseText)
+      console.log('Newsletter response text length:', responseText.length)
+
+      // Handle completely empty responses
+      if (!responseText || responseText.trim() === '') {
+        console.error('Received completely empty response from newsletter API')
+        throw new Error('Server returned empty response. The newsletter API endpoint may not be working correctly.')
+      }
+
+      let result
+      try {
+        result = JSON.parse(responseText)
+      } catch (parseError) {
+        console.error('Failed to parse newsletter response as JSON:', parseError)
+        console.error('Raw response text:', responseText)
+        throw new Error(`Newsletter API returned invalid JSON. Raw response: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`)
+      }
+
+      if (!res.ok) {
+        console.error('Newsletter API error:', result)
+        throw new Error(result.error || result.message || `Newsletter API error: HTTP ${res.status}: ${res.statusText}`)
+      }
+      
+      console.log('Newsletter subscription successful:', result)
+      
+      // Mostrar mensagem de sucesso
       setMessage('Thank you for subscribing! Check your email for confirmation.')
       setIsSuccess(true)
       
@@ -77,18 +78,18 @@ export default function NewsletterTest() {
       setEmail('')
       setPhone('')
       
-      // Remover o iframe e o formulário
-      document.body.removeChild(iframe)
-      document.body.removeChild(form)
-    }, 2000)
+    } catch (error) {
+      console.error('Newsletter error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.'
+      setMessage(errorMessage)
+      setIsSuccess(false)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <Head>
-        <title>Newsletter Test</title>
-      </Head>
-      
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
         <div className="p-8">
           <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-1">Test Page</div>
@@ -104,6 +105,7 @@ export default function NewsletterTest() {
                 onChange={(e) => setFirstName(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 required
+                disabled={isSubmitting}
               />
             </div>
             
@@ -116,6 +118,7 @@ export default function NewsletterTest() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 required
+                disabled={isSubmitting}
               />
             </div>
             
@@ -127,15 +130,17 @@ export default function NewsletterTest() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                disabled={isSubmitting}
               />
             </div>
             
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                disabled={isSubmitting}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Subscribe Now
+                {isSubmitting ? 'Subscribing...' : 'Subscribe Now'}
               </button>
             </div>
           </form>
@@ -149,6 +154,7 @@ export default function NewsletterTest() {
           <div className="mt-8 text-sm text-gray-500">
             <p>This is a test page for the newsletter signup functionality.</p>
             <p className="mt-2">After submitting the form, you should see a success message and receive a confirmation email.</p>
+            <p className="mt-2">The form uses the <code>/api/newsletter-brevo</code> endpoint to handle the subscription.</p>
           </div>
         </div>
       </div>

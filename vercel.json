@@ -32,6 +32,10 @@
       "dest": "/api/newsletter-subscribe.ts"
     },
     {
+      "src": "/api/newsletter-brevo",
+      "dest": "/api/newsletter-brevo.js"
+    },
+    {
       "src": "/api/contact-brevo",
       "dest": "/api/contact-brevo.js"
     },
