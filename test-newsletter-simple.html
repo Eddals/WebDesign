@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Newsletter Simples</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; }
+        button { background: #7c3aed; color: white; border: none; cursor: pointer; }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Teste Newsletter API</h1>
+    
+    <input type="text" id="firstName" placeholder="Nome" value="Teste">
+    <input type="email" id="email" placeholder="Email" value="teste@example.com">
+    <button onclick="testNewsletter()">Testar Newsletter</button>
+    
+    <div id="result"></div>
+
+    <script>
+        async function testNewsletter() {
+            const firstName = document.getElementById('firstName').value;
+            const email = document.getElementById('email').value;
+            const result = document.getElementById('result');
+            
+            result.innerHTML = 'Enviando...';
+            
+            try {
+                console.log('Sending request to /api/newsletter-brevo');
+                
+                const response = await fetch('/api/newsletter-brevo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        firstName: firstName,
+                        lastName: ''
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                if (response.ok) {
+                    result.className = 'result success';
+                    result.innerHTML = `✅ Sucesso! Response: ${responseText}`;
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `❌ Erro ${response.status}: ${responseText}`;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                result.className = 'result error';
+                result.innerHTML = `❌ Erro: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -38,69 +38,50 @@ export default function EmailForm({
     setMessage('Enviando...')
 
     try {
-      const res = await fetch('/api/send-email', {
+      const res = await fetch('/api/newsletter-brevo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          to: email,
-          name: name,
-          subject: 'Bem-vindo à Devtone Agency!',
-          htmlContent: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #7c3aed; margin-bottom: 10px;">Devtone Agency</h1>
-                <p style="color: #6b7280; font-size: 16px;">Desenvolvimento Web & Design</p>
-              </div>
-              
-              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-                <h2 style="color: white; margin: 0 0 15px 0;">Olá${name ? `, ${name}` : ''}!</h2>
-                <p style="color: white; margin: 0; font-size: 18px;">Obrigado por se inscrever em nossa newsletter!</p>
-              </div>
-              
-              <div style="background: #f8fafc; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
-                <h3 style="color: #374151; margin-top: 0;">O que você receberá:</h3>
-                <ul style="color: #6b7280; line-height: 1.6;">
-                  <li>🚀 Dicas de desenvolvimento web e design</li>
-                  <li>📱 Novidades sobre tecnologias modernas</li>
-                  <li>💡 Cases de sucesso e projetos inspiradores</li>
-                  <li>🎯 Ofertas exclusivas para nossos assinantes</li>
-                </ul>
-              </div>
-              
-              <div style="text-align: center; margin-bottom: 25px;">
-                <a href="https://devtone.agency" style="display: inline-block; background: #7c3aed; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">Visite nosso site</a>
-              </div>
-              
-              <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center;">
-                <p style="color: #9ca3af; font-size: 14px; margin: 0;">
-                  Devtone Agency - Transformando ideias em realidade digital<br>
-                  <a href="https://devtone.agency" style="color: #7c3aed;">devtone.agency</a>
-                </p>
-              </div>
-            </div>
-          `
+          email,
+          firstName: name,
+          lastName: '',
         })
       })
 
-      const data = await res.json()
+      console.log('Response status:', res.status);
+      console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
-      if (res.ok) {
-        setStatus('success')
-        setMessage(successMessage)
-        setEmail('')
-        setName('')
-        
-        // Reset status after 5 seconds
-        setTimeout(() => {
-          setStatus('idle')
-          setMessage('')
-        }, 5000)
-      } else {
-        setStatus('error')
-        setMessage(data.message || 'Erro ao enviar e-mail')
+      // Check if response has content before trying to parse JSON
+      const responseText = await res.text();
+      console.log('Response text:', responseText);
+
+      let result;
+      try {
+        result = responseText ? JSON.parse(responseText) : { error: 'Empty response' };
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', parseError);
+        throw new Error(`Server returned invalid response: ${responseText || 'Empty response'}`);
       }
+
+      if (!res.ok) {
+        console.error('Newsletter error:', result);
+        throw new Error(result.error || `HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      console.log('Newsletter subscription successful:', result);
+
+      setStatus('success')
+      setMessage(successMessage)
+      setEmail('')
+      setName('')
+      
+      // Reset status after 5 seconds
+      setTimeout(() => {
+        setStatus('idle')
+        setMessage('')
+      }, 5000)
     } catch (error) {
       setStatus('error')
       setMessage('Erro de conexão. Tente novamente.')

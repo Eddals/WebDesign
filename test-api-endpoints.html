@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Endpoints Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #555;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API Endpoints Test Suite</h1>
+        <p>This page tests various API endpoints to identify issues with the newsletter subscription.</p>
+    </div>
+
+    <div class="container">
+        <div class="test-section">
+            <h3>1. Test Newsletter Endpoint</h3>
+            <p>Tests the simple test endpoint to verify API connectivity.</p>
+            <button onclick="testNewsletterEndpoint()">Test Newsletter Endpoint</button>
+            <div id="testResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Test Newsletter Brevo API (.js version)</h3>
+            <p>Tests the JavaScript version of the newsletter API.</p>
+            <button onclick="testNewsletterBrevoJS()">Test Newsletter Brevo JS</button>
+            <div id="brevoJSResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Test Newsletter Brevo API (.ts version)</h3>
+            <p>Tests the TypeScript version of the newsletter API.</p>
+            <button onclick="testNewsletterBrevoTS()">Test Newsletter Brevo TS</button>
+            <div id="brevoTSResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Test OPTIONS Requests</h3>
+            <p>Tests CORS preflight requests.</p>
+            <button onclick="testOptionsRequests()">Test OPTIONS</button>
+            <div id="optionsResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Test All API Endpoints</h3>
+            <p>Tests multiple API endpoints to see which ones are working.</p>
+            <button onclick="testAllEndpoints()">Test All Endpoints</button>
+            <div id="allEndpointsResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function logResult(elementId, type, message) {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.textContent = message;
+        }
+
+        function appendResult(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent += message + '\n';
+        }
+
+        async function testNewsletterEndpoint() {
+            logResult('testResult', 'info', 'Testing newsletter endpoint...');
+            
+            try {
+                const response = await fetch('/api/test-newsletter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        test: true,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                const responseText = await response.text();
+                
+                logResult('testResult', response.ok ? 'success' : 'error', 
+                    `Status: ${response.status}\nHeaders: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}\nResponse: ${responseText}`);
+                
+            } catch (error) {
+                logResult('testResult', 'error', `Error: ${error.message}`);
+            }
+        }
+
+        async function testNewsletterBrevoJS() {
+            logResult('brevoJSResult', 'info', 'Testing newsletter-brevo.js endpoint...');
+            
+            try {
+                const response = await fetch('/api/newsletter-brevo.js', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        firstName: 'Test User',
+                        phone: '+1234567890'
+                    })
+                });
+
+                const responseText = await response.text();
+                
+                logResult('brevoJSResult', response.ok ? 'success' : 'error', 
+                    `Status: ${response.status}\nHeaders: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}\nResponse: ${responseText}`);
+                
+            } catch (error) {
+                logResult('brevoJSResult', 'error', `Error: ${error.message}`);
+            }
+        }
+
+        async function testNewsletterBrevoTS() {
+            logResult('brevoTSResult', 'info', 'Testing newsletter-brevo.ts endpoint...');
+            
+            try {
+                const response = await fetch('/api/newsletter-brevo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        firstName: 'Test User',
+                        phone: '+1234567890'
+                    })
+                });
+
+                const responseText = await response.text();
+                
+                logResult('brevoTSResult', response.ok ? 'success' : 'error', 
+                    `Status: ${response.status}\nHeaders: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}\nResponse: ${responseText}`);
+                
+            } catch (error) {
+                logResult('brevoTSResult', 'error', `Error: ${error.message}`);
+            }
+        }
+
+        async function testOptionsRequests() {
+            logResult('optionsResult', 'info', 'Testing OPTIONS requests...');
+            
+            const endpoints = [
+                '/api/test-newsletter',
+                '/api/newsletter-brevo',
+                '/api/newsletter-brevo.js'
+            ];
+
+            let results = '';
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'OPTIONS',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const responseText = await response.text();
+                    results += `${endpoint}:\nStatus: ${response.status}\nResponse: ${responseText}\n\n`;
+                    
+                } catch (error) {
+                    results += `${endpoint}:\nError: ${error.message}\n\n`;
+                }
+            }
+            
+            logResult('optionsResult', 'info', results);
+        }
+
+        async function testAllEndpoints() {
+            logResult('allEndpointsResult', 'info', 'Testing all API endpoints...');
+            
+            const endpoints = [
+                '/api/health',
+                '/api/test-simple',
+                '/api/test-newsletter',
+                '/api/newsletter-brevo',
+                '/api/newsletter-brevo.js',
+                '/api/contact-brevo',
+                '/api/estimate-brevo'
+            ];
+
+            let results = 'API Endpoint Test Results:\n\n';
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'GET'
+                    });
+
+                    const responseText = await response.text();
+                    results += `✓ ${endpoint}: ${response.status} - ${responseText.substring(0, 100)}${responseText.length > 100 ? '...' : ''}\n`;
+                    
+                } catch (error) {
+                    results += `✗ ${endpoint}: Error - ${error.message}\n`;
+                }
+            }
+            
+            logResult('allEndpointsResult', 'info', results);
+        }
+
+        // Auto-run basic connectivity test on page load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, running basic connectivity test...');
+            testNewsletterEndpoint();
+        });
+    </script>
+</body>
+</html>

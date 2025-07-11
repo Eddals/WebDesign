@@ -44,18 +44,63 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
         phone: phone ? phone : 'não fornecido'
       })
       
-      // Enviar para o endpoint específico de newsletter
-      const response = await fetch('/api/newsletter-subscribe', {
+      // First try the test endpoint to verify API is working
+      console.log('Testing API connectivity...');
+      const testRes = await fetch('/api/test-newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ test: true })
+      });
+      
+      console.log('Test endpoint status:', testRes.status);
+      const testText = await testRes.text();
+      console.log('Test endpoint response:', testText);
+      
+      // Now try the actual newsletter endpoint
+      console.log('Calling newsletter endpoint...');
+      const res = await fetch('/api/newsletter-brevo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          firstName,
           email,
-          phone: phone.trim()
+          firstName,
+          phone: phone || 'não fornecido'
         })
       })
+
+      console.log('Newsletter response status:', res.status);
+      console.log('Newsletter response headers:', Object.fromEntries(res.headers.entries()));
+
+      // Check if response has content before trying to parse JSON
+      const responseText = await res.text();
+      console.log('Newsletter response text:', responseText);
+      console.log('Newsletter response text length:', responseText.length);
+
+      // Handle completely empty responses
+      if (!responseText || responseText.trim() === '') {
+        console.error('Received completely empty response from newsletter API');
+        throw new Error('Server returned empty response. The newsletter API endpoint may not be working correctly.');
+      }
+
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse newsletter response as JSON:', parseError);
+        console.error('Raw response text:', responseText);
+        throw new Error(`Newsletter API returned invalid JSON. Raw response: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`);
+      }
+
+      if (!res.ok) {
+        console.error('Newsletter API error:', result);
+        throw new Error(result.error || result.message || `Newsletter API error: HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      console.log('Newsletter subscription successful:', result);
       
       // Mostrar mensagem de sucesso
       setMessage({ 
@@ -75,9 +120,10 @@ const NewsletterDirectForm = ({ onClose, isPopup = false }: NewsletterDirectForm
       }
     } catch (error) {
       console.error('Newsletter error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.'
       setMessage({ 
         type: 'error', 
-        text: 'Something went wrong. Please try again.' 
+        text: errorMessage
       })
     } finally {
       setIsSubmitting(false)
