@@ -130,14 +130,40 @@ export default async function handler(req, res) {
       body: JSON.stringify(emailData)
     });
 
+    let emailResult;
     if (!emailResponse.ok) {
       const errorData = await emailResponse.text();
-      console.error('❌ Error sending email:', emailResponse.status, errorData);
-      throw new Error(`Failed to send email: ${emailResponse.status} ${errorData}`);
+      console.error('❌ Error sending email with template #13:', emailResponse.status, errorData);
+      
+      // Try fallback to template #2
+      console.log('🔄 Trying fallback to template #2...');
+      const fallbackEmailData = {
+        ...emailData,
+        templateId: 2
+      };
+      
+      const fallbackResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': BREVO_API_KEY
+        },
+        body: JSON.stringify(fallbackEmailData)
+      });
+      
+      if (!fallbackResponse.ok) {
+        const fallbackErrorData = await fallbackResponse.text();
+        console.error('❌ Error sending email with template #2:', fallbackResponse.status, fallbackErrorData);
+        throw new Error(`Failed to send email with both templates: ${emailResponse.status} ${errorData}`);
+      }
+      
+      emailResult = await fallbackResponse.json();
+      console.log('✅ Email sent successfully with template #2 (fallback):', emailResult.messageId);
+    } else {
+      emailResult = await emailResponse.json();
+      console.log('✅ Email sent successfully with template #13:', emailResult.messageId);
     }
-
-    const emailResult = await emailResponse.json();
-    console.log('✅ Email sent successfully:', emailResult.messageId);
 
     return res.status(200).json({
       success: true,
