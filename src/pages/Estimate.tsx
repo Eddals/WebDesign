@@ -30,7 +30,6 @@ interface FormData {
   // Personal Info
   name: string;
   email: string;
-  phone: string;
   company: string;
   industry: string;
 
@@ -51,7 +50,6 @@ const Estimate = () => {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
-    phone: '',
     company: '',
     industry: '',
     projectType: '',
@@ -350,7 +348,6 @@ const Estimate = () => {
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
-            phone: formData.phone,
             company: formData.company,
             industry: formData.industry,
             projectType: formData.projectType,
@@ -375,9 +372,8 @@ const Estimate = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          name: formData.name,
           email: formData.email,
-          firstname: formData.name,
-          phone: formData.phone,
           company: formData.company,
           industry: formData.industry,
           projectType: formData.projectType,
@@ -668,21 +664,6 @@ const Estimate = () => {
                       onChange={(e) => updateFormData('email', e.target.value)}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="your@email.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-white/80 font-medium mb-2">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={(e) => updateFormData('phone', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:border-purple-500 transition-colors"
-                      placeholder="(555) 123-4567"
                     />
                   </div>
 
@@ -1023,7 +1004,7 @@ const Estimate = () => {
               >
                 <motion.button
                   type="submit"
-                  disabled={isSubmitting || !formData.name || !formData.email || !formData.phone || !formData.company || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
+                  disabled={isSubmitting || !formData.name || !formData.email || !formData.company || !formData.industry || !formData.projectType || !formData.budget || !formData.timeline}
                   className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-full font-semibold text-lg transition-all duration-300 shadow-lg shadow-purple-500/25"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

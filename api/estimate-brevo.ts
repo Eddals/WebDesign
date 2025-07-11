@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'API key not found', message: 'BREVO_API_KEY not configured in Vercel environment variables' });
     }
 
-    // Montar os parâmetros para o template #2
+    // Montar os parâmetros para o template #7
     const params = {
       FIRSTNAME: body.name,
       COMPANY: body.company,
@@ -21,8 +21,7 @@ export default async function handler(req, res) {
       FEATURES: Array.isArray(body.features) ? body.features.join(', ') : body.features,
       RETAINER: body.retainer,
       DESCRIPTION: body.description,
-      EMAIL: body.email,
-      PHONE: body.phone
+      EMAIL: body.email
     };
 
     // Adicionar contato à lista #7 do Brevo
@@ -37,7 +36,6 @@ export default async function handler(req, res) {
         attributes: {
           FIRSTNAME: firstName,
           LASTNAME: lastName,
-          PHONE: body.phone || '',
           COMPANY: body.company || '',
           INDUSTRY: body.industry || '',
           PROJECT_TYPE: body.projectType || '',
@@ -76,7 +74,7 @@ export default async function handler(req, res) {
       console.error('Error adding contact to Brevo list:', contactError);
     }
 
-    // Enviar e-mail para o cliente usando o template #2
+    // Enviar e-mail para o cliente usando o template #7
     const clientResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
@@ -87,26 +85,10 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         sender: { name: 'DevTone Agency', email: 'team@devtone.agency' },
         to: [{ email: body.email, name: body.name }],
-        templateId: 2,
+        templateId: 7,
         params
       })
     });
-
-    // Opcional: Enviar notificação para o time (pode ser removido se não quiser)
-    // const teamResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
-    //   method: 'POST',
-    //   headers: {
-    //     'accept': 'application/json',
-    //     'api-key': apiKey,
-    //     'content-type': 'application/json'
-    //   },
-    //   body: JSON.stringify({
-    //     sender: { name: 'DevTone Estimate Form', email: 'noreply@devtone.agency' },
-    //     to: [{ email: 'team@devtone.agency', name: 'DevTone Team' }],
-    //     templateId: 2,
-    //     params
-    //   })
-    // });
 
     const clientData = await clientResponse.json();
     if (!clientResponse.ok) {
