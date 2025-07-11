@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     }
 
     // Use hardcoded API key as fallback if environment variable is not set
-    const BREVO_API_KEY = process.env.BREVO_API_KEY || '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';
+    const BREVO_API_KEY = process.env.BREVO_API_KEY || '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';
     if (!BREVO_API_KEY) {
       return res.status(500).json({
         success: false,

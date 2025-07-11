@@ -2,7 +2,7 @@
 const https = require('https');
 
 // Brevo API key
-const BREVO_API_KEY = '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';
+const BREVO_API_KEY = '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';
 
 function testBrevoTemplate13() {
   console.log('🧪 Testing Brevo email with template #13');
