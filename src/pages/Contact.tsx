@@ -74,58 +74,7 @@ const Contact = () => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    console.log('🚀 Sending contact form...');
-    console.log('📋 Form data:', formData);
-
     try {
-      // Send data to N8N webhook
-      try {
-        const webhookData = {
-          nome: formData.name,
-          email: formData.email,
-          telefone: formData.phone || '',
-          empresa: formData.company || '',
-          assunto: formData.subject,
-          mensagem: formData.message,
-          contato_preferido: formData.preferredContact,
-          data_envio: new Date().toISOString(),
-          origem: 'formulario-contato'
-        };
-        
-        console.log('Sending data to N8N webhook:', webhookData);
-        
-        // Direct webhook call to the new URL
-        const webhookUrl = 'https://hook.us2.make.com/9e3cokwmwww6kbxu27awfncy4hvfnja6';
-        const n8nWebhookUrl = 'https://devtone.app.n8n.cloud/webhook-test/42fe2df8-50cc-499e-b1c7-0ffdac9f3454';
-        
-        // Send to Make.com webhook
-        const webhookResponse = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData)
-        });
-        console.log('Make.com webhook response status:', webhookResponse.status);
-
-        // Send to N8N webhook
-        try {
-          const n8nResponse = await fetch(n8nWebhookUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(webhookData)
-          });
-          console.log('N8N webhook response status:', n8nResponse.status);
-        } catch (n8nError) {
-          console.error('Error sending to N8N webhook:', n8nError);
-        }
-      } catch (webhookError) {
-        console.error('Error sending to webhooks:', webhookError);
-        // Continue even if webhook fails
-      }
-      
       // Prepare data for Brevo API
       const emailData = {
         name: formData.name,
@@ -150,15 +99,7 @@ const Contact = () => {
         body: JSON.stringify(emailData)
       });
 
-      let result;
-      try {
-        result = await brevoResponse.json();
-      } catch (err) {
-        console.error('❌ Resposta não foi JSON válido:', err);
-        console.error('Status:', brevoResponse.status);
-        console.error('Status Text:', brevoResponse.statusText);
-        throw new Error(`API retornou resposta inválida: ${brevoResponse.status} ${brevoResponse.statusText}`);
-      }
+      const result = await brevoResponse.json();
       
       console.log('📧 Contact form response:', result);
       
@@ -166,9 +107,6 @@ const Contact = () => {
       if (!result.success) {
         throw new Error(result.error || 'Failed to send message');
       }
-      
-      // Brevo email is handled server-side in the API endpoint
-      console.log('✅ Form submitted successfully, confirmation email will be sent by Brevo')
       
       console.log('✅ Email sent successfully via Brevo!');
       console.log('📧 Template ID #13 used for contact confirmation email');
@@ -191,28 +129,9 @@ const Contact = () => {
 
     } catch (error) {
       console.error('❌ Error submitting contact form:', error);
-      
-      // More detailed error message
-      let errorMessage = 'There was an error sending your message. ';
-      if (error instanceof Error) {
-        errorMessage += error.message;
-      }
-      
-      // Adicionar informação sobre como entrar em contato diretamente
-      errorMessage += '\n\nIf the problem persists, please try again in a few minutes.';
-      errorMessage += '\n\nPlease try again or contact us directly at team@devtone.agency';
-      
-      alert(errorMessage);
-      
-      // Log more details for debugging
-      console.error('Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-        formData: formData
-      });
+      alert('There was an error sending your message. Please try again.');
     } finally {
       setIsSubmitting(false)
-      console.log('🏁 Contact submission completed');
     }
   }
 

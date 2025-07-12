@@ -1,5 +1,5 @@
 export const BREVO_CONFIG = {
-  API_KEY: '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',
+  API_KEY: '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',
   API_URL: 'https://api.brevo.com/v3/smtp/email',
   TEAM_EMAIL: 'team@devtone.agency',
   SMTP_SERVER: 'smtp-relay.brevo.com',

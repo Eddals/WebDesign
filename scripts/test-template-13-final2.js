@@ -1,7 +1,7 @@
 // Test script using built-in https module to test Brevo template #13
 const https = require('https');
 
-// Brevo API key
+// Brevo API key from test-brevo.js
 const BREVO_API_KEY = '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';
 
 function testBrevoTemplate13() {
