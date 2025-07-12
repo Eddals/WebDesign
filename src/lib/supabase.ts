@@ -2,20 +2,20 @@ import { createClient } from '@supabase/supabase-js'
 import { Database } from '../types/supabase'
 
 // Get environment variables with fallback to hardcoded values for debugging
-let supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://csdejqgfzsxcldqqwfds.supabase.co'
-let supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzZGVqcWdmenN4Y2xkcXF3ZmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4ODEzMjMsImV4cCI6MjA2NTQ1NzMyM30.sIpHefIwIjO4iTTNJc07krFHNM8rWih8H06MaftZAyQ'
+let supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://olblavscnardvgpgeqdk.supabase.co'
+let supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sYmxhdnNjbmFyZHZncGdlcWRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyOTA2NTYsImV4cCI6MjA2Nzg2NjY1Nn0.PG3aZtT4y5AQcZ4HNt6cbeibyQW26gvYC674-wVGPds'
 
 // Validate URL format
 if (supabaseUrl && !supabaseUrl.startsWith('http')) {
   console.warn('Invalid Supabase URL detected, using fallback');
-  supabaseUrl = 'https://csdejqgfzsxcldqqwfds.supabase.co';
+  supabaseUrl = 'https://olblavscnardvgpgeqdk.supabase.co';
 }
 
 // Check for placeholder values
 if (supabaseUrl === 'your_supabase_project_url' || supabaseAnonKey === 'your_supabase_anon_key') {
   console.warn('Placeholder Supabase values detected, using fallback');
-  supabaseUrl = 'https://csdejqgfzsxcldqqwfds.supabase.co';
-  supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzZGVqcWdmenN4Y2xkcXF3ZmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4ODEzMjMsImV4cCI6MjA2NTQ1NzMyM30.sIpHefIwIjO4iTTNJc07krFHNM8rWih8H06MaftZAyQ';
+  supabaseUrl = 'https://olblavscnardvgpgeqdk.supabase.co';
+  supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sYmxhdnNjbmFyZHZncGdlcWRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyOTA2NTYsImV4cCI6MjA2Nzg2NjY1Nn0.PG3aZtT4y5AQcZ4HNt6cbeibyQW26gvYC674-wVGPds';
 }
 
 // Debug logging (only once)

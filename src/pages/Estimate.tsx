@@ -25,6 +25,7 @@ import {
   Search
 } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { supabase } from '@/lib/supabase';
 
 interface FormData {
   // Personal Info
@@ -337,8 +338,36 @@ const Estimate = () => {
     setError(null);
 
     try {
-      
-      // Send to devtone.agency webhook
+      // Prepare data for Supabase
+      const estimateData = {
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
+        industry: formData.industry,
+        project_type: formData.projectType,
+        budget: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
+        timeline: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
+        description: formData.description,
+        features: formData.features,
+        retainer: formData.retainer,
+        source: 'website_form',
+        status: 'pending'
+      };
+
+      // Save to Supabase first
+      const { data: supabaseData, error: supabaseError } = await supabase
+        .from('estimates')
+        .insert([estimateData])
+        .select();
+
+      if (supabaseError) {
+        console.error('Supabase Error:', supabaseError);
+        throw new Error(`Database error: ${supabaseError.message}`);
+      }
+
+      console.log('✅ Estimate saved to Supabase:', supabaseData);
+
+      // Send to devtone.agency webhook (optional, keep existing functionality)
       try {
         await fetch('/api/estimate-webhook', {
           method: 'POST',
@@ -363,67 +392,42 @@ const Estimate = () => {
         console.error('Failed to send to webhook:', err);
       }
 
-      // Send to Brevo API endpoint
-      const apiUrl = '/api/estimate-brevo';
-        
-      const brevoResponse = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          company: formData.company,
-          industry: formData.industry,
-          projectType: formData.projectType,
-          budget: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
-          timeline: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
-          description: formData.description,
-          features: formData.features,
-          retainer: formData.retainer
-        })
-      });
-
-      // Check response status
-      if (!brevoResponse.ok) {
-        if (brevoResponse.status === 405) {
-          setError('API endpoint does not allow this method (405 Method Not Allowed).');
-          setIsSubmitting(false);
-          return;
-        }
-        
-        // Try to get error details from response
-        let errorDetails = '';
-        try {
-          const errorData = await brevoResponse.json();
-          errorDetails = errorData.error || errorData.message || JSON.stringify(errorData);
-        } catch (e) {
-          // If can't parse JSON, get text
-          try {
-            errorDetails = await brevoResponse.text();
-          } catch (textError) {
-            errorDetails = 'Could not extract error details';
-          }
-        }
-        
-        throw new Error(`API error (${brevoResponse.status}): ${errorDetails}`);
-      }
-      
-      // Parse successful response
-      let result;
+      // The Brevo integration will be handled automatically by the Supabase trigger
+      // But we can also send directly to Brevo as backup
       try {
-        result = await brevoResponse.json();
+        const apiUrl = '/api/estimate-brevo';
+        const brevoResponse = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            company: formData.company,
+            industry: formData.industry,
+            projectType: formData.projectType,
+            budget: budgetRanges.find(b => b.value === formData.budget)?.label || formData.budget,
+            timeline: timelineOptions.find(t => t.value === formData.timeline)?.label || formData.timeline,
+            description: formData.description,
+            features: formData.features,
+            retainer: formData.retainer
+          })
+        });
+
+        if (brevoResponse.ok) {
+          console.log('✅ Backup Brevo submission successful');
+        } else {
+          console.warn('⚠️ Backup Brevo submission failed, but Supabase trigger should handle it');
+        }
       } catch (err) {
-        console.error('❌ Response was not valid JSON:', err);
-        throw new Error('API returned invalid response (malformed JSON)');
+        console.warn('⚠️ Backup Brevo submission failed:', err);
+        // Don't fail the main flow if Brevo backup fails
       }
 
-      if (result && result.success) {
-        setIsSuccess(true);
-      } else {
-        throw new Error((result && result.error) || 'Failed to send estimate');
-      }
+      // Success - the trigger will handle Brevo automatically
+      setIsSuccess(true);
+      
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
