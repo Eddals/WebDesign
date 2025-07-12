@@ -446,7 +446,7 @@ const Home = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                   >
-                    <span className="inline-block">Unleash Your</span>{" "}
+                    <span className="inline-block">Websites That</span>{" "}
                     <motion.div 
                       className="inline-block relative"
                       initial={{ opacity: 0 }}
@@ -454,7 +454,7 @@ const Home = () => {
                       transition={{ duration: 0.5, delay: 0.6 }}
                     >
                       <span className="relative z-10">
-                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Digital</span>
+                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Work</span>
                       </span>
                       <motion.div 
                         className="absolute -bottom-2 left-0 h-3 w-full bg-purple-500/30 rounded-full blur-sm"
@@ -470,14 +470,14 @@ const Home = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                      <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Potential</span>{" "}
+                      Designs That{" "}
                       <motion.span 
                         className="relative inline-block"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.8 }}
                       >
-                        <span className="text-white">with Devtone</span>
+                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Speak</span>
                         <motion.div 
                           className="absolute -bottom-2 left-0 h-3 w-full bg-purple-500/30 rounded-full blur-sm"
                           initial={{ width: 0 }}
@@ -489,43 +489,15 @@ const Home = () => {
                   </motion.h1>
                 </div>
                 
-                <motion.div 
-                  className="bg-white/5 backdrop-blur-sm border border-purple-500/20 rounded-xl p-8 mb-10 max-w-3xl mx-auto"
+                <motion.p 
+                  className="text-xl text-white/80 mb-8 max-w-2xl mx-auto"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  <h2 className="text-2xl font-bold text-purple-300 mb-4">Your Premier Partner for Web Development</h2>
-                  
-                  <p className="text-white/80 mb-6">
-                    Devtone Agency is not just a branding agency, we are your key to unlocking an unparalleled online presence. 
-                    Our expertise in web development empowers businesses to build dynamic websites that engage visitors and convert 
-                    them into loyal customers.
-                  </p>
-                  
-                  <div className="border-t border-purple-500/20 pt-6 mt-6">
-                    <h3 className="text-xl font-semibold text-white mb-4">Why Choose Devtone for Web Development?</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
-                        <p className="text-white/70">Fast, responsive websites that work on all devices</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
-                        <p className="text-white/70">SEO-optimized to increase your visibility</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
-                        <p className="text-white/70">Visually stunning designs that engage users</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
-                        <p className="text-white/70">Conversion-focused to drive business growth</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                  We create beautiful, fast, and SEO-friendly websites powered by strategic <span className="text-purple-300">digital marketing</span> and professional <span className="text-purple-300">content creation</span>. 
+                  Let's bring your ideas to life!
+                </motion.p>
                 
                 <motion.div 
                   className="flex flex-col sm:flex-row gap-4 justify-center"
