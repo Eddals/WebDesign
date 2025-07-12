@@ -547,21 +547,6 @@ const Contact = () => {
               viewport={{ once: true }}
               className="space-y-8"
             >
-              {/* Google Maps Widget */}
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="w-5 h-5 text-purple-400" />
-                  <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">Find Us</h3>
-                </div>
-                <GoogleMapsWidget 
-                  mapUrl="https://www.google.com/maps/place/Devtone+Agency/@38.4717772,-170.9868608,4z/data=!4m16!1m9!3m8!1s0x8e862144bbfe7805:0x1d5d4a141863603a!2sDevtone+Agency!8m2!3d46.423669!4d-129.9427086!9m1!1b1!16s%2Fg%2F11xmdlj435!3m5!1s0x8e862144bbfe7805:0x1d5d4a141863603a!8m2!3d46.423669!4d-129.9427086!16s%2Fg%2F11xmdlj435?entry=ttu&g_ep=EgoyMDI1MDYxNy4wIKXMDSoASAFQAw%3D%3D"
-                  businessName="Devtone Agency"
-                  rating={5.0}
-                  address="Digital Headquarters"
-                />
-              </div>
-
-                            
               {/* Support Information */}
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
                 <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400">How We Can Help</h3>
