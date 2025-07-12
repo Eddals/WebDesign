@@ -78,14 +78,14 @@ const Contact = () => {
     try {
       // Prepare data for both Supabase and Brevo
       const contactData = {
-        full_name: formData.name,
+        name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
         subject: formData.subject,
         message: formData.message,
         preferred_contact: formData.preferredContact,
-        source: 'contact_form',
+        source: 'contact_page_form',
         status: 'new'
       };
 
@@ -107,7 +107,7 @@ const Contact = () => {
         console.log('🔧 Attempting to save to Supabase...');
         
         const { data: supabaseData, error: supabaseError } = await supabase
-          .from('contacts')
+          .from('contact_form_messages')
           .insert([contactData])
           .select();
 
