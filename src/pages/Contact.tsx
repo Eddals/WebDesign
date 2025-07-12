@@ -16,6 +16,7 @@ import SEO from '@/components/SEO'
 import GoogleMapsWidget from '@/components/GoogleMapsWidget'
 import { submitContactForm } from '@/lib/contact-service'
 import BrevoChatWidget from '@/components/BrevoChatWidget'
+import { supabase } from '@/lib/supabase'
 
 const Contact = () => {
   // Form state
@@ -75,7 +76,19 @@ const Contact = () => {
     setIsSubmitting(true)
 
     try {
-      // Prepare data for Brevo API
+      // Prepare data for both Supabase and Brevo
+      const contactData = {
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        subject: formData.subject,
+        message: formData.message,
+        preferred_contact: formData.preferredContact,
+        source: 'contact_form',
+        status: 'new'
+      };
+
       const emailData = {
         name: formData.name,
         email: formData.email,
@@ -86,30 +99,75 @@ const Contact = () => {
         preferredContact: formData.preferredContact
       };
 
-      console.log('📧 Sending contact form with data:', emailData);
+      let supabaseSuccess = false;
+      let brevoSuccess = false;
 
-      // Send to Brevo API endpoint
-      const apiUrl = '/api/contact-brevo';
+      // Try Supabase first
+      try {
+        console.log('🔧 Attempting to save to Supabase...');
         
-      const brevoResponse = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(emailData)
-      });
+        const { data: supabaseData, error: supabaseError } = await supabase
+          .from('contacts')
+          .insert([contactData])
+          .select();
 
-      const result = await brevoResponse.json();
-      
-      console.log('📧 Contact form response:', result);
-      
-      // Check if the result was successful
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to send message');
+        if (supabaseError) {
+          console.error('❌ Supabase Error:', supabaseError);
+          
+          // Check if it's a network error
+          if (supabaseError.message.includes('fetch') || supabaseError.message.includes('network')) {
+            console.warn('⚠️ Network error with Supabase, trying Brevo directly...');
+          } else {
+            throw new Error(`Database error: ${supabaseError.message}`);
+          }
+        } else {
+          console.log('✅ Contact saved to Supabase:', supabaseData);
+          supabaseSuccess = true;
+        }
+      } catch (supabaseErr) {
+        console.error('❌ Supabase failed:', supabaseErr);
+        // Continue to Brevo as fallback
       }
-      
-      console.log('✅ Email sent successfully via Brevo!');
-      console.log('📧 Template ID #13 used for contact confirmation email');
+
+      // Try Brevo as primary or fallback
+      try {
+        console.log('📧 Sending to Brevo API...');
+
+        const apiUrl = '/api/contact-brevo';
+        const brevoResponse = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(emailData)
+        });
+
+        if (brevoResponse.ok) {
+          const result = await brevoResponse.json();
+          console.log('✅ Brevo submission successful:', result);
+          brevoSuccess = true;
+        } else {
+          const errorText = await brevoResponse.text();
+          console.error('❌ Brevo API error:', brevoResponse.status, errorText);
+          throw new Error(`Brevo API error: ${brevoResponse.status}`);
+        }
+      } catch (brevoErr) {
+        console.error('❌ Brevo failed:', brevoErr);
+      }
+
+      // Check if at least one method succeeded
+      if (!supabaseSuccess && !brevoSuccess) {
+        throw new Error('Both Supabase and Brevo failed. Please check your internet connection and try again.');
+      }
+
+      // Success message based on what worked
+      if (supabaseSuccess && brevoSuccess) {
+        console.log('✅ Contact form submitted successfully via both Supabase and Brevo!');
+      } else if (supabaseSuccess) {
+        console.log('✅ Contact saved to Supabase (Brevo will be handled by trigger)');
+      } else if (brevoSuccess) {
+        console.log('✅ Contact sent via Brevo (Supabase unavailable)');
+      }
       
       setIsSubmitted(true);
 
@@ -129,7 +187,17 @@ const Contact = () => {
 
     } catch (error) {
       console.error('❌ Error submitting contact form:', error);
-      alert('There was an error sending your message. Please try again.');
+      
+      // More specific error messages
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        alert('Network error. Please check your internet connection and try again.');
+      } else if (errorMessage.includes('Database error')) {
+        alert('Database connection error. Please try again or contact support.');
+      } else {
+        alert('There was an error sending your message. Please try again.');
+      }
     } finally {
       setIsSubmitting(false)
     }
