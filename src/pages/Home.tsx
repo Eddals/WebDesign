@@ -446,7 +446,7 @@ const Home = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                   >
-                    <span className="inline-block">Websites That</span>{" "}
+                    <span className="inline-block">Unleash Your</span>{" "}
                     <motion.div 
                       className="inline-block relative"
                       initial={{ opacity: 0 }}
@@ -454,7 +454,7 @@ const Home = () => {
                       transition={{ duration: 0.5, delay: 0.6 }}
                     >
                       <span className="relative z-10">
-                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Work</span>
+                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Digital</span>
                       </span>
                       <motion.div 
                         className="absolute -bottom-2 left-0 h-3 w-full bg-purple-500/30 rounded-full blur-sm"
@@ -470,14 +470,14 @@ const Home = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                      Designs That{" "}
+                      <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Potential</span>{" "}
                       <motion.span 
                         className="relative inline-block"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.8 }}
                       >
-                        <span className="animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500">Speak</span>
+                        <span className="text-white">with Devtone</span>
                         <motion.div 
                           className="absolute -bottom-2 left-0 h-3 w-full bg-purple-500/30 rounded-full blur-sm"
                           initial={{ width: 0 }}
@@ -489,15 +489,43 @@ const Home = () => {
                   </motion.h1>
                 </div>
                 
-                <motion.p 
-                  className="text-xl text-white/80 mb-8 max-w-2xl mx-auto"
+                <motion.div 
+                  className="bg-white/5 backdrop-blur-sm border border-purple-500/20 rounded-xl p-8 mb-10 max-w-3xl mx-auto"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  We create beautiful, fast, and SEO-friendly websites powered by strategic <span className="text-purple-300">digital marketing</span> and professional <span className="text-purple-300">content creation</span>. 
-                  Let's bring your ideas to life!
-                </motion.p>
+                  <h2 className="text-2xl font-bold text-purple-300 mb-4">Your Premier Partner for Web Development</h2>
+                  
+                  <p className="text-white/80 mb-6">
+                    Devtone Agency is not just a branding agency, we are your key to unlocking an unparalleled online presence. 
+                    Our expertise in web development empowers businesses to build dynamic websites that engage visitors and convert 
+                    them into loyal customers.
+                  </p>
+                  
+                  <div className="border-t border-purple-500/20 pt-6 mt-6">
+                    <h3 className="text-xl font-semibold text-white mb-4">Why Choose Devtone for Web Development?</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
+                        <p className="text-white/70">Fast, responsive websites that work on all devices</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
+                        <p className="text-white/70">SEO-optimized to increase your visibility</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
+                        <p className="text-white/70">Visually stunning designs that engage users</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1 text-purple-400"><CheckCircle size={18} /></div>
+                        <p className="text-white/70">Conversion-focused to drive business growth</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
                 
                 <motion.div 
                   className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -1825,6 +1853,214 @@ const Home = () => {
         </section>
 
 
+
+        {/* Testimonials Section */}
+        <section className="py-24 relative overflow-hidden">
+          {/* Background elements */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#030718] via-[#0a0e24] to-[#030718] opacity-80"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiIgZD0iTTAgMGg2MHY2MEgweiIvPjxwYXRoIGQ9Ik0zNiAxOGgtMXYyNGgxeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PHBhdGggZD0iTTI0IDE4aC0xdjI0aDF6IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDQiLz48cGF0aCBkPSJNNjAgMzZ2MUgzNnYtMXoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNCIvPjxwYXRoIGQ9Ik02MCAyNHYxSDM2di0xeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+          
+          {/* Animated gradient orbs */}
+          <motion.div 
+            className="absolute top-1/3 left-10 w-80 h-80 bg-purple-600/10 rounded-full filter blur-[100px]"
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1]
+            }}
+            transition={{ 
+              duration: 10, 
+              repeat: Infinity,
+              ease: "easeInOut" 
+            }}
+          ></motion.div>
+          
+          <motion.div 
+            className="absolute bottom-1/3 right-10 w-96 h-96 bg-indigo-500/10 rounded-full filter blur-[120px]"
+            animate={{ 
+              scale: [1.2, 1],
+              opacity: [0.15, 0.25]
+            }}
+            transition={{ 
+              duration: 12, 
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          ></motion.div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.div 
+                className="inline-block px-4 py-1 mb-4 text-purple-300 border border-purple-500/50 rounded-full text-sm backdrop-blur-sm relative overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+              >
+                <span className="relative z-10">Client Success Stories</span>
+                <motion.div 
+                  className="absolute inset-0 bg-purple-500/20"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.6 }}
+                />
+              </motion.div>
+              
+              <motion.h2 
+                className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-purple-400 text-glow"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                💬 What Our Clients Are Saying
+              </motion.h2>
+              
+              <motion.p
+                className="text-xl text-white/70 max-w-2xl mx-auto mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                Real results from real businesses.
+              </motion.p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Testimonial 1 */}
+              <motion.div 
+                className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-purple-500/30 transition-all duration-300 relative group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                whileHover={{ y: -5 }}
+              >
+                {/* Quote mark */}
+                <div className="absolute top-6 right-6 text-purple-500/20 group-hover:text-purple-500/40 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" className="opacity-30">
+                    <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                  </svg>
+                </div>
+                
+                <div className="testimonial flex items-center gap-6">
+                  {/* First testimonial - male */}
+                  <img 
+                    src="https://i.imgur.com/mBoCxxL.png" 
+                    alt="Daniel Anderson" 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30 flex-shrink-0"
+                  />
+                  <div>
+                    <p className="text-white/80 text-lg mb-2 relative z-10">
+                      "Devtone delivered our website in record time. The design perfectly captures our brand and our customers love it!"
+                    </p>
+                    <h4 className="text-purple-300 font-medium">— Daniel Anderson, Founder of a Design Studio</h4>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Testimonial 2 */}
+              <motion.div 
+                className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-purple-500/30 transition-all duration-300 relative group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                whileHover={{ y: -5 }}
+              >
+                {/* Quote mark */}
+                <div className="absolute top-6 right-6 text-purple-500/20 group-hover:text-purple-500/40 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" className="opacity-30">
+                    <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                  </svg>
+                </div>
+                
+                <div className="testimonial flex items-center gap-6">
+                  {/* Second testimonial - male */}
+                  <img 
+                    src="https://i.imgur.com/V95d7SH.png" 
+                    alt="James Wilson" 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30 flex-shrink-0"
+                  />
+                  <div>
+                    <p className="text-white/80 text-lg mb-2 relative z-10">
+                      "The lead system Devtone built transformed our business. Best investment we've made this year, hands down."
+                    </p>
+                    <h4 className="text-purple-300 font-medium">— James Wilson, CEO of a Real Estate Agency</h4>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Testimonial 3 */}
+              <motion.div 
+                className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-purple-500/30 transition-all duration-300 relative group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{ y: -5 }}
+              >
+                {/* Quote mark */}
+                <div className="absolute top-6 right-6 text-purple-500/20 group-hover:text-purple-500/40 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" className="opacity-30">
+                    <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                  </svg>
+                </div>
+                
+                <div className="testimonial flex items-center gap-6">
+                  {/* Third testimonial - female */}
+                  <img 
+                    src="https://i.imgur.com/RVxTrCp.jpeg" 
+                    alt="Emma Thompson" 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30 flex-shrink-0"
+                  />
+                  <div>
+                    <p className="text-white/80 text-lg mb-2 relative z-10">
+                      "Our sales increased by 78% after Devtone redesigned our online store. Their team was responsive, creative, and genuinely cared about our success."
+                    </p>
+                    <h4 className="text-purple-300 font-medium">— Emma Thompson, Owner of an E-commerce Brand</h4>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Testimonial 4 */}
+              <motion.div 
+                className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-purple-500/30 transition-all duration-300 relative group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ y: -5 }}
+              >
+                {/* Quote mark */}
+                <div className="absolute top-6 right-6 text-purple-500/20 group-hover:text-purple-500/40 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" className="opacity-30">
+                    <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                  </svg>
+                </div>
+                
+                <div className="testimonial flex items-center gap-6">
+                  {/* Fourth testimonial - male */}
+                  <img 
+                    src="https://i.imgur.com/f0diARk.jpeg" 
+                    alt="Michael Rodriguez" 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30 flex-shrink-0"
+                  />
+                  <div>
+                    <p className="text-white/80 text-lg mb-2 relative z-10">
+                      "Devtone's SEO services tripled our organic traffic. We're seeing qualified leads come in daily now. They're the real deal."
+                    </p>
+                    <h4 className="text-purple-300 font-medium">— Michael Rodriguez, Founder of a Tech Startup</h4>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
 
         {/* CTA Section */}
         <section className="container mx-auto px-4 py-16">

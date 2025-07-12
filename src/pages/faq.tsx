@@ -8,7 +8,8 @@ import {
   MessageSquare, Package, Clock, CreditCard, 
   RefreshCw, HelpCircle, ChevronDown, ChevronUp,
   Star, Award, Shield, Zap, Users, Sparkles,
-  FileText, Target, Layers, Send, Mail, Phone, Calendar
+  FileText, Target, Layers, Send, Mail, Phone, Calendar,
+  DollarSign, Code, Laptop, Globe, Palette, Database
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 
@@ -65,6 +66,7 @@ const FAQ = () => {
     { id: 'pricing', label: 'Pricing', icon: <CreditCard size={18} /> },
     { id: 'process', label: 'Process', icon: <RefreshCw size={18} /> },
     { id: 'support', label: 'Support', icon: <MessageSquare size={18} /> },
+    { id: 'tech', label: 'Technology', icon: <Code size={18} /> },
   ];
 
   // Creative contact methods section
@@ -89,47 +91,119 @@ const FAQ = () => {
     }
   ];
 
-  // FAQ Items - removed the "services" category and related questions
+  // FAQ Items - reordered by priority and with new questions
   const faqItems = [
     {
       category: 'pricing',
-      question: "Do you offer a money-back guarantee?",
+      question: "How much do your services cost?",
       answer: (
-        <section>
-          Yes, we offer a comprehensive money-back guarantee:
-          <ul className="mt-4 space-y-2" role="list">
-            <GuaranteeItem title="100% Money-Back Guarantee">
-              <span
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    "within the first 48 hours if you're not satisfied with our initial design concepts."
-                  ),
-                }}
-              />
-            </GuaranteeItem>
-            <GuaranteeItem title="Partial Refund">
-              <span
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    "if we can't deliver on the agreed-upon requirements after multiple revision attempts."
-                  ),
-                }}
-              />
-            </GuaranteeItem>
-          </ul>
-          <p className="mt-4">
-            {
-              DOMPurify.sanitize(
-                "Our goal is your complete satisfaction. If at any point you feel we're not meeting your expectations, please let us know, and we'll work to make it right."
-              )
-            }
-          </p>
-        </section>
+        <>
+          <p className="mb-4">Each project has different needs - that's why we offer a free estimate process.</p>
+          <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-4">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 text-purple-400 mt-1">
+                <DollarSign size={20} />
+              </div>
+              <div>
+                <h4 className="font-semibold text-white text-lg mb-2">Personalized Pricing</h4>
+                <p className="text-white/70">
+                  In less than 2 minutes, you can tell us what you're looking for and we'll send you a personalized proposal.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 text-purple-400 mt-1">
+                <CheckCircle size={14} />
+              </div>
+              <p className="text-white/70">Custom website design tailored to your brand</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 text-purple-400 mt-1">
+                <CheckCircle size={14} />
+              </div>
+              <p className="text-white/70">Responsive design for all devices</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 text-purple-400 mt-1">
+                <CheckCircle size={14} />
+              </div>
+              <p className="text-white/70">SEO optimization to help your site get found</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 text-purple-400 mt-1">
+                <CheckCircle size={14} />
+              </div>
+              <p className="text-white/70">Ongoing support and maintenance options</p>
+            </div>
+          </div>
+          <div className="mt-6 text-center">
+            <motion.a
+              href="/estimate"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-full font-semibold text-white transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Get Your Free Estimate
+            </motion.a>
+          </div>
+        </>
       ),
     },
     {
       category: 'process',
-      question: "What is your development process?",
+      question: "How long does a typical project take?",
+      answer: (
+        <>
+          <p className="mb-4">Project timelines vary based on complexity and scope:</p>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                <Clock className="text-purple-400" size={16} />
+              </div>
+              <div>
+                <h4 className="font-semibold text-white">Basic Website</h4>
+                <p className="text-white/70">3-5 days</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                <Clock className="text-purple-400" size={16} />
+              </div>
+              <div>
+                <h4 className="font-semibold text-white">Standard Website</h4>
+                <p className="text-white/70">1-2 weeks</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                <Clock className="text-purple-400" size={16} />
+              </div>
+              <div>
+                <h4 className="font-semibold text-white">Premium Website</h4>
+                <p className="text-white/70">2-3 weeks</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                <Clock className="text-purple-400" size={16} />
+              </div>
+              <div>
+                <h4 className="font-semibold text-white">E-commerce Website</h4>
+                <p className="text-white/70">3-4 weeks</p>
+              </div>
+            </div>
+          </div>
+          <p className="mt-4 bg-purple-500/10 p-3 rounded-lg border border-purple-500/20">
+            <strong className="text-purple-300">Success Story:</strong> We recently delivered a complete e-commerce platform for a boutique clothing brand in just 18 days, which helped them increase online sales by 45% in the first month after launch.
+          </p>
+        </>
+      ),
+    },
+    {
+      category: 'process',
+      question: "What's your development process like?",
       answer: (
         <>
           <p className="mb-4">Our development process is structured to ensure quality, efficiency, and client satisfaction:</p>
@@ -189,41 +263,26 @@ const FAQ = () => {
               <p className="text-white/70 pl-11">We provide ongoing support and maintenance to keep your website secure, up-to-date, and performing optimally.</p>
             </div>
           </div>
+          <p className="mt-4">
+            Learn more about our approach on our <a href="/services" className="text-purple-400 underline hover:text-purple-300">Services page</a>.
+          </p>
         </>
       ),
     },
     {
-      category: 'process',
-      question: "What information do you need to get started?",
+      category: 'tech',
+      question: "Do you offer SEO or marketing services?",
       answer: (
         <>
-          <p className="mb-4">To get started on your project, we'll need the following information:</p>
+          <p className="mb-4">Yes, we offer comprehensive SEO and digital marketing services to help your website get found and convert visitors:</p>
           <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Users className="text-purple-400" size={16} />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white">Business Information</h4>
-                <p className="text-white/70">Your business name, industry, target audience, and unique selling points</p>
-              </div>
-            </div>
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
                 <Target className="text-purple-400" size={16} />
               </div>
               <div>
-                <h4 className="font-semibold text-white">Project Goals</h4>
-                <p className="text-white/70">What you want to achieve with your website (e.g., generate leads, sell products, provide information)</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Layers className="text-purple-400" size={16} />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white">Design Preferences</h4>
-                <p className="text-white/70">Your brand colors, logo, examples of websites you like, and any design preferences</p>
+                <h4 className="font-semibold text-white">Search Engine Optimization (SEO)</h4>
+                <p className="text-white/70">Keyword research, on-page optimization, technical SEO, and content strategy</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -231,47 +290,90 @@ const FAQ = () => {
                 <FileText className="text-purple-400" size={16} />
               </div>
               <div>
-                <h4 className="font-semibold text-white">Content</h4>
-                <p className="text-white/70">Website copy, images, videos, and any other content you want to include</p>
+                <h4 className="font-semibold text-white">Content Marketing</h4>
+                <p className="text-white/70">Blog posts, articles, and other content creation to drive organic traffic</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Package className="text-purple-400" size={16} />
+                <Users className="text-purple-400" size={16} />
               </div>
               <div>
-                <h4 className="font-semibold text-white">Functionality Requirements</h4>
-                <p className="text-white/70">Specific features you need (e.g., contact forms, booking systems, e-commerce)</p>
+                <h4 className="font-semibold text-white">Social Media Marketing</h4>
+                <p className="text-white/70">Strategy, content creation, and management for social platforms</p>
               </div>
             </div>
           </div>
-          <p className="mt-4">Don't worry if you don't have all this information ready. We can help guide you through the process and gather what we need during our initial consultation.</p>
+          <p className="mt-4 bg-purple-500/10 p-3 rounded-lg border border-purple-500/20">
+            <strong className="text-purple-300">Client Success:</strong> Our SEO services helped a local service business increase their organic traffic by 210% and generate 35+ qualified leads per month, resulting in a 3x ROI on their marketing investment.
+          </p>
+        </>
+      ),
+    },
+    {
+      category: 'tech',
+      question: "What technologies do you use?",
+      answer: (
+        <>
+          <p className="mb-4">We use modern, cutting-edge technologies to build fast, secure, and scalable websites:</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                  <Code className="text-purple-400" size={16} />
+                </div>
+                <h4 className="font-semibold text-white">Frontend</h4>
+              </div>
+              <p className="text-white/70 pl-11">React, Next.js, TypeScript, Tailwind CSS</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                  <Database className="text-purple-400" size={16} />
+                </div>
+                <h4 className="font-semibold text-white">Backend</h4>
+              </div>
+              <p className="text-white/70 pl-11">Node.js, Express, Supabase, Firebase</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                  <Palette className="text-purple-400" size={16} />
+                </div>
+                <h4 className="font-semibold text-white">Design</h4>
+              </div>
+              <p className="text-white/70 pl-11">Figma, Adobe XD, Photoshop</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                  <Globe className="text-purple-400" size={16} />
+                </div>
+                <h4 className="font-semibold text-white">CMS</h4>
+              </div>
+              <p className="text-white/70 pl-11">WordPress, Shopify, Contentful, Sanity</p>
+            </div>
+          </div>
+          <p className="mt-4">
+            We primarily use React, Next.js, and Supabase — learn more on our <a href="/services" className="text-purple-400 underline hover:text-purple-300">Services page</a>.
+          </p>
         </>
       ),
     },
     {
       category: 'support',
-      question: "What support options do you provide?",
+      question: "Do you provide post-launch support?",
       answer: (
         <>
-          <p className="mb-4">We offer various support options to ensure you get the help you need:</p>
+          <p className="mb-4">Yes, we offer comprehensive post-launch support and maintenance services:</p>
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Mail className="text-purple-400" size={16} />
+                <RefreshCw className="text-purple-400" size={16} />
               </div>
               <div>
-                <h4 className="font-semibold text-white">Email Support</h4>
-                <p className="text-white/70">24/7 access with responses within 24 hours</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Phone className="text-purple-400" size={16} />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white">Phone Support</h4>
-                <p className="text-white/70">Available during business hours (Mon-Fri, 12am-6pm EST)</p>
+                <h4 className="font-semibold text-white">Monthly Maintenance Plans</h4>
+                <p className="text-white/70">Regular updates, security patches, backups, and performance monitoring</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -280,20 +382,122 @@ const FAQ = () => {
               </div>
               <div>
                 <h4 className="font-semibold text-white">Technical Support</h4>
-                <p className="text-white/70">Assistance with issues, questions, and troubleshooting</p>
+                <p className="text-white/70">Help with technical issues, troubleshooting, and bug fixes</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <RefreshCw className="text-purple-400" size={16} />
+                <FileText className="text-purple-400" size={16} />
               </div>
               <div>
                 <h4 className="font-semibold text-white">Content Updates</h4>
-                <p className="text-white/70">Help with updating content, images, and products</p>
+                <p className="text-white/70">Assistance with updating content, adding new pages, and making design changes</p>
               </div>
             </div>
           </div>
-          <p className="mt-4">Our support packages start at $50/month and can be customized based on your specific needs.</p>
+          <p className="mt-4">
+            Our support packages start at $50/month and can be customized based on your specific needs. <a href="/contact" className="text-purple-400 underline hover:text-purple-300">Contact us</a> to discuss your support requirements.
+          </p>
+        </>
+      ),
+    },
+    {
+      category: 'pricing',
+      question: "Do you offer a money-back guarantee?",
+      answer: (
+        <section>
+          Yes, we offer a comprehensive money-back guarantee:
+          <ul className="mt-4 space-y-2" role="list">
+            <GuaranteeItem title="100% Money-Back Guarantee">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(
+                    "within the first 48 hours if you're not satisfied with our initial design concepts."
+                  ),
+                }}
+              />
+            </GuaranteeItem>
+            <GuaranteeItem title="Partial Refund">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(
+                    "if we can't deliver on the agreed-upon requirements after multiple revision attempts."
+                  ),
+                }}
+              />
+            </GuaranteeItem>
+          </ul>
+          <p className="mt-4">
+            {
+              DOMPurify.sanitize(
+                "Our goal is your complete satisfaction. If at any point you feel we're not meeting your expectations, please let us know, and we'll work to make it right."
+              )
+            }
+          </p>
+        </section>
+      ),
+    },
+    {
+      category: 'tech',
+      question: "Do you work with my industry?",
+      answer: (
+        <>
+          <p className="mb-4">Yes, we have experience working with clients across various industries:</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-purple-400"><CheckCircle size={16} /></div>
+              <p className="text-white/70">E-commerce & Retail</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-purple-400"><CheckCircle size={16} /></div>
+              <p className="text-white/70">Professional Services</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-purple-400"><CheckCircle size={16} /></div>
+              <p className="text-white/70">Healthcare & Wellness</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-purple-400"><CheckCircle size={16} /></div>
+              <p className="text-white/70">Real Estate & Property</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-purple-400"><CheckCircle size={16} /></div>
+              <p className="text-white/70">Technology & SaaS</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-purple-400"><CheckCircle size={16} /></div>
+              <p className="text-white/70">Food & Hospitality</p>
+            </div>
+          </div>
+          <p className="mt-4">
+            We take the time to understand your industry's specific needs and challenges to create a website that resonates with your target audience and achieves your business goals.
+          </p>
+        </>
+      ),
+    },
+    {
+      category: 'support',
+      question: "Do you offer ongoing support or updates?",
+      answer: (
+        <>
+          <p className="mb-4">Yes, we offer flexible support options to keep your website running smoothly:</p>
+          <div className="space-y-3">
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <h4 className="font-semibold text-white mb-2">Monthly Retainers</h4>
+              <p className="text-white/70">Ongoing support with a set number of hours each month for updates, changes, and maintenance.</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <h4 className="font-semibold text-white mb-2">One-Off Support</h4>
+              <p className="text-white/70">Pay-as-you-go support for occasional updates or changes to your website.</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <h4 className="font-semibold text-white mb-2">Maintenance Plans</h4>
+              <p className="text-white/70">Regular updates, security patches, backups, and performance monitoring to keep your site secure and up-to-date.</p>
+            </div>
+          </div>
+          <p className="mt-4">
+            Our clients appreciate the peace of mind that comes with knowing their website is being properly maintained and that help is available when needed. <a href="/contact" className="text-purple-400 underline hover:text-purple-300">Contact us</a> to discuss your ongoing support needs.
+          </p>
         </>
       ),
     },
@@ -361,9 +565,6 @@ const FAQ = () => {
 
   return (
     <>
-      {/* Live Chat Component */}
-
-      
       <SEO
         title="FAQ - Devtone Agency Web Development & SEO Services"
         description="Find answers about Devtone Agency's web development & SEO services. Learn about our digital marketing solutions, pricing, and how we help businesses unlock online success."
@@ -423,55 +624,13 @@ const FAQ = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                Get quick answers to common questions about our web development services, pricing, and support options.
+                Got questions? We've answered the most common ones below. If you're wondering about something else, feel free to reach out we're here to help.
               </motion.p>
             </motion.div>
           </div>
         </motion.section>
 
         <div className="container mx-auto px-4 pb-24">
-          {/* Contact Methods */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20 justify-center max-w-xl mx-auto"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {contactMethods.map((method, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="group relative"
-                whileHover={{ y: -5 }}
-              >
-                <div className={`absolute -inset-1 bg-gradient-to-r ${method.color} rounded-2xl blur-lg opacity-25 group-hover:opacity-75 transition duration-500`}></div>
-                <div className="relative backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-3 text-center h-full">
-                  <div className={`w-10 h-10 mx-auto mb-2 rounded-full bg-gradient-to-r ${method.color} bg-opacity-20 flex items-center justify-center`}>
-                    {/* Smaller icon */}
-                    {method.title === 'Schedule Call' ? <Calendar className="w-5 h-5" /> : method.title === 'Phone Support' ? <Phone className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
-                  </div>
-                  <h3 className="text-base font-bold text-white mb-1">{method.title}</h3>
-                  <p className="text-white mb-1 text-xs">{method.description}</p>
-                  <div className="text-purple-400 font-semibold mb-1 text-xs">{method.details}</div>
-                  <div className="text-xs text-white mb-1">{method.response}</div>
-                  <div className="mt-2">
-                    <span className="block font-bold text-white text-sm mb-1">Connect</span>
-                    <motion.a
-                      href={method.link}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs font-medium text-white transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {method.title === 'Schedule Call' ? 'Schedule Call' : method.title === 'Phone Support' ? 'Call Us' : 'Email Us'}
-                      <ArrowRight className="w-3 h-3" />
-                    </motion.a>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
             {/* FAQ Categories Sidebar */}
@@ -645,7 +804,7 @@ const FAQ = () => {
                   </motion.div>
                   <h3 className="text-2xl font-semibold text-white mb-4">Still have questions?</h3>
                   <p className="text-white/70 mb-6 max-w-xl mx-auto">
-                    Can't find the answer you're looking for? Please reach out to our friendly team.
+                    Let's talk about your goals — <a href="/contact" className="text-purple-400 underline hover:text-purple-300">schedule a free consultation</a>.
                   </p>
                   <motion.a
                     href="/contact"
