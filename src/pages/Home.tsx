@@ -46,6 +46,20 @@ const customStyles = `
     50% { transform: translateY(-20px); }
   }
   
+  /* Mobile optimized animations */
+  @media (max-width: 768px) {
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  }
+  
   @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
@@ -84,6 +98,23 @@ const customStyles = `
   
   .animate-bounce-slow {
     animation: bounce 3s ease-in-out infinite;
+  }
+  
+  /* Mobile optimized animation classes */
+  @media (max-width: 768px) {
+    .animate-float, 
+    .animate-float-slow, 
+    .animate-float-fast {
+      animation-duration: 10s;
+    }
+    
+    .animate-spin-slow {
+      animation-duration: 20s;
+    }
+    
+    .animate-bounce-slow {
+      animation-duration: 5s;
+    }
   }
   
   .animate-shimmer {
@@ -162,16 +193,36 @@ const Home = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Animation trigger on component mount
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect mobile devices to optimize animations
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Check on initial load
+    checkMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Animation trigger on component mount - with mobile optimization
+  useEffect(() => {
+    // Longer delay on mobile to ensure page is fully loaded before animations
+    const delay = isMobile ? 800 : 300;
+    
     // Small delay to ensure animation is visible after page load
     const timer = setTimeout(() => {
       setAnimateStats(true)
-    }, 300)
+    }, delay)
     
     return () => clearTimeout(timer)
-  }, [])
+  }, [isMobile])
 
   const planDetails = {
     Basic: {
@@ -339,11 +390,11 @@ const Home = () => {
       <div className="min-h-screen bg-[#030718]">
         {/* Add the custom styles */}
         <style >{customStyles}</style>
-        {/* Animated background elements */}
+        {/* Animated background elements - optimized for mobile */}
         <div className="fixed inset-0 overflow-hidden -z-10">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full opacity-10 blur-3xl"></div>
-          <div className="absolute top-1/3 -left-20 w-60 h-60 bg-purple-300 rounded-full opacity-10 blur-3xl"></div>
-          <div className="absolute bottom-20 right-1/4 w-60 h-60 bg-purple-700 rounded-full opacity-10 blur-3xl"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full opacity-10 md:blur-3xl blur-2xl"></div>
+          <div className="absolute top-1/3 -left-20 w-60 h-60 bg-purple-300 rounded-full opacity-10 md:blur-3xl blur-2xl"></div>
+          <div className="absolute bottom-20 right-1/4 w-60 h-60 bg-purple-700 rounded-full opacity-10 md:blur-3xl blur-2xl"></div>
         </div>
 
         {/* Enhanced Hero Section with Interactive Elements */}
@@ -354,32 +405,32 @@ const Home = () => {
               {/* Grid pattern overlay */}
               <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiIgZD0iTTAgMGg2MHY2MEgweiIvPjxwYXRoIGQ9Ik0zNiAxOGgtMXYyNGgxeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PHBhdGggZD0iTTI0IDE4aC0xdjI0aDF6IiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDQiLz48cGF0aCBkPSJNNjAgMzZ2MUgzNnYtMXoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNCIvPjxwYXRoIGQ9Ik02MCAyNHYxSDM2di0xeiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA0Ii8+PC9nPjwvc3ZnPg==')]"></div>
               
-              {/* Animated gradient orbs */}
+              {/* Animated gradient orbs - optimized for mobile */}
               <motion.div 
                 initial={{ x: -100, opacity: 0.2 }}
                 animate={{ x: 0, opacity: 0.5 }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
-                className="absolute -top-20 -right-20 w-96 h-96 bg-purple-600 rounded-full opacity-10 blur-[100px] animate-float-slow"
+                className="absolute -top-20 -right-20 w-96 h-96 bg-purple-600 rounded-full opacity-10 md:blur-[100px] blur-[50px] hidden md:block"
               ></motion.div>
               <motion.div 
                 initial={{ x: 100, opacity: 0.2 }}
                 animate={{ x: 0, opacity: 0.5 }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
-                className="absolute top-1/3 -left-20 w-80 h-80 bg-indigo-500 rounded-full opacity-10 blur-[100px] animate-float"
+                className="absolute top-1/3 -left-20 w-80 h-80 bg-indigo-500 rounded-full opacity-10 md:blur-[100px] blur-[50px]"
                 style={{ animationDelay: "2s" }}
               ></motion.div>
               <motion.div 
                 initial={{ y: 100, opacity: 0.2 }}
                 animate={{ y: 0, opacity: 0.5 }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
-                className="absolute bottom-0 right-1/4 w-72 h-72 bg-purple-800 rounded-full opacity-10 blur-[100px] animate-float-fast"
+                className="absolute bottom-0 right-1/4 w-72 h-72 bg-purple-800 rounded-full opacity-10 md:blur-[100px] blur-[50px] hidden md:block"
                 style={{ animationDelay: "1s" }}
               ></motion.div>
             </div>
           </div>
 
-          {/* Floating tech icons */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Floating tech icons - hidden on mobile for performance */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
             <motion.div 
               className="absolute top-[15%] left-[10%] text-purple-400/30"
               animate={{ y: [0, -15], rotate: [0, 5] }}
@@ -1903,6 +1954,62 @@ const Home = () => {
             </motion.div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Featured Video Testimonial - Joshua */}
+              <motion.div 
+                className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-purple-500/30 transition-all duration-300 relative group md:col-span-2"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                whileHover={{ y: -5 }}
+              >
+                {/* Quote mark */}
+                <div className="absolute top-6 right-6 text-purple-500/20 group-hover:text-purple-500/40 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" className="opacity-30">
+                    <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                  </svg>
+                </div>
+                
+                <div className="testimonial flex flex-col md:flex-row items-center gap-6">
+                  <div className="flex flex-col items-center gap-4 md:w-1/3">
+                    <img 
+                      src="https://i.imgur.com/r4C4SpF.jpg" 
+                      alt="Joshua" 
+                      className="w-24 h-24 rounded-full object-cover border-2 border-purple-500/30 flex-shrink-0 mb-2"
+                    />
+                    <div className="text-center md:text-left">
+                      <p className="text-white/80 text-lg mb-2 relative z-10 italic">
+                        "Honestly, DevTone crushed it. Our site looks way better now, loads faster, and people are actually reaching out. Super chill team, really knew what they were doing. Worth it."
+                      </p>
+                      <h4 className="text-purple-300 font-medium">— Joshua, E-commerce Entrepreneur</h4>
+                    </div>
+                  </div>
+                  
+                  <div className="relative mt-6 md:mt-0 md:w-2/3 group cursor-pointer" onClick={(e) => {
+                    const videoElement = e.currentTarget.querySelector('video') as HTMLVideoElement;
+                    handleVideoPlayPause(videoElement);
+                  }}>
+                    <div className="relative rounded-xl overflow-hidden border-2 border-purple-500/30 shadow-lg">
+                      <video 
+                        src="https://i.imgur.com/r4C4SpF.mp4"
+                        className="w-full rounded-xl"
+                        poster="https://i.imgur.com/r4C4SpF.jpg"
+                        playsInline
+                      />
+                      {!isPlaying && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity group-hover:bg-black/60">
+                          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-purple-600/80 text-white transition-transform group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
               {/* Testimonial 1 */}
               <motion.div 
                 className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:border-purple-500/30 transition-all duration-300 relative group"
