@@ -1979,7 +1979,7 @@ const Home = () => {
                     />
                     <div className="text-center md:text-left">
                       <p className="text-white/80 text-lg mb-2 relative z-10 italic">
-                        "Honestly, DevTone crushed it. Our site looks way better now, loads faster, and people are actually reaching out. Super chill team, really knew what they were doing. Worth it."
+                        "Honestly, DevTone crushed it. Our site looks way better now, loads faster, and people are actually reaching out. Super chill team, really knew what they were doing. Totally worth it."
                       </p>
                       <h4 className="text-purple-300 font-medium">— Joshua, E-commerce Entrepreneur</h4>
                     </div>
