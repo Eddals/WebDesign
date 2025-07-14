@@ -179,14 +179,28 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     const input = e.target.value
     setPhoneNumber(input)
     
-    // Detect country from the full input
-    const fullNumber = input.startsWith('+') ? input : `+${input}`
-    const country = detectCountry(fullNumber)
+    // Clean input to only digits
+    const digitsOnly = input.replace(/[^\d]/g, '')
+    
+    // Check if it's a 10-digit US number (common case)
+    let country: Country
+    let numberWithoutCode: string
+    
+    if (digitsOnly.length === 10 && !input.startsWith('+') && !input.startsWith('1')) {
+      // Assume it's a US number and add +1
+      country = countries.find(c => c.code === 'US') || countries[0]
+      numberWithoutCode = digitsOnly
+    } else {
+      // Detect country from the full input
+      const fullNumber = input.startsWith('+') ? input : `+${input}`
+      country = detectCountry(fullNumber)
+      numberWithoutCode = input.replace(country.dialCode, '').replace(/[^\d]/g, '')
+    }
+    
     setDetectedCountry(country)
     
     // Format phone number based on detected country
     let formattedNumber = input
-    const numberWithoutCode = input.replace(country.dialCode, '').replace(/[^\d]/g, '')
     
     if (country.code === 'US' || country.code === 'CA') {
       // Format as 1 XXX XXX XXXX or (XXX) XXX-XXXX

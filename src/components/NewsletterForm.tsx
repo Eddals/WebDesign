@@ -27,7 +27,15 @@ const NewsletterForm = ({ onClose, isPopup = false }: NewsletterFormProps) => {
     // Obter valores dos campos
     const firstName = firstNameRef.current?.value || ''
     const email = emailRef.current?.value || ''
-    const phone = phoneRef.current?.value || ''
+    let phone = phoneRef.current?.value || ''
+    
+    // Auto-format phone number for US if it's 10 digits
+    if (phone) {
+      const digitsOnly = phone.replace(/[^\d]/g, '')
+      if (digitsOnly.length === 10 && !phone.startsWith('+') && !phone.startsWith('1')) {
+        phone = `+1 ${digitsOnly.slice(0, 3)} ${digitsOnly.slice(3, 6)} ${digitsOnly.slice(6)}`
+      }
+    }
     
     // Validar campos
     if (!firstName.trim()) {
