@@ -504,7 +504,7 @@ const Estimate = () => {
                       <div>
                         <h3 className="text-white font-semibold mb-1">Project Review (2-4 hours)</h3>
                         <p className="text-white/70">
-                          Our expert team is analyzing your requirements to create the perfect solution for your {formData.projectType.toLowerCase()}.
+                          Our expert team is reviewing your request to craft the best solution for your business website or platform.
                         </p>
                       </div>
                     </div>
