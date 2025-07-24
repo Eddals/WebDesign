@@ -6,6 +6,7 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Analytics } from "@vercel/analytics/react";
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
+import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -39,6 +40,10 @@ const MobileApps = lazy(() => import('./pages/services/MobileApps'));
 const TestEmail = lazy(() => import('./pages/TestEmail'));
 const ContactFormDemo = lazy(() => import('./pages/ContactFormDemo'));
 const EmailTest = lazy(() => import('./pages/EmailTest'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogDatabase = lazy(() => import('./pages/BlogDatabase'));
+const Portfolio = lazy(() => import('./pages/Portfolio'));
+// Admin dashboard imports removed
 
 const App = () => {
   useEffect(() => {
@@ -77,6 +82,8 @@ const App = () => {
                   </Suspense>
                 } />
                 
+                {/* Admin routes removed */}
+                
                 {/* Main website routes - with navbar/footer */}
                 <Route path="/*" element={
                   <div className="min-h-screen bg-[#030718]">
@@ -100,6 +107,9 @@ const App = () => {
                         <Route path="/seo" element={<Seo />} />
                         <Route path="/services/seo-optimization" element={<Seo />} />
                         <Route path="/about" element={<About />} />
+                        <Route path="/portfolio" element={<Portfolio />} />
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog-db" element={<BlogDatabase />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/pricing" element={<Pricing />} />
                         <Route path="/estimate" element={<Estimate />} />
