@@ -44,6 +44,27 @@ const Portfolio = lazy(() => import('./pages/Portfolio'));
 // Admin dashboard imports removed
 
 const App = () => {
+  // Google Analytics setup
+  useEffect(() => {
+    // Load Google Analytics script
+    const script1 = document.createElement('script');
+    script1.async = true;
+    script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-1STTQR6S75';
+    document.head.appendChild(script1);
+
+    // Initialize Google Analytics
+    window.dataLayer = window.dataLayer || [];
+    function gtag(...args: any[]) {
+      window.dataLayer.push(args);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-1STTQR6S75');
+
+    // Make gtag available globally
+    (window as any).gtag = gtag;
+  }, []);
+
+  // Brevo Conversations setup
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
