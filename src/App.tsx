@@ -6,7 +6,7 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Analytics } from "@vercel/analytics/react";
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
-import ProtectedRoute from './components/ProtectedRoute';
+
 import Navbar from "./components/Navbar";
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -37,9 +37,7 @@ const MarketingAutomation = lazy(() => import('./pages/services/MarketingAutomat
 const ECommerce = lazy(() => import('./pages/services/ECommerce'));
 const WebsiteRedesign = lazy(() => import('./pages/services/WebsiteRedesign'));
 const MobileApps = lazy(() => import('./pages/services/MobileApps'));
-const TestEmail = lazy(() => import('./pages/TestEmail'));
-const ContactFormDemo = lazy(() => import('./pages/ContactFormDemo'));
-const EmailTest = lazy(() => import('./pages/EmailTest'));
+
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogDatabase = lazy(() => import('./pages/BlogDatabase'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
@@ -119,9 +117,7 @@ const App = () => {
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/chat-dashboard" element={<ChatDashboard />} />
-                        <Route path="/test-email" element={<TestEmail />} />
-                        <Route path="/contact-form-demo" element={<ContactFormDemo />} />
-                        <Route path="/email-test" element={<EmailTest />} />
+
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Suspense>
