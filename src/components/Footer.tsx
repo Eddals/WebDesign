@@ -183,16 +183,6 @@ const Footer = () => {
               <Link to="/terms" className="text-white/50 hover:text-purple-400 transition-colors">
                 Terms of Service
               </Link>
-              <a
-                href="https://dashboard.devtone.agency"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1"
-                title="Client Dashboard"
-              >
-                <Shield size={14} />
-                Dashboard
-              </a>
             </div>
           </div>
         </motion.div>
