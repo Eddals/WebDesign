@@ -3,7 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { HelmetProvider } from 'react-helmet-async';
 import { Suspense, lazy, useEffect } from 'react';
-import { Analytics } from "@vercel/analytics/next";
+import VercelAnalytics from './components/VercelAnalytics';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 
@@ -83,7 +83,7 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <Router>
             <ScrollToTop />
-            <Analytics />
+            <VercelAnalytics />
             <BrevoTracker />
             <Suspense fallback={<LoadingSpinner fullScreen text="Loading..." />}>
               <Routes>
